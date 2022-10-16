@@ -1,6 +1,6 @@
 if engine.ActiveGamemode() == "sandbox"then
 
-hook.Add( "Initialize", "start", function()
+hook.Add( "Initialize", "MelonWars_StartPlyData", function()
 
 	//90% of this code does nothing because this hook is called before the player is initialized lol
 
@@ -43,7 +43,7 @@ end)
 
 
 
-hook.Add( "InitPostEntity", "initializePlayerVariables", function()
+hook.Add( "InitPostEntity", "MelonWars_InitPlyVariables", function()
 	LocalPlayer().spawnTimeMult = 1
 end)
 
@@ -51,7 +51,7 @@ end)
 mw_team_colors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
 mw_team_colors[0] = Color(100,100,100,255)
 
-hook.Add( "Think", "update", function()	
+hook.Add( "Think", "MelonWars_SelectingUpdate", function()	
 	/*if (LocalPlayer().mw_selecting) then
 		LocalPlayer().mw_selEnd = LocalPlayer():GetEyeTrace().HitPos
 	end*/
@@ -70,7 +70,7 @@ local function OnPlayerChat( ply, text, teamChat, isDead )
 		return true
 	end*/
 end
-hook.Add( "OnPlayerChat", "mw_onplayerchat", OnPlayerChat )
+hook.Add( "OnPlayerChat", "MelonWars_OnPlyChat", OnPlayerChat )
 
 //concommand.Add( "+mw_select", function( ply )
 function MW_BeginSelection()
@@ -488,23 +488,23 @@ net.Receive("ContraptionValidateClient", function (len, pl)
 	
 end)
 
-hook.Add("OnTextEntryGetFocus", "disableKeyboard", function (panel)
+hook.Add("OnTextEntryGetFocus", "MelonWars_DisableKeyboard", function (panel)
 	LocalPlayer().disableKeyboard = true
 end)
 
-hook.Add("OnTextEntryLoseFocus", "enableKeyboard", function (panel)
+hook.Add("OnTextEntryLoseFocus", "MelonWars_EnableKeyboard", function (panel)
 	LocalPlayer().disableKeyboard = false
 end)
 
-hook.Add( "OnContextMenuOpen", "AddHalos", function()
+hook.Add( "OnContextMenuOpen", "MelonWars_AddHalos", function()
 	LocalPlayer():ConCommand("mw_context_menu 1")
 end )
 
-hook.Add( "OnContextMenuClose", "AddHalos", function()
+hook.Add( "OnContextMenuClose", "MelonWars_AddHalos", function()
 	LocalPlayer():ConCommand("mw_context_menu 0")
 end )
 
-hook.Add( "PostDrawTranslucentRenderables", "AddHalos", function()
+hook.Add( "PostDrawTranslucentRenderables", "MelonWars_AddHalos", function()
 
 	--[[if (istable(foundMelons)) then
 		//halo.Add( foundMelons, Color( 255, 255, 100 ), 2, 2, 1, true, true )
@@ -566,7 +566,7 @@ hook.Add( "PostDrawTranslucentRenderables", "AddHalos", function()
 	end
 end)
 
-hook.Add( "PostDrawTranslucentRenderables", "mw_unit_selection_circles", function()
+hook.Add( "PostDrawTranslucentRenderables", "MelonWars_UnitSelectionCircles", function()
 	local angle = LocalPlayer():EyeAngles()+Angle(-90,0,0)
 
 	local foundMelons = LocalPlayer().foundMelons
@@ -612,7 +612,7 @@ hook.Add( "PostDrawTranslucentRenderables", "mw_unit_selection_circles", functio
 	end
 end )
 
-hook.Add( "HUDPaint", "mw_hud", function()
+hook.Add( "HUDPaint", "MelonWars_Hud", function()
 
 	if (LocalPlayer().mw_selecting) then
 		MWDrawSelectionCircle(LocalPlayer().mw_selectionStartingPoint, LocalPlayer().mw_selectionEndingPoint)
@@ -1090,7 +1090,7 @@ local function MyCalcView( ply, pos, angles, fov )
 	end
 end
 
-hook.Add( "CalcView", "MyCalcView", MyCalcView )
+hook.Add( "CalcView", "MelonWars_MyCalcView", MyCalcView )
 
 local function MW_Move( ply, mv )
 	if (IsValid(ply.controllingUnit)) then
@@ -1098,7 +1098,7 @@ local function MW_Move( ply, mv )
 	end
 end
 
-hook.Add( "Move", "MWMove", MW_Move )
+hook.Add( "Move", "MelonWars_MoveUnit", MW_Move )
 
 net.Receive( "MWControlUnit" , function(len, pl)
 	local u = net.ReadEntity()
@@ -1127,18 +1127,15 @@ net.Receive( "MWColourMod", function(len, pl)
 	DrawColorModify(LocalPlayer().MWColourModifierTable)
 end)
 
-hook.Add( "RenderScreenspaceEffects", "mw_colourmod", function()
+hook.Add( "RenderScreenspaceEffects", "MelonWars_ColourMod", function()
 	//print(LocalPlayer().MWhasColourModifier )
-
-
 
 	if(LocalPlayer().MWhasColourModifier == true) then
 		DrawColorModify(LocalPlayer().MWColourModifierTable)
 	end
-
 end )
 
-net.Receive( "MWClient_modifySpawnTime", function(len, pl)
+net.Receive( "MelonWars_ClientModifySpawnTime", function(len, pl)
 	local spawnTimeChange = net.ReadFloat()
 	//LocalPlayer().mw_spawntime = LocalPlayer().mw_spawntime + spawnTimeChange
 	LocalPlayer().spawnTimeMult = (1+spawnTimeChange)

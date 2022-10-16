@@ -1,4 +1,3 @@
-
 TOOL.Category = "MelonWars: RTS"
 TOOL.Name = "Player Tool"
 --TOOL.Tab = "Melon Wars"
@@ -4892,9 +4891,8 @@ function MW_isInRange( vector, teamIndex ) //Why does this not just use findinsp
 	end
 
 	local foundPoints = ents.FindByClass( "ent_melon_outpost_point" )
-	
 
-	
+
 	for k, v in pairs( foundPoints ) do
 		if (not canBuild) then
 			if (vector:Distance(v:GetPos()) < 600) then
@@ -4938,4 +4936,3 @@ if (CLIENT) then
 	--language.Add( "Unique_Name", "MelonWars" )
 	language.Add( "undone.melon_universal_tool", "Marine has been undone." )
 end
-

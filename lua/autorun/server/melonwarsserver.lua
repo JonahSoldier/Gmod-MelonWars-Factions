@@ -205,13 +205,13 @@ function Initialize()
 	mw_team_colors[0] = Color(100,100,100,255)
 	mw_team_names[0] = {"Gray"}
 end
-hook.Add("Initialize", "Melonwars Initialize", Initialize)
+hook.Add("Initialize", "MelonWars_InitializeTeams", Initialize)
 
 function AddTabs()
 	spawnmenu.AddToolTab( "MelonWars", "#Melonwarstab", "icon16/wrench.png" )
 end
 -- Hook the Tab to the Spawn Menu
-hook.Add( "AddToolMenuTabs", "MelonWars", AddTabs )
+hook.Add( "AddToolMenuTabs", "MelonWars_AddTabs", AddTabs )
 
 mw_teamCredits = {2000,2000,2000,2000,2000,2000,2000,2000}
 mw_teamUnits = {0,0,0,0,0,0,0,0}
@@ -233,7 +233,7 @@ local function spawn( ply )
 	end
 	util.PrecacheModel( "models/hunter/tubes/circle2x2.mdl" )
 end
-hook.Add( "PlayerInitialSpawn", "mw_initialspawn", spawn )
+hook.Add( "PlayerInitialSpawn", "MelonWars_InitSpawnData", spawn )
 /*
 local function playerSpawn( ply )
 	if (cvars.Bool("mw_admin_player_colors")) then
@@ -241,7 +241,7 @@ local function playerSpawn( ply )
 		ply:SetColor(mw_team_colors[_team])
 	end
 end
-hook.Add( "PlayerSpawn", "mw_spawn", playerSpawn )*/
+hook.Add( "PlayerSpawn", "MelonWars_Spawn", playerSpawn )*/
 
 function MWSendMessage(pl, message, notificationType, length)
 	net.Start("MWMessage")
@@ -285,7 +285,7 @@ local function takedmg( target, dmginfo )
 		end
 	end
 end
-hook.Add( "EntityTakeDamage", "entitytakedmg", takedmg )
+hook.Add( "EntityTakeDamage", "MelonWars_EntTakeDmg", takedmg )
 
 net.Receive( "MW_SelectContraption" , function(len, pl)
 	local count = net.ReadUInt(16)
@@ -1131,7 +1131,7 @@ net.Receive( "ContraptionLoad", function( len, pl )
 				v:SetNWInt("mw_melonTeam", mw_melonTeam)
 				v:SetNWInt("propHP", math.min(1000,v:GetPhysicsObject():GetMass()))--max 1000 de vida
 				v.realvalue = v:GetPhysicsObject():GetMass()
-				hook.Run("MelonWarsEntitySpawned", v)
+				hook.Run("MelonWars_EntitySpawned", v)
 			end
 			if (ent:GetClass() == "player") then
 				v:SetVar('targetPos', pos)
@@ -2072,7 +2072,7 @@ concommand.Add( "mw_admin_reset_teams", function( ply )
     end
 end)
 
-hook.Add( "InitPostEntity", "start", function()	
+hook.Add( "InitPostEntity", "MelonWars_StartLoad", function()	
 	mw_save_name_custom = "melonwars_default_save"
 	teamgrid = {}          -- create the matrix
     for i=1,8 do
@@ -2083,7 +2083,7 @@ hook.Add( "InitPostEntity", "start", function()
     end
 end)
 
-hook.Add( "Think", "update", function()	
+hook.Add( "Think", "MelonWars_SelectingUpdate", function()	
 	local tbl = player.GetAll()
 	for k, v in pairs( tbl ) do
 		if (v.mw_selecting) then
@@ -2154,7 +2154,7 @@ local function MW_Move( ply, mv )
 	end
 end
 
-hook.Add( "Move", "MWCalcView", MW_Move )
+hook.Add( "Move", "MelonWars_CalcView", MW_Move )
 
 net.Receive( "MWControlUnit" , function(len, pl)
 	local u = net.ReadEntity()
