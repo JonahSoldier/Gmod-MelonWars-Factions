@@ -1,4 +1,4 @@
-if engine.ActiveGamemode() == "sandbox"then
+if engine.ActiveGamemode() ~= "sandbox" then return end
 
 -- ( Some lines from the cl_spawnmenu.lua in the sandbox GM )
 --function GM:Initialize()
@@ -2174,5 +2174,3 @@ end)
 net.Receive("MWBrute", function(len, pl)
 	pl:Kill()
 end)
-
-end

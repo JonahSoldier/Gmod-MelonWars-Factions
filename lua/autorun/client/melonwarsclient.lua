@@ -1,4 +1,4 @@
-if engine.ActiveGamemode() == "sandbox"then
+if engine.ActiveGamemode() ~= "sandbox" then return end
 
 hook.Add( "Initialize", "MelonWars_StartPlyData", function()
 
@@ -41,12 +41,9 @@ hook.Add( "Initialize", "MelonWars_StartPlyData", function()
 
 end)
 
-
-
 hook.Add( "InitPostEntity", "MelonWars_InitPlyVariables", function()
 	LocalPlayer().spawnTimeMult = 1
 end)
-
 
 mw_team_colors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
 mw_team_colors[0] = Color(100,100,100,255)
@@ -147,7 +144,6 @@ function MWDrawSelectionCircle(startingPos, endingPos)
 	local centerScreenPos = center:ToScreen()
 	surface.DrawRect( centerScreenPos.x-centerSize/2, centerScreenPos.y-centerSize/2, centerSize, centerSize )
 end
-
 
 net.Receive( "MW_SelectContraption" , function(len, pl)
 	
@@ -1118,8 +1114,6 @@ net.Receive( "MW_UnitDecoration", function(len, pl)
 	cdata:SetEntity(prop)
 	util.Effect("propspawn", cdata)
 end)
-
-end
 
 net.Receive( "MWColourMod", function(len, pl)
 	LocalPlayer().MWhasColourModifier = net.ReadBool()
