@@ -48,7 +48,7 @@ end
 function ENT:PhysicsCollide( colData, collider )
 	local _team = colData.HitEntity.mw_melonTeam
 	if (colData.HitEntity.Base == "ent_melon_base") then
-		if (_team != nil) then
+		if (_team ~= nil) then
 			self:Open(_team)
 		end
 	end

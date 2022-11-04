@@ -16,7 +16,7 @@ function ENT:Initialize()
 	self:SetModel( "models/props_wasteland/buoy01.mdl" )
 	
 	--self:SetAngles(Angle(90,0,0))
-	//self:SetPos(self:GetPos()+Vector(0,0,35))
+	--self:SetPos(self:GetPos()+Vector(0,0,35))
 	
 	self:SetMaterial("models/shiny")
 	
@@ -44,7 +44,7 @@ end
 function ENT:SlowThink()
 
 	if (SERVER) then
-		if (self.capTeam ~= 0 && cvars.Bool("mw_admin_playing")) then
+		if (self.capTeam ~= 0 and cvars.Bool("mw_admin_playing")) then
 			mw_teamCredits[self.capTeam] = mw_teamCredits[self.capTeam]+5
 			for k, v in pairs( player.GetAll() ) do
 				if (v:GetInfo("mw_team") == tostring(self.capTeam)) then
@@ -95,7 +95,7 @@ function ENT:SlowThink()
 				end
 			end
 			--Si nadie estaba capturando, capturar
-			if (!othersHaveCapture) then
+			if not othersHaveCapture then
 				self.captured[i] = math.min(100, self.captured[i]+capture)
 			end
 		else 

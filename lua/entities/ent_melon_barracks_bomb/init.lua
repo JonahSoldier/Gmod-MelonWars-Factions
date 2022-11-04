@@ -9,11 +9,11 @@ function ENT:Initialize()
 
 	self.unit = 4
 	self.modelString = "models/props_wasteland/laundry_basket001.mdl"
-	//self.Angles = Angle(0,0,180)
+	--self.Angles = Angle(0,0,180)
 	self.maxHP = 100
 
-	//self.posOffset = Vector(0,0,10)
-	//self:SetPos(self:GetPos()+Vector(0,0,10))
+	--self.posOffset = Vector(0,0,10)
+	--self:SetPos(self:GetPos()+Vector(0,0,10))
 
 	self:BarrackInitialize()
 	self.population = 1

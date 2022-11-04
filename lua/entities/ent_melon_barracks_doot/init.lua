@@ -9,8 +9,8 @@ function ENT:Initialize()
 	self.unit = 11
 	self.modelString = "models/props_c17/gravestone002a.mdl"
 	self.maxHP = 50
-	//self.Angles = Angle(0,0,0)
-	//self:SetPos(self:GetPos()+Vector(0,0,10))
+	--self.Angles = Angle(0,0,0)
+	--self:SetPos(self:GetPos()+Vector(0,0,10))
 
 	self:BarrackInitialize()
 	self.population = 1

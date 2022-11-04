@@ -19,7 +19,7 @@ function ENT:Initialize()
 	self:SetModel( "models/hunter/triangles/trapezium3x3x1.mdl" )
 	
 	--self:SetAngles(Angle(90,0,0))
-	//self:SetPos(self:GetPos()+Vector(0,0,35))
+	--self:SetPos(self:GetPos()+Vector(0,0,35))
 	
 	self:SetMaterial("phoenix_storms/stripes")
 	
@@ -85,7 +85,7 @@ function ENT:PhysicsCollide( data, phys )
 
 						if (IsValid(healthiest)) then
 							local bullet = ents.Create( "ent_melonbullet_melonium_missile" )
-							if ( !IsValid( bullet ) ) then return end -- Check whether we successfully made an entity, if not - bail
+							if not IsValid( bullet ) then return end -- Check whether we successfully made an entity, if not - bail
 							bullet:SetPos( self:GetPos() + Vector(0,0,10) )
 							bullet:SetNWInt("mw_melonTeam",self.mw_melonTeam)
 							bullet:Spawn()

@@ -5,7 +5,7 @@ function ENT:ClientThink()
 		self.t = self:GetNWInt("mw_melonTeam", -1)
 	end
 	if (self.m == nil) then
-		if (self:GetMoveType() != nil) then
+		if (self:GetMoveType() ~= nil) then
 			self.m = self:GetMoveType()
 		end
 	end
@@ -25,11 +25,11 @@ function ENT:Draw()
 	    local charge = self:GetNWInt("mw_charge", 0)
 	    local maxCharge = self:GetNWInt("maxCharge", 1)
 
-	    //local shots = 50 
+	    --local shots = 50 
 
 	    local width = 7.5
 
-		//local interval = width/shots
+		--local interval = width/shots
 
 	    cam.Start3D2D( vpos, angle, 1 )
 	    	surface.SetDrawColor( Color( 0,255,255, 255 ) )

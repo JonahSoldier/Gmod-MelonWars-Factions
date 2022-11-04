@@ -9,9 +9,9 @@ function ENT:Initialize()
 	self.unit = 7
 	self.modelString = "models/props_wasteland/laundry_cart001.mdl"
 	self.maxHP = 100
-	//self.Angles = Angle(90,45,0)
-	//self:SetPos(self:GetPos()+Vector(0,0,15))
-	//self:SetAngles(self:GetAngles()+self.Angles)
+	--self.Angles = Angle(90,45,0)
+	--self:SetPos(self:GetPos()+Vector(0,0,15))
+	--self:SetAngles(self:GetAngles()+self.Angles)
 
 	self.population = 1
 

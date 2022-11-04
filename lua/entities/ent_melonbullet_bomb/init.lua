@@ -33,7 +33,7 @@ function ENT:PhysicsCollide( colData, collider )
 	if (other.canMove == false) then
 		if (self:IsValid()) then
 			other.damage = 30
-			//util.BlastDamage( self, self, self:GetPos(), 30, 75 )
+			--util.BlastDamage( self, self, self:GetPos(), 30, 75 )
 			local effectdata = EffectData()
 			effectdata:SetOrigin( self:GetPos() )
 			util.Effect( "Explosion", effectdata )

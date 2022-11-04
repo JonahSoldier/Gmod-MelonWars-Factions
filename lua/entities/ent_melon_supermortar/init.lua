@@ -50,7 +50,7 @@ function ENT:SlowThink ( ent )
 	if (mw_electric_network[self.network].energy >= energyCost) then
 		if (ent.ai or CurTime() > ent.nextControlShoot) then
 			--------------------------------------------------------Disparar
-			if (forcedTargetPos != nil) then
+			if (forcedTargetPos ~= nil) then
 				local targets = ents.FindInSphere( forcedTargetPos, 3 )
 				ent.targetEntity = nil
 				for k, v in pairs(targets) do
@@ -64,7 +64,7 @@ function ENT:SlowThink ( ent )
 			
 			if (ent.nextShot < CurTime()) then
 			
-				if (IsValid(ent.targetEntity)and ent.targetEntity != ent) then
+				if (IsValid(ent.targetEntity)and ent.targetEntity ~= ent) then
 					if ((ent.targetEntity:GetPos()-ent:GetPos()):LengthSqr() < ent.range*ent.range) then
 						local tr = util.TraceLine( {
 							start = pos,
@@ -73,7 +73,7 @@ function ENT:SlowThink ( ent )
 							})
 
 						
-						if  (tr != nil and tostring(tr.Entity) == '[NULL Entity]') then
+						if  (tr ~= nil and tostring(tr.Entity) == '[NULL Entity]') then
 							ent:Shoot( ent, forcedTargetPos)
 							self:DrainPower(500)
 						end
@@ -86,21 +86,18 @@ function ENT:SlowThink ( ent )
 end
 
 function ENT:Shoot(ent, forcedTargetPos)
-
 	sound.Play( ent.shotSound, ent:GetPos() )
-			
-		
+
 	local targetPos = ent.targetEntity:GetPos()
 
 	if (ent.targetEntity:GetVar("shotOffset") ~= nil) then
 		targetPos = targetPos+ent.targetEntity:GetVar("shotOffset")
 	end
 
-
 	local shootVector = (targetPos-ent:GetPos() + Vector(0, 0, 1000) + Vector(math.random(-self.spread,self.spread),math.random(-self.spread,self.spread),math.random(-self.spread,self.spread)))*24
-		
+
 	local bullet = ents.Create( "ent_melonbullet_siegebomb" )
-	if ( !IsValid( bullet ) ) then return end -- Check whether we successfully made an entity, if not - bail
+	if not IsValid( bullet ) then return end -- Check whether we successfully made an entity, if not - bail
 	bullet:SetPos( ent:GetPos() + Vector(0,0,250) )
 	bullet:SetNWInt("mw_melonTeam",self.mw_melonTeam)
 	bullet:SetModel("models/props_phx/cannonball.mdl")
@@ -113,11 +110,7 @@ function ENT:Shoot(ent, forcedTargetPos)
 	bullet.owner = ent
 	ent.fired = true
 	ent.nextShot = CurTime()+ent.fireDelay
-
 end
-
-
-
 
 function ENT:DeathEffect ( ent )
 	ent:StopSound("d3_citadel.combine_ball_field_loop1")

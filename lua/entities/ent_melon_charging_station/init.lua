@@ -26,7 +26,7 @@ function ENT:Initialize()
 	self.careForFriendlyFire = false
 	self.careForWalls = false
 
-	//self:SetPos(self:GetPos()+Vector(0,0,-5))
+	--self:SetPos(self:GetPos()+Vector(0,0,-5))
 	self:SetNWVector("energyPos", Vector(0,0,20))
 
 	self.shotOffset = Vector(0,0,15)
@@ -35,7 +35,7 @@ function ENT:Initialize()
 end
 
 function ENT:ModifyColor()
-	//self:SetColor(Color(self:GetColor().r+120, self:GetColor().g+120, self:GetColor().b+120, 255))
+	--self:SetColor(Color(self:GetColor().r+120, self:GetColor().g+120, self:GetColor().b+120, 255))
 end
 
 function ENT:SlowThink ( ent )
@@ -110,7 +110,7 @@ function ENT:Shoot ( ent )
 			if (ent.targetEntity:GetVar("shotOffset") ~= nil) then
 				targetPos = targetPos+ent.targetEntity:GetVar("shotOffset")
 			end
-			//ent:FireBullets(bullet)
+			--ent:FireBullets(bullet)
 			local effectdata = EffectData()
 			effectdata:SetScale(3000)
 			effectdata:SetMagnitude(3000)

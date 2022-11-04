@@ -18,11 +18,11 @@ function ENT:Initialize()
 
 	self.materialString = ""
 
-	//self:SetAngles(self:GetAngles()+Angle(0,0,0))
+	--self:SetAngles(self:GetAngles()+Angle(0,0,0))
 
-	//local offset = Vector(0,-0.8,0)
-	//offset:Rotate(self:GetAngles())
-	//self:SetPos(self:GetPos()+offset)
+	--local offset = Vector(0,-0.8,0)
+	--offset:Rotate(self:GetAngles())
+	--self:SetPos(self:GetPos()+offset)
 
 	self.captureSpeed = 0
 
@@ -48,19 +48,19 @@ function ENT:SlowThink ( ent )
 end
 
 function ENT:Welded( ent, parent )
-	//local weld = constraint.Weld( ent, parent, 0, 0, 0, true , false )
+	--local weld = constraint.Weld( ent, parent, 0, 0, 0, true , false )
 
 	--ent.canMove = false
 
-	//ent.parent = parent
+	--ent.parent = parent
 	ent.phys:SetMaterial("rubber")
 
 	local LPos1 = Vector(0,0,0)
 	local LVector = Vector(1,0,0)
 	local axis = constraint.Axis(self, parent, 0, 0, LPos1, LPos1, 0, 0, 0, 1, LVector, false)
-	//self.parent = parent
+	--self.parent = parent
 
-	//self.weld = constraint.Weld( self, parent, 0, 0, 0, true , false )
+	--self.weld = constraint.Weld( self, parent, 0, 0, 0, true , false )
 	--Resta su poblacion para luego sumar la nueva
 	MW_UpdatePopulation(-ent.population, mw_melonTeam)
 	ent.population = math.ceil(ent.population/2)
@@ -72,7 +72,7 @@ function ENT:Welded( ent, parent )
 		if (istable(v)) then
 			for k, i in pairs(v) do
 				if(istable(i)) then
-					if (i.Entity.Type != "anim") then
+					if (i.Entity.Type ~= "anim") then
 						self.parent = i.Entity
 						self:SetNWBool("wheel_set_parent_once", false)
 					end
@@ -91,16 +91,16 @@ function ENT:OnFinishMovement(parent)
 
 	self.axisConstraint = constraint.FindConstraint( self, "Axis" )
 	
-	//PrintTable(self.axisConstraint)
+	--PrintTable(self.axisConstraint)
 
 	 
 
-	if (self:GetNWBool("wheel_set_parent_once", true)) then //Prevents this from running constantly to hopefully help lag, uses a NWInt because as a normal variable it saves to the contrap file
+	if (self:GetNWBool("wheel_set_parent_once", true)) then --Prevents this from running constantly to hopefully help lag, uses a NWInt because as a normal variable it saves to the contrap file
 		for k, v in pairs(self.axisConstraint) do
 			if (istable(v)) then
 				for k, i in pairs(v) do
 					if(istable(i)) then
-						if (i.Entity.Type != "anim") then
+						if (i.Entity.Type ~= "anim") then
 							self.parent = i.Entity
 							self:SetNWBool("wheel_set_parent_once", false)
 						end
@@ -136,7 +136,7 @@ function ENT:Update (ent)
 			end
 		end
 
-		if (self.weld != nil or self.weld == false) then
+		if (self.weld ~= nil or self.weld == false) then
 			constraint.RemoveConstraints( self, "Weld" )
 			self.weld = nil
 			ent.phys:SetMaterial("ice")

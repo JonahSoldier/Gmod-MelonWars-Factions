@@ -60,10 +60,10 @@ function ENT:Think ()
 
 	for k, v in pairs(allConstraints) do
 		if(v.Type == "Weld") then
-			//v:GetConstrainedPhysObjects()
-			if(v.Ent1!=self) then
-				//print(v.Ent1:GetNWInt("mw_charge", 0))
-				if(v.Ent1:GetNWInt("mw_charge", -1)>=0 and v.Ent1:GetClass() != "ent_melon_contraption_capacitor") then
+			--v:GetConstrainedPhysObjects()
+			if(v.Ent1~=self) then
+				--print(v.Ent1:GetNWInt("mw_charge", 0))
+				if(v.Ent1:GetNWInt("mw_charge", -1)>=0 and v.Ent1:GetClass() ~= "ent_melon_contraption_capacitor") then
 					table.insert(suppliedEntities, v.Ent1)
 				else
 					if(v.Ent1:GetClass() == "ent_melon_contraption_capacitor") then	
@@ -73,13 +73,13 @@ function ENT:Think ()
 					end
 				end
 			else
-				//print(v.Ent2:GetNWInt("mw_charge", 0))
-				if(v.Ent2:GetNWInt("mw_charge", -1)>=0 and v.Ent2:GetClass() != "ent_melon_contraption_capacitor") then
+				--print(v.Ent2:GetNWInt("mw_charge", 0))
+				if(v.Ent2:GetNWInt("mw_charge", -1)>=0 and v.Ent2:GetClass() ~= "ent_melon_contraption_capacitor") then
 					table.insert(suppliedEntities, v.Ent2)
 				else
 					if(v.Ent2:GetClass() == "ent_melon_contraption_capacitor") then
 						if(istable(v.Ent2.batteryConnections)) then
-							//PrintTable(v.Ent2.batteryConnections)
+							--PrintTable(v.Ent2.batteryConnections)
 							table.Merge(suppliedEntities, v.Ent2.batteryConnections)
 						end
 					end
@@ -92,8 +92,8 @@ function ENT:Think ()
 
 	for k, v in pairs(suppliedEntities) do
 		if(self:GetNWInt("mw_charge", -1)>v:GetNWInt("maxCharge", -1)-v:GetNWInt("mw_charge", -1)) then
-			//this is really messy, but it takes away the difference between how much energy the target part
-			//has and its maximum value 
+			--this is really messy, but it takes away the difference between how much energy the target part
+			--has and its maximum value 
 			self:SetNWInt("mw_charge", self:GetNWInt("mw_charge", -1)-(v:GetNWInt("maxCharge", -1)-v:GetNWInt("mw_charge", -1)))
 			v:SetNWInt("mw_charge", v:GetNWInt("maxCharge", -1))
 		else

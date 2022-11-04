@@ -15,12 +15,12 @@ function ENT:Initialize()
 	self.range = 300
 	self.population = 3
 	self.connection = nil
-	//self.careForFriendlyFire = false
-	//self.careForWalls = false
-	//self.shotSound = ""
+	--self.careForFriendlyFire = false
+	--self.careForWalls = false
+	--self.shotSound = ""
 	self.nextShot = CurTime()
 
-	//self:SetPos(self:GetPos()+Vector(0,0,-5))
+	--self:SetPos(self:GetPos()+Vector(0,0,-5))
 	self:SetNWVector("energyPos", Vector(0,0,20))
 
 	self.shotOffset = Vector(0,0,23.5)
@@ -29,7 +29,7 @@ function ENT:Initialize()
 end
 
 function ENT:ModifyColor()
-	//self:SetColor(Color(self:GetColor().r+120, self:GetColor().g+120, self:GetColor().b+120, 255))
+	--self:SetColor(Color(self:GetColor().r+120, self:GetColor().g+120, self:GetColor().b+120, 255))
 end
 
 function ENT:SlowThink ( ent )
@@ -60,7 +60,7 @@ function ENT:SlowThink ( ent )
 				})
 				if (tostring(tr.Entity) == '[NULL Entity]') then
 					if (string.StartWith(v:GetClass(), "ent_melonbullet")) then 
-						if((v:GetClass() != "ent_melonbullet_unit_shell") and (v:GetClass() != "ent_melonbullet_particlebeamtracer") and (v:GetClass() != "ent_melonbullet_flamerfuel")) then
+						if((v:GetClass() ~= "ent_melonbullet_unit_shell") and (v:GetClass() ~= "ent_melonbullet_particlebeamtracer") and (v:GetClass() ~= "ent_melonbullet_flamerfuel")) then
 							table.insert(foundEntities, v)
 						end
 					end
@@ -107,7 +107,7 @@ function ENT:Shoot ( ent )
 		if (ent.targetEntity:GetVar("shotOffset") ~= nil) then
 			targetPos = targetPos+ent.targetEntity:GetVar("shotOffset")
 		end
-		//ent:FireBullets(bullet)
+		--ent:FireBullets(bullet)
 		local effectdata = EffectData()
 		effectdata:SetScale(3000)
 		effectdata:SetMagnitude(3000)

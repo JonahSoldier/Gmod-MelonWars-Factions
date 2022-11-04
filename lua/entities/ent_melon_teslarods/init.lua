@@ -14,7 +14,7 @@ function ENT:Initialize()
 	self.range = 80
 	self.sphereRadius = 0
 	self.shotSound = "weapons/stunstick/stunstick_impact1.wav"
-	self.shotOffset = Vector(0,0,50.25) //Originally 30, increased to spite mortars.
+	self.shotOffset = Vector(0,0,50.25) --Originally 30, increased to spite mortars.
 	
 	self.canMove = false
 	self.canBeSelected = false
@@ -53,7 +53,7 @@ function ENT:SlowThink ( ent )
 			end
 		})
 		if (tostring(tr.Entity) == '[NULL Entity]') then
-			if (v.Base == "ent_melon_base" and !ent:SameTeam(v)) then -- si no es un aliado
+			if (v.Base == "ent_melon_base" and not ent:SameTeam(v)) then -- si no es un aliado
 				table.insert(foundEntities, v)
 			end
 		end
@@ -87,7 +87,7 @@ function ENT:SlowThink ( ent )
 end
 
 function ENT:DischargeEffect()
-	//print("test")
+	--print("test")
 
 	local discharge = ents.Create("point_tesla")
 

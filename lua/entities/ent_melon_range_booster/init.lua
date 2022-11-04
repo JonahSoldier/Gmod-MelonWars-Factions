@@ -32,7 +32,7 @@ function ENT:Use( pl )
 		
 		for k, v in pairs(allEnts) do
 			if(v.Base == "ent_melon_base") then
-				if(!v.hasRangeMultiplier) then
+				if not v.hasRangeMultiplier then
 					v.range = v.range*3
 					v.hasRangeMultiplier = true
 				end

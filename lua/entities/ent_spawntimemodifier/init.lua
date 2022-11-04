@@ -13,7 +13,7 @@ function ENT:Initialize()
 
 	
 	for k, v in pairs( player.GetAll() ) do
-		v:PrintMessage( HUD_PRINTTALK, "/////////////////// Buildspeed modifier x1.33 spawned" )
+		v:PrintMessage( HUD_PRINTTALK, "== Buildspeed modifier x1.33 spawned! ==" )
 	end
 	self.affectedPlayers = {}
 	
@@ -50,6 +50,6 @@ function ENT:OnRemove()
 		net.Send(v)
 	end
 	for k, v in pairs( player.GetAll() ) do
-		v:PrintMessage( HUD_PRINTTALK, "/////////////////// Buildspeed modifier x1.33 removed" )
+		v:PrintMessage( HUD_PRINTTALK, "== Buildspeed modifier x1.33 removed! ==" )
 	end
 end

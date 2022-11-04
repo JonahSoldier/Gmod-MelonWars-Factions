@@ -13,12 +13,12 @@ function ENT:Initialize()
 	self.damageDeal = 3
 	self.maxHP = 40
 	self.range = 1000
-	//self.Angles = Angle(0,0,0)	
+	--self.Angles = Angle(0,0,0)	
 	self.shotSound = "weapons/ar1/ar1_dist2.wav"
 	self.tracer = "AR2Tracer"
 	
 	self.shotOffset = Vector(0,0,15)
-	//self:SetPos(self:GetPos()+Vector(0,0,-5))
+	--self:SetPos(self:GetPos()+Vector(0,0,-5))
 
 	self.careForFriendlyFire = false
 	self.careForWalls = false

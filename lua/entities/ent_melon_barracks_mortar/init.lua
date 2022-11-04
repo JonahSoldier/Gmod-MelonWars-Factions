@@ -9,8 +9,8 @@ function ENT:Initialize()
 	self.unit = 9
 	self.modelString = "models/XQM/CoasterTrack/train_1.mdl"
 	self.maxHP = 120
-	//self.Angles = Angle(0,0,0)
-	//self:SetPos(self:GetPos()+Vector(0,0,-25))
+	--self.Angles = Angle(0,0,0)
+	--self:SetPos(self:GetPos()+Vector(0,0,-25))
 
 	self.shotOffset = Vector(0,0,60)
 

@@ -48,12 +48,12 @@ function ENT:Initialize()
 		self:DeleteOnRemove( self.effect )
 		
 		self.effect:SetParent( self, -1 )
-	//local weld = constraint.Weld( self, self.effect, 0, 0, 0, true , false )
+	--local weld = constraint.Weld( self, self.effect, 0, 0, 0, true , false )
 	
-	for k, v in pairs( player.GetAll() ) do
+	for _, v in ipairs( player.GetAll() ) do
 		sound.Play( "ambient/alarms/train_horn_distant1.wav", v:GetPos(), 60, 75, 1)
 		v:PrintMessage( HUD_PRINTCENTER, "NUKE detected!" )
-		v:PrintMessage( HUD_PRINTTALK, "/////////////////// NUKE detected! ///////////////////" )
+		v:PrintMessage( HUD_PRINTTALK, "== NUKE detected! ==" )
 	end
 end
 
@@ -108,7 +108,7 @@ function ENT:Shoot ( ent, forcedTargetPos )
 	for k, v in pairs( player.GetAll() ) do
 		sound.Play("ambient/alarms/razortrain_horn1.wav", v:GetPos(), 70, 90, 1)
 	end
-	ent.forceExplode = (forcedTargetPos != nil)
+	ent.forceExplode = (forcedTargetPos ~= nil)
 	timer.Simple( 1.5, function()
 		if (ent.forceExplode or IsValid(ent.targetEntity)) then
 		timer.Simple( 0.02, function()

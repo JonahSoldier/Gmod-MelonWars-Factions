@@ -8,7 +8,7 @@ function ENT:Initialize()
 	MW_Defaults ( self )
 
 	self.modelString = "models/props_c17/TrapPropeller_Blade.mdl"
-	//self.Angles = Angle(0,0,0)
+	--self.Angles = Angle(0,0,0)
 	self.canMove = false
 	self.canBeSelected = false
 	self.canShoot = false
@@ -24,7 +24,7 @@ function ENT:Initialize()
 	self.careForFriendlyFire = false
 
 	self.population = 0	
-	//self:SetPos(self:GetPos()+Vector(0,0,0))
+	--self:SetPos(self:GetPos()+Vector(0,0,0))
 	
 	self.melons = {}
 	MW_Setup ( self )
@@ -48,7 +48,7 @@ function ENT:SlowThink(ent)
 	for k, v in pairs( foundEnts ) do
 		if (v:GetClass() ~= "ent_melon_shredder") then
 			if (v.Base == "ent_melon_base") then
-				if(v.isShredding != true) then
+				if(v.isShredding ~= true) then
 					if (v:GetNWFloat("health", 100) <= self.damageDeal) then
 						local gain = v:GetVar("value")*0.75
 						if (v.spawned and v:GetClass() == "ent_melon_voidling") then
@@ -71,7 +71,7 @@ function ENT:SlowThink(ent)
 				end
 			
 				v.damage = v.damage+self.damageDeal
-				//v:SetNWFloat("health", v:GetNWFloat("health", 1)-self.damageDeal)
+				--v:SetNWFloat("health", v:GetNWFloat("health", 1)-self.damageDeal)
 				v.gotHit = true
 				/*if (v:GetNWFloat("health", 1) <= 0) then
 					MW_Die(v)

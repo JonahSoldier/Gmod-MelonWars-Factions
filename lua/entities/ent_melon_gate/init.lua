@@ -14,10 +14,10 @@ function ENT:Initialize()
 	self.speed = 200
 	self.force = 100
 
-	//self:SetAngles(self:GetAngles()+Angle(90,0,0))
+	--self:SetAngles(self:GetAngles()+Angle(90,0,0))
 
-	//local offset = Vector(0,0,18.5)
-	//self:SetPos(self:GetPos()+offset)
+	--local offset = Vector(0,0,18.5)
+	--self:SetPos(self:GetPos()+offset)
 
 	self.closedpos = self:GetPos()
 	self.openedpos = self:GetPos()+Vector(0,0,80)
@@ -46,7 +46,7 @@ end
 function ENT:Actuate ()
 	if (self.process <= CurTime()) then
 		self.process = CurTime()+5
-		self.open = !self.open
+		self.open = not self.open
 		self:SetNWBool("open", self.open)
 	end
 end
@@ -54,7 +54,7 @@ end
 function ENT:Update()
 	if (self.process >= CurTime()) then
 		local percent = (self.process-CurTime())/5
-		if (!self.open) then
+		if not self.open then
 			self:SetPos(self.openedpos*percent+self.closedpos*(1-percent))
 		else
 			self:SetPos(self.openedpos*(1-percent)+self.closedpos*(percent))

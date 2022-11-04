@@ -9,7 +9,7 @@ function ENT:Initialize()
 	self:GetPhysicsObject():SetDamping(2,2)
 
 	self.lamp = ents.Create( "gmod_light" )
-	if ( !IsValid( self.lamp ) ) then return end
+	if not IsValid( self.lamp ) then return end
 
 	self.lamp:SetParent(self)
 	self.lamp:SetLocalPos(Vector(0,0,0))

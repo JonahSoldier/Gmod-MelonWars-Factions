@@ -16,7 +16,7 @@ function ENT:Initialize()
 	self:SetModel( "models/props_wasteland/laundry_washer001a.mdl" )
 	
 	--self:SetAngles(Angle(90,0,0))
-	//self:SetPos(self:GetPos()+Vector(0,0,25))
+	--self:SetPos(self:GetPos()+Vector(0,0,25))
 	
 	self:SetMaterial("models/shiny")
 	
@@ -34,7 +34,7 @@ function ENT:Initialize()
 end
 
 function ENT:OnDuplicated( entTable )
-	//self:SetPos(self:GetPos()-Vector(0,0,25))
+	--self:SetPos(self:GetPos()-Vector(0,0,25))
 end
 
 function ENT:Think()
@@ -97,14 +97,14 @@ function ENT:SlowThink()
 				end
 			end
 			--Si nadie estaba capturando, capturar
-			if (!othersHaveCapture) then
+			if not othersHaveCapture then
 				self.captured[i] = math.min(100, self.captured[i]+capture)
 			end
 		else 
 		--Si no, bajarle
 			self.captured[i] = math.max(0, self.captured[i]-20)
 		end
-	end 
+	end
 
 	local totalCapture = 0
 

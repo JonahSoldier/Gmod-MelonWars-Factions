@@ -16,7 +16,7 @@ function ENT:Initialize()
 	self:SetModel( "models/props_trainstation/TrackSign03.mdl" )
 	
 	--self:SetAngles(Angle(90,0,0))
-	//self:SetPos(self:GetPos()+Vector(0,0,50))
+	--self:SetPos(self:GetPos()+Vector(0,0,50))
 	
 	self:SetMaterial("models/shiny")
 	
@@ -91,7 +91,7 @@ function ENT:SlowThink()
 				end
 			end
 			--Si nadie estaba capturando, capturar
-			if (!othersHaveCapture) then
+			if not othersHaveCapture then
 				self.captured[i] = math.min(100, self.captured[i]+capture)
 			end
 		else 

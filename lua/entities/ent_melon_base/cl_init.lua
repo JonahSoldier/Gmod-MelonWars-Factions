@@ -65,7 +65,7 @@ function ENT:Think()
 end
 
 function ENT:DrawExpirationDate()
-	if (self:GetNWFloat("expiration", -1) != -1) then
+	if (self:GetNWFloat("expiration", -1) ~= -1) then
 		local vpos = self:GetPos()+Vector(0,0,30)
 		local angle = LocalPlayer():EyeAngles()+Angle(0,0,90)
 	    angle:RotateAroundAxis( LocalPlayer():EyeAngles():Up(), -90 )
@@ -76,8 +76,7 @@ function ENT:DrawExpirationDate()
 	end
 end
 
-function ENT:ClientThink()
-end
+function ENT:ClientThink() end
 
 function BarrackDraw(self, offset)
 	if (cvars.Number("mw_team") == self:GetNWInt("mw_melonTeam", -1)) then
@@ -89,7 +88,7 @@ function BarrackDraw(self, offset)
         local STT = self:GetNWFloat("slowThinkTimer", 0)
         local OD = self:GetNWFloat("overdrive", 0)
         cam.Start3D2D( vpos, angle, 1 )
-        	if (!self:GetNWBool("spawned", false)) then
+        	if not self:GetNWBool("spawned", false) then
 	            if (NST > CurTime()) then
 	                surface.SetDrawColor( Color(0,255,255) )
 	                surface.DrawRect( 0, -15, 5, math.min(35, 35+(CurTime()+OD-NST)*35/STT) )
@@ -160,7 +159,7 @@ function ENT:OnRemove()
 	end
 end
 
-// New Year
+-- New Year
 /*function ENT:OnRemove()
 	MW_Firework(self, 50, 1)
 end*/

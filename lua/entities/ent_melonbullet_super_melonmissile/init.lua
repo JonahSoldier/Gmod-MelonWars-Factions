@@ -54,7 +54,7 @@ end*/
 
 function ENT:Think()
 
-	if(self.crashed != true) then
+	if(self.crashed ~= true) then
 		local targetOffset = Vector( 0, 0, 0)
 
 		if(17.5+self.launchTime - CurTime() > 0) then
@@ -86,7 +86,7 @@ function ENT:Think()
 		self:SetAngles( (targetVec-self:GetPos()):Angle()+Angle(90,0,0))
 		self:NextThink(CurTime()+0.05)
 	
-		if(self.distance < self.speed*85 && not self.incomingSoundPlayed) then
+		if(self.distance < self.speed*85 and not self.incomingSoundPlayed) then
 			for k, v in pairs( player.GetAll() ) do
 				sound.Play( "d3_citadel.timestop_winddown", v:GetPos())
 			end
@@ -126,7 +126,7 @@ function ENT:Explode()
 
 		v:SetHealth( 100 )
 		v:SetArmor( 100 )
-		util.BlastDamage( self, self, v:GetPos(), 25, 50 ) //ghetto way of making ears ring 
+		util.BlastDamage( self, self, v:GetPos(), 25, 50 ) --ghetto way of making ears ring 
 		
 		v:SetHealth( 100 )
 		v:SetArmor( 100 )
@@ -158,7 +158,7 @@ function ENT:Explode()
 					[ "$pp_colour_mulb" ] = -10+i/10
 				}
 				net.Start("MWColourMod")
-					net.WriteBool(true) //hasColourModifier
+					net.WriteBool(true) --hasColourModifier
 					net.WriteTable(MWColourModifierTable)
 				net.Send(v)
 			end)
@@ -166,7 +166,7 @@ function ENT:Explode()
 		
 		timer.Simple( 5, function()
 			net.Start("MWColourMod")
-				net.WriteBool(false) //hasColourModifier
+				net.WriteBool(false) --hasColourModifier
 			net.Send(v)
 		end)
 	end
@@ -184,7 +184,7 @@ function ENT:Explode()
 
 			local count = table.Count(debri_props)
 			
-			for i = 1, count do //nicked the code from the HQ to make it spit out radioactive debris
+			for i = 1, count do --nicked the code from the HQ to make it spit out radioactive debris
 				local debris = ents.Create( "ent_melonium_plate" )
 				debris:Ignite( 500 )
 				debris:SetPos(self:GetPos() + Vector(math.random(-100,100), math.random(-100,100), math.random(0,200)))
@@ -193,7 +193,7 @@ function ENT:Explode()
 				debris:PhysicsInit(6)
 				local debrisPhys = debris:GetPhysicsObject()
 				debrisPhys:ApplyForceCenter(Vector(math.random(-5000,5000), math.random(-5000,5000), math.random(5000,35000)))
-				//MW_SickEffect(debris, 25)
+				--MW_SickEffect(debris, 25)
 			end
 
 			local effectdata = EffectData()

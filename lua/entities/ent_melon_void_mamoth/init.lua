@@ -23,7 +23,7 @@ function ENT:Initialize()
 
 	self.captureSpeed = 2
 
-	//print("My Initialization")
+	--print("My Initialization")
 
 	MW_Setup ( self )
 
@@ -57,7 +57,7 @@ end
 function ENT:Explode()
 	timer.Simple( 0.1, function()
 		if (IsValid(self)) then
-			if (!self.forceExplode and !IsValid(self.targetEntity)) then
+			if not self.forceExplode and not IsValid(self.targetEntity) then
 				self.targetEntity = nil
 				self.nextSlowThink = CurTime()+0.1
 				return false

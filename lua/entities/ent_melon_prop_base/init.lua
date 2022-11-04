@@ -110,16 +110,16 @@ end]]
 function ENT:OnRemove()
 	if (SERVER) then
 		if (self:GetNWFloat("health", 1) == self:GetNWFloat("maxhealth", 1) and CurTime()-self:GetCreationTime() < 30) then
-			if (mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] != nil) then
+			if (mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ~= nil) then
 				mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)]+self.value
 			end
 			for k, v in pairs( player.GetAll() ) do
-				if (self:GetNWInt("mw_melonTeam", 0) != 0) then
+				if (self:GetNWInt("mw_melonTeam", 0) ~= 0) then
 					if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
 						net.Start("MW_TeamCredits")
 							net.WriteInt(mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
 						net.Send(v)
-						v:PrintMessage( HUD_PRINTTALK, "///// "..self.value.." Water Refunded" )
+						v:PrintMessage( HUD_PRINTTALK, "== "..self.value.." Water Refunded ==" )
 					end
 				end
 			end

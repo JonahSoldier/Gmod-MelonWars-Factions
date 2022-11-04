@@ -9,8 +9,8 @@ function ENT:Initialize()
 
 	self.modelString = "models/props_trainstation/trashcan_indoor001b.mdl"
 	self.maxHP = 20
-	//self.Angles = Angle(0,0,0)
-	//self:SetPos(self:GetPos() + Vector(0,0,16))
+	--self.Angles = Angle(0,0,0)
+	--self:SetPos(self:GetPos() + Vector(0,0,16))
 
 	self.population = 0
 
@@ -34,7 +34,7 @@ end
 
 function ENT:Actuate ()
 	if (self.lastSwitch < CurTime()-1) then
-		self.open = !self.open
+		self.open = not self.open
 		self:SetNWBool("open", self.open)
 		if (self.open) then
 			self:SetNWString("message", "Open")

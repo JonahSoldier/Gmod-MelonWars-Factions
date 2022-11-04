@@ -10,8 +10,8 @@ function ENT:Initialize()
 	self.modelString = "models/Items/ammocrate_ar2.mdl"
 	self.maxHP = 75
 
-	//self.Angles = Angle(0,0,0)
-	//self:SetPos(self:GetPos()+Vector(0,0,10))
+	--self.Angles = Angle(0,0,0)
+	--self:SetPos(self:GetPos()+Vector(0,0,10))
 
 	self:BarrackInitialize()
 	self.population = 1

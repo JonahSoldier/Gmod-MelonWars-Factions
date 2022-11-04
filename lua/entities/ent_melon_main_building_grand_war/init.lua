@@ -37,9 +37,9 @@ function ENT:Initialize()
 	self.slowThinkTimer = 1
 	self.nextSlowThink = 0
 	self.modelString = "models/props_combine/combinethumper001a.mdl"
-	//self.Angles = Angle(0,0,0)
+	--self.Angles = Angle(0,0,0)
 	self.shotOffset = Vector(0,-20,30)
-	//self:SetPos(self:GetPos()+Vector(0,0,1))
+	--self:SetPos(self:GetPos()+Vector(0,0,1))
 	self.materialString = "models/shiny"
 	self.shotSound = "weapons/stunstick/stunstick_impact1.wav"
 	
@@ -109,7 +109,7 @@ function ENT:Shoot ( ent )
 			end
 		end
 
-		if (ent.targetEntity.damage != nil) then
+		if (ent.targetEntity.damage ~= nil) then
 			ent.targetEntity.damage = ent.targetEntity.damage+self.damageDeal
 		end
 		local effectdata = EffectData()

@@ -17,7 +17,7 @@ function ENT:Initialize()
 	self.minRange = 200
 	
 	self.ai_chases = false
-	//self:SetPos(self:GetPos()+Vector(0,0,18))
+	--self:SetPos(self:GetPos()+Vector(0,0,18))
 	
 	--self.Angles = Angle(0,0,0)
 	
@@ -59,9 +59,9 @@ function ENT:PhysicsUpdate()
 end
 
 function ENT:Shoot ( ent, forceTargetPos )
-	if (ent:GetVelocity():Length() < 15 && ent.nextShot < CurTime()) then
+	if (ent:GetVelocity():Length() < 15 and ent.nextShot < CurTime()) then
 		sound.Play( ent.shotSound, ent:GetPos() )
-		if (forceTargetPos != nil or IsValid(ent.targetEntity)) then
+		if (forceTargetPos ~= nil or IsValid(ent.targetEntity)) then
 			
 			local targetPos
 			if (IsValid(ent.targetEntity)) then
@@ -76,7 +76,7 @@ function ENT:Shoot ( ent, forceTargetPos )
 			local shootVector = (targetPos-ent:GetPos() + Vector(0, 0, 1000) + Vector(math.random(-self.spread,self.spread),math.random(-self.spread,self.spread),math.random(-self.spread,self.spread)))*24
 			--local shootVector = (targetPos-ent:GetPos() + Vector(0, 0, 700))*36
 			local bullet = ents.Create( "ent_melonbullet_bomb" )
-			if ( !IsValid( bullet ) ) then return end -- Check whether we successfully made an entity, if not - bail
+			if not IsValid( bullet ) then return end -- Check whether we successfully made an entity, if not - bail
 			bullet:SetPos( ent:GetPos() + Vector(0,0,50) )
 			bullet:SetNWInt("mw_melonTeam",self.mw_melonTeam)
 			bullet:SetModel("models/props_phx/misc/smallcannonball.mdl")

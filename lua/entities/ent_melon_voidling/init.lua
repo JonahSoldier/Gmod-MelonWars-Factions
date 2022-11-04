@@ -53,7 +53,7 @@ function ENT:SlowThink ( ent )
 		ent.damage = 0.1
 	end
 	
-	if(self.targetEntity != nil ) then
+	if(self.targetEntity ~= nil ) then
 		if(self.targetEntity:GetClass() == "ent_melon_teslarods") then
 			self:LoseTarget()
 		end
@@ -69,7 +69,7 @@ function ENT:SkinMaterial()
 end
 
 function ENT:Shoot ( ent, forceTargetPos )
-	if(self.targetEntity:GetClass() != "ent_melon_teslarods") then
+	if(self.targetEntity:GetClass() ~= "ent_melon_teslarods") then
 		print(self.targetEntity:GetClass())
 		self.phys:SetDamping(0, 0)
 		self:SetVelocity(Vector(0,0,0))
@@ -86,13 +86,13 @@ end
 function ENT:Explode()
 	timer.Simple( 0.1, function()
 		if (IsValid(self)) then
-			if (!self.forceExplode and !IsValid(self.targetEntity)) then
+			if not self.forceExplode and not IsValid(self.targetEntity) then
 				self.targetEntity = nil
 				self.nextSlowThink = CurTime()+0.1
 				return false
 			else
 				if (self.forceExplode or tostring( self.targetEntity ) ~= "[NULL Entity]") then
-					//allows this to damage base props, self.damageDeal is divided by 2 so it does half damage to them.
+					--allows this to damage base props, self.damageDeal is divided by 2 so it does half damage to them.
 					if (self.targetEntity.Base == "ent_melon_prop_base") then
 						self.targetEntity:SetNWFloat( "health", self.targetEntity:GetNWFloat( "health", 1)-self.damageDeal/2) 
 						if (self.targetEntity:GetNWFloat( "health", 1) <= 0) then
@@ -101,7 +101,7 @@ function ENT:Explode()
 						sound.Play( self.shotSound, self:GetPos(), 75, 145 )
 						MW_Die ( self )
 					else
-						//self.targetEntity.damage = self.damageDeal //Doesn't work on static entities for some reason
+						--self.targetEntity.damage = self.damageDeal --Doesn't work on static entities for some reason
 						self.targetEntity:TakeDamage( self.damageDeal, self, self )
 						sound.Play( self.shotSound, self:GetPos(), 75, 145 )
 						MW_Die ( self )
@@ -131,7 +131,7 @@ end
 	elseif (forceTargetPos == nil and ent.targetEntity:GetClass() == "prop_physics") then
 		ent.targetEntity:TakeDamage( ent.damageDeal, ent, ent )
 		local php = ent:GetNWInt("propHP", -1)
-		if (php != -1) then
+		if (php ~= -1) then
 			ent:SetNWInt("propHP", php-ent.damageDeal)
 		end
 	else

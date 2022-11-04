@@ -7,7 +7,7 @@ function ENT:Initialize()
 
 	MW_Defaults ( self )
 
-	self.modelString = "models/props_phx/wheels/magnetic_large_base.mdl" //Physical model, doesn't get shown in this case
+	self.modelString = "models/props_phx/wheels/magnetic_large_base.mdl" --Physical model, doesn't get shown in this case
 	self.moveType = MOVETYPE_VPHYSICS
 	self.speed = 100
 	self.spread = 10
@@ -16,9 +16,9 @@ function ENT:Initialize()
 	self.range = 250
 
 
-	//showing the actual model part
+	--showing the actual model part
 	self.visualmodel = ents.Create( "prop_physics" )
-	if ( !IsValid( self.visualmodel ) ) then return end
+	if not IsValid( self.visualmodel ) then return end
 
 	self.visualmodel:SetModel("models/Mechanics/gears/gear12x24.mdl")
 	self.visualmodel:SetMaterial(self.materialString)
@@ -32,7 +32,7 @@ function ENT:Initialize()
 
 	self.visualmodel:SetCollisionGroup( COLLISION_GROUP_IN_VEHICLE )
 	
- 	//self:SetNoDraw( 1 ) // Makes the actual *real* model invisible, so it just shows the gear thingy
+ 	--self:SetNoDraw( 1 ) -- Makes the actual *real* model invisible, so it just shows the gear thingy
 
 
 	self.weight = 25
@@ -66,11 +66,11 @@ function ENT:SlowThink ( ent )
 	if self:GetNWInt("mw_charge", 0)==0 then
 		self.slowThinkTimer = 1
 	else 
-		//self.shotDelay = math.sqrt(((self:GetNWInt("mw_charge", 0)*-1)+200)/35)
+		--self.shotDelay = math.sqrt(((self:GetNWInt("mw_charge", 0)*-1)+200)/35)
 		self.slowThinkTimer = math.sqrt(((self:GetNWInt("mw_charge", 0)*-1)+200)/35)
 	end
 
-	if(self.nextRecharge < CurTime()) then //This is slightly dumb but I can't be bothered to re-organize the code around here. It's set to 2.5 because that's higher than the max slowthinktimer given by the other equation. - Jonah
+	if(self.nextRecharge < CurTime()) then --This is slightly dumb but I can't be bothered to re-organize the code around here. It's set to 2.5 because that's higher than the max slowthinktimer given by the other equation. - Jonah
 		if( self:GetNWInt("mw_charge", 0) + 5 < 200) then
 			self:SetNWInt("mw_charge", self:GetNWInt("mw_charge", 0)+5)
 		else

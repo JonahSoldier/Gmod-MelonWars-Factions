@@ -48,21 +48,21 @@ function ENT:DeathEffect( ent )
 	timer.Simple( 0.02, function()
 		if (IsValid(ent)) then
 			local pos = ent:GetPos()
-			//Put script to delay slowthink and sap power here
+			--Put script to delay slowthink and sap power here
 
 			local foundEnts = ents.FindInSphere(pos, ent.range )
 			for k, v in RandomPairs( foundEnts ) do
-				if (!(v:GetClass() == "ent_melon_emp")) then
+				if not (v:GetClass() == "ent_melon_emp") then
 					
 					if(v.nextSlowThink == nil or v.nextSlowThink < CurTime()) then
 						v.nextSlowThink = CurTime()
 					else
 						v.nextSlowThink = v.nextSlowThink+15
 					end
-					//v:NextThink( v.nextSlowThink+15 )
+					--v:NextThink( v.nextSlowThink+15 )
 					v.damage = 1
 					
-					if(v.speed != nil and !v.stunned) then
+					if(v.speed ~= nil and not v.stunned) then
 						local originalSpeed = v.speed
 						v.speed = v.speed * 0.75
 
@@ -108,10 +108,10 @@ function ENT:DeathEffect( ent )
 
 			sound.Play("NPC_Vortigaunt.Explode", ent:GetPos(), 100, 80, 1)
 
-			//NPC_Vortigaunt.Explode
+			--NPC_Vortigaunt.Explode
 			
-			local pos1 = ent:GetPos()// Set worldpos 1. Add to the hitpos the world normal.
-			local pos2 = ent:GetPos()+Vector(0,0,-20) // Set worldpos 2. Subtract from the hitpos the world normal.
+			local pos1 = ent:GetPos()-- Set worldpos 1. Add to the hitpos the world normal.
+			local pos2 = ent:GetPos()+Vector(0,0,-20) -- Set worldpos 2. Subtract from the hitpos the world normal.
 			ent.fired = true
 			ent:Remove()
 			
@@ -121,7 +121,7 @@ function ENT:DeathEffect( ent )
 end
 
 function ENT:SlowThink ( ent )
-	if (self:GetNWInt("mw_charge", 0) != 50) then
+	if (self:GetNWInt("mw_charge", 0) ~= 50) then
 		self.canShoot = false
 	else
 		self.canShoot = true
@@ -156,9 +156,9 @@ end
 
 function ENT:Shoot ( ent, forcedTargetPos)
 	sound.Play("buttons/button8.wav", ent:GetPos())
-	ent.forceExplode = (forcedTargetPos != nil)
+	ent.forceExplode = (forcedTargetPos ~= nil)
 	timer.Simple( 0.3, function()
-		if (!ent.forceExplode and !IsValid(ent.targetEntity)) then
+		if not ent.forceExplode and not IsValid(ent.targetEntity) then
 			ent.targetEntity = nil
 			ent.nextSlowThink = CurTime()+0.1
 			return false

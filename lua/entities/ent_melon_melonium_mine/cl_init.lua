@@ -7,7 +7,7 @@ end
 function ENT:Draw()
     self:DrawModel() -- Draws Model Client Side
 
-    if (self:GetNWFloat("next", -1) != -1) then
+    if (self:GetNWFloat("next", -1) ~= -1) then
     	local timeLeft = self:GetNWFloat("next")-CurTime()
     	local vpos = self:GetPos()+Vector(0,0,80)
 		local angle = LocalPlayer():EyeAngles()+Angle(0,0,90)

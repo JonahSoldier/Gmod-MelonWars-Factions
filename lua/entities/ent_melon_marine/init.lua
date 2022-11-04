@@ -20,7 +20,7 @@ function ENT:Initialize()
 
 	self.captureSpeed = 0.25
 
-	//print("My Initialization")
+	--print("My Initialization")
 
 	MW_Setup ( self )
 

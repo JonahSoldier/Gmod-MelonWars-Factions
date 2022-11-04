@@ -76,9 +76,9 @@ end
 
 function ENT:FinishMovement ()
 	if (self.rallyPoints[1] == Vector(0,0,0)) then
-		if!(self.exhaustedUntil > CurTime()) then
+		if self.exhaustedUntil <= CurTime() then
 			if(self.moving == true) then
-				self.alternate = !self.alternate 
+				self.alternate = not self.alternate 
 				if(self.alternate) then
 					self.rallyPoints[1] = self.targetPos + Vector(50, 50,0)
 				else
@@ -98,8 +98,6 @@ function ENT:FinishMovement ()
 		end
 		self.rallyPoints[30] = Vector(0,0,0)
 	end
-
-
 
 	self:OnFinishMovement()
 end
@@ -173,11 +171,11 @@ function ENT:PhysicsUpdate()
 			force = -5
 		end
 		
-		//if (force > self.delayedForce) then
+		--if (force > self.delayedForce) then
 			self.delayedForce = (self.delayedForce*2+force)/3
-		//else
-			//self.delayedForce = self.delayedForce*0.7
-		//end
+		--else
+			--self.delayedForce = self.delayedForce*0.7
+		--end
 
 		phys:ApplyForceCenter(Vector(0,0,self.delayedForce))
 	--end

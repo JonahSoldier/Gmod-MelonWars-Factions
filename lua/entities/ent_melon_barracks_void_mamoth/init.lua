@@ -9,11 +9,11 @@ function ENT:Initialize()
 
 	self.unit = 25
 	self.modelString = "models/props_combine/masterinterface.mdl"
-	//self.Angles = Angle(0,0,180)
+	--self.Angles = Angle(0,0,180)
 	self.maxHP = 200
 
-	//self.posOffset = Vector(0,0,10)
-	//self:SetPos(self:GetPos()+Vector(0,0,10))
+	--self.posOffset = Vector(0,0,10)
+	--self:SetPos(self:GetPos()+Vector(0,0,10))
 	self.shotOffset = Vector(60,0,60)
 	self:BarrackInitialize()
 	self.population = 1

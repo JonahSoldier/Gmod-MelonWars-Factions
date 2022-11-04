@@ -85,7 +85,7 @@ function ENT:Update( ent )
 				if (ent.moving) then
 					local moveVector = (ent.targetPos-ent:GetPos()):GetNormalized()*self.speed-self:GetVelocity()
 					force = Vector(moveVector.x, moveVector.y, 0)
-					//Takes the average between the prev moveforce and the desired new moveforce, prevents it from shaking violently without any noticeable effect on its ability to move
+					--Takes the average between the prev moveforce and the desired new moveforce, prevents it from shaking violently without any noticeable effect on its ability to move
 					ent.moveForce = (ent.moveForce + force*self.thrustforce)/2
 					
 				else
@@ -99,7 +99,7 @@ function ENT:Update( ent )
 				ent:FinishMovement()
 				for k, v in pairs(constraint.GetAllConstrainedEntities( self )) do
 					if (v.Base == "ent_melon_base") then
-						if (v != ent) then
+						if (v ~= ent) then
 							v:FinishMovement()
 						end
 					end

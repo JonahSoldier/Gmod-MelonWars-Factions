@@ -111,11 +111,11 @@ function ENT:PhysicsUpdate()
 			force = -1
 		end
 		
-		//if (force > self.delayedForce) then
+		--if (force > self.delayedForce) then
 			self.delayedForce = (self.delayedForce*2+force)/3
-		//else
-			//self.delayedForce = self.delayedForce*0.7
-		//end
+		--else
+			--self.delayedForce = self.delayedForce*0.7
+		--end
 
 		phys:ApplyForceCenter(Vector(0,0,self.delayedForce))
 	--end

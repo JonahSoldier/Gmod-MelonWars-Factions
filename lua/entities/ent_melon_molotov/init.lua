@@ -49,8 +49,8 @@ function ENT:DeathEffect( ent )
 			effectdata:SetOrigin( ent:GetPos() )
 			util.Effect( "HelicopterMegaBomb", effectdata )
 			
-			local pos1 = ent:GetPos()// Set worldpos 1. Add to the hitpos the world normal.
-			local pos2 = ent:GetPos()+Vector(0,0,-20) // Set worldpos 2. Subtract from the hitpos the world normal.
+			local pos1 = ent:GetPos()-- Set worldpos 1. Add to the hitpos the world normal.
+			local pos2 = ent:GetPos()+Vector(0,0,-20) -- Set worldpos 2. Subtract from the hitpos the world normal.
 			ent.fired = true
 			ent:Remove()
 			
@@ -97,7 +97,7 @@ function ENT:Welded (ent, trace)
 	ent.maxHP = 10
 	ent.HP = 10
 	ent.population = 1
-	//MW_UpdatePopulation(-1, mw_melonTeam)
+	--MW_UpdatePopulation(-1, mw_melonTeam)
 	ent.range = 100
 	ent.materialString = "Models/effects/comball_sphere"
 	--[[for i = 1, 4 do
@@ -141,10 +141,10 @@ end
 
 function ENT:Shoot ( ent, forcedTargetPos)
 	sound.Play("buttons/button6.wav", ent:GetPos())
-	ent.forceExplode = (forcedTargetPos != nil)
+	ent.forceExplode = (forcedTargetPos ~= nil)
 	timer.Simple( 0.3, function()
 		sound.Play(self.deathSound, ent:GetPos())
-		if (!ent.forceExplode and !IsValid(ent.targetEntity)) then
+		if not ent.forceExplode and not IsValid(ent.targetEntity) then
 			ent.targetEntity = nil
 			ent.nextSlowThink = CurTime()+0.1
 			return false

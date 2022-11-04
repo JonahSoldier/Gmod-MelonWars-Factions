@@ -15,7 +15,7 @@ function ENT:Initialize()
 	self.range = 400
 	self.shotSound = "weapons/stunstick/stunstick_impact1.wav"
 	--self.tracer = "AR2Tracer"
-	//self:SetPos(self:GetPos()+Vector(0,0,40))
+	--self:SetPos(self:GetPos()+Vector(0,0,40))
 	self.shotOffset = Vector(0,0,30)
 	
 	self.canMove = false
@@ -55,7 +55,7 @@ function ENT:SlowThink ( ent )
 				end
 			})
 			if (tostring(tr.Entity) == '[NULL Entity]') then
-				if ((v.Base == "ent_melon_base" or v.Base == "ent_melon_energy_base" or v.Base == "ent_melon_prop_base" or v:GetClass() == "prop_physics" )and !ent:SameTeam(v)) then -- si no es un aliado
+				if ((v.Base == "ent_melon_base" or v.Base == "ent_melon_energy_base" or v.Base == "ent_melon_prop_base" or v:GetClass() == "prop_physics" )and not ent:SameTeam(v)) then -- si no es un aliado
 					table.insert(foundEntities, v)
 				end
 			end
@@ -81,7 +81,7 @@ function ENT:SlowThink ( ent )
 				if (v:GetClass() == "prop_physics" or v.Base == "ent_melon_prop_base") then
 					v:TakeDamage( self.damageDeal, self, self )
 					local php = v:GetNWInt("propHP", -1)
-					if (php != -1) then
+					if (php ~= -1) then
 						v:SetNWInt("propHP", php-self.damageDeal)
 					end
 				else
