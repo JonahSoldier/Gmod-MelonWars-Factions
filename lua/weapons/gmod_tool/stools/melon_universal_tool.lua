@@ -1940,8 +1940,8 @@ function _CreatePanel()
 		end]]
 		ipos = 1
 		for i=firstBuilding, firstEnergy-1 do
-			if ((mw_units[i].code == nil or LocalPlayer():GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVarNumber("mw_admin_bonusunits") == 1)) then
-				if (mw_units[i].name ~= "Contraption Assembler" or cvars.Number("mw_admin_ban_contraptions") == 0) then
+			if (mw_units[i].code == nil or LocalPlayer():GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVarNumber("mw_admin_bonusunits") == 1) then
+				if mw_units[i].name ~= "Contraption Assembler" or cvars.Number("mw_admin_ban_contraptions") == 0 then
 					_MakeButton(i, ipos, scroll)
 					ipos = ipos+1
 				end
@@ -1993,7 +1993,7 @@ function _CreatePanel()
 				function prop_window:LayoutEntity(Entity)
 					Entity:SetAngles(v.angle+Angle(0,CurTime()*50,0))
 				end
-				--prop_window:SetLookAt(prop_window:GetEntity():OBBCenter())	
+				--prop_window:SetLookAt(prop_window:GetEntity():OBBCenter())
 			end
 		end
 

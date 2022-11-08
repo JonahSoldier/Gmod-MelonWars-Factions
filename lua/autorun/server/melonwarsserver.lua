@@ -2017,8 +2017,8 @@ hook.Add( "InitPostEntity", "MelonWars_StartLoad", function()
 		end
 	end
 end )
-
-hook.Add( "Think", "MelonWars_SelectingUpdate", function()	
+--[[
+hook.Add( "Think", "MelonWars_SelectingUpdate", function()
 	local tbl = player.GetAll()
 	for _, v in ipairs( tbl ) do
 		if v.mw_selecting then
@@ -2033,7 +2033,7 @@ hook.Add( "Think", "MelonWars_SelectingUpdate", function()
 		end
 	end
 end )
-
+]]
 net.Receive( "UpdateServerTeams", function( len, pl )
 	-- if not ply:IsAdmin() then return end
 		teamgrid = net.ReadTable()
