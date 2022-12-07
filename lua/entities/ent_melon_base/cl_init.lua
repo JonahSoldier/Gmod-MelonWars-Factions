@@ -65,15 +65,14 @@ function ENT:Think()
 end
 
 function ENT:DrawExpirationDate()
-	if (self:GetNWFloat("expiration", -1) ~= -1) then
-		local vpos = self:GetPos()+Vector(0,0,30)
-		local angle = LocalPlayer():EyeAngles()+Angle(0,0,90)
-	    angle:RotateAroundAxis( LocalPlayer():EyeAngles():Up(), -90 )
-		local timeLeft = self:GetNWFloat("expiration")-CurTime()
-		cam.Start3D2D( vpos, angle, 0.5 )
-			draw.SimpleText( tostring(math.ceil(timeLeft)), "Trebuchet18", 0, 0, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-		cam.End3D2D()
-	end
+	if self:GetNWFloat("expiration", -1) == -1 then return end
+	local vpos = self:GetPos()+Vector(0,0,30)
+	local angle = LocalPlayer():EyeAngles()+Angle(0,0,90)
+	angle:RotateAroundAxis( LocalPlayer():EyeAngles():Up(), -90 )
+	local timeLeft = self:GetNWFloat("expiration")-CurTime()
+	cam.Start3D2D( vpos, angle, 0.5 )
+		draw.SimpleText( tostring(math.ceil(timeLeft)), "Trebuchet18", 0, 0, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	cam.End3D2D()
 end
 
 function ENT:ClientThink() end
@@ -143,24 +142,22 @@ function BarrackDraw(self, offset)
 	end
 
 	local time = self:GetNWFloat("spawnTime",0)
-    if (CurTime() < time) then
-	    local angle = LocalPlayer():EyeAngles()+Angle(0,0,90)
-	    angle:RotateAroundAxis( LocalPlayer():EyeAngles():Up(), -90 )
-	    local vpos = self:WorldSpaceCenter()--+angle:Forward()*10-angle:Right()*10/2
-		cam.Start3D2D( vpos, angle, 0.5 )
-			draw.SimpleText( tostring(math.ceil(time-CurTime())).."s", "Trebuchet24", 0, 0, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-		cam.End3D2D()
-	end
+	if CurTime() >= time then return end
+	local angle = LocalPlayer():EyeAngles()+Angle(0,0,90)
+	angle:RotateAroundAxis( LocalPlayer():EyeAngles():Up(), -90 )
+	local vpos = self:WorldSpaceCenter()--+angle:Forward()*10-angle:Right()*10/2
+	cam.Start3D2D( vpos, angle, 0.5 )
+		draw.SimpleText( tostring(math.ceil(time-CurTime())).."s", "Trebuchet24", 0, 0, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	cam.End3D2D()
 end
 
 function ENT:OnRemove()
-	for k, v in pairs(self:GetChildren()) do
+	for _, v in pairs(self:GetChildren()) do
 		v:Remove()
 	end
 end
-
--- New Year
-/*function ENT:OnRemove()
+--[[
+function ENT:OnRemove() -- New Year
 	MW_Firework(self, 50, 1)
-end*/
-
+end
+]]

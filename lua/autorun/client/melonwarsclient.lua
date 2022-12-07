@@ -45,7 +45,7 @@ hook.Add( "Think", "MelonWars_SelectingUpdate", function()
 end )
 --[[
 local function OnPlayerChat( ply, text, teamChat, isDead )
-	if (cvars.Bool( "mw_custom_chat" )) then
+	if cvars.Bool( "mw_custom_chat" ) then
 		local _team = cvars.Number( "mw_team" )
 		chat.AddText( mw_team_colors[_team], ply:Nick(), Color(255,255,255), ": ", text )
 		return true
@@ -138,22 +138,18 @@ net.Receive( "MW_ReturnSelection", function( len, pl )
 	-- LocalPlayer().foundMelons = newTable
 end )
 --[[
-function DrawBuildRanges(zoneEntity , zoneRadius)
-	if (tostring(LocalPlayer().BuildZone) == "[NULL Entity]" or not IsValid(LocalPlayer().BuildZone)) then
-		LocalPlayer().BuildZone = ents.CreateClientProp( "models/hunter/tubes/circle2x2.mdl" )
-		LocalPlayer().BuildZone:SetMoveType( MOVETYPE_NONE )
-		LocalPlayer().BuildZone:SetNotSolid( true );
-		LocalPlayer().BuildZone:SetRenderMode( RENDERMODE_TRANSALPHA )
-		LocalPlayer().BuildZone:SetMaterial("models/debug/debugwhite")
-		LocalPlayer().BuildZone:SetColor( Color( 255, 255, 255, 255 ) )
-		LocalPlayer().BuildZone:SetModelScale(0.021*zoneRadius)
-		LocalPlayer().BuildZone:SetPos(zoneEntity:GetPos())
-		LocalPlayer().BuildZone:Spawn()
-		print(LocalPlayer().BuildZone)
-		print(zoneEntity)
-		
-		-- LocalPlayer().BuildZone:DeleteOnRemove( zoneEntity )
-	end
+function DrawBuildRanges(zoneEntity, zoneRadius)
+	if not (tostring(LocalPlayer().BuildZone) == "[NULL Entity]" or not IsValid(LocalPlayer().BuildZone)) then return end
+	LocalPlayer().BuildZone = ents.CreateClientProp( "models/hunter/tubes/circle2x2.mdl" )
+	LocalPlayer().BuildZone:SetMoveType( MOVETYPE_NONE )
+	LocalPlayer().BuildZone:SetNotSolid( true );
+	LocalPlayer().BuildZone:SetRenderMode( RENDERMODE_TRANSALPHA )
+	LocalPlayer().BuildZone:SetMaterial("models/debug/debugwhite")
+	LocalPlayer().BuildZone:SetColor( Color( 255, 255, 255, 255 ) )
+	LocalPlayer().BuildZone:SetModelScale(0.021*zoneRadius)
+	LocalPlayer().BuildZone:SetPos(zoneEntity:GetPos())
+	LocalPlayer().BuildZone:Spawn()
+	-- LocalPlayer().BuildZone:DeleteOnRemove( zoneEntity )
 end
 ]]
 function MW_UpdateGhostEntity (model, pos, offset, angle, newColor, ghostSphereRange, ghostSpherePos)
@@ -246,7 +242,7 @@ end
 function MW_FinishSelection() -- Previously concommand.Add( "-mw_select", function( ply )
 	sound.Play( "buttons/lightswitch2.wav", LocalPlayer():GetPos(), 50, 80, 1 )
 	LocalPlayer().mw_selecting = false
-	
+
 	-- Finds all the entities in the selection sphere
 
 	-- local foundEnts = ents.FindInSphere((ply.mw_selEnd+ply.mw_selStart)/2, ply.mw_selStart:Distance(ply.mw_selEnd)/2+0.1 )
@@ -327,15 +323,14 @@ end
 net.Receive( "MW_SelectContraption", function( len, pl )
 	local count = net.ReadUInt( 16 )
 	-- print("Receiving extra selections from the server ("..count..")")
-	local entities = {}
+	local v, hasMelonBase, canMove, isFound
 	for i = 0, count do
-		local v = net.ReadEntity()
-		if v.Base == "ent_melon_base" then
-			if cvars.Bool( "mw_admin_move_any_team", false ) or ( pl == nil or v:GetNWInt( "mw_melonTeam", -1 ) == pl:GetInfoNum( "mw_team", -1 ) ) then
-				if not LocalPlayer().foundMelons[v] then
-					table.insert( LocalPlayer().foundMelons, v )
-				end
-			end
+		v = net.ReadEntity()
+		hasMelonBase = v.Base == "ent_melon_base"
+		canMove = cvars.Bool( "mw_admin_move_any_team", false ) or ( pl == nil or v:GetNWInt( "mw_melonTeam", -1 ) == pl:GetInfoNum( "mw_team", -1 ) )
+		isFound = LocalPlayer().foundMelons[v]
+		if hasMelonBase and canMove and not isFound then
+			table.insert( LocalPlayer().foundMelons, v )
 		end
 	end
 end )
@@ -454,9 +449,9 @@ hook.Add( "PostDrawTranslucentRenderables", "MelonWars_AddHalos", function()
 			local eyeEntity = tr.Entity
 			if (tostring( eyeEntity ~= "Entity [0][worldspawn]")) then
 				table.insert(entityTable, eyeEntity)
-			if (istable(entityTable)) then
+				--[[ if (istable(entityTable)) then
 					-- halo.Add( entityTable, Color( 255, 100, 100 ), 2, 2, 1, true, true )
-				end
+				end ]]
 			end
 		end
 	end
@@ -605,7 +600,6 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 					surface.DrawOutlinedRect( pos.x - clampedBar/2 -1, pos.y - 61, clampedBar +2, 13 )
 					surface.SetDrawColor(Color( 255*math.min((1-hp/maxhp)*2,1), 255*math.min(hp/maxhp*2,1), 0, 100 ))
 					surface.DrawRect( pos.x - clampedBar/2, pos.y - 60, clampedBar, 11 )
-
 					surface.SetFont( "Trebuchet18" )
 					surface.SetTextColor( 0, 0, 0, 255 )
 					surface.SetTextPos( pos.x - 6, pos.y - 63 )

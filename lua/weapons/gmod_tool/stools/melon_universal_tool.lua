@@ -1,7 +1,7 @@
 TOOL.Category = "MelonWars: RTS"
 TOOL.Name = "Player Tool"
 TOOL.Command = nil
-TOOL.ConfigName = "" -- Setting this means that you do not have to create external configuration files to define the layout of the tool config-hud 
+TOOL.ConfigName = "" -- Setting this means that you do not have to create external configuration files to define the layout of the tool config-hud
 
 -- Convars (Start)
 
@@ -18,10 +18,10 @@ TOOL.ClientConVar[ "mw_team" ] = 1
 CreateClientConVar( "mw_contraption_name", "default", 0, false )
 TOOL.ClientConVar[ "mw_contraption_name" ] = "default"
 
-CreateConVar( "mw_enable_skin", "1", FCVAR_ARCHIVE+FCVAR_USERINFO, "Enable or disable your custom skin." )
+CreateConVar( "mw_enable_skin", "1", FCVAR_ARCHIVE + FCVAR_USERINFO, "Enable or disable your custom skin." )
 TOOL.ClientConVar[ "mw_enable_skin" ] = "1"
 
-CreateConVar( "mw_admin_open_permits", "0", 8192+128, "Whether or not everyone is allowed to use the admin menu." )
+CreateConVar( "mw_admin_open_permits", "0", 8192 + 128, "Whether or not everyone is allowed to use the admin menu." )
 TOOL.ClientConVar[ "mw_admin_spawn_time" ] = 0
 CreateConVar( "mw_admin_spawn_time", "0", 8192, "Whether or not units take time before spawning." )
 TOOL.ClientConVar[ "mw_admin_spawn_time" ] = 1
@@ -139,17 +139,17 @@ end
 local unitCount = 88
 mw_units = {}
 local u = nil
-for i=1, unitCount do
+for i = 1, unitCount do
 	mw_units[i] = Unit()
 end
 
 local function BarracksText ( number, max )
-	return [[This is a building that produces a ]]..mw_units[number].name.." every "..tostring(mw_units[number].spawn_time*3).." seconds, up to "..max.." at any given time, at half the price. Select this building and command it to move somewhere to set a rally point for its deployed units. Look at it and press E to toggle it on and off."
+	return "This is a building that produces a " .. mw_units[number].name .. " every " .. tostring(mw_units[number].spawn_time * 3) .. " seconds, up to " .. max .. " at any given time, at half the price. Select this building and command it to move somewhere to set a rally point for its deployed units. Look at it and press E to toggle it on and off."
 end
 
 local i = 0
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Marine"
 u.class 		= "ent_melon_marine"
@@ -160,7 +160,7 @@ u.spawn_time 	= 2
 u.description 	= [[The basic unit.]]
 u.model 		= "models/props_junk/watermelon01.mdl"
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Medic"
 u.class 		= "ent_melon_medic"
@@ -171,7 +171,7 @@ u.spawn_time 	= 3
 u.description 	= [[The healer of the group, always good to have one around.]]
 u.model 		= "models/props_junk/watermelon01.mdl"
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Jetpack"
 u.class 		= "ent_melon_jetpack"
@@ -183,7 +183,7 @@ u.description 	= [[These marines take to the skies... but not too high. They hov
 u.model 		= "models/props_junk/watermelon01.mdl"
 u.offset 		= Vector(0,0,140)
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Bomb"
 u.class 		= "ent_melon_bomb"
@@ -194,7 +194,7 @@ u.spawn_time 	= 5
 u.description 	= [[Explodes on proximity after 0.3 seconds. Send some cannon fodder in front to keep it alive until it reaches its target. Watch out for friendly fire!]]
 u.model 		= "models/props_phx/misc/soccerball.mdl"
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Gunner"
 u.class 		= "ent_melon_gunner"
@@ -205,7 +205,7 @@ u.spawn_time 	= 6
 u.description 	= [[Equiped with a minigun, this tougher and slower unit will shoot faster the longer it holds down the trigger. It has some spread, so try getting up close.]]
 u.model 		= "models/Roller.mdl"
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Missiles"
 u.class 		= "ent_melon_missiles"
@@ -216,7 +216,7 @@ u.spawn_time 	= 5
 u.description 	= [[This unit launches medium range homing missiles to suppress hoards of weak units. Good for dealing constant group damage.]]
 u.model 		= "models/xqm/rails/trackball_1.mdl"
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Sniper"
 u.class 		= "ent_melon_sniper"
@@ -228,83 +228,83 @@ u.description 	= [[Slow shooting but very powerful. Useful for picking off bigge
 u.model 		= "models/props_junk/propane_tank001a.mdl"
 u.offset 		= Vector(0,0,12)
 
-i = i+1
+i = i + 1
 u = mw_units[i]
-u.name 			= "Hot Shot"					
-u.class 		= "ent_melon_hotshot"		
-u.cost 			= 1000					
-u.welded_cost 	= 750						
-u.population 	= 2					
+u.name 			= "Hot Shot"
+u.class 		= "ent_melon_hotshot"
+u.cost 			= 1000
+u.welded_cost 	= 750
+u.population 	= 2
 u.spawn_time 	= 5
-u.description 	= [[Shoots a fan of incendiary bullets in a wide spread. Useful against spread out squads, not as effective against clumped up enemies.]]				
+u.description 	= [[Shoots a fan of incendiary bullets in a wide spread. Useful against spread out squads, not as effective against clumped up enemies.]]
 u.model 		= "models/xqm/afterburner1.mdl"
 u.offset 		= Vector(0,0,10)
 
-i = i+1
+i = i + 1
 u = mw_units[i]
-u.name 			= "Mortar"			
-u.class 		= "ent_melon_mortar"	
-u.cost 			= 3000				
-u.welded_cost 	= 1500				
-u.population 	= 3					
+u.name 			= "Mortar"
+u.class 		= "ent_melon_mortar"
+u.cost 			= 3000
+u.welded_cost 	= 1500
+u.population 	= 3
 u.spawn_time 	= 40
-u.description 	= [[Very durable. Launches bombs in an arc. Useful for eliminating enemies behind walls. It can't shoot while moving nor at point-blank.]]				
+u.description 	= [[Very durable. Launches bombs in an arc. Useful for eliminating enemies behind walls. It can't shoot while moving nor at point-blank.]]
 u.model 		= "models/props_borealis/bluebarrel001.mdl"
 u.offset 		= Vector(0,0,20)
 
-i = i+1
+i = i + 1
 u = mw_units[i]
-u.name 			= "Nuke"					
-u.class 		= "ent_melon_nuke"		
-u.cost 			= 3000					
-u.welded_cost 	= -1						
-u.population 	= 4					
+u.name 			= "Nuke"
+u.class 		= "ent_melon_nuke"
+u.cost 			= 3000
+u.welded_cost 	= -1
+u.population 	= 4
 u.spawn_time 	= 30
-u.description 	= [[Goes BOOM like a baus. Protect it until it gets to the enemy walls, because it doesn't explode as big if it gets killed before detonation. Takes 1.5 seconds to detonate.]]				
+u.description 	= [[Goes BOOM like a baus. Protect it until it gets to the enemy walls, because it doesn't explode as big if it gets killed before detonation. Takes 1.5 seconds to detonate.]]
 u.model 		= "models/props_phx/cannonball.mdl"
 u.offset 		= Vector(0,0,20)
 
-i = i+1
+i = i + 1
 u = mw_units[i]
-u.name 			= "Cannon"	
-u.class 		= "ent_melon_cannon"	
-u.cost 			= 7000				
-u.welded_cost 	= 5000			
-u.population 	= 5				
+u.name 			= "Cannon"
+u.class 		= "ent_melon_cannon"
+u.cost 			= 7000
+u.welded_cost 	= 5000
+u.population 	= 5
 u.spawn_time 	= 20
-u.description 	= [[Fires a long range fast cannon ball that deals high (yet inconsistent) damage on impact, going through anything not strong enough to stop it. It can't fire while moving. Its shots can collapse defenses.]]				
+u.description 	= [[Fires a long range fast cannon ball that deals high (yet inconsistent) damage on impact, going through anything not strong enough to stop it. It can't fire while moving. Its shots can collapse defenses.]]
 u.model 		= "models/props_c17/oildrum001.mdl"
 u.offset 		= Vector(0,0,0)
 u.isBonusUnit   = true
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "void"
-u.name 			= "Voidling"			
+u.name 			= "Voidling"
 u.class 		= "ent_melon_voidling"
-u.cost 			= 20				
-u.welded_cost 	= -1				
-u.population 	= 1				
+u.cost 			= 20
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 1/3
-u.description 	= [[A little entity of Void that seeks equilibrium. It will throw itself at enemies to deal damage and die in the process. When sacrificing a voidling to a shredder, you gain a small Water profit.]]	
+u.description 	= [[A little entity of Void that seeks equilibrium. It will throw itself at enemies to deal damage and die in the process. When sacrificing a voidling to a shredder, you gain a small Water profit.]]
 u.model 		= "models/hunter/misc/sphere025x025.mdl"
 u.code 			= "--banned--"
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "void"
-u.name 			= "Raider"			
+u.name 			= "Raider"
 u.class 		= "ent_melon_void_raider"
-u.cost 			= 300				
-u.welded_cost 	= -1				
-u.population 	= 2				
+u.cost 			= 300
+u.welded_cost 	= -1
+u.population 	= 2
 u.spawn_time 	= 5
 u.angle 		= Angle(0, 0, 180)
 u.offset 		= Vector(0,0,7)
-u.description 	= [[A backpack-wearing void unit that can capture enemy buildings of all sorts. Useful for causing chaos in enemy defensive lines or taking over valuable infrastructure.]]	
+u.description 	= [[A backpack-wearing void unit that can capture enemy buildings of all sorts. Useful for causing chaos in enemy defensive lines or taking over valuable infrastructure.]]
 u.model 		= "models/props_junk/MetalBucket01a.mdl"
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "full"
 u.name 			= "Buck"			
@@ -317,7 +317,7 @@ u.offset 		= Vector(0,0,5)
 u.description 	= [[A slow trooper that fires a shotgun blast in a tight spread. Useful for clearing hordes of weak enemies.]]	
 u.model 		= "models/props_junk/plasticbucket001a.mdl"
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "full"
 u.name 			= "Fighter"			
@@ -330,7 +330,7 @@ u.description 	= [[A fast fighter jet that flies high and shoots down. It can't 
 u.model 		= "models/props_phx/construct/metal_plate1_tri.mdl"
 
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "prot"
 u.name 			= "Gatling"			
@@ -342,7 +342,7 @@ u.spawn_time 	= 5
 u.description 	= [[A gunner with an electric motor to spin up its barrels immediately. Shoots slower as it runs out of energy. Will slowly recharge its batteries with a handcrank when idle.]]	
 u.model 		= "models/Mechanics/gears/gear12x24.mdl"
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "prot"
 u.name 			= "Molotov"			
@@ -355,7 +355,7 @@ u.offset 		= Vector(0,0,10)
 u.description 	= [[A bomb that leaves behind a flaming, dangerous area on the floor.]]	
 u.model 		= "models/props_junk/propanecanister001a.mdl"
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Droid"			
 u.class 		= "ent_melon_droid"
@@ -369,7 +369,7 @@ u.model 		= "models/props_c17/utilityconnecter006c.mdl"
 u.button_color 	= button_energy_color
 u.isBonusUnit   = true
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Long-boy"			
 u.class 		= "ent_melon_longboy"
@@ -382,7 +382,7 @@ u.description 	= [[A very long range superweapon that needs to deploy to attack.
 u.model 		= "models/props_trainstation/trainstation_ornament001.mdl"
 u.button_color 	= button_energy_color
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "--banned--"
 u.name 			= "Forcefield"			
@@ -396,7 +396,7 @@ u.description 	= [[A forcefield that blocks bullets from the enemy team.]]
 u.model 		= "models/hunter/tubes/tube4x4x2to2x2.mdl"
 
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code = "prot"
 u.name 			= "Heavy Flamethrower"			
@@ -410,7 +410,7 @@ u.description 	= [[Fire.]]
 u.model 		= "models/props_citizen_tech/firetrap_propanecanister01a.mdl"
 u.isBonusUnit   = true
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code = "full"
 u.name 			= "EMP Device"			
@@ -424,7 +424,7 @@ u.description 	= [[Needs to be charged before it can detonate. Stuns and slows u
 u.model 		= "models/maxofs2d/hover_classic.mdl"
 u.isBonusUnit   = true
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "admin"
 u.name 			= "Siege Gun"			
@@ -438,7 +438,7 @@ u.description 	= [[explode.]]
 u.model 		= "models/props_trainstation/trashcan_indoor001b.mdl"
 
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Doot"			
 u.class 		= "ent_melon_doot"
@@ -450,7 +450,7 @@ u.description 	= [[Such spoops]]
 u.model 		= "models/Gibs/HGIBS.mdl"
 u.isBonusUnit   = true
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "void"
 u.name 			= "Mammoth"			
@@ -464,7 +464,7 @@ u.description 	= [[A big entity of Void, powerful and slow. Has a lot of health,
 u.model 		= "models/mechanics/wheels/wheel_spike_48.mdl"
 u.isBonusUnit   = true
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "admin"
 u.name 			= "Engineer"			
@@ -479,7 +479,7 @@ u.description 	= [[A heavy, clunky thing that can repair stationary structures.]
 u.model 		= "models/props_wasteland/light_spotlight01_lamp.mdl"
 
 
-i = i+1
+i = i + 1
 firstBuilding = i --------------------------------- First building
 
 
@@ -496,7 +496,7 @@ u.model 		= "models/props_lab/teleportbulkeli.mdl"
 u.offset 		= Vector(0,0,100)
 u.angle 		= Angle(90, -90, 90)
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "full"
 u.name 			= "Refuel Station"			
@@ -524,7 +524,7 @@ u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(180, 180, 0)
 u.energyRange		= 500
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Shredder"				
 u.class 		= "ent_melon_shredder"
@@ -536,7 +536,7 @@ u.description 	= [[A set of spinning blades, used to recycle melons, get resourc
 u.model 		= "models/props_c17/TrapPropeller_Blade.mdl"
 u.offset 		= Vector(0,0,0)
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "prot"
 u.name 			= "Electrified Debris"			
@@ -550,7 +550,7 @@ u.model 		= "models/props_rooftop/antennaclusters01a.mdl"
 u.offset 		= Vector(0,0,60)
 u.angle 		= Angle(0, 0, 0)
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Elevator Pad"
 u.class 		= "ent_melon_elevator_pad"
@@ -562,7 +562,7 @@ u.description 	= [[A pad you place on the floor that lifts up anything above it.
 u.model 		= "models/hunter/tubes/circle2x2.mdl"
 u.offset 		= Vector(0,0,-5)
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Loading Bay"
 u.class 		= "ent_melon_loading_bay"
@@ -574,7 +574,7 @@ u.description 	= [[A pad you place on the floor that loads units on it to the ne
 u.model 		= "models/props_phx/construct/metal_plate2x2.mdl"
 u.offset 		= Vector(0,0,-5)
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "void"
 u.name 			= "Teleporter Transmitter"
@@ -587,7 +587,7 @@ u.description 	= [[A void teleportation platform that links to the nearest recei
 u.model 		= "models/props_lab/teleplatform.mdl"
 u.offset 		= Vector(0,0,-5)
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "void"
 u.name 			= "Teleporter Receiver"
@@ -602,7 +602,7 @@ u.model 		= "models/props_lab/teleplatform.mdl"
 u.offset 		= Vector(0,0,-5)
 
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Gate"
 u.class 		= "ent_melon_gate"
@@ -615,7 +615,7 @@ u.model 		= "models/props_phx/construct/metal_plate1x2.mdl"
 u.offset 		= Vector(0,0,18.5)
 u.angle 		= Angle(90,0,0)
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Station"
 u.class 		= "ent_melon_station"
@@ -629,7 +629,7 @@ u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(0,0,0)
 u.code			= "admin"
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "prot"
 u.name 			= "Energy Siphon"
@@ -652,7 +652,7 @@ u.button_color 	= button_energy_color
 u.buildAnywere  = true
 u.energyRange	= 750
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Large Gate"
 u.class 		= "ent_melon_gate_big"
@@ -667,7 +667,7 @@ u.angle 		= Angle(90,0,0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Tesla Tower"			
 u.class 		= "ent_melon_tesla_tower"	
@@ -682,7 +682,7 @@ u.angle 		= Angle(0, 0, 0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "full"
 u.name 			= "Particle Tower"			
@@ -698,7 +698,7 @@ u.angle 		= Angle(0, 0, 0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "void"
 u.name 			= "Anti-Power Reactor"			
@@ -714,7 +714,7 @@ u.angle 		= Angle(0, 0, 0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "void"
 u.name 			= "Unit Launcher"			
@@ -731,7 +731,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 u.isBonusUnit   = true
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "admin"
 u.name 			= "Supergun"			
@@ -747,7 +747,7 @@ u.angle 		= Angle(-90, 0, -90)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "admin"
 u.name 			= "Melonium Silo"			
@@ -763,7 +763,7 @@ u.angle 		= Angle(-90, 0, -90)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "--banned--"
 u.name 			= "Universal Overclocker"			
@@ -779,7 +779,7 @@ u.angle 		= Angle(0, 0, 0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "admin"
 u.name 			= "Siege Mortar"			
@@ -795,7 +795,7 @@ u.angle 		= Angle(-90, 0, -90)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Over-Clocker"			
 u.class 		= "ent_melon_overclocker"	
@@ -810,7 +810,7 @@ u.angle 		= Angle(0, 0, 0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Medical Bay"			
 u.class 		= "ent_melon_medical_bay"	
@@ -825,7 +825,7 @@ u.angle 		= Angle(0, 0, 0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Charging Station"			
 u.class 		= "ent_melon_charging_station"	
@@ -840,7 +840,7 @@ u.angle 		= Angle(0, 0, 0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Radar"			
 u.class 		= "ent_melon_radar"	
@@ -855,7 +855,7 @@ u.angle 		= Angle(0, 0, 0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Forcefield generator"			
 u.class 		= "ent_melon_forcefield_generator"	
@@ -871,7 +871,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 u.isBonusUnit   = true
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "full"
 u.name 			= "Point Defense Station"			
@@ -887,7 +887,7 @@ u.angle 		= Angle(0, 0, 0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Marine Barracks"			
 u.class 		= "ent_melon_barracks_marine"
@@ -901,7 +901,7 @@ u.offset 		= Vector(0,0,10)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Medic Academy"			
 u.class 		= "ent_melon_barracks_medic" 
@@ -915,7 +915,7 @@ u.offset 		= Vector(0,0,10)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Jetpack Flight School"		
 u.class 		= "ent_melon_barracks_jetpack"	
@@ -929,7 +929,7 @@ u.offset 		= Vector(0,0,-15)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Bomb Factory"				
 u.class 		= "ent_melon_barracks_bomb"	
@@ -944,7 +944,7 @@ u.angle 		= Angle(180,0,0)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Gunner Training Camp"		
 u.class 		= "ent_melon_barracks_gunner"
@@ -958,7 +958,7 @@ u.offset 		= Vector(0,0,-25)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Missiles Production Line"		
 u.class 		= "ent_melon_barracks_missiles"	
@@ -973,7 +973,7 @@ u.angle 		= Angle(-90,0,90)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Sniper Shooting Range"		
 u.class 		= "ent_melon_barracks_sniper"	
@@ -988,7 +988,7 @@ u.angle 		= Angle(180, 90, 0)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Hot Shot Forge"				
 u.class 		= "ent_melon_barracks_hotshot"		
@@ -1002,7 +1002,7 @@ u.offset 		= Vector(0,0,30)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Mortar Production Facility"	
 u.class 		= "ent_melon_barracks_mortar"	
@@ -1016,7 +1016,7 @@ u.offset 		= Vector(0,0,-25)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Nuke Assembler"				
 u.class 		= "ent_melon_barracks_nuke"		
@@ -1030,7 +1030,7 @@ u.offset 		= Vector(0,0,0)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 --[[
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Tombstone"				
 u.class 		= "ent_melon_barracks_doot"		
@@ -1044,7 +1044,7 @@ u.offset 		= Vector(0,0,0)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 ]]
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "void"
 u.name 			= "Voidling Reactor"			
@@ -1059,7 +1059,7 @@ u.offset 		= Vector(0,0,25)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "void"
 u.name 			= "Raider Fabrication Platform"			
@@ -1076,7 +1076,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "void"
 u.name 			= "Mammoth Spawning Vat"			
@@ -1092,7 +1092,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 u.isBonusUnit   = true
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "full"
 u.name 			= "Buck University"			
@@ -1107,7 +1107,7 @@ u.offset 		= Vector(0,0,0)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "full"
 u.name 			= "Fighter University"			
@@ -1122,7 +1122,7 @@ u.offset 		= Vector(0,0,0)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "prot"
 u.name 			= "Gatling Depot"			
@@ -1137,7 +1137,7 @@ u.offset 		= Vector(0,0,-10)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.code 			= "prot"
 u.name 			= "Molotov Depot"			
@@ -1152,7 +1152,7 @@ u.offset 		= Vector(0,0,-10)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Contraption Assembler"
 u.class 		= "ent_melon_contraption_assembler"
@@ -1169,7 +1169,7 @@ u.canOverlap 	= false
 u.energy 		= true
 u.button_color 	= button_barrack_color
 
-i = i+1
+i = i + 1
 firstEnergy = i ----------------------------------First energy
 u = mw_units[i]
 u.name 			= "Relay"
@@ -1185,7 +1185,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 u.buildAnywere  = true
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Big Relay"
 u.class 		= "ent_melon_energy_relay_large"
@@ -1201,7 +1201,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= 1000
 u.buildAnywere  = true
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Switch"
 u.class 		= "ent_melon_energy_switch"
@@ -1216,7 +1216,7 @@ u.canOverlap 	= false
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "S Battery"
 u.class 		= "ent_melon_energy_capacitor"
@@ -1231,7 +1231,7 @@ u.canOverlap 	= false
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "M Battery"
 u.class 		= "ent_melon_energy_capacitor_medium"
@@ -1246,7 +1246,7 @@ u.canOverlap 	= false
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "L Battery"
 u.class 		= "ent_melon_energy_capacitor_large"
@@ -1261,7 +1261,7 @@ u.canOverlap 	= false
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Solar Panel"
 u.class 		= "ent_melon_energy_solar_panel"
@@ -1278,7 +1278,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 u.changeAngles  = false
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Steam Generator"
 u.class 		= "ent_melon_energy_steam_plant"
@@ -1294,7 +1294,7 @@ u.canOverlap 	= false
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Nuclear Plant"
 u.class 		= "ent_melon_energy_nuclear_plant"
@@ -1310,7 +1310,7 @@ u.canOverlap 	= false
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Water Pump"
 u.class 		= "ent_melon_energy_water_pump"
@@ -1326,7 +1326,7 @@ u.canOverlap 	= false
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
-i = i+1
+i = i + 1
 firstContraption = i ---------------------------- First Contraption
 u = mw_units[i]
 u.name 			= "Engine"
@@ -1343,7 +1343,7 @@ u.angleSnap		= false
 u.contraptionPart = true
 u.spawnable_on_floor = false
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Large Engine"
 u.class 		= "ent_melon_engine_large"
@@ -1359,7 +1359,7 @@ u.angleSnap		= false
 u.contraptionPart = true
 u.spawnable_on_floor = false
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Propeller"
 u.class 		= "ent_melon_propeller"
@@ -1375,7 +1375,7 @@ u.angleSnap		= false
 u.contraptionPart = true
 u.spawnable_on_floor = false
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Hover Pad"
 u.class 		= "ent_melon_hover"
@@ -1391,7 +1391,7 @@ u.angleSnap		= false
 u.contraptionPart = true
 u.spawnable_on_floor = false
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Wheel"
 u.class 		= "ent_melon_wheel"
@@ -1408,7 +1408,7 @@ u.angleSnap		= false
 u.contraptionPart = true
 u.spawnable_on_floor = false
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Unit Transport"
 u.class 		= "ent_melon_unit_transport"
@@ -1423,7 +1423,7 @@ u.angle 		= Angle(0,0,0)
 u.angleSnap		= false
 u.canOverlap 	= false
 
-i = i+1
+i = i + 1
 u = mw_units[i]
 u.name 			= "Capacitor"
 u.class 		= "ent_melon_contraption_capacitor"
@@ -1479,7 +1479,7 @@ end
 
 i = 0
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Blast Door"
 u.model = "models/props_lab/blastdoor001c.mdl"
@@ -1488,7 +1488,7 @@ u.angle = Angle(0,0,0)
 u.cost = 200
 u.hp = 150
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Barricade"
 u.model = "models/props_wasteland/barricade002a.mdl"
@@ -1497,7 +1497,7 @@ u.angle = Angle(0,90,0)
 u.cost = 15
 u.hp = 40
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Fence"
 u.model = "models/props_wasteland/wood_fence01a.mdl"
@@ -1506,7 +1506,7 @@ u.angle = Angle(0,90,0)
 u.cost = 40
 u.hp = 100
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Pallet"
 u.model = "models/props_junk/wood_pallet001a.mdl"
@@ -1515,7 +1515,7 @@ u.angle = Angle(90,0,0)
 u.cost = 25
 u.hp = 50
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Brick"
 u.model = "models/hunter/blocks/cube05x1x05.mdl"
@@ -1524,7 +1524,7 @@ u.angle = Angle(0,0,0)
 u.cost = 15
 u.hp = 35
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Half Block"
 u.model = "models/hunter/blocks/cube1x1x05.mdl"
@@ -1533,7 +1533,7 @@ u.angle = Angle(0,0,0)
 u.cost = 35
 u.hp = 50
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Block"
 u.model = "models/hunter/blocks/cube1x1x1.mdl"
@@ -1542,7 +1542,7 @@ u.angle = Angle(0,0,0)
 u.cost = 75
 u.hp = 100
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Half Platform"
 u.model = "models/hunter/blocks/cube2x2x05.mdl"
@@ -1551,7 +1551,7 @@ u.angle = Angle(0,0,0)
 u.cost = 115
 u.hp = 150
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Platform"
 u.model = "models/hunter/blocks/cube2x2x1.mdl"
@@ -1560,7 +1560,7 @@ u.angle = Angle(0,0,0)
 u.cost = 150
 u.hp = 200
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Concrete Barrier"
 u.model = "models/props_c17/concrete_barrier001a.mdl"
@@ -1569,7 +1569,7 @@ u.angle = Angle(0,0,0)
 u.cost = 75
 u.hp = 150
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Wall"
 u.model = "models/hunter/blocks/cube2x2x05.mdl"
@@ -1578,7 +1578,7 @@ u.angle = Angle(90,0,0)
 u.cost = 100
 u.hp = 175
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Long Wall"
 u.model = "models/hunter/blocks/cube1x4x05.mdl"
@@ -1587,7 +1587,7 @@ u.angle = Angle(90,0,0)
 u.cost = 100
 u.hp = 175
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Flat Platform"
 u.model = "models/hunter/plates/plate2x2.mdl"
@@ -1596,7 +1596,7 @@ u.angle = Angle(0,0,0)
 u.cost = 15
 u.hp = 35
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Short Ramp"
 u.model = "models/hunter/plates/plate1x2.mdl"
@@ -1605,7 +1605,7 @@ u.angle = Angle(-17,0,0)
 u.cost = 25
 u.hp = 25
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Slim Half Ramp"
 u.model = "models/hunter/plates/plate1x2.mdl"
@@ -1614,7 +1614,7 @@ u.angle = Angle(0,90,-17)
 u.cost = 25
 u.hp = 25
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Half Ramp"
 u.model = "models/hunter/plates/plate2x2.mdl"
@@ -1623,7 +1623,7 @@ u.angle = Angle(0,90,-17)
 u.cost = 50
 u.hp = 40
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Slim Full Ramp"
 u.model = "models/hunter/triangles/2x1x1.mdl"
@@ -1632,7 +1632,7 @@ u.angle = Angle(0,90,0)
 u.cost = 75
 u.hp = 75
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Barrel"
 u.model = "models/props_c17/oildrum001.mdl"
@@ -1641,7 +1641,7 @@ u.angle = Angle(0,0,0)
 u.cost = 25
 u.hp = 50
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "3D Frame"
 u.model = "models/props_phx/construct/metal_wire1x2x2b.mdl"
@@ -1650,7 +1650,7 @@ u.angle = Angle(0,0,0)
 u.cost = 20
 u.hp = 20
 --[[
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Square Frame"
 u.model = "models/props_phx/construct/metal_wire2x2b.mdl"
@@ -1659,7 +1659,7 @@ u.angle = Angle(0,0,0)
 u.cost = 10
 u.hp = 10
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Rectangular Frame"
 u.model = "models/props_phx/construct/metal_wire1x2b.mdl"
@@ -1668,7 +1668,7 @@ u.angle = Angle(0,180,0)
 u.cost = 8
 u.hp = 8
 ]]
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Railing"
 u.model = "models/PHXtended/bar2x.mdl"
@@ -1677,7 +1677,7 @@ u.angle = Angle(90,180,0)
 u.cost = 8
 u.hp = 5
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Half Pipe"
 u.model = "models/props_phx/construct/metal_plate_curve180.mdl"
@@ -1686,7 +1686,7 @@ u.angle = Angle(180,0,0)
 u.cost = 50
 u.hp = 75
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Pole"
 u.model = "models/props_docks/dock01_pole01a_128.mdl"
@@ -1695,7 +1695,7 @@ u.angle = Angle(0,0,0)
 u.cost = 15
 u.hp = 15
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Disk"
 u.model = "models/props_phx/construct/metal_angle360.mdl"
@@ -1704,7 +1704,7 @@ u.angle = Angle(0,0,0)
 u.cost = 15
 u.hp = 15
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Half Disk"
 u.model = "models/props_phx/construct/metal_angle180.mdl"
@@ -1713,7 +1713,7 @@ u.angle = Angle(180,0,0)
 u.cost = 8
 u.hp = 8
 
-i = i+1
+i = i + 1
 u = mw_base_props[i]
 u.name = "Stilt"
 u.model = "models/props_docks/dock01_pole01a_128.mdl"
@@ -2731,11 +2731,11 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 				button:SetPos(145+i*45,y)
 				button:SetText("")
 				function button:DoClick()
-					LocalPlayer():ConCommand("mw_team "..tostring(i))
+					LocalPlayer():ConCommand("mw_team " .. tostring(i))
 					LocalPlayer():ConCommand("mw_action 7")
 					pl.mw_frame:Remove()
 					pl.mw_frame = nil
-						
+
 					net.Start("MW_UpdateClientInfo")
 						net.WriteInt(i, 8)
 					net.SendToServer()
@@ -4425,10 +4425,11 @@ You'll have more fun if you play with
 someone. Join the MelonWars:RTS steam
 group to find MelonWars players!]],
  "DermaLarge", x+w/2, y+30, color_white, TEXT_ALIGN_CENTER )
- draw.DrawText("https:--steamcommunity.com/groups/melonwarsrts", "Trebuchet24", x+w/2, y+270, color_white, TEXT_ALIGN_CENTER )
+		draw.DrawText("https:--steamcommunity.com/groups/melonwarsrts", "Trebuchet24", x+w/2, y+270, color_white, TEXT_ALIGN_CENTER )
+		return
 	end
 
-	if game.SinglePlayer() then return end -- Starting to draw multiplayer menu
+	-- Starting to draw multiplayer menu
 
 	local pl = LocalPlayer()
 	local w = 300

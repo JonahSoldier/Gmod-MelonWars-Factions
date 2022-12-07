@@ -138,16 +138,12 @@ function ENT:MelonSetColor( teamnumber )
 		newColor = unit_colors[teamnumber]
 	end
 	self:SetColor(newColor)
-	self:ModifyColor()
 end
-
-function ENT:ModifyColor()
-end
-/*
+--[[
 function ENT:OnDuplicated( entTable )
 	self:SetPos(self:GetPos()-self.posOffset)
-end*/
-
+end
+]]
 function MW_Setup( ent )
 	ent.targetEntity = nil
 	ent.followEntity = nil
@@ -209,27 +205,25 @@ function MW_Setup( ent )
 end
 
 function MW_Spawn(ent)
-	if (SERVER) then
-		
-		ent:SetMoveType( ent.moveType )   -- after all, gmod is a physics
-		ent:SetMaterial(ent.materialString)
-		ent.spawned = true
+	if not SERVER then return end
+	ent:SetMoveType( ent.moveType )   -- after all, gmod is a physics
+	ent:SetMaterial(ent.materialString)
+	ent.spawned = true
 
-		ent.HP = ent.maxHP
-		ent:SetNWFloat( "maxhealth", ent.maxHP )
-		ent:SetNWFloat( "health", ent.HP )
+	ent.HP = ent.maxHP
+	ent:SetNWFloat( "maxhealth", ent.maxHP )
+	ent:SetNWFloat( "health", ent.HP )
 
-		local baseSize
-		if (ent.sphereRadius ~= 0) then
-			baseSize = ent.sphereRadius
-		else
-			local mins = ent.phys:GetAABB()
-			baseSize = (-mins.x-mins.y)*0.6
-		end
-		ent:SetNWFloat( "baseSize", baseSize+5 )
-
-		hook.Run("MelonWarsEntitySpawned", ent)
+	local baseSize
+	if (ent.sphereRadius ~= 0) then
+		baseSize = ent.sphereRadius
+	else
+		local mins = ent.phys:GetAABB()
+		baseSize = (-mins.x-mins.y)*0.6
 	end
+	ent:SetNWFloat( "baseSize", baseSize+5 )
+
+	hook.Run("MelonWarsEntitySpawned", ent)
 end
 
 function ENT:Welded( ent, parent )
@@ -278,8 +272,6 @@ function ENT:Think()
 	end
 	if (self.spawned) then
 		self:Update(self)
-
-		self:SpecificThink()
 	end
 	if not self.canMove and self:GetClass() ~= "ent_melon_unit_transport" and self:GetClass() ~= "ent_melon_main_unit" then
 		if (self:GetMoveType() ~= MOVETYPE_NONE ) then
@@ -294,152 +286,139 @@ function ENT:Think()
 		self.damage = 5
 	end
 end
-
+--[[
 function ENT:SpawnDoot()
-	/*if (self.dootChance > math.random()) then
-		local vPoint = self:GetPos()
-		local effectdata = EffectData()
-		effectdata:SetOrigin( vPoint )
-		util.Effect( "AntlionGib", effectdata )
-		sound.Play("npc/zombie/zombie_voice_idle7.wav", self:GetPos(), 75, 240)
-		SpawnUnitAtPos("ent_melon_doot", 0, self:GetPos(), self:GetAngles(), 0, 0, 0, false, nil, nil)
-	end*/
+	if self.dootChance <= math.random() then return end
+	local vPoint = self:GetPos()
+	local effectdata = EffectData()
+	effectdata:SetOrigin( vPoint )
+	util.Effect( "AntlionGib", effectdata )
+	sound.Play("npc/zombie/zombie_voice_idle7.wav", self:GetPos(), 75, 240)
+	SpawnUnitAtPos("ent_melon_doot", 0, self:GetPos(), self:GetAngles(), 0, 0, 0, false, nil, nil)
 end
-
-
+]]
 function ENT:Update( ent )
+	if not cvars.Bool("mw_admin_playing") then return end
+	if (CurTime() > ent.nextSlowThink) then
+		ent.nextSlowThink = CurTime()+ent.slowThinkTimer
+		ent:SlowThink( ent )
+	end
 
-	----[[
-	if (cvars.Bool("mw_admin_playing") ) then
-		if (CurTime() > ent.nextSlowThink) then
-			ent.nextSlowThink = CurTime()+ent.slowThinkTimer
-			ent:SlowThink( ent )
-		end
-
-		--Aplicar daño
-		if (ent.damage > 0) then
-			ent.gotHit = true
-			ent.HP = ent.HP-ent.damage
-			ent:SetNWFloat( "health", ent.HP )
-			ent.damage = 0
-			if (ent.HP <= 0) then
-				MW_Die( ent )
-			end
-		end
-
-		ent:SetNWEntity( "targetEntity", ent.targetEntity )
-		ent:SetNWEntity( "followEntity", ent.followEntity )
-		
-		local entPos = ent:GetPos()
-		local followEntityPos = Vector(0,0,0)
-		if (IsValid(ent.followEntity)) then
-			followEntityPos = ent.followEntity:GetPos()
-		end
-		local targetEntityPos = Vector(0,0,0)
-		if (IsValid(ent.targetEntity)) then
-			targetEntityPos = ent.targetEntity:GetPos()
-		end
-
-		if (ent.canMove) then
-			if (ent.followEntity ~= ent) then
-				if (IsValid(ent.followEntity)) then
-					if ((followEntityPos-entPos):LengthSqr() > ent.range*ent.range) then
-						ent.targetPos = followEntityPos+(entPos-followEntityPos):GetNormalized()*ent.range*0.5
-						ent.moving = true
-					end
-				end
-			else
-				if (ent.chasing) then
-					if (IsValid(ent.targetEntity)) then
-						if ((targetEntityPos-entPos):LengthSqr() > ent.range*ent.range) then
-							local chanceDistMul = 0.9
-							if (ent.meleeAi) then
-								chanceDistMul = 0.2
-							end
-							ent.targetPos = targetEntityPos+(entPos-targetEntityPos):GetNormalized()*ent.range*chanceDistMul
-							ent.moving = true
-						end
-					end
-				end
-			end
-			
-			local phys = ent.phys
-			
-			if (IsValid(phys)) then
-				---------------------------------------------------------------------------Movimiento
-				if (ent.moving) then
-					--if (ent.chaseStance == false or ent.targetEntity == nil) then
-					local moveVector = (ent.targetPos-entPos):GetNormalized()*ent.speed-ent:GetVelocity()*0.5
-					force = Vector(moveVector.x, moveVector.y, 0)
-					-- OLD MOVEMENT, MOVE IN THINK. NEW MOVEMENT IN PHYSICS UPDATE
-					--phys:ApplyForceCenter (force*phys:GetMass())
-					-- new:
-					ent.phys:Wake()
-					ent.moveForce = force*0.5*ent.moveForceMultiplier
-					--end
-				end
-
-				if (ent.moving and ent.ai) then
-					local distanceToLastPosition = (ent.lastPosition-entPos):LengthSqr()
-
-					if (ent.lastPosition ~= Vector(0,0,0) and distanceToLastPosition > 500000) then --Stop moving if distance from lastposition is ridiculous (teleported)
-						ent:FinishMovement()
-						ent.lastPosition = Vector(0,0,0)
-					elseif (distanceToLastPosition < (ent.speed/2)*(ent.speed/2))then
-						ent.stuck = ent.stuck+1
-					else
-						ent.lastPosition = entPos
-						ent.stuck = 0
-					end
-
-					if (ent.stuck%8 == 7) then
-						if (ent.stuck > 40) then
-							if not ent.chaseStance then
-								ent.targetEntity = nil
-								ent:FinishMovement()
-								ent.stuck = 0
-							end
-						else
-							if not ent.chaseStance or (ent.chaseStance and not IsValid(ent.targetEntity)) then
-								ent:Unstuck()
-							end
-						end
-					end
-				end
-			end
-
-			local flattenedTargetPos = Vector(ent.targetPos.x, ent.targetPos.y, entPos.z)
-			if (ent.ai) then
-				if ((flattenedTargetPos-entPos):LengthSqr() < 30*30) then
-					ent:FinishMovement()
-				end
-			else
-				if ((flattenedTargetPos-entPos):LengthSqr() < 10*10) then
-					ent:FinishMovement()
-				end
-			end
-
-			ent:SetNWBool("moving", ent.moving)
-			ent:NextThink(CurTime() + 0.1)
-			return true
+	if (ent.damage > 0) then -- Apply damage
+		ent.gotHit = true
+		ent.HP = ent.HP-ent.damage
+		ent:SetNWFloat( "health", ent.HP )
+		ent.damage = 0
+		if (ent.HP <= 0) then
+			MW_Die( ent )
 		end
 	end
-	--]]--
+
+	ent:SetNWEntity( "targetEntity", ent.targetEntity )
+	ent:SetNWEntity( "followEntity", ent.followEntity )
+
+	local entPos = ent:GetPos()
+	local followEntityPos = Vector(0,0,0)
+	if (IsValid(ent.followEntity)) then
+		followEntityPos = ent.followEntity:GetPos()
+	end
+	local targetEntityPos = Vector(0,0,0)
+	if (IsValid(ent.targetEntity)) then
+		targetEntityPos = ent.targetEntity:GetPos()
+	end
+
+	if not ent.canMove then return end
+	if (ent.followEntity ~= ent) then
+		if (IsValid(ent.followEntity)) then
+			if ((followEntityPos-entPos):LengthSqr() > ent.range*ent.range) then
+				ent.targetPos = followEntityPos+(entPos-followEntityPos):GetNormalized()*ent.range*0.5
+				ent.moving = true
+			end
+		end
+	else
+		if (ent.chasing) then
+			if (IsValid(ent.targetEntity)) then
+				if ((targetEntityPos-entPos):LengthSqr() > ent.range*ent.range) then
+					local chanceDistMul = 0.9
+					if (ent.meleeAi) then
+						chanceDistMul = 0.2
+					end
+					ent.targetPos = targetEntityPos+(entPos-targetEntityPos):GetNormalized()*ent.range*chanceDistMul
+					ent.moving = true
+				end
+			end
+		end
+	end
+
+	local phys = ent.phys
+
+	if (IsValid(phys)) then
+		---------------------------------------------------------------------------Movimiento
+		if (ent.moving) then
+			--if (ent.chaseStance == false or ent.targetEntity == nil) then
+			local moveVector = (ent.targetPos-entPos):GetNormalized()*ent.speed-ent:GetVelocity()*0.5
+			force = Vector(moveVector.x, moveVector.y, 0)
+			-- OLD MOVEMENT, MOVE IN THINK. NEW MOVEMENT IN PHYSICS UPDATE
+			--phys:ApplyForceCenter (force*phys:GetMass())
+			-- new:
+			ent.phys:Wake()
+			ent.moveForce = force*0.5*ent.moveForceMultiplier
+			--end
+		end
+
+		if (ent.moving and ent.ai) then
+			local distanceToLastPosition = (ent.lastPosition-entPos):LengthSqr()
+
+			if (ent.lastPosition ~= Vector(0,0,0) and distanceToLastPosition > 500000) then --Stop moving if distance from lastposition is ridiculous (teleported)
+				ent:FinishMovement()
+				ent.lastPosition = Vector(0,0,0)
+			elseif (distanceToLastPosition < (ent.speed/2)*(ent.speed/2))then
+				ent.stuck = ent.stuck+1
+			else
+				ent.lastPosition = entPos
+				ent.stuck = 0
+			end
+
+			if (ent.stuck%8 == 7) then
+				if (ent.stuck > 40) then
+					if not ent.chaseStance then
+						ent.targetEntity = nil
+						ent:FinishMovement()
+						ent.stuck = 0
+					end
+				else
+					if not ent.chaseStance or (ent.chaseStance and not IsValid(ent.targetEntity)) then
+						ent:Unstuck()
+					end
+				end
+			end
+		end
+	end
+
+	local flattenedTargetPos = Vector(ent.targetPos.x, ent.targetPos.y, entPos.z)
+	if (ent.ai) then
+		if ((flattenedTargetPos-entPos):LengthSqr() < 30*30) then
+			ent:FinishMovement()
+		end
+	else
+		if ((flattenedTargetPos-entPos):LengthSqr() < 10*10) then
+			ent:FinishMovement()
+		end
+	end
+
+	ent:SetNWBool("moving", ent.moving)
+	ent:NextThink(CurTime() + 0.1)
+	return true
 end
 
 function ENT:Unstuck()
 	local phys = self.phys
-	if (CurTime() > self.nextJump) then
-		phys:ApplyForceCenter (Vector(0,0,self.speed*2.5)*phys:GetMass())
-		self.nextJump = CurTime()+1
-	end
+	if CurTime() <= self.nextJump then return end
+	phys:ApplyForceCenter (Vector(0,0,self.speed*2.5)*phys:GetMass())
+	self.nextJump = CurTime()+1
 end
 
-function ENT:OnFinishMovement()
-
-end
-
-function ENT:FinishMovement ()
+function ENT:FinishMovement()
 	if (self.rallyPoints[1] == Vector(0,0,0)) then
 		self.moving = false
 		self.stuck = 0
@@ -452,10 +431,9 @@ function ENT:FinishMovement ()
 		end
 		self.rallyPoints[30] = Vector(0,0,0)
 	end
-	self:OnFinishMovement()
 end
 
-function ENT:RemoveRallyPoints ()
+function ENT:RemoveRallyPoints()
 	for i=1, 30 do
 		self.rallyPoints[i] = Vector(0,0,0)
 	end
@@ -474,7 +452,6 @@ function ENT:SameTeam(ent)
 end
 
 function ENT:Align( reference, target, multiplier )
-
 	local cross = reference:Cross(target)
 	local torque = cross*multiplier
 
@@ -488,7 +465,6 @@ function ENT:StopAngularVelocity( percent )
 end
 
 function ENT:ApplyTorque( torque )
-
 	local forceOffset = torque:Angle():Right()
 	local forceDirection = torque:Cross(forceOffset)
 
@@ -498,144 +474,143 @@ end
 
 function MW_UnitDefaultThink( ent )
 	if not util.IsInWorld( ent:GetPos() ) then ent:Remove() end
-	if (ent.canShoot and ent.ai) then
-		local pos = ent:GetPos()
-		if (ent.targetEntity == nil or ent.targetEntity.Base == "ent_melon_prop_base" or ent.targetEntity:GetNWInt("propHP",-1) ~= -1) then
-			----------------------------------------------------------------------Buscar target
-			local foundEnts = ents.FindInSphere(pos, ent.range )
-			for k, v in RandomPairs( foundEnts ) do
-				if (v.Base == "ent_melon_base") then --si es una sandía
-					if (v:GetNWInt("mw_melonTeam", 0) ~= ent:GetNWInt("mw_melonTeam", 0)) then -- si tienen distinto equipo
-						if (v.targetable) then -- si es targeteable
-							if not ent:SameTeam(v) then -- si no es un aliado
-								if (ent.careForWalls) then
-									local tr = util.TraceLine( {
-									start = pos,
-									endpos = v:GetPos()+v:GetVar("shotOffset",Vector(0,0,0)),
-									filter = function( foundEnt )
-										if ( foundEnt:GetClass() == "prop_physics") then--si hay un prop en el medio
-											return true
-										end
-										if (ent.careForFriendlyFire) then --No dispara si hay un compañero en el camino
-											if ( foundEnt.Base == "ent_melon_base" ) then
-												if (foundEnt:GetNWInt("mw_melonTeam", -1) == ent:GetNWInt("mw_melonTeam", 0) and foundEnt ~= ent) then
-													return true
-												end
+	if not ( ent.canShoot and ent.ai ) then return end
+	local pos = ent:GetPos()
+	if (ent.targetEntity == nil or ent.targetEntity.Base == "ent_melon_prop_base" or ent.targetEntity:GetNWInt("propHP",-1) ~= -1) then
+		----------------------------------------------------------------------Buscar target
+		local foundEnts = ents.FindInSphere(pos, ent.range )
+		for k, v in RandomPairs( foundEnts ) do
+			if (v.Base == "ent_melon_base") then --si es una sandía
+				if (v:GetNWInt("mw_melonTeam", 0) ~= ent:GetNWInt("mw_melonTeam", 0)) then -- si tienen distinto equipo
+					if (v.targetable) then -- si es targeteable
+						if not ent:SameTeam(v) then -- si no es un aliado
+							if (ent.careForWalls) then
+								local tr = util.TraceLine( {
+								start = pos,
+								endpos = v:GetPos()+v:GetVar("shotOffset",Vector(0,0,0)),
+								filter = function( foundEnt )
+									if ( foundEnt:GetClass() == "prop_physics") then--si hay un prop en el medio
+										return true
+									end
+									if (ent.careForFriendlyFire) then --No dispara si hay un compañero en el camino
+										if ( foundEnt.Base == "ent_melon_base" ) then
+											if (foundEnt:GetNWInt("mw_melonTeam", -1) == ent:GetNWInt("mw_melonTeam", 0) and foundEnt ~= ent) then
+												return true
 											end
 										end
 									end
-									})
 								end
-								if (not ent.careForWalls or (tr ~= nil and tostring(tr.Entity) == '[NULL Entity]')) then
-								----------------------------------------------------------Encontró target
-									ent.targetEntity = v
-								end
+								})
+							end
+							if (not ent.careForWalls or (tr ~= nil and tostring(tr.Entity) == '[NULL Entity]')) then
+							----------------------------------------------------------Encontró target
+								ent.targetEntity = v
 							end
 						end
 					end
 				end
 			end
-			-------------------------------------------------Si aun asi no encontró target
-			if (ent.targetEntity == nil) then
-				for k, v in RandomPairs( foundEnts ) do
-					if (v:GetNWInt("mw_melonTeam", ent:GetNWInt("mw_melonTeam", 0)) ~= ent:GetNWInt("mw_melonTeam", 0) and not string.StartWith( v:GetClass(), "ent_melonbullet_" ) and not ent:SameTeam(v)) then --si es de otro equipo
-						if (ent.chaseStance) then
-							if (v:GetClass() == "ent_melon_wall") then
-								if (ent.stuck > 15) then
-									if (IsValid(ent.barrier)) then
-										ent.targetEntity = ent.barrier
-									else
-										ent.targetEntity = v
-									end
+		end
+		-------------------------------------------------Si aun asi no encontró target
+		if (ent.targetEntity == nil) then
+			for k, v in RandomPairs( foundEnts ) do
+				if (v:GetNWInt("mw_melonTeam", ent:GetNWInt("mw_melonTeam", 0)) ~= ent:GetNWInt("mw_melonTeam", 0) and not string.StartWith( v:GetClass(), "ent_melonbullet_" ) and not ent:SameTeam(v)) then --si es de otro equipo
+					if (ent.chaseStance) then
+						if (v:GetClass() == "ent_melon_wall") then
+							if (ent.stuck > 15) then
+								if (IsValid(ent.barrier)) then
+									ent.targetEntity = ent.barrier
+								else
+									ent.targetEntity = v
 								end
-							else
-								ent.targetEntity = v
 							end
 						else
 							ent.targetEntity = v
 						end
+					else
+						ent.targetEntity = v
 					end
-				end
-			end
-		end 
-
-		if (ent.targetEntity ~= nil) then
-			----------------------------------------------------------------------Perder target
-			----------------------------------------porque no existe
-			if not IsValid(ent.targetEntity) then
-				ent.stuck = 0
-				return ent:LoseTarget()
-			----------------------------------------por que esta en el 0,0,0
-			elseif (ent.targetEntity:GetPos() == Vector(0,0,0)) then
-				return ent:LoseTarget()
-			end
-			----------------------------------------porque es intargeteable
-			if (not ent.targetable) then
-				return ent:LoseTarget()
-			end
-			----------------------------------------porque es el mismo
-			if (ent.targetEntity == ent or ent.forcedTargetEntity == ent) then
-				return ent:LoseTarget()
-			end
-			----------------------------------------porque es un aliado
-			if (ent:SameTeam(ent.targetEntity) or ent:SameTeam(ent.targetEntity)) then
-				return ent:LoseTarget()
-			end
-			----------------------------------------porque está lejos (o muy cerca)
-			local targetDist = ent.targetEntity:GetPos():Distance(pos)
-			if (IsValid(ent.targetEntity) and (targetDist > ent.range+ent.targetEntity:GetNWFloat( "baseSize", 0) or targetDist < ent.minRange)) then
-				if (ent.chaseStance and ent.ai_chases) then
-					if (not ent.chasing) then
-						ent.holdGroundPosition = ent:GetPos()
-						ent.chasing = true
-					end
-					local tepos = ent.targetEntity:GetPos()
-					ent:SetVar("targetPos", tepos)
-					ent:SetNWVector("targetPos", tepos)
-					ent:SetVar("moving", true)
-					ent:SetVar("followEntity", ent)
-					ent:SetNWEntity("followEntity", ent)
-					if ((tepos-ent.holdGroundPosition):LengthSqr() > ent.maxChaseDistance*ent.maxChaseDistance) then
-						ent:LoseTarget()
-					end
-				else
-					ent:LoseTarget()
-				end
-				return false
-			end
-			
-			----------------------------------------------objetivo forzado
-			if (IsValid(ent.forcedTargetEntity)) then
-				ent.targetEntity = ent.forcedTargetEntity
-			else
-				ent.forcedTargetEntity = nil
-			end
-			
-			local tr = util.TraceLine( {
-				start = pos,
-				endpos = ent.targetEntity:GetPos()+ent.targetEntity:GetVar("shotOffset", Vector(0,0,0)),
-				--filter = function( foundEntity ) if (( (foundEntity:GetClass() == "ent_melon_wall" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1)) or (foundEntity:GetClass() == "prop_physics" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1)) ) and foundEntity ~= ent.targetEntity ) then return true end end
-				filter = function( foundEntity ) if (foundEntity.Base ~= "ent_melon_base" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1) or foundEntity:GetClass() == "prop_physics" and foundEntity ~= ent.targetEntity) then return true end end
-				})
-			----------------------------------------por que hay algo en el medio
-
-			if (ent.careForWalls) then
-				if (tostring(tr.Entity) ~= '[NULL Entity]') then
-					return ent:LoseTarget()
-				end
-
-				if (tostring(tr.Entity) == "Entity [0][worldspawn]") then
-					return ent:LoseTarget()
 				end
 			end
 		end
-		
-		if (ent.targetEntity ~= nil) then
-			local distance = ent.targetEntity:GetPos():Distance(ent:GetPos())
-			if (distance < ent.range+ent.targetEntity:GetNWFloat( "baseSize", 0) and distance > ent.minRange) then
-				if (ent.targetEntity:GetNWInt("mw_melonTeam", 0) ~= ent:GetNWInt("mw_melonTeam", 0)) then
-					ent:Shoot( ent )
+	end 
+
+	if (ent.targetEntity ~= nil) then
+		----------------------------------------------------------------------Perder target
+		----------------------------------------porque no existe
+		if not IsValid(ent.targetEntity) then
+			ent.stuck = 0
+			return ent:LoseTarget()
+		----------------------------------------por que esta en el 0,0,0
+		elseif (ent.targetEntity:GetPos() == Vector(0,0,0)) then
+			return ent:LoseTarget()
+		end
+		----------------------------------------porque es intargeteable
+		if (not ent.targetable) then
+			return ent:LoseTarget()
+		end
+		----------------------------------------porque es el mismo
+		if (ent.targetEntity == ent or ent.forcedTargetEntity == ent) then
+			return ent:LoseTarget()
+		end
+		----------------------------------------porque es un aliado
+		if (ent:SameTeam(ent.targetEntity) or ent:SameTeam(ent.targetEntity)) then
+			return ent:LoseTarget()
+		end
+		----------------------------------------porque está lejos (o muy cerca)
+		local targetDist = ent.targetEntity:GetPos():Distance(pos)
+		if (IsValid(ent.targetEntity) and (targetDist > ent.range+ent.targetEntity:GetNWFloat( "baseSize", 0) or targetDist < ent.minRange)) then
+			if (ent.chaseStance and ent.ai_chases) then
+				if (not ent.chasing) then
+					ent.holdGroundPosition = ent:GetPos()
+					ent.chasing = true
 				end
+				local tepos = ent.targetEntity:GetPos()
+				ent:SetVar("targetPos", tepos)
+				ent:SetNWVector("targetPos", tepos)
+				ent:SetVar("moving", true)
+				ent:SetVar("followEntity", ent)
+				ent:SetNWEntity("followEntity", ent)
+				if ((tepos-ent.holdGroundPosition):LengthSqr() > ent.maxChaseDistance*ent.maxChaseDistance) then
+					ent:LoseTarget()
+				end
+			else
+				ent:LoseTarget()
+			end
+			return false
+		end
+
+		----------------------------------------------objetivo forzado
+		if (IsValid(ent.forcedTargetEntity)) then
+			ent.targetEntity = ent.forcedTargetEntity
+		else
+			ent.forcedTargetEntity = nil
+		end
+
+		local tr = util.TraceLine( {
+			start = pos,
+			endpos = ent.targetEntity:GetPos()+ent.targetEntity:GetVar("shotOffset", Vector(0,0,0)),
+			--filter = function( foundEntity ) if (( (foundEntity:GetClass() == "ent_melon_wall" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1)) or (foundEntity:GetClass() == "prop_physics" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1)) ) and foundEntity ~= ent.targetEntity ) then return true end end
+			filter = function( foundEntity ) if (foundEntity.Base ~= "ent_melon_base" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1) or foundEntity:GetClass() == "prop_physics" and foundEntity ~= ent.targetEntity) then return true end end
+			})
+		----------------------------------------por que hay algo en el medio
+
+		if (ent.careForWalls) then
+			if (tostring(tr.Entity) ~= '[NULL Entity]') then
+				return ent:LoseTarget()
+			end
+
+			if (tostring(tr.Entity) == "Entity [0][worldspawn]") then
+				return ent:LoseTarget()
+			end
+		end
+	end
+
+	if (ent.targetEntity ~= nil) then
+		local distance = ent.targetEntity:GetPos():Distance(ent:GetPos())
+		if (distance < ent.range+ent.targetEntity:GetNWFloat( "baseSize", 0) and distance > ent.minRange) then
+			if (ent.targetEntity:GetNWInt("mw_melonTeam", 0) ~= ent:GetNWInt("mw_melonTeam", 0)) then
+				ent:Shoot( ent )
 			end
 		end
 	end
@@ -659,18 +634,17 @@ function ENT:LoseTarget()
 end
 
 function ENT:PhysicsCollide( colData, physObject )
-	if (IsValid(colData.HitEntity)) then
-		local other = colData.HitEntity
-		local otherTargetPos = other:GetVar('targetPos')
-		if ((otherTargetPos == self.targetPos and other:GetVar('moving', false) == false) or self.rallyPoints[1] == otherTargetPos) then
-			self:FinishMovement()
-		end
-		if (other:GetNWFloat("mw_sick", 0) > self:GetNWFloat("mw_sick", 0)) then
-			self:SetNWFloat("mw_sick", other:GetNWFloat("mw_sick", 0))
-		end
-		if (other:GetClass() == "ent_melon_wall") then
-			self.barrier = other
-		end
+	if not IsValid(colData.HitEntity) then return end
+	local other = colData.HitEntity
+	local otherTargetPos = other:GetVar('targetPos')
+	if (otherTargetPos == self.targetPos and other:GetVar('moving', false) == false) or self.rallyPoints[1] == otherTargetPos then
+		self:FinishMovement()
+	end
+	if other:GetNWFloat("mw_sick", 0) > self:GetNWFloat("mw_sick", 0) then
+		self:SetNWFloat("mw_sick", other:GetNWFloat("mw_sick", 0))
+	end
+	if other:GetClass() == "ent_melon_wall" then
+		self.barrier = other
 	end
 end
 
@@ -678,7 +652,6 @@ function MW_DefaultShoot( ent, forceTargetPos )
 	local pos = ent:GetPos()+ent.shotOffset
 	--------------------------------------------------------Disparar
 	if (forceTargetPos ~= nil or IsValid(ent.targetEntity)) then
-
 		local dir = nil
 		if (IsValid(ent.targetEntity)) then
 			local targetPos = ent.targetEntity:GetPos()-ent.targetEntity:OBBCenter()
@@ -801,14 +774,11 @@ function ENT:DeathEffect( ent )
 end
 
 function MW_Die( ent )
-	if (IsValid(ent)) then
-		if (not cvars.Bool("mw_admin_immortality")) then
-			if (ent.DeathEffect ~= nil) then
-				--ent:SpawnDoot()
-				ent:DeathEffect ( ent )
-			end
-		end
-	end
+	if not IsValid(ent) then return end
+	if cvars.Bool("mw_admin_immortality") then return end
+	if ent.DeathEffect == nil then return end
+	-- ent:SpawnDoot()
+	ent:DeathEffect ( ent )
 end
 
 function ENT:MW_PropDefaultDeathEffect( ent )
@@ -820,11 +790,11 @@ function ENT:MW_PropDefaultDeathEffect( ent )
 end
 
 function ENT:PhysicsUpdate()
-	self:DefaultPhysicsUpdate ()
+	self:DefaultPhysicsUpdate()
 end
 
-function ENT:DefaultPhysicsUpdate ()
-	if (cvars.Bool("mw_admin_playing") ) then
+function ENT:DefaultPhysicsUpdate()
+	if cvars.Bool("mw_admin_playing") then
 		if (self.moving) then
 			if (self:GetVelocity():LengthSqr() < self.speed*self.speed) then
 				self.phys:ApplyForceCenter (self.moveForce*self.phys:GetMass())
@@ -841,7 +811,7 @@ function ENT:DefaultPhysicsUpdate ()
 end
 
 function ENT:OnTakeDamage( damage )
-	if ((damage:GetAttacker():GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not damage:GetAttacker():GetVar('careForFriendlyFire')) and not damage:GetAttacker():IsPlayer()) then 
+	if (damage:GetAttacker():GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not damage:GetAttacker():GetVar('careForFriendlyFire')) and not damage:GetAttacker():IsPlayer() then 
 		local damageDone = 0
 		
 		if (self.canMove == true) then
@@ -867,12 +837,7 @@ function ENT:OnTakeDamage( damage )
 		if (self.HP <= 0) then
 			MW_Die (self)
 		end
-		self:_OnTakeDamage( damage )
 	end
-end
-
-function ENT:_OnTakeDamage( damage )
-
 end
 
 function ENT:OnRemove()
@@ -887,22 +852,20 @@ function ENT:OnRemove()
 end
 
 function ENT:DefaultOnRemove()
-	if (SERVER) then
-		if (IsValid(self)) then
-			MW_UpdatePopulation(-self.population, self:GetNWInt("mw_melonTeam", 0))
-			if not self.gotHit and CurTime()-self:GetCreationTime() < 30 and not self.fired then
-				if (mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ~= nil) then
-					mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)]+self.value
-				end
-				for k, v in pairs( player.GetAll() ) do
-					if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
-						if (self:GetNWInt("mw_melonTeam", 0) ~= 0) then
-							net.Start("MW_TeamCredits")
-								net.WriteInt(mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
-							net.Send(v)
-							--v:PrintMessage( HUD_PRINTTALK, "== "..self.value.." Water Refunded" )
-						end
-					end
+	if not SERVER then return end
+	if not IsValid(self) then return end
+	MW_UpdatePopulation(-self.population, self:GetNWInt("mw_melonTeam", 0))
+	if not self.gotHit and CurTime()-self:GetCreationTime() < 30 and not self.fired then
+		if (mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ~= nil) then
+			mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)]+self.value
+		end
+		for _, v in ipairs( player.GetAll() ) do
+			if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
+				if (self:GetNWInt("mw_melonTeam", 0) ~= 0) then
+					net.Start("MW_TeamCredits")
+						net.WriteInt(mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
+					net.Send(v)
+					--v:PrintMessage( HUD_PRINTTALK, "== "..self.value.." Water Refunded" )
 				end
 			end
 		end
@@ -910,12 +873,12 @@ function ENT:DefaultOnRemove()
 end
 
 function MW_UpdatePopulation (ammount, teamID)
-	--if (SERVER) then
-	if (ammount ~= 0 and teamID ~= 0 and teamID ~= nil) then
+	-- if not SERVER then return end
+	if ammount ~= 0 and teamID ~= 0 and teamID ~= nil then
 		mw_teamUnits[teamID] = mw_teamUnits[teamID]+ammount
 		local ownerPlayers = {}
 		ownerPlayers = player.GetAll()
-		local i = 0	--Parche horrible: cada vez que elimina a alguien de la lista, al remover a alguien mas busca un lugar antes, ya que la lista se acomodó para rellenar el espacio vacio
+		local i = 0 --Parche horrible: cada vez que elimina a alguien de la lista, al remover a alguien mas busca un lugar antes, ya que la lista se acomodó para rellenar el espacio vacio
 		for k, v in pairs( player.GetAll() ) do
 			if (v:GetInfoNum("mw_team", 0) ~= teamID) then
 				table.remove(ownerPlayers, k-i)
@@ -926,7 +889,6 @@ function MW_UpdatePopulation (ammount, teamID)
 			net.WriteInt(mw_teamUnits[teamID] ,16)
 		net.Send(ownerPlayers)
 	end
-	--end
 end
 
 function ENT:BarrackInitialize ()
@@ -989,135 +951,126 @@ function ENT:BarrackSlowThink()
 		end
 	end
 
-	if (self.spawned) then
-		if(cvars.Bool("mw_admin_playing")) then
-			if not self.unitspawned then
-				if (self:GetNWFloat("nextSlowThink") < CurTime()+self:GetNWFloat("overdrive", 0)) then
-					if (EnoughPower(ent:GetNWInt("mw_melonTeam", 0))) then
-						self:SetNWFloat("overdrive", 0)
-						local newMarine = ents.Create( self.unit_class )
-						if not IsValid( newMarine ) then return end -- Check whether we successfully made an entity, if not - bail
-						local rotatedShotOffset = Vector(ent.shotOffset.x, ent.shotOffset.y, ent.shotOffset.z)
-						rotatedShotOffset:Rotate(self:GetAngles())
-						newMarine:SetPos( ent:GetPos() + Vector(0,0,20) + rotatedShotOffset)
-					
-						sound.Play( "doors/door_latch1.wav", ent:GetPos(), 75, 150, 1 )
-					
-						mw_melonTeam = ent:GetNWInt("mw_melonTeam", 0)
-					
-						newMarine:Spawn()
-						newMarine:SetNWInt("mw_melonTeam", ent:GetNWInt("mw_melonTeam", 0))
-						newMarine:Ini(ent:GetNWInt("mw_melonTeam", 0))
+	if self.spawned == false then return end
+	if not cvars.Bool("mw_admin_playing") then return end
+	if not self.unitspawned then
+		if (self:GetNWFloat("nextSlowThink") < CurTime()+self:GetNWFloat("overdrive", 0)) then
+			if (EnoughPower(ent:GetNWInt("mw_melonTeam", 0))) then
+				self:SetNWFloat("overdrive", 0)
+				local newMarine = ents.Create( self.unit_class )
+				if not IsValid( newMarine ) then return end -- Check whether we successfully made an entity, if not - bail
+				local rotatedShotOffset = Vector(ent.shotOffset.x, ent.shotOffset.y, ent.shotOffset.z)
+				rotatedShotOffset:Rotate(self:GetAngles())
+				newMarine:SetPos( ent:GetPos() + Vector(0,0,20) + rotatedShotOffset)
 
-						for i=1, 30 do
-							newMarine.rallyPoints[i] = self.rallyPoints[i]
-						end
+				sound.Play( "doors/door_latch1.wav", ent:GetPos(), 75, 150, 1 )
 
-						if (cvars.Bool("mw_admin_credit_cost")) then
-							newMarine.value = self.unit_cost
-						else
-							newMarine.value = 0
-						end
+				mw_melonTeam = ent:GetNWInt("mw_melonTeam", 0)
 
-						if (ent.targetPos == ent:GetPos()) then
-							newMarine:SetVar('targetPos', ent:GetPos()+Vector(100,0,0))
-							newMarine:SetNWVector('targetPos', ent:GetPos()+Vector(100,0,0))
-						else
-							newMarine:SetVar('targetPos', ent.targetPos+Vector(0,0,1))
-							newMarine:SetNWVector('targetPos', ent.targetPos+Vector(0,0,1))
-						end
-						newMarine:SetVar('moving', true)
+				newMarine:Spawn()
+				newMarine:SetNWInt("mw_melonTeam", ent:GetNWInt("mw_melonTeam", 0))
+				newMarine:Ini(ent:GetNWInt("mw_melonTeam", 0))
 
-						if (IsValid(self:GetOwner())) then
-							if (self:GetOwner():GetInfo( "mw_enable_skin" ) == "1") then
-								local _skin = mw_special_steam_skins[self:GetOwner():SteamID()]
-								if (_skin ~= nil) then
-									if (_skin.material ~= nil) then
-										newMarine:SkinMaterial(_skin.material)
-									end
-									--if (_skin.trail ~= nil) then
-									--	local color = Color(newMarine:GetColor().r*_skin.teamcolor+255*(1-_skin.teamcolor), newMarine:GetColor().g*_skin.teamcolor+255*(1-_skin.teamcolor), newMarine:GetColor().b*_skin.teamcolor+255*(1-_skin.teamcolor))
-									--	util.SpriteTrail( newMarine, 0, color, false, _skin.startSize, _skin.endSize, _skin.length, 1 / _skin.startSize * 0.5, _skin.trail )
-									--end
-								end
-							end
-						end
-				
-						table.insert(ent.melons, newMarine)
-						undo.Create("Melon Marine")
-						 undo.AddEntity( newMarine )
-						 undo.SetPlayer( ent:GetOwner())
-						undo.Finish()
-
-						if (self:GetNWBool("active", false)) then
-							self.nextSlowThink = CurTime()+self.slowThinkTimer
-							self:SetNWFloat("nextSlowThink", self.nextSlowThink)
-						end
-						self.unitspawned = true
-						self:SetNWBool("spawned", self.unitspawned)
-					end
+				for i=1, 30 do
+					newMarine.rallyPoints[i] = self.rallyPoints[i]
 				end
-			end
 
-			self:SetNWInt("count", 0)
-			for k, v in pairs( ent.melons ) do
-				if (IsValid(v)) then
-					self:SetNWInt("count", self:GetNWInt("count", 0)+1)
+				if (cvars.Bool("mw_admin_credit_cost")) then
+					newMarine.value = self.unit_cost
 				else
-					table.remove(ent.melons, k)
+					newMarine.value = 0
 				end
-			end
 
-			if (self:GetNWBool("active", false)) then
-				if (self.unitspawned) then
-					if (self:GetNWInt("count", 0) < self:GetNWInt("maxunits", 0) and EnoughPower(self:GetNWInt("mw_melonTeam", -1))) then
-						if (mw_teamCredits[ent:GetNWInt("mw_melonTeam", 0)] >= self.unit_cost or not cvars.Bool("mw_admin_credit_cost")) then
-							-- Start Production
-							--self:SetNWBool("spawned", false)
-							------
+				if (ent.targetPos == ent:GetPos()) then
+					newMarine:SetVar('targetPos', ent:GetPos()+Vector(100,0,0))
+					newMarine:SetNWVector('targetPos', ent:GetPos()+Vector(100,0,0))
+				else
+					newMarine:SetVar('targetPos', ent.targetPos+Vector(0,0,1))
+					newMarine:SetNWVector('targetPos', ent.targetPos+Vector(0,0,1))
+				end
+				newMarine:SetVar('moving', true)
 
-							if (cvars.Bool("mw_admin_credit_cost")) then
-								mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)]-self.unit_cost
-								for k, v in pairs( player.GetAll() ) do
-									if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
-										net.Start("MW_TeamCredits")
-											net.WriteInt(mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
-										net.Send(v)
-									end
-								end
+				if (IsValid(self:GetOwner())) then
+					if (self:GetOwner():GetInfo( "mw_enable_skin" ) == "1") then
+						local _skin = mw_special_steam_skins[self:GetOwner():SteamID()]
+						if (_skin ~= nil) then
+							if (_skin.material ~= nil) then
+								newMarine:SkinMaterial(_skin.material)
 							end
-
-							self.nextSlowThink = CurTime()+self.slowThinkTimer
-							self:SetNWFloat("nextSlowThink", self.nextSlowThink)
-							self.unitspawned = false
-							self:SetNWBool("spawned", self.unitspawned)
+							--if (_skin.trail ~= nil) then
+							--	local color = Color(newMarine:GetColor().r*_skin.teamcolor+255*(1-_skin.teamcolor), newMarine:GetColor().g*_skin.teamcolor+255*(1-_skin.teamcolor), newMarine:GetColor().b*_skin.teamcolor+255*(1-_skin.teamcolor))
+							--	util.SpriteTrail( newMarine, 0, color, false, _skin.startSize, _skin.endSize, _skin.length, 1 / _skin.startSize * 0.5, _skin.trail )
+							--end
 						end
-					else
-						self.unitspawned = true
-						self:SetNWBool("spawned", self.unitspawned)
 					end
 				end
-			--else
-			--	self.nextSlowThink = CurTime()+1
-			--	self:SetNWFloat("nextSlowThink", self.nextSlowThink)
-			--	self.unitspawned = false
-			--	self:SetNWBool("spawned", self.unitspawned)
+
+				table.insert(ent.melons, newMarine)
+				undo.Create("Melon Marine")
+					undo.AddEntity( newMarine )
+					undo.SetPlayer( ent:GetOwner())
+				undo.Finish()
+
+				if (self:GetNWBool("active", false)) then
+					self.nextSlowThink = CurTime()+self.slowThinkTimer
+					self:SetNWFloat("nextSlowThink", self.nextSlowThink)
+				end
+				self.unitspawned = true
+				self:SetNWBool("spawned", self.unitspawned)
 			end
 		end
 	end
-end
 
-function ENT:SpecificThink()
+	self:SetNWInt("count", 0)
+	for k, v in pairs( ent.melons ) do
+		if (IsValid(v)) then
+			self:SetNWInt("count", self:GetNWInt("count", 0)+1)
+		else
+			table.remove(ent.melons, k)
+		end
+	end
 
+	if (self:GetNWBool("active", false)) then
+		if self.unitspawned == false then return end
+		if (self:GetNWInt("count", 0) < self:GetNWInt("maxunits", 0) and EnoughPower(self:GetNWInt("mw_melonTeam", -1))) then
+			if not (mw_teamCredits[ent:GetNWInt("mw_melonTeam", 0)] >= self.unit_cost or not cvars.Bool("mw_admin_credit_cost")) then return end
+			-- Start Production
+			--self:SetNWBool("spawned", false)
+
+			if (cvars.Bool("mw_admin_credit_cost")) then
+				mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)]-self.unit_cost
+				for k, v in pairs( player.GetAll() ) do
+					if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
+						net.Start("MW_TeamCredits")
+							net.WriteInt(mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
+						net.Send(v)
+					end
+				end
+			end
+
+			self.nextSlowThink = CurTime()+self.slowThinkTimer
+			self:SetNWFloat("nextSlowThink", self.nextSlowThink)
+			self.unitspawned = false
+			self:SetNWBool("spawned", self.unitspawned)
+		else
+			self.unitspawned = true
+			self:SetNWBool("spawned", self.unitspawned)
+		end
+	--else
+	--	self.nextSlowThink = CurTime()+1
+	--	self:SetNWFloat("nextSlowThink", self.nextSlowThink)
+	--	self.unitspawned = false
+	--	self:SetNWBool("spawned", self.unitspawned)
+	end
 end
 
 function ENT:PlayHudSound(sndFile, volume, pitch, _team)
 	local toAll = false
-	if (_team == nil) then
+	if _team == nil then
 		toAll = true
 	end
-	for k, v in pairs( player.GetAll() ) do
-		if (toAll or v:GetInfoNum("mw_team", 0) == _team) then
+	for _, v in ipairs( player.GetAll() ) do
+		if toAll or v:GetInfoNum("mw_team", 0) == _team then
 			local snd = CreateSound( v, sndFile )
 			snd:PlayEx( volume, pitch )
 		end
