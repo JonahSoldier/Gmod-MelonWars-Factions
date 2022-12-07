@@ -10,7 +10,7 @@ hook.Add( "Initialize", "MelonWars_StartPlyData", function()
 
 	LocalPlayer().mw_toolCost = -1
 	LocalPlayer().mw_hudColor = Color(10,10,10,20)
-	
+
 	LocalPlayer().mw_hover = 0
 	LocalPlayer().mw_menu = 0
 	LocalPlayer().mw_selectTimer = 0
@@ -18,7 +18,7 @@ hook.Add( "Initialize", "MelonWars_StartPlyData", function()
 	LocalPlayer().mw_spawnTimer = 0
 	LocalPlayer().mw_cooldown = 0
 	LocalPlayer().mw_frame = nil
-	
+
 	LocalPlayer().mw_units = 0
 	LocalPlayer().mw_credits = 0
 
@@ -33,15 +33,15 @@ end )
 mw_team_colors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
 mw_team_colors[0] = Color(100,100,100,255)
 
-hook.Add( "Think", "MelonWars_SelectingUpdate", function()	
+hook.Add( "Think", "MelonWars_SelectingUpdate", function()
 	--[[if (LocalPlayer().mw_selecting) then
 		LocalPlayer().mw_selEnd = LocalPlayer():GetEyeTrace().HitPos
 	end]]
 	local tr = LocalPlayer():GetEyeTrace()
 	local ent = tr.Entity
 	if ent:GetNWString( "message", "nope" ) ~= "nope" then
-        AddWorldTip( nil, ent:GetNWString( "message", "nope" ), nil, Vector( 0, 0, 0 ), ent )
-    end
+		AddWorldTip( nil, ent:GetNWString( "message", "nope" ), nil, Vector( 0, 0, 0 ), ent )
+	end
 end )
 --[[
 local function OnPlayerChat( ply, text, teamChat, isDead )
@@ -68,7 +68,7 @@ function MW_BeginSelection() -- Previously concommand.Add( "+mw_select", functio
 	sound.Play( "buttons/lightswitch2.wav", ply:GetPos(), 75, 100, 1 )
 
 	if ply:KeyDown( IN_SPEED ) then
-	else 
+	else
 		if istable( ply.foundMelons ) then
 			table.Empty( ply.foundMelons )
 		end
@@ -477,7 +477,7 @@ hook.Add( "PostDrawTranslucentRenderables", "MelonWars_AddHalos", function()
 		render.SetColorMaterial()	
 		render.DrawSphere( zoneTable[i]:GetPos(), zoneRadius, 35, 12, Color( 255, 255, 255, 10*alphaMultiplier ) ) -- pos, radius, qualitylongitude, qualitylatitude, colour
 		render.DrawSphere( zoneTable[i]:GetPos(), -zoneRadius, 35, 12, Color( 255, 255, 255, 10*alphaMultiplier ) ) -- pos, radius, qualitylongitude, qualitylatitude, colour
-	end 
+	end
 
 	render.SetStencilEnable(false)
 	-- halo.Add( zoneTable, Color(200,200,200,255), 0, 3, 1, true, true )
