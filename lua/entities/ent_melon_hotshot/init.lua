@@ -25,7 +25,7 @@ function ENT:Initialize()
 
 	self.angularDamping = 10
 
-	//self:SetPos(self:GetPos()+Vector(0,0,12))
+	--self:SetPos(self:GetPos()+Vector(0,0,12))
 	
 	self.nextShot = CurTime()+3
 
@@ -62,7 +62,7 @@ function ENT:Shoot ( ent, forceTargetPos )
 	if (ent.nextShot < CurTime()) then
 		local pos = ent:GetPos()+ent.shotOffset
 		--------------------------------------------------------Disparar
-		if (forceTargetPos != nil or IsValid(ent.targetEntity)) then
+		if (forceTargetPos ~= nil or IsValid(ent.targetEntity)) then
 			local targetPos
 			if (IsValid(ent.targetEntity)) then
 				targetPos = ent.targetEntity:GetPos()+ent.targetEntity:OBBCenter()
@@ -87,7 +87,7 @@ function ENT:Shoot ( ent, forceTargetPos )
 				rotatedDir:RotateAroundAxis(axis, (i-math.Round(bulletCount/2))*self.shotAngle/bulletCount)
 				local dir = rotatedDir:Forward()
 				local cb = function(attacker,tr,dmginfo)
-					if tr.Entity != nil then
+					if tr.Entity ~= nil then
 						if tr.Entity:IsValid() then 
 							if (not attacker:SameTeam(tr.Entity)) then
 								tr.Entity:Ignite(3)

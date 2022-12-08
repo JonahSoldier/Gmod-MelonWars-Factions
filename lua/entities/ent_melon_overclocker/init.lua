@@ -60,14 +60,14 @@ function ENT:ConnectToBarrack()
 		end
 	end
 	
-	if (closestEntity != nil) then
+	if (closestEntity ~= nil) then
 		self.connection = closestEntity
 		self.slowThinkTimer= closestEntity.slowThinkTimer/10
 		constraint.Rope( self, closestEntity, 0, 0, Vector(0,0,10), Vector(0,0,5), self:GetPos():Distance(closestEntity:GetPos()), 0, 0, 10, "cable/physbeam", false )
 	else
 		for k, v in pairs(player.GetAll()) do
 			if (v:GetInfoNum("mw_team", 0) == self:GetNWInt("mw_melonTeam", 0)) then
-				v:PrintMessage( HUD_PRINTTALK, "///// Over-Clockers must be spawned next to Barracks" )
+				v:PrintMessage( HUD_PRINTTALK, "== Over-Clockers must be spawned next to Barracks! ==" )
 			end
 		end
 		self:Remove()
@@ -75,10 +75,10 @@ function ENT:ConnectToBarrack()
 end
 
 function ENT:SlowThink(ent)
-	if (!IsValid(self.connection)) then
+	if not IsValid(self.connection) then
 		self:DeathEffect( self )
 	else
-		if (self:GetNWBool("active", true) and (!self.connection:GetNWBool("spawned", false) or self.connection:GetClass() == "ent_melon_contraption_assembler") and self.connection:GetNWBool("active", false)) then
+		if (self:GetNWBool("active", true) and (not self.connection:GetNWBool("spawned", false) or self.connection:GetClass() == "ent_melon_contraption_assembler") and self.connection:GetNWBool("active", false)) then
 			if (self:DrainPower(self.slowThinkTimer*10)) then
 				self.connection:SetNWFloat("overdrive", self.connection:GetNWFloat("overdrive", 0)+self.slowThinkTimer/2)
 			end

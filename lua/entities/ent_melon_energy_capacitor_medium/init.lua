@@ -9,8 +9,8 @@ function ENT:Initialize()
 	self.modelString = "models/props_phx/wheels/monster_truck.mdl"
 	self.maxHP = 300
 	self.shotOffset = Vector(0,0,30)
-	//self.Angles = Angle(0,0,0)
-	//self:SetPos(self:GetPos()+Vector(0,0,-5))
+	--self.Angles = Angle(0,0,0)
+	--self:SetPos(self:GetPos()+Vector(0,0,-5))
 	--self:SetPos(self:GetPos()+Vector(0,0,10))
 	self.moveType = MOVETYPE_NONE
 	self.connections = {}
@@ -47,8 +47,8 @@ function ENT:DeathEffect ( ent )
 			effectdata:SetOrigin( ent:GetPos() )
 			util.Effect( "Explosion", effectdata )
 			
-			local pos1 = ent:GetPos()// Set worldpos 1. Add to the hitpos the world normal.
-			local pos2 = ent:GetPos()+Vector(0,0,-20) // Set worldpos 2. Subtract from the hitpos the world normal.
+			local pos1 = ent:GetPos()-- Set worldpos 1. Add to the hitpos the world normal.
+			local pos2 = ent:GetPos()+Vector(0,0,-20) -- Set worldpos 2. Subtract from the hitpos the world normal.
 			ent.fired = true
 			ent:Remove()
 			

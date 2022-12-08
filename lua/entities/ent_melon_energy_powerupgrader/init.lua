@@ -9,10 +9,10 @@ function ENT:Initialize()
 	self.modelString = "models/props_c17/substation_circuitbreaker01a.mdl"
 	self.maxHP = 100
 	self.range = 999999
-	//self.Angles = Angle(0,0,0)
-	///local offset = Vector(0,0,50)
-	//offset:Rotate(self:GetAngles())
-	//self:SetPos(self:GetPos()+offset)
+	--self.Angles = Angle(0,0,0)
+	--/local offset = Vector(0,0,50)
+	--offset:Rotate(self:GetAngles())
+	--self:SetPos(self:GetPos()+offset)
 	--self:SetPos(self:GetPos()+Vector(0,0,10))
 	self.moveType = MOVETYPE_NONE
 	self.canMove = false
@@ -25,7 +25,7 @@ function ENT:Initialize()
 
 	MW_Energy_Setup ( self )
 
-	self.currentPowerEffect = 0 //Almost definitely not the best way to do this but idc
+	self.currentPowerEffect = 0 --Almost definitely not the best way to do this but idc
 	timer.Simple(0.5, function () self:ConnectToBarrack() end)
 end
 
@@ -36,26 +36,24 @@ function ENT:ConnectToBarrack()
 	local found = false
 
 	for k, v in pairs(entities) do
-		if ((v:GetClass() == "ent_melon_energy_powerupgrader") and v:GetNWInt("mw_melonTeam", 0) == self:GetNWInt("mw_melonTeam", 0) and v != self) then
+		if ((v:GetClass() == "ent_melon_energy_powerupgrader") and v:GetNWInt("mw_melonTeam", 0) == self:GetNWInt("mw_melonTeam", 0) and v ~= self) then
 
 			for k, v in pairs(player.GetAll()) do
 				if (v:GetInfoNum("mw_team", 0) == self:GetNWInt("mw_melonTeam", 0)) then
-					v:PrintMessage( HUD_PRINTTALK, "///// You can only have one Anti-power Reactor at a time." )
+					v:PrintMessage( HUD_PRINTTALK, "== You can only have one Anti-power Reactor at a time. ==" )
 				end
 			end
 			self:Remove()
 		end
 	end
-
-
 end
 
 function ENT:Think(ent)
 	if(self.spawned) then
-		local energyCost = 35 // max reduction
+		local energyCost = 35 -- max reduction
 		local powerAffected = 0 
 		
-		//if(mw_electric_network[self.network].energy > 0) then
+		--if(mw_electric_network[self.network].energy > 0) then
 
 		if (powerAffected < mw_electric_network[self.network].energy) then
 			if (powerAffected < energyCost) then
@@ -70,7 +68,7 @@ function ENT:Think(ent)
 		end
 
 		if (self:DrainPower(powerAffected)) then
-			if (self.currentPowerEffect != powerAffected) then			
+			if (self.currentPowerEffect ~= powerAffected) then			
 				MW_UpdatePopulation(self.currentPowerEffect-powerAffected, self:GetNWInt("mw_melonTeam",-1))
 			end
 
@@ -103,7 +101,7 @@ function ENT:DeathEffect ( ent )
 end
 
 function ENT:OnRemove()
-	if (self.currentPowerEffect != 0) then
+	if (self.currentPowerEffect ~= 0) then
 		MW_UpdatePopulation(self.currentPowerEffect, self:GetNWInt("mw_melonTeam",-1))
 	end
 end 
@@ -118,10 +116,10 @@ end
 	
 				self:SetNWString("message", "Reducing power.")
 
-				if !self.powerReduced then
-					//mw_teamUnits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamUnits[self:GetNWInt("mw_melonTeam", 0)]-15
+				if not self.powerReduced then
+					--mw_teamUnits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamUnits[self:GetNWInt("mw_melonTeam", 0)]-15
 					MW_UpdatePopulation(-15, self:GetNWInt("mw_melonTeam",-1))
-					//This is for reducing team power
+					--This is for reducing team power
 
 					for k, v in pairs( player.GetAll() ) do
 						if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
@@ -136,7 +134,7 @@ end
 		else				
 
 			if self.powerReduced then
-				//mw_teamUnits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamUnits[self:GetNWInt("mw_melonTeam", 0)]+15
+				--mw_teamUnits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamUnits[self:GetNWInt("mw_melonTeam", 0)]+15
 				MW_UpdatePopulation(15, self:GetNWInt("mw_melonTeam",-1))
 
 				for k, v in pairs( player.GetAll() ) do

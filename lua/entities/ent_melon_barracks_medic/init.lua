@@ -9,8 +9,8 @@ function ENT:Initialize()
 	self.unit = 2
 	self.modelString = "models/props_junk/wood_crate002a.mdl"
 	self.maxHP = 100
-	//self.Angles = Angle(0,0,0)
-	//self:SetPos(self:GetPos()+Vector(0,0,10))
+	--self.Angles = Angle(0,0,0)
+	--self:SetPos(self:GetPos()+Vector(0,0,10))
 
 	self:BarrackInitialize()
 	self.population = 1

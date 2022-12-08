@@ -100,7 +100,7 @@ function ENT:SlowThink()
 				end
 			end
 			--Si nadie estaba capturando, capturar
-			if (!othersHaveCapture) then
+			if not othersHaveCapture then
 				self.captured[i] = math.min(100, self.captured[i]+capture)
 			end
 		--[[else 
@@ -109,7 +109,7 @@ function ENT:SlowThink()
 				self.captured[i] = math.max(0, self.captured[i]-10)
 			--end]]
 		end
-	end 
+	end
 
 	if (totalCapture == 100) then
 		for i=1,8 do 

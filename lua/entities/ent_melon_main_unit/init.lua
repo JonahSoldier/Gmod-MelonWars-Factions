@@ -10,9 +10,9 @@ function ENT:Initialize()
 	self.slowThinkTimer = 1
 	self.nextSlowThink = 0
 	self.modelString = "models/hunter/misc/sphere2x2.mdl"
-	//self.Angles = Angle(0,0,0)
+	--self.Angles = Angle(0,0,0)
 	self.shotOffset = Vector(0,0,0)
-	//self:SetPos(self:GetPos()+Vector(0,0,1))
+	--self:SetPos(self:GetPos()+Vector(0,0,1))
 	self.materialString = "phoenix_storms/gear"
 	self.shotSound = "weapons/stunstick/stunstick_impact1.wav"
 	
@@ -53,7 +53,7 @@ function ENT:Initialize()
 	self.zone:SetPos(self:GetPos()+Vector(0,0,-50))
 	self.zone:Spawn()
 	self.zone:SetMoveType( MOVETYPE_NONE )
-	self.zone:SetModelScale( 2.1, 0 ) //half size
+	self.zone:SetModelScale( 2.1, 0 ) --half size
 	self.zone:SetMaterial( "models/ihvtest/eyeball_l" )
 	self.zone:SetNWInt("zoneTeam", mw_melonTeam)
 	self.zone:SetNWInt("scale", 250)
@@ -140,7 +140,7 @@ function ENT:Shoot ( ent )
 
 		ent.targetEntity:TakeDamage( self.damageDeal, self, self )
 		/*
-		if (ent.targetEntity.damage != nil) then
+		if (ent.targetEntity.damage ~= nil) then
 			ent.targetEntity.damage = ent.targetEntity.damage+self.damageDeal
 		end*/
 

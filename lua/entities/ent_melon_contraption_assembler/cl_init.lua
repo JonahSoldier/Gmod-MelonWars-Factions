@@ -23,7 +23,7 @@ function ENT:Draw()
         local OD = self:GetNWFloat("overdrive", 0)*3
 
         cam.Start3D2D( vpos, angle, 1 )
-            if (NST > CurTime()--[[ && self:GetNWBool("spawned", false)]]) then
+            if (NST > CurTime()--[[ and self:GetNWBool("spawned", false)]]) then
                 surface.SetDrawColor( Color(0,255,255) )
                 surface.DrawRect( 0, -15, 5, 35+(math.min(0, CurTime()+OD-NST))*35/STT )
                 surface.SetDrawColor( Color(255,240,0) )

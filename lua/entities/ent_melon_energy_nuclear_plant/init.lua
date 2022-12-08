@@ -8,10 +8,10 @@ function ENT:Initialize()
 
 	self.modelString = "models/props_combine/combine_booth_med01a.mdl"
 	self.maxHP = 1000
-	//self.Angles = Angle(0,0,0)
-	//local offset = Vector(0,0,20)
-	//offset:Rotate(self:GetAngles())
-	//self:SetPos(self:GetPos()+offset)
+	--self.Angles = Angle(0,0,0)
+	--local offset = Vector(0,0,20)
+	--offset:Rotate(self:GetAngles())
+	--self:SetPos(self:GetPos()+offset)
 	--self:SetPos(self:GetPos()+Vector(0,0,10))
 	self.moveType = MOVETYPE_NONE
 	self.canMove = false
@@ -117,8 +117,8 @@ function ENT:DeathEffect ( ent )
 				effectdata:SetOrigin( ent:GetPos() + Vector(-150,-150,0))
 				util.Effect( "Explosion", effectdata )
 			
-			local pos1 = ent:GetPos()// Set worldpos 1. Add to the hitpos the world normal.
-			local pos2 = ent:GetPos()+Vector(0,0,-20) // Set worldpos 2. Subtract from the hitpos the world normal.
+			local pos1 = ent:GetPos()-- Set worldpos 1. Add to the hitpos the world normal.
+			local pos2 = ent:GetPos()+Vector(0,0,-20) -- Set worldpos 2. Subtract from the hitpos the world normal.
 			ent.fired = true
 			ent:Remove()
 			

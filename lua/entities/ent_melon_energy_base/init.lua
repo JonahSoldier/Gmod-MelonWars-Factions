@@ -28,13 +28,13 @@ function MW_CalculateConnections(ent, all)
 		table.sort( foundEntities, function( a, b ) return ((a:GetPos()-pos):LengthSqr() < (b:GetPos()-pos):LengthSqr()) end )
 		for k, v in pairs(foundEntities) do
 			if (count >= 3) then break end
-			if (v != ent) then
+			if (v ~= ent) then
 				if ((all == true and v.Base == "ent_melon_energy_base") or (all == false and v.connectToMachines) or (ent.connectToRelaysOnly == true and string.StartWith(v:GetClass(), "ent_melon_energy_relay"))) then
 					if (v.allowConnections == true) then
 						if (ent:SameTeam(v)) then
 							table.insert(ent.connections, v)
 							table.insert(v.connections, ent)
-							if (!all or string.StartWith(v:GetClass(), "ent_melon_energy_relay")) then
+							if not all or string.StartWith(v:GetClass(), "ent_melon_energy_relay") then
 								count = count + 1
 							end
 							hasConnection = true
@@ -59,7 +59,7 @@ function MW_CalculateConnections(ent, all)
 					nw = othernw
 					MW_Energy_Network_Insert_Element(ent, nw)
 				else
-					if (nw != othernw) then
+					if (nw ~= othernw) then
 						MW_Energy_Network_Merge(ent, nw, othernw)
 					end
 				end
@@ -73,7 +73,7 @@ end
 function MW_CleanUp_Network(network)
 	local deleted = 0
 	for k, v in pairs(mw_electric_network[network].elements) do
-		if (!IsValid(mw_electric_network[network].elements[k-deleted])) then
+		if not IsValid(mw_electric_network[network].elements[k-deleted]) then
 			table.remove( mw_electric_network[network].elements, k-deleted )
 			deleted = deleted+1
 		end
@@ -136,7 +136,7 @@ end
 function MW_Energy_Network_Remove_Element(ent)
 	local network = ent.network
 	local nw = mw_electric_network[network]
-	if (nw != nil) then
+	if (nw ~= nil) then
 		nw.energy = nw.energy-ent:GetEnergy() 
 		nw.capacity = nw.capacity - ent.capacity
 		table.RemoveByValue( nw.elements, ent )
@@ -216,7 +216,7 @@ function MW_Energy_Network_Search(ent, targetEnt)
 	if (safety == 10000) then
 		error("SAFETY SEARCH STOP")
 	end
-	local found = (foundEnt != nil)
+	local found = (foundEnt ~= nil)
 	table.Add(closedList, openList)
 	for k, v in pairs(closedList) do
 		v.alreadySearched = false
@@ -305,7 +305,7 @@ function ENT:SetNetwork(network)
 	local previousNetwork = self.network
 
 	if (previousNetwork > 0) then
-		if (previousNetwork != nil) then
+		if (previousNetwork ~= nil) then
 			local prevnw = mw_electric_network[previousNetwork]
 			prevnw.energy = prevnw.energy-self:GetEnergy()
 			prevnw.capacity = prevnw.capacity - self.capacity

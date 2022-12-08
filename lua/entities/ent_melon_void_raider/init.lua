@@ -21,20 +21,18 @@ function ENT:Initialize()
 
 	self.angularDamping = 10
 	
-	//self:SetPos(self:GetPos()+Vector(0,0,12))
+	--self:SetPos(self:GetPos()+Vector(0,0,12))
 	
 	self.nextShot = CurTime()+0.5
 
 	self.population = 2
-	
+
 	MW_Setup ( self )
 
 	construct.SetPhysProp( self:GetOwner() , self, 0, nil,  { GravityToggle = true, Material = "ice" } )
 
-
-
 	self.backpack = ents.Create( "prop_physics" )
-	if ( !IsValid( self.backpack ) ) then return end
+	if not IsValid( self.backpack ) then return end
 
 	self.backpack:SetModel("models/Items/car_battery01.mdl")
 	self.backpack:SetParent(self)
@@ -62,8 +60,8 @@ function ENT:SlowThink ( ent )
 	--ent.phys:SetVelocity(vel)
 	MW_UnitDefaultThink ( ent )
 
-	if(self.targetEntity != nil) then
-		if(self.targetEntity.moveType != MOVETYPE_NONE) then
+	if(self.targetEntity ~= nil) then
+		if(self.targetEntity.moveType ~= MOVETYPE_NONE) then
 			ent:LoseTarget()
 		else
 			if(self.targetEntity:GetClass() == "ent_melon_main_building" or self.targetEntity:GetClass() == "ent_melon_main_building_grand_war") then
@@ -85,7 +83,7 @@ end
 function ENT:Shoot ( ent, forceTargetPos )
 	if (ent.ai or CurTime() > ent.nextControlShoot) then
 		if(ent.targetEntity.moveType == MOVETYPE_NONE) then
-			if(self.targetEntity:GetClass() != "ent_melon_main_building" and self.targetEntity:GetClass() != "ent_melon_main_building_grand_war") then
+			if(self.targetEntity:GetClass() ~= "ent_melon_main_building" and self.targetEntity:GetClass() ~= "ent_melon_main_building_grand_war") then
 
 				MW_UpdatePopulation(ent.targetEntity.population*-1, ent.targetEntity:GetNWInt("mw_melonTeam",-1))
 				MW_UpdatePopulation(ent.targetEntity.population, self:GetNWInt("mw_melonTeam",-1))

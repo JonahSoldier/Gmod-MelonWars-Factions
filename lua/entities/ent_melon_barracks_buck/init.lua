@@ -9,8 +9,8 @@ function ENT:Initialize()
 	self.unit = 14
 	self.modelString = "models/hunter/misc/roundthing2.mdl"
 	self.maxHP = 120
-	//self.Angles = Angle(0,0,0)
-	//self:SetPos(self:GetPos()+Vector(0,0,-25))
+	--self.Angles = Angle(0,0,0)
+	--self:SetPos(self:GetPos()+Vector(0,0,-25))
 
 	self:BarrackInitialize()
 	self.population = 1

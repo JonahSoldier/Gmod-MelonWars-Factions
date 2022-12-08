@@ -16,6 +16,20 @@ function ENT:Draw()
     self:TransportDraw(self, 190)
 end
 
+local function drawSolidCircle( x, y, radius, seg )
+	local cir = {}
+
+	table.insert( cir, { x = x, y = y, u = 0.5, v = 0.5 } )
+	for i = 0, seg do
+		local a = math.rad( ( i / seg ) * -360 )
+		table.insert( cir, { x = x + math.sin( a ) * radius, y = y + math.cos( a ) * radius, u = math.sin( a ) / 2 + 0.5, v = math.cos( a ) / 2 + 0.5 } )
+	end
+
+	local a = math.rad( 0 ) -- This is needed for non absolute segment counts
+	table.insert( cir, { x = x + math.sin( a ) * radius, y = y + math.cos( a ) * radius, u = math.sin( a ) / 2 + 0.5, v = math.cos( a ) / 2 + 0.5 } )
+
+	surface.DrawPoly( cir )
+end
 
 function ENT:TransportDraw(self, offset)
 	if (cvars.Number("mw_team") == self:GetNWInt("mw_melonTeam", -1)) then
@@ -68,8 +82,8 @@ function ENT:TransportDraw(self, offset)
 
 		local s = 17
 		cam.Start3D2D( self:GetPos()+self:GetRight()*Vector(-68.1,-68.1,-68.1) - Vector(0,0,65), self:GetAngles()+Angle(0,0,-90) , 1 )
-			//:GetAngles() 
-			//+(Vector(68.1,0,-65)
+			--:GetAngles() 
+			--+(Vector(68.1,0,-65)
 			surface.SetDrawColor( Color( 100, 100, 100, 255 ) )
 			drawSolidCircle( -3.1, 2.65, s, s )
 		cam.End3D2D()
@@ -84,19 +98,4 @@ function ENT:TransportDraw(self, offset)
 			draw.SimpleText( tostring(math.ceil(time-CurTime())).."s", "Trebuchet24", 0, 0, Color(255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		cam.End3D2D()
 	end
-end
-
-function drawSolidCircle( x, y, radius, seg )
-	local cir = {}
-
-	table.insert( cir, { x = x, y = y, u = 0.5, v = 0.5 } )
-	for i = 0, seg do
-		local a = math.rad( ( i / seg ) * -360 )
-		table.insert( cir, { x = x + math.sin( a ) * radius, y = y + math.cos( a ) * radius, u = math.sin( a ) / 2 + 0.5, v = math.cos( a ) / 2 + 0.5 } )
-	end
-
-	local a = math.rad( 0 ) -- This is needed for non absolute segment counts
-	table.insert( cir, { x = x + math.sin( a ) * radius, y = y + math.cos( a ) * radius, u = math.sin( a ) / 2 + 0.5, v = math.cos( a ) / 2 + 0.5 } )
-
-	surface.DrawPoly( cir )
 end

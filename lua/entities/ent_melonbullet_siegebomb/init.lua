@@ -32,7 +32,7 @@ function ENT:PhysicsCollide( colData, collider )
 	if (self.exploded == false) then
 		local other = colData.HitEntity
 		local otherhealth = other:GetNWFloat("health", 0)
-		if (otherhealth != 0) then
+		if (otherhealth ~= 0) then
 			self.exploded = true
 
 			util.BlastDamage( self, self, self:GetPos(), 50, 50 )

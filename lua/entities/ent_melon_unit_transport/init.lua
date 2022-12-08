@@ -10,8 +10,8 @@ function ENT:Initialize()
 	self.unit = 2
 	self.modelString = "models/props_junk/wood_crate002a.mdl"
 	self.maxHP = 50
-	//self.Angles = Angle(0,0,0)
-	//self:SetPos(self:GetPos()+Vector(0,0,10))
+	--self.Angles = Angle(0,0,0)
+	--self:SetPos(self:GetPos()+Vector(0,0,10))
 
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = false
@@ -64,7 +64,7 @@ end
 
 function ENT:AbsorbUnit(unit)
 	if (self.canEatUnits and unit:GetNWInt("mw_melonTeam", 0) == self:GetNWInt("mw_melonTeam", -1)) then
-		if (unit.Base == "ent_melon_base" and unit.canMove == true and unit:GetClass() != "ent_melon_engine" and unit:GetClass() != "ent_melon_engine_large" and unit:GetClass() != "ent_melon_wheel" and unit:GetClass() != "ent_melon_main_unit") then
+		if (unit.Base == "ent_melon_base" and unit.canMove == true and unit:GetClass() ~= "ent_melon_engine" and unit:GetClass() ~= "ent_melon_engine_large" and unit:GetClass() ~= "ent_melon_wheel" and unit:GetClass() ~= "ent_melon_main_unit") then
 			if (unit.population <= self:GetNWInt("maxunits", 0) - self:GetNWInt("count", 0)) then
 				local index = self:GetNWInt("count", 0)
 				self:SetNWInt("count", index+unit.population)
@@ -74,7 +74,7 @@ function ENT:AbsorbUnit(unit)
 				self:SetNWInt("energy"..index, unit:GetNWInt("mw_charge", 0))
 				self:SetNWInt("entindex"..index, unit:EntIndex())
 				MW_UpdatePopulation(unit.population, self:GetNWInt("mw_melonTeam", 0))
-				//self.population = self.population+unit.population
+				--self.population = self.population+unit.population
 				unit.fired = true
 
 				table.insert(self.idsInside, unit:EntIndex())
@@ -95,11 +95,11 @@ function ENT:FreeUnits()
 	if (self:GetNWInt("count", 0) > 0) then
 		local count = 0
 		for i=0, 9 do
-			if (self:GetNWString("class"..i, "") != "") then
+			if (self:GetNWString("class"..i, "") ~= "") then
 				count = count+1
 
 				local class = self:GetNWString("class"..i, "")
-				local pos = self:GetPos()+self:GetForward()*(count%3-1)*15+self:GetRight()*(40+count*5)//+Vector(math.random(-10,10),math.random(-10,10),count*10)
+				local pos = self:GetPos()+self:GetForward()*(count%3-1)*15+self:GetRight()*(40+count*5)--+Vector(math.random(-10,10),math.random(-10,10),count*10)
 				local value = self:GetNWInt("value"..i, 0)
 				local hp = self:GetNWInt("hp"..i, 0)
 				local energy = self:GetNWInt("energy"..i, 0)
@@ -107,7 +107,7 @@ function ENT:FreeUnits()
 				local _team = self:GetNWInt("mw_melonTeam", -1)
 
 				local newMarine = ents.Create( class )
-				if ( !IsValid( newMarine ) ) then return end -- Check whether we successfully made an entity, if not - bail
+				if not IsValid( newMarine ) then return end -- Check whether we successfully made an entity, if not - bail
 
 				newMarine:SetPos(pos)
 				

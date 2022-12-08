@@ -8,7 +8,7 @@ function ENT:Draw()
     -- self.BaseClass.Draw(self) -- Overrides Draw
     self:DrawModel() -- Draws Model Client Side
 
-    if (self:GetNWFloat("countdown", -1) != -1) then
+    if (self:GetNWFloat("countdown", -1) ~= -1) then
     	local timeLeft = self:GetNWFloat("countdown")-CurTime()
     	local vpos = self:GetPos()+Vector(0,0,30)
 		local angle = LocalPlayer():EyeAngles()+Angle(0,0,90)

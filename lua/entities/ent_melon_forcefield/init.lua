@@ -26,14 +26,14 @@ function ENT:Initialize()
 
 	self.population = 0
 
-	//print("My Initialization")
+	--print("My Initialization")
 
 	MW_Setup ( self )
 	
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 	self.canBeSelected = false
 	self:SetMaterial("models/effects/comball_tape")
-	//self:SetModelScale( 2.0, 0.000001 )
+	--self:SetModelScale( 2.0, 0.000001 )
 
 
 

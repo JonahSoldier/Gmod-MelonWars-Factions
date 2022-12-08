@@ -9,8 +9,8 @@ function ENT:Initialize()
 	self.unit = 16
 	self.modelString = "models/props_wasteland/kitchen_stove001a.mdl"
 	self.maxHP = 120
-	//self.Angles = Angle(0,0,0)
-	//self:SetPos(self:GetPos()+Vector(0,0,-25))
+	--self.Angles = Angle(0,0,0)
+	--self:SetPos(self:GetPos()+Vector(0,0,-25))
 	self.shotOffset = Vector(0,0,30)
 	
 	self:BarrackInitialize()

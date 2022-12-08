@@ -48,7 +48,7 @@ end
 function ENT:Shoot ( ent, forcedTargetPos )
 	if (ent.ai or CurTime() > ent.nextControlShoot) then
 		--------------------------------------------------------Disparar
-		if (forcedTargetPos != nil) then
+		if (forcedTargetPos ~= nil) then
 			local targets = ents.FindInSphere( forcedTargetPos, 3 )
 			ent.targetEntity = nil
 			for k, v in pairs(targets) do
@@ -71,7 +71,7 @@ function ENT:Shoot ( ent, forcedTargetPos )
 				end
 				
 				local bullet = ents.Create( "ent_melonbullet_missile" )
-				if ( !IsValid( bullet ) ) then return end -- Check whether we successfully made an entity, if not - bail
+				if not IsValid( bullet ) then return end -- Check whether we successfully made an entity, if not - bail
 				bullet:SetPos( ent:GetPos() + Vector(0,0,10) )
 				bullet:SetNWInt("mw_melonTeam",self.mw_melonTeam)
 				bullet:Spawn()

@@ -4,14 +4,14 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include('shared.lua')
 
 function ENT:Initialize()
-	//self:SetPos(self:GetPos()+Vector(0,0,-5))
+	--self:SetPos(self:GetPos()+Vector(0,0,-5))
 	
 	MW_Defaults ( self )
 
 	self.modelString = "models/props_rooftop/roof_vent004.mdl"
 	self.moveType = MOVETYPE_NONE
-	//self.Angles = Angle(0,0,0)
-	//self:SetPos(self:GetPos()+Vector(0,0,0))
+	--self.Angles = Angle(0,0,0)
+	--self:SetPos(self:GetPos()+Vector(0,0,0))
 	self.canMove = false
 	self.canShoot = false
 	self.maxHP = 100
@@ -35,7 +35,7 @@ function ENT:Initialize()
 	self.zone:SetPos(self:GetPos()+Vector(0,0,-50))
 	self.zone:Spawn()
 	self.zone:SetMoveType( MOVETYPE_NONE )
-	self.zone:SetModelScale( 2.1, 0 ) //half size
+	self.zone:SetModelScale( 2.1, 0 ) --half size
 	self.zone:SetMaterial( "models/ihvtest/eyeball_l" )
 	self.zone:SetNWInt("zoneTeam", mw_melonTeam)
 	self.zone:SetNWInt("scale", 250)
@@ -44,7 +44,7 @@ function ENT:Initialize()
 
 	
 	timer.Simple(0.1, function () self:snapToGround() end) 
-	// this doesn't seem like a super great way to do this but this seems to be what marum did so it's good enough for me
+	-- this doesn't seem like a super great way to do this but this seems to be what marum did so it's good enough for me
 end
 
 
@@ -65,13 +65,11 @@ function ENT:snapToGround()
 		self:Remove()
 		for k, v in pairs(player.GetAll()) do
 			if (v:GetInfoNum("mw_team", 0) == self:GetNWInt("mw_melonTeam", 0)) then
-				v:PrintMessage( HUD_PRINTTALK, "///// Stations must be spawned on the ground." )
+				v:PrintMessage( HUD_PRINTTALK, "== Stations must be spawned on the ground! ==" )
 			end
 		end
 	end	
 end
-
-
 
 function ENT:SlowThink(ent)
 

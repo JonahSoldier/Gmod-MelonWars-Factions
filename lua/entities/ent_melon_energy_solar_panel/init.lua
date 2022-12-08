@@ -9,10 +9,10 @@ function ENT:Initialize()
 
 	self.modelString = "models/props_combine/weaponstripper.mdl"
 	self.maxHP = 20
-	//self.Angles = Angle(-90,0,180)
-	//local offset = Vector(0,0,0)
-	//offset:Rotate(self:GetAngles())
-	//self:SetPos(self:GetPos()+offset)
+	--self.Angles = Angle(-90,0,180)
+	--local offset = Vector(0,0,0)
+	--offset:Rotate(self:GetAngles())
+	--self:SetPos(self:GetPos()+offset)
 	--self:SetPos(self:GetPos()+Vector(0,0,10))
 	self.moveType = MOVETYPE_NONE
 
@@ -39,7 +39,7 @@ function ENT:EstimateEfficiency()
 		local tr = util.TraceLine( {
 			start = self:GetPos() + offset,
 			endpos = self:GetPos() + offset + Vector(0, 0, 10000),
-			filter = function( ent ) if ( ent:GetClass() != "player" ) and ent != self then return true end end
+			filter = function( ent ) if ( ent:GetClass() ~= "player" ) and ent ~= self then return true end end
 		} )
 		local freeSky = tr.HitSky or not tr.Hit
 		if (freeSky) then
@@ -62,7 +62,7 @@ function ENT:Think(ent)
 			local tr = util.TraceLine( {
 				start = self:GetPos() + offset,
 				endpos = self:GetPos() + offset + Vector(0, 0, 10000),
-				filter = function( ent ) if ( ent:GetClass() != "player" ) and ent != self then return true end end
+				filter = function( ent ) if ( ent:GetClass() ~= "player" ) and ent ~= self then return true end end
 			} )
 			local freeSky = tr.HitSky or not tr.Hit
 			if (freeSky) then

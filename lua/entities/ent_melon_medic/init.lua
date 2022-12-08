@@ -68,17 +68,17 @@ function ENT:SlowThink ( ent )
 				end
 			end
 		end
-		
+
 		--if (IsValid(ent.forcedTargetEntity)) then
 		--	ent.targetEntity = ent.forcedTargetEntity
 		--else
 		--	ent.forcedTargetEntity = nil
 		--end
-		
+
 		if (ent.targetEntity ~= nil) then
 			----------------------------------------------------------------------Perder target
 			----------------------------------------por que no existe
-			if (!IsValid(ent.targetEntity)) then
+			if not IsValid(ent.targetEntity) then
 				ent.targetEntity = nil
 				ent.nextSlowThink = CurTime()+0.1
 				return false
@@ -93,7 +93,7 @@ function ENT:SlowThink ( ent )
 			local tr = util.TraceLine( {
 			start = pos,
 			endpos = ent.targetEntity:GetPos(),
-			filter = function( foundEntity ) if ( foundEntity:GetClass() == "prop_physics" and foundEntity ~= ent.targetEntity and !string.StartWith( ent.targetEntity:GetClass(), "ent_melon_main_building") and !string.StartWith( ent.targetEntity:GetClass(), "ent_melonbullet_" )) then return true end end
+			filter = function( foundEntity ) if ( foundEntity:GetClass() == "prop_physics" and foundEntity ~= ent.targetEntity and not string.StartWith( ent.targetEntity:GetClass(), "ent_melon_main_building") and not string.StartWith( ent.targetEntity:GetClass(), "ent_melonbullet_" )) then return true end end
 			})
 			if (tostring(tr.Entity) ~= '[NULL Entity]') then
 				ent.targetEntity = nil
@@ -105,7 +105,7 @@ function ENT:SlowThink ( ent )
 		end
 	end
 	if (not healed) then
-		if (ent.HP < ent.maxHP) then // SELF HEAL
+		if (ent.HP < ent.maxHP) then -- SELF HEAL
 			ent.HP = ent.HP+1
 			if (ent.HP > ent.maxHP) then
 				ent.HP = ent.maxHP
@@ -118,7 +118,7 @@ end
 function ENT:Shoot ( ent, forcedTargetPos )
 	if (ent.ai or CurTime() > ent.nextControlShoot) then
 		--------------------------------------------------------Disparar
-		if (forcedTargetPos != nil) then
+		if (forcedTargetPos ~= nil) then
 			local targets = ents.FindInSphere( forcedTargetPos, 3 )
 			for k, v in pairs(targets) do
 				if (v:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 0) or ent:SameTeam(v)) then
@@ -141,7 +141,7 @@ function ENT:Shoot ( ent, forcedTargetPos )
 					if (ent.targetEntity:GetVar("shotOffset") ~= nil) then
 						targetPos = targetPos+ent.targetEntity:GetVar("shotOffset")
 					end
-					//ent:FireBullets(bullet)
+					--ent:FireBullets(bullet)
 					local effectdata = EffectData()
 					effectdata:SetOrigin( targetPos + Vector(0,0,10) )
 					util.Effect( "inflator_magic", effectdata )

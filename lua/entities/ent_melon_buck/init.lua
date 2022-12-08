@@ -25,7 +25,7 @@ function ENT:Initialize()
 
 	self.angularDamping = 10
 
-	//self:SetPos(self:GetPos()+Vector(0,0,12))
+	--self:SetPos(self:GetPos()+Vector(0,0,12))
 	
 	self.nextShot = CurTime()+2
 
@@ -60,7 +60,7 @@ function ENT:Shoot ( ent, forceTargetPos )
 	if (ent.nextShot < CurTime()) then
 		local pos = ent:GetPos()+ent.shotOffset
 		--------------------------------------------------------Disparar
-		if (forceTargetPos != nil or IsValid(ent.targetEntity)) then
+		if (forceTargetPos ~= nil or IsValid(ent.targetEntity)) then
 			local targetPos
 			if (IsValid(ent.targetEntity)) then
 				targetPos = ent.targetEntity:GetPos()+ent.targetEntity:OBBCenter()

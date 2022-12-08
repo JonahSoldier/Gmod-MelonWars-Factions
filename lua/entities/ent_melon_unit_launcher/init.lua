@@ -62,7 +62,7 @@ end
 
 function ENT:AbsorbUnit(unit)
 	if (self.canEatUnits and unit:GetNWInt("mw_melonTeam", 0) == self:GetNWInt("mw_melonTeam", -1)) then
-		if (unit.Base == "ent_melon_base" and unit.canMove == true and unit:GetClass() != "ent_melon_engine" and unit:GetClass() != "ent_melon_engine_large" and unit:GetClass() != "ent_melon_wheel" and unit:GetClass() != "ent_melon_main_unit") then
+		if (unit.Base == "ent_melon_base" and unit.canMove == true and unit:GetClass() ~= "ent_melon_engine" and unit:GetClass() ~= "ent_melon_engine_large" and unit:GetClass() ~= "ent_melon_wheel" and unit:GetClass() ~= "ent_melon_main_unit") then
 			if (unit.population <= self:GetNWInt("maxunits", 0) - self:GetNWInt("count", 0)) then
 				local index = self:GetNWInt("count", 0)
 				self:SetNWInt("count", index+unit.population)
@@ -72,7 +72,7 @@ function ENT:AbsorbUnit(unit)
 				self:SetNWInt("energy"..index, unit:GetNWInt("mw_charge", 0))
 				self:SetNWInt("entindex"..index, unit:EntIndex())
 				MW_UpdatePopulation(unit.population, self:GetNWInt("mw_melonTeam", 0))
-				//self.population = self.population+unit.population
+				--self.population = self.population+unit.population
 				unit.fired = true
 
 				table.insert(self.idsInside, unit:EntIndex())
@@ -93,13 +93,13 @@ function ENT:FreeUnits()
 	if (self:GetNWInt("count", 0) > 0) then
 		local count = 0
 		for i=0, 9 do
-			if (self:GetNWString("class"..i, "") != "") then
+			if (self:GetNWString("class"..i, "") ~= "") then
 				count = count+1
 
 				local class = self:GetNWString("class"..i, "")
 				local pos = self:GetPos()+self:GetRight()*Vector(-98.1,-98.1,-98.1)- Vector(0,0,120) + Vector(math.random(-10,10),math.random(-10,10), count*10)
 
-				//(count%3-1)*15*(40+count*5) 
+				--(count%3-1)*15*(40+count*5) 
 
 				local value = self:GetNWInt("value"..i, 0)
 				local hp = self:GetNWInt("hp"..i, 0)
@@ -108,7 +108,7 @@ function ENT:FreeUnits()
 				local _team = self:GetNWInt("mw_melonTeam", -1)
 
 				local newMarine = ents.Create( class )
-				if ( !IsValid( newMarine ) ) then return end -- Check whether we successfully made an entity, if not - bail
+				if not IsValid( newMarine ) then return end -- Check whether we successfully made an entity, if not - bail
 
 				newMarine:SetPos(pos)
 				
@@ -164,7 +164,7 @@ function ENT:SlowThink ( ent )
 	if (mw_electric_network[self.network].energy >= energyCost) then
 		if (ent.ai or CurTime() > ent.nextControlShoot) then
 			--------------------------------------------------------Disparar
-			if (forcedTargetPos != nil) then
+			if (forcedTargetPos ~= nil) then
 				local targets = ents.FindInSphere( forcedTargetPos, 3 )
 				ent.targetEntity = nil
 				for k, v in pairs(targets) do
@@ -178,7 +178,7 @@ function ENT:SlowThink ( ent )
 			
 			if (ent.nextShot < CurTime()) then
 			
-				if (ent.targetPos != Vector(0,0,0) ) then
+				if (ent.targetPos ~= Vector(0,0,0) ) then
 					if ((ent.targetPos-ent:GetPos()):LengthSqr() < ent.range*ent.range) then
 						if((ent.targetPos-ent:GetPos()):LengthSqr() > ent.minRange*ent.minRange) then
 
@@ -187,7 +187,7 @@ function ENT:SlowThink ( ent )
 							local buildingDetect = ents.FindInSphere( ent.targetPos, 600 )
 
 							for k, v in pairs(buildingDetect) do
-								if (v.moveType == MOVETYPE_NONE and v:GetNWInt("mw_melonTeam", 0) != self:GetNWInt("mw_melonTeam", 0)) then
+								if (v.moveType == MOVETYPE_NONE and v:GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0)) then
 									foundBuilding = true
 								end
 							end
@@ -199,7 +199,7 @@ function ENT:SlowThink ( ent )
 							else
 								for k, v in pairs(player.GetAll()) do
 									if (v:GetInfoNum("mw_team", 0) == self:GetNWInt("mw_melonTeam", 0)) then
-										v:PrintMessage( HUD_PRINTTALK, "///// Unit launcher target position too close to an enemy building." )
+										v:PrintMessage( HUD_PRINTTALK, "== Unit launcher target position too close to an enemy building! ==" )
 									end
 								end
 								ent.targetPos = Vector(0,0,0)
@@ -220,18 +220,17 @@ function ENT:Shoot(ent, forcedTargetPos)
 		sound.Play( ent.shotSound, v:GetPos() )
 	end
 		
-	//ent.targetEntity:GetPos()
+	--ent.targetEntity:GetPos()
 
 
 	local bullet = ents.Create( "ent_melonbullet_unit_shell" )
-	if ( !IsValid( bullet ) ) then return end -- Check whether we successfully made an entity, if not - bail
+	if not IsValid( bullet ) then return end -- Check whether we successfully made an entity, if not - bail
 	bullet:SetPos( ent:GetPos() + Vector(0,0,200) )
 	bullet:SetNWInt("mw_melonTeam",self.mw_melonTeam)
 	bullet:Spawn()
 	bullet:SetNWVector("targetPos", forcedTargetPos)
 	bullet.owner = ent
 
-	
 	bullet:SetNWInt("count", self:GetNWInt("count", 0))
 	bullet.idsInside = self.idsInside
 
@@ -267,14 +266,14 @@ end
 /*
 
 
-				if (IsValid(ent.targetEntity)and ent.targetEntity != ent) then
+				if (IsValid(ent.targetEntity)and ent.targetEntity ~= ent) then
 					if ((ent.targetEntity:GetPos()-ent:GetPos()):LengthSqr() < ent.range*ent.range) then
 						local tr = util.TraceLine( {
 							start = pos,
 							endpos = ent.targetEntity:GetPos()+ent.targetEntity:GetVar("shotOffset", Vector(0,0,0)),
 							filter = function( foundEntity ) if (foundEntity.Base ~= "ent_melon_base" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1)or foundEntity:GetClass() == "prop_physics" and foundEntity ~= ent.targetEntity) then return true end end
 							})
-						if  (tr != nil and tostring(tr.Entity) == '[NULL Entity]') then
+						if  (tr ~= nil and tostring(tr.Entity) == '[NULL Entity]') then
 							ent:Shoot( ent, ent.targetPos)
 							self:DrainPower(1000)
 						end

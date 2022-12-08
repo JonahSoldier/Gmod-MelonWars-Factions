@@ -53,7 +53,7 @@ end*/
 
 function ENT:Think()
 
-	if(self.crashed != true) then
+	if(self.crashed ~= true) then
 		local targetOffset = Vector( 0, 0, 0)
 
 		if(17.5+self.launchTime - CurTime() > 0) then
@@ -85,7 +85,7 @@ function ENT:Think()
 		self:SetAngles( (targetVec-self:GetPos()):Angle() )
 		self:NextThink(CurTime()+0.05)
 	
-		if(self.distance < self.speed*135 && not self.incomingSoundPlayed) then
+		if(self.distance < self.speed*135 and not self.incomingSoundPlayed) then
 			for k, v in pairs( player.GetAll() ) do
 				sound.Play( "d3_citadel.timestop_buildup", v:GetPos() )
 			end
@@ -125,8 +125,8 @@ function ENT:Explode()
 
 		v:SetHealth( 100 )
 		v:SetArmor( 100 )
-		util.BlastDamage( self, self, v:GetPos(), 25, 50 ) //ghetto way of making ears ring 
-		//EmitSound( "d3_citadel.timestop_winddown", v:GetPos(), v:EntIndex(), 8, 1, 75, 0, 100, 0 )
+		util.BlastDamage( self, self, v:GetPos(), 25, 50 ) --ghetto way of making ears ring 
+		--EmitSound( "d3_citadel.timestop_winddown", v:GetPos(), v:EntIndex(), 8, 1, 75, 0, 100, 0 )
 		v:SetHealth( 100 )
 		v:SetArmor( 100 )
 		
@@ -157,7 +157,7 @@ function ENT:Explode()
 					[ "$pp_colour_mulb" ] = 10-i/10
 				}
 				net.Start("MWColourMod")
-					net.WriteBool(true) //hasColourModifier
+					net.WriteBool(true) --hasColourModifier
 					net.WriteTable(MWColourModifierTable)
 				net.Send(v)
 			end)
@@ -165,7 +165,7 @@ function ENT:Explode()
 		
 		timer.Simple( 5, function()
 			net.Start("MWColourMod")
-				net.WriteBool(false) //hasColourModifier
+				net.WriteBool(false) --hasColourModifier
 			net.Send(v)
 		end)
 	end

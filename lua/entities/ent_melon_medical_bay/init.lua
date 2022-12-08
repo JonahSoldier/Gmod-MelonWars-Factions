@@ -26,7 +26,7 @@ function ENT:Initialize()
 	self.careForFriendlyFire = false
 	self.careForWalls = false
 
-	//self:SetPos(self:GetPos()+Vector(0,0,-5))
+	--self:SetPos(self:GetPos()+Vector(0,0,-5))
 	self:SetNWVector("energyPos", Vector(0,0,20))
 
 	self.shotOffset = Vector(0,0,15)
@@ -161,7 +161,7 @@ function ENT:SlowThink ( ent )
 	if (ent.targetEntity ~= nil) then
 		----------------------------------------------------------------------Perder target
 		----------------------------------------por que no existe
-		if (!IsValid(ent.targetEntity)) then
+		if (not IsValid(ent.targetEntity)) then
 			ent.targetEntity = nil
 			ent.nextSlowThink = CurTime()+0.1
 			return false
@@ -176,7 +176,7 @@ function ENT:SlowThink ( ent )
 		local tr = util.TraceLine( {
 		start = pos,
 		endpos = ent.targetEntity:GetPos(),
-		filter = function( foundEntity ) if ( foundEntity:GetClass() == "prop_physics" and foundEntity ~= ent.targetEntity  and !string.StartWith( ent.targetEntity:GetClass(), "ent_melonbullet_" )) then return true end end
+		filter = function( foundEntity ) if ( foundEntity:GetClass() == "prop_physics" and foundEntity ~= ent.targetEntity  and not string.StartWith( ent.targetEntity:GetClass(), "ent_melonbullet_" )) then return true end end
 		})
 		if (tostring(tr.Entity) ~= '[NULL Entity]') then
 			ent.targetEntity = nil
@@ -197,7 +197,7 @@ function ENT:Shoot ( ent )
 			if (ent.targetEntity:GetVar("shotOffset") ~= nil) then
 				targetPos = targetPos+ent.targetEntity:GetVar("shotOffset")
 			end
-			//ent:FireBullets(bullet)
+			--ent:FireBullets(bullet)
 			local effectdata = EffectData()
 			effectdata:SetOrigin( targetPos + Vector(0,0,10) )
 			util.Effect( "inflator_magic", effectdata )

@@ -14,13 +14,12 @@ function ENT:Initialize()
 	self.sizeMultiplier = 1
 	self.nextRun = CurTime()
 
-	//timer.Simple(20, function() self:Remove() end)
+	--timer.Simple(20, function() self:Remove() end)
 	self:SetNoDraw( true )
 end
 
 
 function ENT:Think ( ent )
-	
 	if (self.sizeMultiplier < 0.5 ) then
 		if ( IsValid( self.moreFlames ) ) then
 			self.moreFlames:Remove()
@@ -40,7 +39,7 @@ function ENT:Think ( ent )
 			end
 
 			self.moreFlames = ents.Create( "prop_physics" )
-			if ( !IsValid( self.moreFlames ) ) then return end
+			if not IsValid( self.moreFlames ) then return end
 
 			self.moreFlames:SetModel("models/hunter/tubes/circle4x4.mdl")
 			self.moreFlames:SetMaterial("Models/effects/vol_light001")

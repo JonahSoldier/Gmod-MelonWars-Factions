@@ -20,7 +20,7 @@ function ENT:Initialize()
 	self:SetModel( "models/props_vehicles/generatortrailer01.mdl" )
 	
 	--self:SetAngles(Angle(90,0,0))
-	//self:SetPos(self:GetPos()+Vector(0,0,35))
+	--self:SetPos(self:GetPos()+Vector(0,0,35))
 	
 	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
 	self:SetSolid( SOLID_VPHYSICS )         -- Toolbox

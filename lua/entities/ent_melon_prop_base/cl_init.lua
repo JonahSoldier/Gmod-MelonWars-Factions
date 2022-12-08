@@ -15,7 +15,7 @@ function ENT:Draw()
 	end
 end
 
-// New Year
+-- New Year
 /*function ENT:OnRemove()
 	MW_Firework(self, 50, 1)
 end*/

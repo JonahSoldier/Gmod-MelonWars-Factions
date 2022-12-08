@@ -9,9 +9,9 @@ function ENT:Initialize()
 	self.unit = 6
 	self.modelString = "models/props_interiors/VendingMachineSoda01a.mdl"
 	self.maxHP = 120
-	//self.Angles = Angle(-45,0,45)
-	//self:SetPos(self:GetPos()+Vector(0,0,10))
-	//self:SetAngles(self:GetAngles()+self.Angles)
+	--self.Angles = Angle(-45,0,45)
+	--self:SetPos(self:GetPos()+Vector(0,0,10))
+	--self:SetAngles(self:GetAngles()+self.Angles)
 	self.shotOffset = Vector(30,0,0)
 
 	self:BarrackInitialize()

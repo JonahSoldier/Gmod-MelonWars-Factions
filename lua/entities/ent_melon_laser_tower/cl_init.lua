@@ -42,6 +42,6 @@ function ENT:Think()
 		self:AttackParticle()
 	end
 
-	//self:NextThink(CurTime() + 0.2)
-	//return true
+	--self:NextThink(CurTime() + 0.2)
+	--return true
 end

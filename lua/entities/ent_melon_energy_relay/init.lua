@@ -9,7 +9,7 @@ function ENT:Initialize()
 
 	self.modelString = "models/props_docks/dock01_pole01a_128.mdl"
 	self.maxHP = 20
-	//self.Angles = Angle(0,0,0)
+	--self.Angles = Angle(0,0,0)
 
 	self.population = 0
 

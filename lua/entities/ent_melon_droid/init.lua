@@ -29,7 +29,7 @@ function ENT:Initialize()
 
 	self.population = 2
 
-	//print("My Initialization")
+	--print("My Initialization")
 
 	MW_Setup ( self )
 

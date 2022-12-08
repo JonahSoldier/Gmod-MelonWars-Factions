@@ -9,11 +9,11 @@ function ENT:Initialize()
 
 	self.unit = 13
 	self.modelString = "models/props_vehicles/apc_tire001.mdl"
-	//self.Angles = Angle(0,0,180)
+	--self.Angles = Angle(0,0,180)
 	self.maxHP = 35
 
-	//self.posOffset = Vector(0,0,10)
-	//self:SetPos(self:GetPos()+Vector(0,0,10))
+	--self.posOffset = Vector(0,0,10)
+	--self:SetPos(self:GetPos()+Vector(0,0,10))
 	self.shotOffset = Vector(0,0,5)
 	self:BarrackInitialize()
 	self.population = 1

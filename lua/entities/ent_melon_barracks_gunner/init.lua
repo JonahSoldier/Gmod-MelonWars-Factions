@@ -9,10 +9,10 @@ function ENT:Initialize()
 	self.unit = 5
 	self.modelString = "models/props_combine/combine_interface002.mdl"
 	self.maxHP = 100
-	//self.Angles = Angle(0,0,0)
+	--self.Angles = Angle(0,0,0)
 
-	//self.posOffset = Vector(0,0,-25)
-	//self:SetPos(self:GetPos()+Vector(0,0,-25))
+	--self.posOffset = Vector(0,0,-25)
+	--self:SetPos(self:GetPos()+Vector(0,0,-25))
 
 	self.shotOffset = Vector(0,0,30)
 

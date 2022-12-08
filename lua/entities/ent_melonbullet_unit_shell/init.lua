@@ -53,7 +53,7 @@ end*/
 
 function ENT:Think()
 
-	if(self.crashed != true) then
+	if(self.crashed ~= true) then
 		local targetOffset = Vector( 0, 0, 0)
 
 		if(7.5+self.launchTime - CurTime() > 0) then
@@ -85,7 +85,7 @@ function ENT:Think()
 		self:SetAngles( (targetVec-self:GetPos()):Angle() )
 		self:NextThink(CurTime()+0.05)
 	
-		if(self.distance < self.speed*35 && not self.incomingSoundPlayed) then
+		if(self.distance < self.speed*35 and not self.incomingSoundPlayed) then
 			for k, v in pairs( player.GetAll() ) do
 				sound.Play( "HeadcrabCanister.IncomingSound", v:GetPos() )
 			end
@@ -120,13 +120,13 @@ end
 function ENT:FreeUnits(i)
 	if (self:GetNWInt("count", 0) > 0) then
 		local count = i
-		if (self:GetNWString("class"..i, "") != "") then
-			//count = count+1
+		if (self:GetNWString("class"..i, "") ~= "") then
+			--count = count+1
 
 			local class = self:GetNWString("class"..i, "")
 			local pos = self:GetPos()+Vector(0,0,50)+self:GetForward()*(count%3-1)*15+self:GetRight()*(40+count*5)
 
-			//+Vector(math.random(-10,10),math.random(-10,10),count*10)
+			--+Vector(math.random(-10,10),math.random(-10,10),count*10)
 
 			local value = self:GetNWInt("value"..i, 0)
 			local hp = self:GetNWInt("hp"..i, 0)
@@ -135,7 +135,7 @@ function ENT:FreeUnits(i)
 			local _team = self:GetNWInt("mw_melonTeam", -1)
 
 			local newMarine = ents.Create( class )
-			if ( !IsValid( newMarine ) ) then return end -- Check whether we successfully made an entity, if not - bail
+			if not IsValid( newMarine ) then return end -- Check whether we successfully made an entity, if not - bail
 
 			newMarine:SetPos(pos)
 
@@ -187,7 +187,7 @@ function ENT:Explode()
 		local effectdata = EffectData()
 		effectdata:SetOrigin( self:GetPos() )
 		util.Effect( "Explosion", effectdata )
-		//local target = self:GetNWEntity("target", nil)
+		--local target = self:GetNWEntity("target", nil)
 		/*if (target ~= nil and IsValid(target)) then
 			target.damage = 100
 		end*/

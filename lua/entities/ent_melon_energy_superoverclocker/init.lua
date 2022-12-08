@@ -9,10 +9,10 @@ function ENT:Initialize()
 	self.modelString = "models/props_c17/substation_circuitbreaker01a.mdl"
 	self.maxHP = 250
 	self.range = 999999
-	//self.Angles = Angle(0,0,0)
-	///local offset = Vector(0,0,50)
-	//offset:Rotate(self:GetAngles())
-	//self:SetPos(self:GetPos()+offset)
+	--self.Angles = Angle(0,0,0)
+	--/local offset = Vector(0,0,50)
+	--offset:Rotate(self:GetAngles())
+	--self:SetPos(self:GetPos()+offset)
 	--self:SetPos(self:GetPos()+Vector(0,0,10))
 	self.moveType = MOVETYPE_NONE
 	self.canMove = false
@@ -31,12 +31,6 @@ end
 function ENT:Think(ent)
 	if(self.spawned) then
 		local energyCost = 20
-		
-		//print(self:GetOwner().mw_credits)
-
-
-
-
 		print(self:GetOwner().GetNWInt(mw_spawntime,0))
 
 		if (mw_electric_network[self.network].energy >= energyCost) then
@@ -44,9 +38,9 @@ function ENT:Think(ent)
 	
 				self:SetNWString("message", "Reducing power.")
 
-				if !powerReduced then
+				if not powerReduced then
 					mw_teamUnits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamUnits[self:GetNWInt("mw_melonTeam", 0)]-15
-					//This is for reducing team power
+					--This is for reducing team power
 
 					for k, v in pairs( player.GetAll() ) do
 						if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
@@ -58,11 +52,11 @@ function ENT:Think(ent)
 					end
 				end
 			end
-		else				
+		else
 
 			if powerReduced then
 				mw_teamUnits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamUnits[self:GetNWInt("mw_melonTeam", 0)]+15
-				//Reducing power or something, if this comment's still here in the final product I forgot to remove it.
+				--Reducing power or something, if this comment's still here in the final product I forgot to remove it.
 
 				for k, v in pairs( player.GetAll() ) do
 					if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then

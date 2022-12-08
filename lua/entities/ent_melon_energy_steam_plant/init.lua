@@ -8,10 +8,10 @@ function ENT:Initialize()
 
 	self.modelString = "models/mechanics/roboticslarge/claw_hub_8l.mdl"
 	self.maxHP = 100
-	//self.Angles = Angle(0,0,0)
-	///local offset = Vector(0,0,50)
-	//offset:Rotate(self:GetAngles())
-	//self:SetPos(self:GetPos()+offset)
+	--self.Angles = Angle(0,0,0)
+	--/local offset = Vector(0,0,50)
+	--offset:Rotate(self:GetAngles())
+	--self:SetPos(self:GetPos()+offset)
 	--self:SetPos(self:GetPos()+Vector(0,0,10))
 	self.moveType = MOVETYPE_NONE
 	self.canMove = false

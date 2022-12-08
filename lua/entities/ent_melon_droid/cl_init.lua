@@ -14,11 +14,11 @@ function ENT:Draw()
 	    local charge = self:GetNWInt("mw_charge", 0)
 	    local maxCharge = self:GetNWInt("maxCharge", 1)
 
-	    //local shots = 50 
+	    --local shots = 50 
 
 	    local width = 15
 
-		//local interval = width/shots
+		--local interval = width/shots
 
 	    cam.Start3D2D( vpos, angle, 1 )
 	    	surface.SetDrawColor( Color( 0,255,255, 255 ) )

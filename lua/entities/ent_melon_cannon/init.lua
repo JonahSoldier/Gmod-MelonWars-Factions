@@ -57,9 +57,9 @@ end
 
 function ENT:Shoot ( ent, forceTargetPos )
 
-	if (ent:GetVelocity():Length() < 15 && ent.nextShot < CurTime()) then
+	if (ent:GetVelocity():Length() < 15 and ent.nextShot < CurTime()) then
 		sound.Play( ent.shotSound, ent:GetPos() )
-		if (forceTargetPos != nil or IsValid(ent.targetEntity)) then
+		if (forceTargetPos ~= nil or IsValid(ent.targetEntity)) then
 			local targetPos
 			if (IsValid(ent.targetEntity)) then
 				targetPos = ent.targetEntity:GetPos()
@@ -73,7 +73,7 @@ function ENT:Shoot ( ent, forceTargetPos )
 			local shootVector = 150*(targetPos-(ent:GetPos()+Vector(0,0,50)) + Vector(0, 0, 40) + Vector(math.random(-self.spread,self.spread),math.random(-self.spread,self.spread),math.random(-self.spread,self.spread)))
 			--local shootVector = (targetPos-ent:GetPos() + Vector(0, 0, 700))*36
 			local bullet = ents.Create( "ent_melonbullet_cannonball" )
-			if ( !IsValid( bullet ) ) then return end -- Check whether we successfully made an entity, if not - bail
+			if not IsValid( bullet ) then return end -- Check whether we successfully made an entity, if not - bail
 			bullet:SetPos( ent:GetPos() + Vector(0,0,50) )
 			bullet:SetNWInt("mw_melonTeam",self.mw_melonTeam)
 			bullet:SetModel("models/props_phx/misc/smallcannonball.mdl")

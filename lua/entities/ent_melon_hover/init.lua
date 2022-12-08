@@ -12,11 +12,11 @@ function ENT:Initialize()
 	self.modelString = "models/props_c17/pulleywheels_small01.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
-	//self:SetAngles(self:GetAngles()+Angle(90,0,0))
+	--self:SetAngles(self:GetAngles()+Angle(90,0,0))
 	
 	self.population = 0
 
-	//self.sphereRadius = 5
+	--self.sphereRadius = 5
 	
 	self:SetNWBool("done",false)
 	

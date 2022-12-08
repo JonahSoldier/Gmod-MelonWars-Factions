@@ -9,7 +9,7 @@ function ENT:Initialize()
 
 	self.modelString = "models/props_citizen_tech/firetrap_propanecanister01a.mdl"
 	
-	//"models/props_citizen_tech/firetrap_propanecanister01a.mdl"
+	--"models/props_citizen_tech/firetrap_propanecanister01a.mdl"
 
 	self.moveType = MOVETYPE_VPHYSICS
 	self.speed = 60
@@ -57,7 +57,7 @@ function ENT:PhysicsUpdate()
 	local inclination = self:Align(self:GetAngles():Up(), Vector(0,0,1), 1000)
 	self.phys:Wake() 	
 
-	//self.phys:ApplyForceCenter(Vector(0,0,inclination*100*self.phys:GetMass()))
+	--self.phys:ApplyForceCenter(Vector(0,0,inclination*100*self.phys:GetMass()))
 	self.phys:SetAngleVelocity( self:GetAngles():Up()*500*inclination)
 
 	self:DefaultPhysicsUpdate()
@@ -66,7 +66,7 @@ end
 function ENT:Shoot ( ent, forcedTargetPos )
 	if (ent.ai or CurTime() > ent.nextControlShoot) then
 		--------------------------------------------------------Disparar
-		if (forcedTargetPos != nil) then
+		if (forcedTargetPos ~= nil) then
 			local targets = ents.FindInSphere( forcedTargetPos, 3 )
 			ent.targetEntity = nil
 			for k, v in pairs(targets) do
@@ -89,7 +89,7 @@ function ENT:Shoot ( ent, forcedTargetPos )
 				end
 				
 				local bullet = ents.Create( "ent_melonbullet_flamerfuel" )
-				if ( !IsValid( bullet ) ) then return end -- Check whether we successfully made an entity, if not - bail
+				if not IsValid( bullet ) then return end -- Check whether we successfully made an entity, if not - bail
 				bullet:SetPos( ent:GetPos() + Vector(0,0, 75) )
 				bullet:SetNWInt("mw_melonTeam",self.mw_melonTeam)
 				bullet:Spawn()

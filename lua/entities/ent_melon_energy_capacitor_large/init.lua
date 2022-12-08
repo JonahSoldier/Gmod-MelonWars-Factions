@@ -8,8 +8,8 @@ function ENT:Initialize()
 
 	self.modelString = "models/props_combine/combine_train02a.mdl"
 	self.maxHP = 500
-	//self.Angles = Angle(0,0,0)
-	//self:SetPos(self:GetPos()+Vector(0,0,100))
+	--self.Angles = Angle(0,0,0)
+	--self:SetPos(self:GetPos()+Vector(0,0,100))
 	--self:SetPos(self:GetPos()+Vector(0,0,10))
 	self.moveType = MOVETYPE_NONE
 	self.connections = {}
@@ -74,8 +74,8 @@ function ENT:DeathEffect ( ent )
 				effectdata:SetOrigin( ent:GetPos() + Vector(-110,-110,0))
 				util.Effect( "Explosion", effectdata )
 			
-			local pos1 = ent:GetPos()// Set worldpos 1. Add to the hitpos the world normal.
-			local pos2 = ent:GetPos()+Vector(0,0,-20) // Set worldpos 2. Subtract from the hitpos the world normal.
+			local pos1 = ent:GetPos()-- Set worldpos 1. Add to the hitpos the world normal.
+			local pos2 = ent:GetPos()+Vector(0,0,-20) -- Set worldpos 2. Subtract from the hitpos the world normal.
 			ent.fired = true
 			ent:Remove()
 			

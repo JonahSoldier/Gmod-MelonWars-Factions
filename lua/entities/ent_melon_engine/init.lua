@@ -14,11 +14,11 @@ function ENT:Initialize()
 	self.speed = 150
 	self.thrustforce = 0.3
 
-	//self:SetAngles(self:GetAngles()+Angle(90,180,0))
+	--self:SetAngles(self:GetAngles()+Angle(90,180,0))
 
-	//local offset = Vector(0,-0.8,0)
-	//offset:Rotate(self:GetAngles())
-	//self:SetPos(self:GetPos()+offset)
+	--local offset = Vector(0,-0.8,0)
+	--offset:Rotate(self:GetAngles())
+	--self:SetPos(self:GetPos()+offset)
 
 	self.maxHP = 25
 
@@ -97,7 +97,7 @@ function ENT:Update( ent )
 				ent:FinishMovement()
 				for k, v in pairs(constraint.GetAllConstrainedEntities( self )) do
 					if (v.Base == "ent_melon_base") then
-						if (v != ent) then
+						if (v ~= ent) then
 							v:FinishMovement()
 						end
 					end
@@ -122,7 +122,7 @@ function ENT:PhysicsUpdate()
 		self:Align(self:GetAngles():Up(), -moveVector, 100000)
 	end
 
-	//local damp = -self:GetAngles():Up():Dot(moveVector)
+	--local damp = -self:GetAngles():Up():Dot(moveVector)
 	local damp = 0.8
 	self:StopAngularVelocity(damp)
 

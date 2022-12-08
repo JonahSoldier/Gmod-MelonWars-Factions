@@ -58,7 +58,7 @@ function ENT:SlowThink ( ent )
 	if (mw_electric_network[self.network].energy >= energyCost) then
 		if (ent.ai or CurTime() > ent.nextControlShoot) then
 			--------------------------------------------------------Disparar
-			if (forcedTargetPos != nil) then
+			if (forcedTargetPos ~= nil) then
 				local targets = ents.FindInSphere( forcedTargetPos, 3 )
 				ent.targetEntity = nil
 				for k, v in pairs(targets) do
@@ -69,15 +69,14 @@ function ENT:SlowThink ( ent )
 				end
 			end
 
-			
 			if (ent.nextShot < CurTime()) then
 				if(self.fireprint == false) then
 					for k, v in pairs( player.GetAll() ) do
-						v:PrintMessage( HUD_PRINTTALK, "/////////////////// Melonium Missile Ready. ///////////////////" )
+						v:PrintMessage( HUD_PRINTTALK, "== Melonium Missile ready! ==" )
 					end
 					self.fireprint = true
 				end
-				if (ent.targetPos != Vector(0,0,0) ) then
+				if (ent.targetPos ~= Vector(0,0,0) ) then
 					if ((ent.targetPos-ent:GetPos()):LengthSqr() < ent.range*ent.range) then
 						if((ent.targetPos-ent:GetPos()):LengthSqr() > ent.minRange*ent.minRange) then
 
@@ -86,7 +85,7 @@ function ENT:SlowThink ( ent )
 							local buildingDetect = ents.FindInSphere( ent.targetPos, 600 )
 
 							for k, v in pairs(buildingDetect) do
-								if (v.moveType == MOVETYPE_NONE and v:GetNWInt("mw_melonTeam", 0) != self:GetNWInt("mw_melonTeam", 0)) then
+								if (v.moveType == MOVETYPE_NONE and v:GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0)) then
 									foundBuilding = true
 								end
 							end
@@ -111,11 +110,11 @@ function ENT:Shoot(ent, forcedTargetPos)
 		sound.Play( ent.shotSound, v:GetPos() )
 	end
 		
-	//ent.targetEntity:GetPos()
+	--ent.targetEntity:GetPos()
 
 
 	local bullet = ents.Create( "ent_melonbullet_super_melonmissile" )
-	if ( !IsValid( bullet ) ) then return end -- Check whether we successfully made an entity, if not - bail
+	if not IsValid( bullet ) then return end -- Check whether we successfully made an entity, if not - bail
 	bullet:SetPos( ent:GetPos() + Vector(0,0,200) )
 	bullet:SetNWInt("mw_melonTeam",self.mw_melonTeam)
 	bullet:Spawn()
@@ -143,14 +142,14 @@ end
 /*
 
 
-				if (IsValid(ent.targetEntity)and ent.targetEntity != ent) then
+				if (IsValid(ent.targetEntity)and ent.targetEntity ~= ent) then
 					if ((ent.targetEntity:GetPos()-ent:GetPos()):LengthSqr() < ent.range*ent.range) then
 						local tr = util.TraceLine( {
 							start = pos,
 							endpos = ent.targetEntity:GetPos()+ent.targetEntity:GetVar("shotOffset", Vector(0,0,0)),
 							filter = function( foundEntity ) if (foundEntity.Base ~= "ent_melon_base" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1)or foundEntity:GetClass() == "prop_physics" and foundEntity ~= ent.targetEntity) then return true end end
 							})
-						if  (tr != nil and tostring(tr.Entity) == '[NULL Entity]') then
+						if  (tr ~= nil and tostring(tr.Entity) == '[NULL Entity]') then
 							ent:Shoot( ent, ent.targetPos)
 							self:DrainPower(1000)
 						end

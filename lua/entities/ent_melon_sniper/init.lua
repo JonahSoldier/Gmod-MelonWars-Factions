@@ -25,7 +25,7 @@ function ENT:Initialize()
 
 	self.angularDamping = 10
 	
-	//self:SetPos(self:GetPos()+Vector(0,0,12))
+	--self:SetPos(self:GetPos()+Vector(0,0,12))
 	
 	self.nextShot = CurTime()+3
 
@@ -57,7 +57,7 @@ function ENT:PhysicsUpdate()
 end
 
 function ENT:Shoot ( ent, forceTargetPos )
-	if (ent:GetVelocity():Length() < 15 && ent.nextShot < CurTime()) then
+	if (ent:GetVelocity():Length() < 15 and ent.nextShot < CurTime()) then
 		if (ent.ai or CurTime() > ent.nextControlShoot) then
 			MW_DefaultShoot ( ent, forceTargetPos )
 			for k, v in pairs( player.GetAll() ) do

@@ -9,7 +9,7 @@ function ENT:Initialize()
 	self.unit = 10
 	self.modelString = "models/props_lab/teleportframe.mdl"
 	self.maxHP = 250
-	//self.Angles = Angle(0,0,0)
+	--self.Angles = Angle(0,0,0)
 	--self:SetPos(self:GetPos()+Vector(0,0,10))
 
 	self:BarrackInitialize()

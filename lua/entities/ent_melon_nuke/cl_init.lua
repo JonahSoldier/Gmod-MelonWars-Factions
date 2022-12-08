@@ -1,6 +1,6 @@
 include('shared.lua')
 
-// New Year
+-- New Year
 /*function ENT:OnRemove()
 	MW_Firework(self, 200, 5)
 	MW_Firework(self, 200, 7)
