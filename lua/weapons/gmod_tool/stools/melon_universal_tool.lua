@@ -1938,7 +1938,7 @@ function _CreatePanel()
 				surface.DrawRect( 130, a, 30, 5)
 			end
 		end]]
-		ipos = 1
+		local ipos = 1
 		for i=firstBuilding, firstEnergy-1 do
 			if (mw_units[i].code == nil or LocalPlayer():GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVarNumber("mw_admin_bonusunits") == 1) then
 				if mw_units[i].name ~= "Contraption Assembler" or cvars.Number("mw_admin_ban_contraptions") == 0 then

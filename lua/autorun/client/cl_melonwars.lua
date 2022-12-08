@@ -60,7 +60,7 @@ function MW_BeginSelection() -- Previously concommand.Add( "+mw_select", functio
 		start = ply:EyePos(),
 		endpos = ply:EyePos() + ply:EyeAngles():Forward() * 10000,
 		filter = function( ent ) if ( ent:GetClass() ~= "player" ) then return true end end,
-		mask = MASK_SOLID+MASK_WATER
+		mask = MASK_SOLID + MASK_WATER
 	} )
 
 	ply.mw_selectionStartingPoint = trace.HitPos
@@ -80,25 +80,24 @@ function MWDrawSelectionCircle(startingPos, endingPos)
 
 	local ply = LocalPlayer()
 	local baseSize = 5000
-	local pos
-	local center = (startingPos+endingPos)/2
-	local radius = (startingPos-endingPos):Length()/2
-	local oneTurn = math.pi*2
+	local center = (startingPos + endingPos) / 2
+	local radius = (startingPos-endingPos):Length() / 2
+	local oneTurn = math.pi * 2
 	local pointCount = 12
 
-	for i=0, oneTurn, oneTurn/pointCount do
-		local worldPos = center + Vector(radius*math.sin(i), radius*math.cos(i), 0)
+	for i = 0, oneTurn, oneTurn / pointCount do
+		local worldPos = center + Vector(radius * math.sin(i), radius * math.cos(i), 0)
 		local screenPos = worldPos:ToScreen()
-		local size = baseSize/(ply:EyePos()-worldPos):Length()
-		surface.DrawRect( screenPos.x-size/2, screenPos.y-size/2, size, size )
+		local size = baseSize / (ply:EyePos() - worldPos):Length()
+		surface.DrawRect( screenPos.x - size / 2, screenPos.y - size / 2, size, size )
 	end
 
 	local lineCount = 24
 
 	local pointPos = center + Vector(radius, 0, 0)
-	local increment = oneTurn/lineCount
-	for i=0, oneTurn, increment do
-		local nextPos = center + Vector(radius*math.cos(i+increment), radius*math.sin(i+increment), 0)
+	local increment = oneTurn / lineCount
+	for i = 0, oneTurn, increment do
+		local nextPos = center + Vector(radius * math.cos(i + increment), radius * math.sin(i + increment), 0)
 		-- local size = baseSize/(ply:EyePos()-worldPos):Length()
 		local startPoint = pointPos:ToScreen()
 		local endPoint = nextPos:ToScreen()
@@ -106,19 +105,19 @@ function MWDrawSelectionCircle(startingPos, endingPos)
 		surface.DrawLine( startPoint.x, startPoint.y, endPoint.x, endPoint.y)
 	end
 
-	local startSize = baseSize/(ply:EyePos()-startingPos):Length()
+	local startSize = baseSize / (ply:EyePos() - startingPos):Length()
 	local startScreenPos = startingPos:ToScreen()
-	surface.DrawRect( startScreenPos.x-startSize, startScreenPos.y-startSize, startSize*2, startSize*2 )
+	surface.DrawRect( startScreenPos.x - startSize, startScreenPos.y - startSize, startSize * 2, startSize * 2 )
 
-	local endSize = baseSize/(ply:EyePos()-endingPos):Length()
+	local endSize = baseSize / (ply:EyePos() - endingPos):Length()
 	local endScreenPos = endingPos:ToScreen()
-	surface.DrawRect( endScreenPos.x-endSize, endScreenPos.y-endSize, endSize*2, endSize*2 )
+	surface.DrawRect( endScreenPos.x - endSize, endScreenPos.y - endSize, endSize * 2, endSize * 2 )
 
 	-- surface.DrawLine( startScreenPos.x, startScreenPos.y, endScreenPos.x, endScreenPos.y)
 
-	local centerSize = (startSize+endSize)/2
+	local centerSize = (startSize + endSize) / 2
 	local centerScreenPos = center:ToScreen()
-	surface.DrawRect( centerScreenPos.x-centerSize/2, centerScreenPos.y-centerSize/2, centerSize, centerSize )
+	surface.DrawRect( centerScreenPos.x - centerSize / 2, centerScreenPos.y - centerSize / 2, centerSize, centerSize )
 end
 
 net.Receive( "MW_ReturnSelection", function( len, pl )
@@ -128,7 +127,7 @@ net.Receive( "MW_ReturnSelection", function( len, pl )
 	local count = net.ReadUInt(16)
 	-- local newTable = {}
 
-	for i=0,count do
+	for i = 0, count do
 		local foundEntity = net.ReadEntity()
 		if (not table.HasValue(LocalPlayer().foundMelons, foundEntity)) then
 			table.insert(LocalPlayer().foundMelons, foundEntity)
@@ -589,6 +588,7 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 	end
 
 	if istable(ply.foundMelons) then
+		local pos, fe, te
 		for _, v in ipairs( ply.foundMelons ) do
 			if v:IsValid() then
 				--[[local hp = v:GetNWFloat("health", 0)
@@ -605,7 +605,7 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 					surface.SetTextPos( pos.x - 6, pos.y - 63 )
 					surface.DrawText( math.Round(hp))]]
 
-					local fe = v:GetNWEntity("followEntity", nil)
+					fe = v:GetNWEntity("followEntity", nil)
 					if (fe:IsValid() and fe ~= v) then
 						pos = fe:WorldSpaceCenter():ToScreen()
 						DrawMelonCross(pos, Color( 0, 150, 255, 255 ))
@@ -614,7 +614,7 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 						DrawMelonCross(pos, Color( 0, 255, 0, 255 ))
 					end
 
-					local te = v:GetNWEntity("targetEntity", nil)
+					te = v:GetNWEntity("targetEntity", nil)
 					if (te:IsValid() and te ~= v) then
 						pos = te:WorldSpaceCenter():ToScreen()
 						DrawMelonCross(pos, Color( 255, 0, 0, 255 ))
