@@ -1096,12 +1096,12 @@ net.Receive( "ContraptionAutoValidate", function( len, pl )
 	local dupetable = util.JSONToTable( text )
 	local ent = mrtsMessageReceivingEntity
 	-- print(mrtsNetworkBuffer) -- prints [
-	-- print(text) --  Returns the file properly. 
+	-- print(text) --  Returns the file properly.
 
 	-- PrintTable(dupetable) --  Sometimes this is a table and sometimes it's nil?????????
 
 	-- if (not istable(dupetable)) then --  Prints a list of the dupes that created the nil tables and the text that was sent.
-	-- 	print(name) 
+	-- 	print(name)
 	-- 	print(text)
 	-- end
 
@@ -1138,7 +1138,7 @@ net.Receive( "ContraptionAutoValidate", function( len, pl )
 								-- but I can't find the 'correct' way.
 
 								local tableAdd={}
-								tableAdd["spawnDelay"] = p.spawn_time 
+								tableAdd["spawnDelay"] = p.spawn_time
 								table.Add( i, tableAdd )
 							else
 								i.spawnDelay=p.spawn_time
@@ -1149,7 +1149,7 @@ net.Receive( "ContraptionAutoValidate", function( len, pl )
 
 				-- For some reason almost every file tries to check some table with almost nothing in it
 				-- Class included, so I have to check if it's there first
-				if i.Class ~= nil then 
+				if i.Class ~= nil then
 					if not string.StartWith(i.Class,"ent_melon" ) then
 						-- Spawns a prop and runs getmass on it to validate its price
 
@@ -1488,7 +1488,7 @@ concommand.Add( "mw_reset_power", function()
 			--mw_teamUnits[v:GetVar("mw_melonTeam")] = mw_teamUnits[v:GetVar("mw_melonTeam")]
 		end
 	end ]]
-		
+
 	for _, v in ipairs( player.GetAll() ) do
 		local mw_melonTeam = v:GetInfoNum( "mw_team", 0 )
 		net.Start( "MW_TeamUnits" )
@@ -1610,7 +1610,7 @@ concommand.Add( "mw_typeselect", function( ply, cmd, args )
 		ply.mw_selecting = false
 		ply:SetNWBool("mw_selecting", false)
 		--Encuentra todas las entidades en la esfera de selección
-		
+
 		local foundEnts = ents.FindInSphere(ply:GetEyeTrace().HitPos, 300)
 		if (not ply:KeyDown(IN_SPEED)) then ply.foundMelons = {} end
 		--Busca de esas entidades cuales son sandias, y cuales son del equipo correcto
@@ -1946,7 +1946,7 @@ concommand.Add( "mw_admin_reset_teams", function()
 	end
 end )
 
-hook.Add( "InitPostEntity", "MelonWars_StartLoad", function()	
+hook.Add( "InitPostEntity", "MelonWars_StartLoad", function()
 	-- mw_save_name_custom = "melonwars_default_save"
 	teamgrid = {}          -- create the matrix
 	for i=1,8 do

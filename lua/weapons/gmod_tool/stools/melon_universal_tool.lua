@@ -285,7 +285,7 @@ u.class 		= "ent_melon_voidling"
 u.cost 			= 20
 u.welded_cost 	= -1
 u.population 	= 1
-u.spawn_time 	= 1/3
+u.spawn_time 	= 1 / 3
 u.description 	= [[A little entity of Void that seeks equilibrium. It will throw itself at enemies to deal damage and die in the process. When sacrificing a voidling to a shredder, you gain a small Water profit.]]
 u.model 		= "models/hunter/misc/sphere025x025.mdl"
 u.code 			= "--banned--"
@@ -399,79 +399,79 @@ u.model 		= "models/hunter/tubes/tube4x4x2to2x2.mdl"
 i = i + 1
 u = mw_units[i]
 u.code = "prot"
-u.name 			= "Heavy Flamethrower"			
+u.name 			= "Heavy Flamethrower"
 u.class 		= "ent_melon_flamethrower"
-u.cost 			= 9000				
-u.welded_cost 	= 3000			
-u.population 	= 8				
-u.spawn_time 	= 35	
+u.cost 			= 9000
+u.welded_cost 	= 3000
+u.population 	= 8
+u.spawn_time 	= 35
 u.offset        = Vector(0,0,42)
-u.description 	= [[Fire.]]	
+u.description 	= [[Fire.]]
 u.model 		= "models/props_citizen_tech/firetrap_propanecanister01a.mdl"
 u.isBonusUnit   = true
 
 i = i + 1
 u = mw_units[i]
 u.code = "full"
-u.name 			= "EMP Device"			
+u.name 			= "EMP Device"
 u.class 		= "ent_melon_emp"
-u.cost 			= 100			
-u.welded_cost 	= 1			
-u.population 	= 2				
-u.spawn_time 	= 5	
+u.cost 			= 100
+u.welded_cost 	= 1
+u.population 	= 2
+u.spawn_time 	= 5
 u.offset        = Vector(0,0,5)
-u.description 	= [[Needs to be charged before it can detonate. Stuns and slows units for 10 seconds, and drains energy from units and buildings. If it detonates near part of an energy grid it'll disable every building in it for 15 seconds, and the part that was hit for 30. The effects stack, so you can use multiple to disable things longer.]]	
+u.description 	= [[Needs to be charged before it can detonate. Stuns and slows units for 10 seconds, and drains energy from units and buildings. If it detonates near part of an energy grid it'll disable every building in it for 15 seconds, and the part that was hit for 30. The effects stack, so you can use multiple to disable things longer.]]
 u.model 		= "models/maxofs2d/hover_classic.mdl"
 u.isBonusUnit   = true
 
 i = i + 1
 u = mw_units[i]
 u.code 			= "admin"
-u.name 			= "Siege Gun"			
+u.name 			= "Siege Gun"
 u.class 		= "ent_melon_siegegun"
-u.cost 			= 100			
-u.welded_cost 	= 1			
-u.population 	= 2				
-u.spawn_time 	= 5	
+u.cost 			= 100
+u.welded_cost 	= 1
+u.population 	= 2
+u.spawn_time 	= 5
 u.offset        = Vector(0,0,32)
-u.description 	= [[explode.]]	
+u.description 	= [[explode.]]
 u.model 		= "models/props_trainstation/trashcan_indoor001b.mdl"
 
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Doot"			
+u.name 			= "Doot"
 u.class 		= "ent_melon_doot"
-u.cost 			= 25				
-u.welded_cost 	= 20				
-u.population 	= 1				
+u.cost 			= 25
+u.welded_cost 	= 20
+u.population 	= 1
 u.spawn_time 	= 0.5-- 1
-u.description 	= [[Such spoops]]	
+u.description 	= [[Such spoops]]
 u.model 		= "models/Gibs/HGIBS.mdl"
 u.isBonusUnit   = true
 
 i = i + 1
 u = mw_units[i]
 u.code 			= "void"
-u.name 			= "Mammoth"			
+u.name 			= "Mammoth"
 u.class 		= "ent_melon_void_mamoth"
-u.cost 			= 1000				
-u.welded_cost 	= -1				
-u.population 	= 3				
+u.cost 			= 1000
+u.welded_cost 	= -1
+u.population 	= 3
 u.spawn_time 	= 10
 u.offset 		= Vector(0,0,10)
-u.description 	= [[A big entity of Void, powerful and slow. Has a lot of health, deals extra damage to buildings and captures points quicker.]]	
+u.description 	= [[A big entity of Void, powerful and slow. Has a lot of health, deals extra damage to buildings and captures points quicker.]]
 u.model 		= "models/mechanics/wheels/wheel_spike_48.mdl"
 u.isBonusUnit   = true
 
 i = i + 1
 u = mw_units[i]
 u.code 			= "admin"
-u.name 			= "Engineer"			
+u.name 			= "Engineer"
 u.class 		= "ent_melon_engineer"
-u.cost 			= 300				
-u.welded_cost 	= 100				
-u.population 	= 1					
+u.cost 			= 300
+u.welded_cost 	= 100
+u.population 	= 1
 u.spawn_time 	= 3
 u.angle 		= Angle(90, 0, 0)
 u.offset 		= Vector(0,0,10)
@@ -484,14 +484,14 @@ firstBuilding = i --------------------------------- First building
 
 
 u = mw_units[i]
-u.name 			= "City Energy Network Connection"	
-u.code 			= "admin"		
-u.class 		= "ent_melon_energy_uplink"	
-u.cost 			= 9					
-u.welded_cost 	= -1					
-u.population 	= 0						
-u.spawn_time 	= 10	
-u.description 	= [[Swhy3]]				
+u.name 			= "City Energy Network Connection"
+u.code 			= "admin"
+u.class 		= "ent_melon_energy_uplink"
+u.cost 			= 9
+u.welded_cost 	= -1
+u.population 	= 0
+u.spawn_time 	= 10
+u.description 	= [[Swhy3]]
 u.model 		= "models/props_lab/teleportbulkeli.mdl"
 u.offset 		= Vector(0,0,100)
 u.angle 		= Angle(90, -90, 90)
@@ -499,26 +499,26 @@ u.angle 		= Angle(90, -90, 90)
 i = i + 1
 u = mw_units[i]
 u.code 			= "full"
-u.name 			= "Refuel Station"			
-u.class 		= "ent_melon_refuel"	
-u.cost 			= 500				
-u.welded_cost 	= -1					
-u.population 	= 2						
-u.spawn_time 	= 20	
-u.description 	= [[A ground-station for the refueling of fighters. Essential, provided you have a safe enough place to put it.]]				
+u.name 			= "Refuel Station"
+u.class 		= "ent_melon_refuel"
+u.cost 			= 500
+u.welded_cost 	= -1
+u.population 	= 2
+u.spawn_time 	= 20
+u.description 	= [[A ground-station for the refueling of fighters. Essential, provided you have a safe enough place to put it.]]
 u.model 		= "models/xqm/jetenginepropellerlarge.mdl"
 u.offset 		= Vector(0,0,-2)
 u.angle 		= Angle(90, 0, 0)
 
-i=i+1
+i = i + 1
 u = mw_units[i]
-u.name 			= "Turret"			
-u.class 		= "ent_melon_turret"	
-u.cost 			= 350					
-u.welded_cost 	= -1					
-u.population 	= 2						
-u.spawn_time 	= 10	
-u.description 	= [[Static defense, a heavy machinegun with good health and firepower]]				
+u.name 			= "Turret"
+u.class 		= "ent_melon_turret"
+u.cost 			= 350
+u.welded_cost 	= -1
+u.population 	= 2
+u.spawn_time 	= 10
+u.description 	= [[Static defense, a heavy machinegun with good health and firepower]]
 u.model 		= "models/combine_turrets/ground_turret.mdl"
 u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(180, 180, 0)
@@ -526,26 +526,26 @@ u.energyRange		= 500
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Shredder"				
+u.name 			= "Shredder"
 u.class 		= "ent_melon_shredder"
-u.cost 			= 100					
-u.welded_cost 	= -1					
-u.population 	= 0						
+u.cost 			= 100
+u.welded_cost 	= -1
+u.population 	= 0
 u.spawn_time 	= 5
-u.description 	= [[A set of spinning blades, used to recycle melons, get resources back, and sometimes make smoothies. It has low health, so use as defense at your own risk. (It doesn't give credits for friendly free units)]]			
+u.description 	= [[A set of spinning blades, used to recycle melons, get resources back, and sometimes make smoothies. It has low health, so use as defense at your own risk. (It doesn't give credits for friendly free units)]]
 u.model 		= "models/props_c17/TrapPropeller_Blade.mdl"
 u.offset 		= Vector(0,0,0)
 
 i = i + 1
 u = mw_units[i]
 u.code 			= "prot"
-u.name 			= "Electrified Debris"			
-u.class 		= "ent_melon_teslarods"	
-u.cost 			= 150					
-u.welded_cost 	= -1					
-u.population 	= 0						
-u.spawn_time 	= 10	
-u.description 	= [[A haphazard spread of metal rods connected to an underground power source. Due to its design, it is near impossible to dispatch without use of explosives or excessively high temperatures.]]				
+u.name 			= "Electrified Debris"
+u.class 		= "ent_melon_teslarods"
+u.cost 			= 150
+u.welded_cost 	= -1
+u.population 	= 0
+u.spawn_time 	= 10
+u.description 	= [[A haphazard spread of metal rods connected to an underground power source. Due to its design, it is near impossible to dispatch without use of explosives or excessively high temperatures.]]
 u.model 		= "models/props_rooftop/antennaclusters01a.mdl"
 u.offset 		= Vector(0,0,60)
 u.angle 		= Angle(0, 0, 0)
@@ -640,12 +640,12 @@ if CLIENT then
 	end
 end
 ]]
-u.class 		= "ent_melon_energy_siphon"	
-u.cost 			= 1250					
-u.welded_cost 	= -1					
-u.population 	= 5						
-u.spawn_time 	= 10	
-u.description 	= [[Connects to enemy energy networks and drains their energy whilst adding to yours at a rate of 5e/s per-attached device. Can be built outside of build range provided a friendly unit is nearby.]]				
+u.class 		= "ent_melon_energy_siphon"
+u.cost 			= 1250
+u.welded_cost 	= -1
+u.population 	= 5
+u.spawn_time 	= 10
+u.description 	= [[Connects to enemy energy networks and drains their energy whilst adding to yours at a rate of 5e/s per-attached device. Can be built outside of build range provided a friendly unit is nearby.]]
 u.model 		= "models/props_c17/substation_stripebox01a.mdl"
 u.offset 		= Vector(0,0,60)
 u.button_color 	= button_energy_color
@@ -669,13 +669,13 @@ u.energyRange	= defaultenergyrange
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Tesla Tower"			
-u.class 		= "ent_melon_tesla_tower"	
-u.cost 			= 300					
-u.welded_cost 	= -1					
-u.population 	= 1						
-u.spawn_time 	= 10	
-u.description 	= [[Static defense that consumes energy to zap up to 5 targets at once. Requires energy to fire.]]				
+u.name 			= "Tesla Tower"
+u.class 		= "ent_melon_tesla_tower"
+u.cost 			= 300
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 10
+u.description 	= [[Static defense that consumes energy to zap up to 5 targets at once. Requires energy to fire.]]
 u.model 		= "models/props_c17/FurnitureBoiler001a.mdl"
 u.offset 		= Vector(0,0,40)
 u.angle 		= Angle(0, 0, 0)
@@ -685,13 +685,13 @@ u.energyRange	= defaultenergyrange
 i = i + 1
 u = mw_units[i]
 u.code 			= "full"
-u.name 			= "Particle Tower"			
-u.class 		= "ent_melon_laser_tower"	
-u.cost 			= 12000					
-u.welded_cost 	= -1					
-u.population 	= 5						
-u.spawn_time 	= 80	
-u.description 	= [[Static assault weapon that fires a beam of energy at targets resulting in an explosion after a few seconds. (Alt right click on a unit to target it, alt right click on the world to clear targets, will fire until targeted unit is killed)]]				
+u.name 			= "Particle Tower"
+u.class 		= "ent_melon_laser_tower"
+u.cost 			= 12000
+u.welded_cost 	= -1
+u.population 	= 5
+u.spawn_time 	= 80
+u.description 	= [[Static assault weapon that fires a beam of energy at targets resulting in an explosion after a few seconds. (Alt right click on a unit to target it, alt right click on the world to clear targets, will fire until targeted unit is killed)]]
 u.model 		= "models/props_wasteland/lighthouse_fresnel_light_base.mdl"
 u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(0, 0, 0)
@@ -701,13 +701,13 @@ u.energyRange	= defaultenergyrange
 i = i + 1
 u = mw_units[i]
 u.code 			= "void"
-u.name 			= "Anti-Power Reactor"			
-u.class 		= "ent_melon_energy_powerupgrader"	
-u.cost 			= 2000				
-u.welded_cost 	= -1					
-u.population 	= 0						
-u.spawn_time 	= 60	
-u.description 	= [[A large void machine that uses energy to generate negative power, reducing the power usage of its team when it's on up to a maximum of -35. Limit of one per team.]]				
+u.name 			= "Anti-Power Reactor"
+u.class 		= "ent_melon_energy_powerupgrader"
+u.cost 			= 2000
+u.welded_cost 	= -1
+u.population 	= 0
+u.spawn_time 	= 60
+u.description 	= [[A large void machine that uses energy to generate negative power, reducing the power usage of its team when it's on up to a maximum of -35. Limit of one per team.]]
 u.model 		= "models/props_c17/substation_circuitbreaker01a.mdl"
 u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(0, 0, 0)
@@ -717,13 +717,13 @@ u.energyRange	= defaultenergyrange
 i = i + 1
 u = mw_units[i]
 u.code 			= "void"
-u.name 			= "Unit Launcher"			
-u.class 		= "ent_melon_unit_launcher"	
-u.cost 			= 2500					
-u.welded_cost 	= -1					
-u.population 	= 1						
-u.spawn_time 	= 40	
-u.description 	= [[A large mortar used to fire shells full of melons at your enemies. Aim/fire by giving move orders to the launcher. Can load up to 10 power. Can't be fired too close to enemy buildings.]]				
+u.name 			= "Unit Launcher"
+u.class 		= "ent_melon_unit_launcher"
+u.cost 			= 2500
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 40
+u.description 	= [[A large mortar used to fire shells full of melons at your enemies. Aim/fire by giving move orders to the launcher. Can load up to 10 power. Can't be fired too close to enemy buildings.]]
 u.model 		= "models/props_citizen_tech/steamengine001a.mdl"
 u.offset 		= Vector(0, 0, 100)
 u.angle 		= Angle(-90, 0, -90)
@@ -734,13 +734,13 @@ u.isBonusUnit   = true
 i = i + 1
 u = mw_units[i]
 u.code 			= "admin"
-u.name 			= "Supergun"			
-u.class 		= "ent_melon_supergun"	
-u.cost 			= 6500					
-u.welded_cost 	= -1					
-u.population 	= 5						
-u.spawn_time 	= 40	
-u.description 	= [[Gun.]]				
+u.name 			= "Supergun"
+u.class 		= "ent_melon_supergun"
+u.cost 			= 6500
+u.welded_cost 	= -1
+u.population 	= 5
+u.spawn_time 	= 40
+u.description 	= [[Gun.]]
 u.model 		= "models/props_citizen_tech/steamengine001a.mdl"
 u.offset 		= Vector(0, 0, 100)
 u.angle 		= Angle(-90, 0, -90)
@@ -750,13 +750,13 @@ u.energyRange	= defaultenergyrange
 i = i + 1
 u = mw_units[i]
 u.code 			= "admin"
-u.name 			= "Melonium Silo"			
-u.class 		= "ent_melon_supermissile"	
-u.cost 			= 6500					
-u.welded_cost 	= -1					
-u.population 	= 5						
-u.spawn_time 	= 40	
-u.description 	= [[Missl.]]				
+u.name 			= "Melonium Silo"
+u.class 		= "ent_melon_supermissile"
+u.cost 			= 6500
+u.welded_cost 	= -1
+u.population 	= 5
+u.spawn_time 	= 40
+u.description 	= [[Missl.]]
 u.model 		= "models/props_citizen_tech/steamengine001a.mdl"
 u.offset 		= Vector(0, 0, 100)
 u.angle 		= Angle(-90, 0, -90)
@@ -766,13 +766,13 @@ u.energyRange	= defaultenergyrange
 i = i + 1
 u = mw_units[i]
 u.code 			= "--banned--"
-u.name 			= "Universal Overclocker"			
-u.class 		= "ent_melon_energy_superoverclocker"	
-u.cost 			= 2250				
-u.welded_cost 	= -1					
-u.population 	= 1						
-u.spawn_time 	= 60	
-u.description 	= [[This is broken don't use it.]]				
+u.name 			= "Universal Overclocker"
+u.class 		= "ent_melon_energy_superoverclocker"
+u.cost 			= 2250
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 60
+u.description 	= [[This is broken don't use it.]]
 u.model 		= "models/props_c17/substation_circuitbreaker01a.mdl"
 u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(0, 0, 0)
@@ -782,13 +782,13 @@ u.energyRange	= defaultenergyrange
 i = i + 1
 u = mw_units[i]
 u.code 			= "admin"
-u.name 			= "Siege Mortar"			
-u.class 		= "ent_melon_supermortar"	
-u.cost 			= 10000					
-u.welded_cost 	= -1					
-u.population 	= 5						
-u.spawn_time 	= 60	
-u.description 	= [[Big gun.]]				
+u.name 			= "Siege Mortar"
+u.class 		= "ent_melon_supermortar"
+u.cost 			= 10000
+u.welded_cost 	= -1
+u.population 	= 5
+u.spawn_time 	= 60
+u.description 	= [[Big gun.]]
 u.model 		= "models/props_citizen_tech/steamengine001a.mdl"
 u.offset 		= Vector(0, 0, 100)
 u.angle 		= Angle(-90, 0, -90)
@@ -797,13 +797,13 @@ u.energyRange	= defaultenergyrange
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Over-Clocker"			
-u.class 		= "ent_melon_overclocker"	
-u.cost 			= 200					
-u.welded_cost 	= -1					
-u.population 	= 0						
-u.spawn_time 	= 10	
-u.description 	= [[Place it right next to a Barracks of any kind. When it's on, it will consume energy and boost the barrack's production rate. (It will disappear if not placed close enough to a barracks)]]				
+u.name 			= "Over-Clocker"
+u.class 		= "ent_melon_overclocker"
+u.cost 			= 200
+u.welded_cost 	= -1
+u.population 	= 0
+u.spawn_time 	= 10
+u.description 	= [[Place it right next to a Barracks of any kind. When it's on, it will consume energy and boost the barrack's production rate. (It will disappear if not placed close enough to a barracks)]]
 u.model 		= "models/props_combine/combine_light001a.mdl"
 u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(0, 0, 0)
@@ -812,13 +812,13 @@ u.energyRange	= defaultenergyrange
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Medical Bay"			
-u.class 		= "ent_melon_medical_bay"	
-u.cost 			= 600					
-u.welded_cost 	= -1					
+u.name 			= "Medical Bay"
+u.class 		= "ent_melon_medical_bay"
+u.cost 			= 600
+u.welded_cost 	= -1
 u.population 	= 1
-u.spawn_time 	= 10	
-u.description 	= [[This building will slowly heal up to 10 units at a time in a big radius. It requires a lot of energy per target, so area attacks might drain a lot of energy]]				
+u.spawn_time 	= 10
+u.description 	= [[This building will slowly heal up to 10 units at a time in a big radius. It requires a lot of energy per target, so area attacks might drain a lot of energy]]
 u.model 		= "models/props_phx/wheels/747wheel.mdl"
 u.offset 		= Vector(0,0,-5)
 u.angle 		= Angle(0, 0, 0)
@@ -827,13 +827,13 @@ u.energyRange	= defaultenergyrange
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Charging Station"			
-u.class 		= "ent_melon_charging_station"	
-u.cost 			= 300					
-u.welded_cost 	= -1					
-u.population 	= 1						
-u.spawn_time 	= 10	
-u.description 	= [[Provides energy to nearby energy dependant units.]]				
+u.name 			= "Charging Station"
+u.class 		= "ent_melon_charging_station"
+u.cost 			= 300
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 10
+u.description 	= [[Provides energy to nearby energy dependant units.]]
 u.model 		= "models/props_c17/substation_transformer01d.mdl"
 u.offset 		= Vector(0,0,24)
 u.angle 		= Angle(0, 0, 0)
@@ -842,13 +842,13 @@ u.energyRange	= defaultenergyrange
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Radar"			
-u.class 		= "ent_melon_radar"	
-u.cost 			= 100					
-u.welded_cost 	= -1					
+u.name 			= "Radar"
+u.class 		= "ent_melon_radar"
+u.cost 			= 100
+u.welded_cost 	= -1
 u.population 	= 0
-u.spawn_time 	= 5	
-u.description 	= [[If energized, it will alert your team of nearby units no matter where you are. It passively consumes the power output of 2 solar panels]]				
+u.spawn_time 	= 5
+u.description 	= [[If energized, it will alert your team of nearby units no matter where you are. It passively consumes the power output of 2 solar panels]]
 u.model 		= "models/props_trainstation/trainstation_column001.mdl"
 u.offset 		= Vector(0,0,-5)
 u.angle 		= Angle(0, 0, 0)
@@ -857,13 +857,13 @@ u.energyRange	= defaultenergyrange
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Forcefield generator"			
-u.class 		= "ent_melon_forcefield_generator"	
-u.cost 			= 750					
-u.welded_cost 	= -1					
+u.name 			= "Forcefield generator"
+u.class 		= "ent_melon_forcefield_generator"
+u.cost 			= 750
+u.welded_cost 	= -1
 u.population 	= 3
-u.spawn_time 	= 15	
-u.description 	= [[Generates a forcefield around itself that uses energy to block enemy bullets while letting friendly bullets and all projectiles through. Stops 1 damage for 2 energy.]]				
+u.spawn_time 	= 15
+u.description 	= [[Generates a forcefield around itself that uses energy to block enemy bullets while letting friendly bullets and all projectiles through. Stops 1 damage for 2 energy.]]
 u.model 		= "models/props_c17/substation_transformer01d.mdl"
 u.offset 		= Vector(0,0,23.5)
 u.angle 		= Angle(0, 0, 0)
@@ -874,13 +874,13 @@ u.isBonusUnit   = true
 i = i + 1
 u = mw_units[i]
 u.code 			= "full"
-u.name 			= "Point Defense Station"			
-u.class 		= "ent_melon_point_defence"	
-u.cost 			= 750					
-u.welded_cost 	= -1					
+u.name 			= "Point Defense Station"
+u.class 		= "ent_melon_point_defence"
+u.cost 			= 750
+u.welded_cost 	= -1
 u.population 	= 3
-u.spawn_time 	= 25	
-u.description 	= [[A Full defense tower that zaps and destroys incoming projectiles. Consumes 75 energy per projectile destroyed.]]				
+u.spawn_time 	= 25
+u.description 	= [[A Full defense tower that zaps and destroys incoming projectiles. Consumes 75 energy per projectile destroyed.]]
 u.model 		= "models/props_docks/channelmarker02a.mdl"
 u.offset 		= Vector(0,0,23.5)
 u.angle 		= Angle(0, 0, 0)
@@ -889,13 +889,13 @@ u.energyRange	= defaultenergyrange
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Marine Barracks"			
+u.name 			= "Marine Barracks"
 u.class 		= "ent_melon_barracks_marine"
-u.cost 			= 750						
-u.welded_cost 	= -1							
-u.population 	= 1						
+u.cost 			= 750
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 10
-u.description   = BarracksText (1, 10)										
+u.description   = BarracksText (1, 10)
 u.model 		= "models/Items/ammocrate_ar2.mdl"
 u.offset 		= Vector(0,0,10)
 u.canOverlap 	= false
@@ -903,13 +903,13 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Medic Academy"			
-u.class 		= "ent_melon_barracks_medic" 
-u.cost 			= 1000						
-u.welded_cost 	= -1							
-u.population 	= 1							
+u.name 			= "Medic Academy"
+u.class 		= "ent_melon_barracks_medic"
+u.cost 			= 1000
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 10
-u.description 	= BarracksText (2, 5)							
+u.description 	= BarracksText (2, 5)
 u.model 		= "models/props_junk/wood_crate002a.mdl"
 u.offset 		= Vector(0,0,10)
 u.canOverlap 	= false
@@ -917,13 +917,13 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Jetpack Flight School"		
-u.class 		= "ent_melon_barracks_jetpack"	
-u.cost 			= 2000							
-u.welded_cost 	= -1								
-u.population 	= 1								
+u.name 			= "Jetpack Flight School"
+u.class 		= "ent_melon_barracks_jetpack"
+u.cost 			= 2000
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 10
-u.description 	= BarracksText (3, 5)							
+u.description 	= BarracksText (3, 5)
 u.model 		= "models/props_wasteland/kitchen_stove002a.mdl"
 u.offset 		= Vector(0,0,-15)
 u.canOverlap 	= false
@@ -931,13 +931,13 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Bomb Factory"				
-u.class 		= "ent_melon_barracks_bomb"	
-u.cost 			= 1800						
-u.welded_cost 	= -1							
-u.population 	= 1							
+u.name 			= "Bomb Factory"
+u.class 		= "ent_melon_barracks_bomb"
+u.cost 			= 1800
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 10
-u.description 	= BarracksText (4, 3)						
+u.description 	= BarracksText (4, 3)
 u.model 		= "models/props_wasteland/laundry_basket001.mdl"
 u.offset 		= Vector(0,0,10)
 u.angle 		= Angle(180,0,0)
@@ -946,13 +946,13 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Gunner Training Camp"		
+u.name 			= "Gunner Training Camp"
 u.class 		= "ent_melon_barracks_gunner"
-u.cost 			= 3000						
-u.welded_cost 	= -1							
-u.population 	= 1						
-u.spawn_time 	= 10	
-u.description 	= BarracksText (5, 5)							
+u.cost 			= 3000
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 10
+u.description 	= BarracksText (5, 5)
 u.model 		= "models/props_combine/combine_interface002.mdl"
 u.offset 		= Vector(0,0,-25)
 u.canOverlap 	= false
@@ -960,13 +960,13 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Missiles Production Line"		
-u.class 		= "ent_melon_barracks_missiles"	
-u.cost 			= 3000							
-u.welded_cost 	= -1								
-u.population 	= 1								
-u.spawn_time 	= 15	
-u.description 	= BarracksText (6, 4)								
+u.name 			= "Missiles Production Line"
+u.class 		= "ent_melon_barracks_missiles"
+u.cost 			= 3000
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 15
+u.description 	= BarracksText (6, 4)
 u.model 		= "models/props_interiors/VendingMachineSoda01a.mdl"
 u.offset 		= Vector(0,0,10)
 u.angle 		= Angle(-90,0,90)
@@ -975,13 +975,13 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Sniper Shooting Range"		
-u.class 		= "ent_melon_barracks_sniper"	
-u.cost 			= 3000							
-u.welded_cost 	= -1								
-u.population 	= 1								
-u.spawn_time 	= 15	
-u.description 	= BarracksText (7, 3)								
+u.name 			= "Sniper Shooting Range"
+u.class 		= "ent_melon_barracks_sniper"
+u.cost 			= 3000
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 15
+u.description 	= BarracksText (7, 3)
 u.model 		= "models/props_wasteland/laundry_cart001.mdl"
 u.offset 		= Vector(0,0,15)
 u.angle 		= Angle(180, 90, 0)
@@ -990,13 +990,13 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Hot Shot Forge"				
-u.class 		= "ent_melon_barracks_hotshot"		
-u.cost 			= 4000							
-u.welded_cost 	= -1								
-u.population 	= 1								
-u.spawn_time 	= 15	
-u.description 	= BarracksText (8, 3)								
+u.name 			= "Hot Shot Forge"
+u.class 		= "ent_melon_barracks_hotshot"
+u.cost 			= 4000
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 15
+u.description 	= BarracksText (8, 3)
 u.model 		= "models/props_wasteland/laundry_dryer002.mdl"
 u.offset 		= Vector(0,0,30)
 u.canOverlap 	= false
@@ -1004,13 +1004,13 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Mortar Production Facility"	
-u.class 		= "ent_melon_barracks_mortar"	
-u.cost 			= 5000							
-u.welded_cost 	= -1								
-u.population 	= 1								
-u.spawn_time 	= 15	
-u.description 	= BarracksText (9, 3)								
+u.name 			= "Mortar Production Facility"
+u.class 		= "ent_melon_barracks_mortar"
+u.cost 			= 5000
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 15
+u.description 	= BarracksText (9, 3)
 u.model 		= "models/XQM/CoasterTrack/train_1.mdl"
 u.offset 		= Vector(0,0,-25)
 u.canOverlap 	= false
@@ -1018,13 +1018,13 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Nuke Assembler"				
-u.class 		= "ent_melon_barracks_nuke"		
-u.cost 			= 4500							
-u.welded_cost 	= -1								
-u.population 	= 1								
-u.spawn_time 	= 20	
-u.description 	= BarracksText (10, 1)								
+u.name 			= "Nuke Assembler"
+u.class 		= "ent_melon_barracks_nuke"
+u.cost 			= 4500
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 20
+u.description 	= BarracksText (10, 1)
 u.model 		= "models/props_lab/teleportframe.mdl"
 u.offset 		= Vector(0,0,0)
 u.canOverlap 	= false
@@ -1032,13 +1032,13 @@ u.button_color 	= button_barrack_color
 --[[
 i = i + 1
 u = mw_units[i]
-u.name 			= "Tombstone"				
-u.class 		= "ent_melon_barracks_doot"		
-u.cost 			= 300						
-u.welded_cost 	= -1								
-u.population 	= 1								
-u.spawn_time 	= 10	
-u.description 	= BarracksText (11, 3)								
+u.name 			= "Tombstone"
+u.class 		= "ent_melon_barracks_doot"
+u.cost 			= 300
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 10
+u.description 	= BarracksText (11, 3)
 u.model 		= "models/props_c17/gravestone002a.mdl"
 u.offset 		= Vector(0,0,0)
 u.canOverlap 	= false
@@ -1047,13 +1047,13 @@ u.button_color 	= button_barrack_color
 i = i + 1
 u = mw_units[i]
 u.code 			= "void"
-u.name 			= "Voidling Reactor"			
+u.name 			= "Voidling Reactor"
 u.class 		= "ent_melon_barracks_voidling"
-u.cost 			= 1500						
-u.welded_cost 	= -1							
-u.population 	= 1						
+u.cost 			= 1500
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 20
-u.description   = BarracksText (12, 5)	
+u.description   = BarracksText (12, 5)
 u.model 		= "models/props_wasteland/laundry_washer001a.mdl"
 u.offset 		= Vector(0,0,25)
 u.canOverlap 	= false
@@ -1062,13 +1062,13 @@ u.button_color 	= button_barrack_color
 i = i + 1
 u = mw_units[i]
 u.code 			= "void"
-u.name 			= "Raider Fabrication Platform"			
+u.name 			= "Raider Fabrication Platform"
 u.class 		= "ent_melon_barracks_void_raider"
-u.cost 			= 500						
-u.welded_cost 	= -1							
-u.population 	= 1						
+u.cost 			= 500
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 30
-u.description   = BarracksText (13, 3)	
+u.description   = BarracksText (13, 3)
 u.model 		= "models/props_vehicles/apc_tire001.mdl"
 u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(-90,0,0)
@@ -1079,13 +1079,13 @@ u.button_color 	= button_barrack_color
 i = i + 1
 u = mw_units[i]
 u.code 			= "void"
-u.name 			= "Mammoth Spawning Vat"			
+u.name 			= "Mammoth Spawning Vat"
 u.class 		= "ent_melon_barracks_void_mamoth"
-u.cost 			= 5000						
-u.welded_cost 	= -1							
-u.population 	= 1						
+u.cost 			= 5000
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 30
-u.description   = BarracksText (13, 3)	
+u.description   = BarracksText (13, 3)
 u.model 		= "models/props_combine/masterinterface.mdl"
 u.offset 		= Vector(0,0,-10)
 u.canOverlap 	= false
@@ -1095,13 +1095,13 @@ u.isBonusUnit   = true
 i = i + 1
 u = mw_units[i]
 u.code 			= "full"
-u.name 			= "Buck University"			
+u.name 			= "Buck University"
 u.class 		= "ent_melon_barracks_buck"
-u.cost 			= 4000						
-u.welded_cost 	= -1							
-u.population 	= 1						
+u.cost 			= 4000
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 40
-u.description   = BarracksText (14, 5)	
+u.description   = BarracksText (14, 5)
 u.model 		= "models/hunter/misc/roundthing2.mdl"
 u.offset 		= Vector(0,0,0)
 u.canOverlap 	= false
@@ -1110,13 +1110,13 @@ u.button_color 	= button_barrack_color
 i = i + 1
 u = mw_units[i]
 u.code 			= "full"
-u.name 			= "Fighter University"			
+u.name 			= "Fighter University"
 u.class 		= "ent_melon_barracks_fighter"
-u.cost 			= 4500						
-u.welded_cost 	= -1							
-u.population 	= 1						
+u.cost 			= 4500
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 40
-u.description   = BarracksText (15, 4)	
+u.description   = BarracksText (15, 4)
 u.model 		= "models/phxtended/trieq2x2x2solid.mdl"
 u.offset 		= Vector(0,0,0)
 u.canOverlap 	= false
@@ -1125,13 +1125,13 @@ u.button_color 	= button_barrack_color
 i = i + 1
 u = mw_units[i]
 u.code 			= "prot"
-u.name 			= "Gatling Depot"			
+u.name 			= "Gatling Depot"
 u.class 		= "ent_melon_barracks_gatling"
-u.cost 			= 2000				
-u.welded_cost 	= -1							
-u.population 	= 1						
+u.cost 			= 2000
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 20
-u.description   = BarracksText (16, 5)	
+u.description   = BarracksText (16, 5)
 u.model 		= "models/props_wasteland/kitchen_stove001a.mdl"
 u.offset 		= Vector(0,0,-10)
 u.canOverlap 	= false
@@ -1140,13 +1140,13 @@ u.button_color 	= button_barrack_color
 i = i + 1
 u = mw_units[i]
 u.code 			= "prot"
-u.name 			= "Molotov Depot"			
+u.name 			= "Molotov Depot"
 u.class 		= "ent_melon_barracks_molotov"
-u.cost 			= 900						
-u.welded_cost 	= -1							
-u.population 	= 1						
+u.cost 			= 900
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 20
-u.description   = BarracksText (17, 3)	
+u.description   = BarracksText (17, 3)
 u.model 		= "models/props_industrial/oil_storage.mdl"
 u.offset 		= Vector(0,0,-10)
 u.canOverlap 	= false
@@ -1682,7 +1682,7 @@ u = mw_base_props[i]
 u.name = "Half Pipe"
 u.model = "models/props_phx/construct/metal_plate_curve180.mdl"
 u.offset = Vector(-46,0,48)
-u.angle = Angle(180,0,0)	
+u.angle = Angle(180,0,0)
 u.cost = 50
 u.hp = 75
 
@@ -1861,7 +1861,7 @@ function _CreatePanel()
 			end
 		end
 
-		if not cvars.Bool("mw_admin_allow_manual_placing") then 
+		if not cvars.Bool("mw_admin_allow_manual_placing") then
 			LocalPlayer():ConCommand("mw_unit_option_welded 1")
 			local label = vgui.Create("DLabel", pl.panel)
 			label:SetPos(170, 15)
@@ -1892,7 +1892,7 @@ function _CreatePanel()
 			local checkbox = _MakeCheckbox( 180, 15, pl.panel, "Spawn as turret", "mw_unit_option_welded")
 			function checkbox:OnCursorEntered()
 				pl.mw_hover = 0
-				pl.info_name:SetText("Spawn as turret")	
+				pl.info_name:SetText("Spawn as turret")
 				pl.info_cost:SetText("")
 				pl.info_turret_cost:SetText("")
 				pl.info_power:SetText("")
@@ -2088,7 +2088,7 @@ function _CreatePanel()
 		for i=firstContraption, unitCount do
 			_MakeButton(i, i-firstContraption+1, scroll)
 		end
-		
+
 		DefaultInfo()
 		-- }
 	elseif (pl.mw_menu == -1) then																--Contraption manager menu
@@ -2362,11 +2362,11 @@ Choose a category on the left to see info about a certain topic!
 [[
 What is this mod?
 
-This is a remake of a 2006 addon called WarMelons:RTS by Lap and MegaJohnny. It's a strategy game that is played in sandbox, allowing you to build contraptions and your own maps with the familiar controls of standard Garry's Mod. 
+This is a remake of a 2006 addon called WarMelons:RTS by Lap and MegaJohnny. It's a strategy game that is played in sandbox, allowing you to build contraptions and your own maps with the familiar controls of standard Garry's Mod.
 
-The original addon was discontinued and broke when Gmod 13 came out, and I never heard of the developer again. I missed the addon so much that I looked for it everywhere. After more than a year without success, I decided to learn Lua and make my own version. 
+The original addon was discontinued and broke when Gmod 13 came out, and I never heard of the developer again. I missed the addon so much that I looked for it everywhere. After more than a year without success, I decided to learn Lua and make my own version.
 
-This addon isn't quite the same as the original, but I hope it will fill the void that WarMelons left. 
+This addon isn't quite the same as the original, but I hope it will fill the void that WarMelons left.
 - Marum
 
 
@@ -2409,7 +2409,7 @@ Shoutout to Ludsoe, who is also making a WarMelons remake!
 ]])
 		info:SetFontInternal("Trebuchet24")
 
-		_MakeHelpButton("Help", 1, info, 
+		_MakeHelpButton("Help", 1, info,
 [[
 Introduction:
 
@@ -2453,8 +2453,8 @@ In the Team menu you can choose which team you wan't to be on.
 The Help menu is this menu right here!
 
 And finally, the Admin menu is where the server owner can set all of the options for the gamemode.
-]])		
-	
+]])
+
 		_MakeHelpButton("Spawning", 3, info,
 [[
 How do i spawn units?
@@ -2464,7 +2464,7 @@ Once you selected a unit from the units menu, or a building from the Buildings m
 While the toolgun is set to spawn, click on the ground to spawn the selected unit. units have a Water cost and a Power cost. Water is the game's main resource, and it will be depleted when spawning units, unless the admin option "Free Water" is set to true (which it is by default). Power usage increases the more units you have, and you can't spawn units if your power has reached its max.
 
 From the units menu, you can also select an option to spawn units as Turrets, which reduces their cost, but they spawn welded to what you are looking at. Some units can't be spawned as turrets, such as Nukes and Jetpacks.
-]])		
+]])
 
 		_MakeHelpButton("Units", 4, info,
 [[
@@ -2498,7 +2498,7 @@ The Mortar is a powerful armoured unit that can quickly take down enemy squads. 
 
 Nuke:
 The Nuke is the ultimate breaching weapon. Its slow, but it carries a powerful blast. When it spawns, it informs every player of the imminent danger. It takes it 1.5 seconds to explode after it gets to the enemy wall, but it doesn't explode as big if it gets killed before it detonates, so take good care of it until it does. It will only automatically target enemy walls too, to avoid enemy kamikazes from triggering it.
-]])		
+]])
 
 		_MakeHelpButton("Buildings", 5, info,
 [[
@@ -2717,7 +2717,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 				end
 			end
 
-			y = y+80
+			y = y + 80
 
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(15, y)
@@ -2725,7 +2725,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetFontInternal( "DermaLarge" )
 			label:SetText([[Spawn grand
 				war base]])
-			for i=1, 8 do
+			for i = 1, 8 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(40,40)
 				button:SetPos(145+i*45,y)
@@ -2746,7 +2746,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 				end
 			end
 
-			y = y+80
+			y = y + 80
 
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(15, y)
@@ -2754,7 +2754,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetFontInternal( "DermaLarge" )
 			label:SetText([[Spawn
 				Ornament]])
-			for i=1, 8 do
+			for i = 1, 8 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(40,40)
 				button:SetPos(145+i*45,y)
@@ -2764,7 +2764,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 					LocalPlayer():ConCommand("mw_action 25")
 					pl.mw_frame:Remove()
 					pl.mw_frame = nil
-						
+
 					net.Start("MW_UpdateClientInfo")
 						net.WriteInt(i, 8)
 					net.SendToServer()
@@ -2847,11 +2847,11 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetText("Alternative Gameplay Options")
 
 			y = y+40
-				
+
 			_MakeCheckbox( 20, y, scroll, "No manual placing", "mw_admin_allow_manual_placing", "[Prevents spawning of mobile units]", true)
 
 			y = y+40
-				
+
 			_MakeCheckbox( 20, y, scroll, "Ban Contraptions", "mw_admin_ban_contraptions", "[Disable contraption assemblers]", false)
 
 			y = y+60
@@ -3095,7 +3095,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 					draw.RoundedBox( 6, 2, 2, w-4, h-4, mw_team_colors[i] )
 				end
 				grid:AddItem(DPanel)
-			end		
+			end
 		else
 			local label = vgui.Create("DLabel", pl.panel)
 			label:SetPos(120, 210)
@@ -3178,7 +3178,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			end
 
 			-- I have to add an artificial delay or the serverside code runs before the convar is changed
-			timer.Simple(0.1, function()   
+			timer.Simple(0.1, function()
 				net.Start("MWReadyUp")
 				net.SendToServer()
 			end)
@@ -3248,7 +3248,7 @@ function _MakeButton(number, posnumber, parent) -- Make Button
 	end
 	function button:OnCursorEntered()
 		pl.mw_hover = number
-		pl.info:SetText(mw_units[number].description)	
+		pl.info:SetText(mw_units[number].description)
 		if (cvars.Number("mw_admin_credit_cost") == 1) then
 			pl.info_cost:SetText("Cost: "..mw_units[number].cost)
 			if (mw_units[number].welded_cost == -1) then
@@ -3260,7 +3260,7 @@ function _MakeButton(number, posnumber, parent) -- Make Button
 			pl.info_cost:SetText("")
 			pl.info_turret_cost:SetText("")
 		end
-		pl.info_power:SetText("Power: "..mw_units[number].population)	
+		pl.info_power:SetText("Power: "..mw_units[number].population)
 		if (cvars.Number("mw_admin_spawn_time") == 1) then
 			pl.info_time:SetText("Spawn time: "..mw_units[number].spawn_time.."s")
 		else
@@ -3275,7 +3275,7 @@ end
 function DefaultInfo()
 	if not CLIENT then return end
 	local pl = LocalPlayer()
-		
+
 	pl.info = vgui.Create("DLabel", pl.panel)
 	pl.info:SetPos(190, 190)
 	pl.info:SetSize(370,200)
@@ -3289,35 +3289,35 @@ function DefaultInfo()
 	pl.info_name:SetSize(370,100)
 	pl.info_name:SetWrap(true)
 	pl.info_name:SetFontInternal( "DermaLarge" )
-	pl.info_name:SetText("-")	
+	pl.info_name:SetText("-")
 
 	pl.info_cost = vgui.Create("DLabel", pl.panel)
 	pl.info_cost:SetPos(190, 110)
 	pl.info_cost:SetSize(370,100)
 	pl.info_cost:SetWrap(true)
 	pl.info_cost:SetFontInternal( "DermaLarge" )
-	pl.info_cost:SetText("Cost: ")	
-		
+	pl.info_cost:SetText("Cost: ")
+
 	pl.info_turret_cost = vgui.Create("DLabel", pl.panel)
 	pl.info_turret_cost:SetPos(190, 140)
 	pl.info_turret_cost:SetSize(370,100)
 	pl.info_turret_cost:SetWrap(true)
 	pl.info_turret_cost:SetFontInternal( "Trebuchet24" )
-	pl.info_turret_cost:SetText("")	
-		
+	pl.info_turret_cost:SetText("")
+
 	pl.info_power = vgui.Create("DLabel", pl.panel)
 	pl.info_power:SetPos(400, 110)
 	pl.info_power:SetSize(370,100)
 	pl.info_power:SetWrap(true)
 	pl.info_power:SetFontInternal( "DermaLarge" )
-	pl.info_power:SetText("Power")	
+	pl.info_power:SetText("Power")
 
 	pl.info_time = vgui.Create("DLabel", pl.panel)
 	pl.info_time:SetPos(400, 140)
 	pl.info_time:SetSize(370,100)
 	pl.info_time:SetWrap(true)
 	pl.info_time:SetFontInternal( "Trebuchet24" )
-	pl.info_time:SetText("")	
+	pl.info_time:SetText("")
 end
 
 function TOOL:DrawToolScreen( width, height )
@@ -3325,7 +3325,7 @@ function TOOL:DrawToolScreen( width, height )
 	surface.SetDrawColor( Color( 20, 20, 20 ) )
 	surface.DrawRect( 0, 0, width, height )
 
-	if cvars.Bool( "mw_admin_cutscene" ) then 
+	if cvars.Bool( "mw_admin_cutscene" ) then
 		draw.SimpleText( "Toolgun Disabled", "DermaLarge", width / 2, height / 2, Color( 200, 200, 200 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		return
 	end
@@ -3522,7 +3522,7 @@ function TOOL:LeftClick( tr )
 							mw_delay = mw_units[unit_index].spawn_time
 							cost = 1337
 
-							if (attach == 1) then 
+							if (attach == 1) then
 								cost = mw_units[unit_index].welded_cost
 							else
 								cost = mw_units[unit_index].cost
@@ -3781,15 +3781,15 @@ function TOOL:Think()
 		local eyeZ = ply:EyePos()[3]
 		local processedTrace = ply:EyePos()
 
-		if desiredZ < eyeZ and actualZ < desiredZ then 
+		if desiredZ < eyeZ and actualZ < desiredZ then
 			local fraction = ( eyeZ - desiredZ ) / ( eyeZ - actualZ ) -- Distance to desired z as fraction of the whole trace's length
 			processedTrace = processedTrace + ( ply:EyeAngles():Forward() * fraction * specialTrace.StartPos:Distance( specialTrace.HitPos ) )
-		else 
+		else
 			-- Not sure if I want the commented stuff, it might in some situations make doing some things a bit easier, and it hasn't bothered me or anyone else yet that it behaves this way
 			-- if(actualZ>desiredZ) then
 			--	 processedTrace = Vector(specialTrace.HitPos[1], specialTrace.HitPos[2], desiredZ)
 			-- else
-				processedTrace = specialTrace.HitPos 
+				processedTrace = specialTrace.HitPos
 			-- end
 		end
 
@@ -3867,7 +3867,7 @@ function TOOL:Think()
 					self.ePressed = true
 					local tr = LocalPlayer():GetEyeTrace()
 					local correctTeam = (tr.Entity:GetNWInt("mw_melonTeam", 0) == newTeam or tr.Entity:GetNWInt("capTeam", 0) == newTeam or cvars.Bool("mw_admin_move_any_team", false))
-				
+
 					if (string.StartWith( tr.Entity:GetClass(), "ent_melon_barracks" ) or tr.Entity:GetClass() == "ent_melon_overclocker" ) then
 						-- if (correctTeam) then
 							net.Start("ToggleBarracks")
@@ -3967,7 +3967,7 @@ function TOOL:Think()
 			end
 		end
 	end
-			
+
 	if (newTeam ~= 0) then
 		newColor = mw_team_colors[newTeam]
 	else
@@ -4013,7 +4013,7 @@ function TOOL:Think()
 	else
 		self.ctrlPressed = false
 	end
-			
+
 	if (LocalPlayer().mw_spawnTimer == nil) then
 		LocalPlayer().mw_spawnTimer = CurTime()
 	end
@@ -4023,7 +4023,7 @@ function TOOL:Think()
 	if (LocalPlayer().mw_cooldown == nil) then
 		LocalPlayer().mw_cooldown = CurTime()
 	end
-			
+
 	if (LocalPlayer().mw_units == nil) then
 		LocalPlayer().mw_units = 0
 	end
@@ -4117,7 +4117,7 @@ function TOOL:DoSelection(startingPos, endingPos)
 			typeSelect = clickedUnit:GetClass()
 		end
 	else
-		if radius > 15 then 
+		if radius > 15 then
 			local heightTrace = util.TraceLine( {
 				start = center,
 				endpos = center + Vector(0,0,2000),
@@ -4131,13 +4131,13 @@ function TOOL:DoSelection(startingPos, endingPos)
 				filter = function( ent ) if ( ent:GetClass() == "prop_physics" ) then return true end end,
 				mask = MASK_SOLID+MASK_WATER
 			} )
-			
+
 			local depth = depthTrace.HitPos:Distance(center)
 			local height = heightTrace.HitPos:Distance(center) -- Using the normal distance function is a bit more computationally expensive but hopefully this shouldn't be bad enough to be an issue
 
 			if(depth < 25) then depth = 25 end
 			if(height < 25) then height = 25 end
-			
+
 
 			if(clickedUnit:GetClass()=="ent_melon_jetpack") then
 				allFoundEntities = ents.FindInBox(center - Vector(radius,radius,50), center + Vector(radius,radius,50) )
@@ -4215,7 +4215,7 @@ function TOOL:MakeContraptionMenu()
 		-- This means contraption price related stuff has to be updated in two separate places now which is stupid, but I don't want to have to restructure Marum's code just to make updating this less annoying
 
 		local cost = 0
-		local power = 0 
+		local power = 0
 		local spawnTime = 0
 
 		local fulltable = util.JSONToTable(file.Read(LocalPlayer().selectedAssembler.file))
@@ -4238,7 +4238,7 @@ function TOOL:MakeContraptionMenu()
 				spawnTime = spawnTime + ent.spawnDelay*2
 			end
 		end
-		LocalPlayer().contrapCost = cost 
+		LocalPlayer().contrapCost = cost
 		LocalPlayer().contrapPower = power
 		LocalPlayer().selectedAssembler:SetNWFloat("slowThinkTimer", spawnTime)
 
@@ -4257,7 +4257,7 @@ function TOOL:MakeContraptionMenu()
 	LocalPlayer().cmenuframe:SetPos(ScrW()/2-w/2,ScrH()/2-h/2)
 	LocalPlayer().cmenuframe:SetTitle("Contraption Legalizer")
 	LocalPlayer().cmenuframe:MakePopup()
-			
+
 	LocalPlayer().cmenuframe.OnClose = function()
 		LocalPlayer().cmenuframe = nil
 	end
@@ -4350,7 +4350,7 @@ function StartBuildingContraption( assembler, _file, cost, power )
 	net.SendToServer()
 
 	if cvars.Bool("mw_admin_credit_cost") then
-		local newCredits = LocalPlayer().mw_credits-LocalPlayer().contrapCost 
+		local newCredits = LocalPlayer().mw_credits-LocalPlayer().contrapCost
 		net.Start("MW_UpdateServerInfo")
 			net.WriteInt(cvars.Number("mw_team"), 8)
 			net.WriteInt(newCredits, 32)
@@ -4537,7 +4537,7 @@ to start a game and turn off cheats]]
 			local h = 280
 			local x = ScrW()-w
 			local y = ScrH()
-			
+
 			draw.DrawText( "R: Open menu", "DermaLarge", x+w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
 			draw.DrawText( "LMB: Spawn Main Building", "DermaLarge", x+w-10, y-100, color_white, TEXT_ALIGN_RIGHT )
 			draw.DrawText( "RMB: Cancel", "DermaLarge", x+w-10, y-60, color_white, TEXT_ALIGN_RIGHT )
@@ -4582,7 +4582,7 @@ to start a game and turn off cheats]]
 					draw.RoundedBox( 10, mx-100, my+40, 200, 45, Color(0,0,0,100) )
 					draw.DrawText( "Spawning "..mw_units[unit_id].name, "Trebuchet24", mx, my+40, Color(255,255,0,255), TEXT_ALIGN_CENTER )
 					draw.DrawText( "as turret", "Trebuchet24", mx, my+60, Color(255,255,0,255), TEXT_ALIGN_CENTER )
-						
+
 					draw.RoundedBox( 2, mx-21, my-3, 17, 5, Color(50,50,50))
 					draw.RoundedBox( 2, mx+4, my-3, 17, 5, Color(50,50,50))
 					draw.RoundedBox( 2, mx-4, my-31-math.sin(CurTime()*3)*10, 7, 12, Color(50,50,50))
@@ -4593,12 +4593,12 @@ to start a game and turn off cheats]]
 					draw.RoundedBox( 10, mx-160, my+40, 320, 25, Color(0,0,0,100) )
 					draw.DrawText( "Spawning "..mw_units[unit_id].name, "Trebuchet24", mx, my+40, Color(255,255,255,200), TEXT_ALIGN_CENTER )
 					local a = math.sin(CurTime()*3)*5
-						
+
 					draw.RoundedBox( 2, mx-4, my-23-a, 7, 12, Color(50,50,50))
 					draw.RoundedBox( 2, mx-4, my+12+a, 7, 12, Color(50,50,50))
 					draw.RoundedBox( 2, mx-24-a, my-3, 12, 7, Color(50,50,50))
 					draw.RoundedBox( 2, mx+11+a, my-3, 12, 7, Color(50,50,50))
-						
+
 					draw.RoundedBox( 1, mx-3, my-22-a, 5, 10, teamColor)
 					draw.RoundedBox( 1, mx-3, my+13+a, 5, 10, teamColor)
 					draw.RoundedBox( 1, mx-23-a, my-2, 10, 5, teamColor)
@@ -4608,7 +4608,7 @@ to start a game and turn off cheats]]
 				local name = ""
 				draw.RoundedBox( 10, mx-115, my+40, 230, 45, Color(0,0,0,100) )
 				draw.DrawText( "Spawning "..name, "Trebuchet24", mx, my+40, Color(255,255,0,255), TEXT_ALIGN_CENTER )
-					
+
 				draw.RoundedBox( 2, mx-21, my-3, 17, 5, Color(50,50,50))
 				draw.RoundedBox( 2, mx+4, my-3, 17, 5, Color(50,50,50))
 				draw.RoundedBox( 2, mx-4, my-31-math.sin(CurTime()*3)*10, 7, 12, Color(50,50,50))
@@ -4773,7 +4773,7 @@ local function isInRangeLoop( vector, teamIndex, entClass, buildDist )
 	end
 end
 
-function MW_isInRange( vector, teamIndex ) -- Why does this not just use findinsphere? 
+function MW_isInRange( vector, teamIndex ) -- Why does this not just use findinsphere?
 	local canBuild = false
 
 	if isInRangeLoop( vector, teamIndex, "ent_melon_main_building", 800 ) then return true end
