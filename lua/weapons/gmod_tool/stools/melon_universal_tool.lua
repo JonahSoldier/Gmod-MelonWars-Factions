@@ -307,92 +307,92 @@ u.model 		= "models/props_junk/MetalBucket01a.mdl"
 i = i + 1
 u = mw_units[i]
 u.code 			= "full"
-u.name 			= "Buck"			
+u.name 			= "Buck"
 u.class 		= "ent_melon_buck"
-u.cost 			= 500				
-u.welded_cost 	= 250			
+u.cost 			= 500
+u.welded_cost 	= 250
 u.population 	= 3
 u.spawn_time 	= 20
 u.offset 		= Vector(0,0,5)
-u.description 	= [[A slow trooper that fires a shotgun blast in a tight spread. Useful for clearing hordes of weak enemies.]]	
+u.description 	= [[A slow trooper that fires a shotgun blast in a tight spread. Useful for clearing hordes of weak enemies.]]
 u.model 		= "models/props_junk/plasticbucket001a.mdl"
 
 i = i + 1
 u = mw_units[i]
 u.code 			= "full"
-u.name 			= "Fighter"			
+u.name 			= "Fighter"
 u.class 		= "ent_melon_fighter"
-u.cost 			= 750				
-u.welded_cost 	= -1				
+u.cost 			= 750
+u.welded_cost 	= -1
 u.population 	= 2
 u.spawn_time 	= 20
-u.description 	= [[A fast fighter jet that flies high and shoots down. It can't fly forever without landing, though.]]	
+u.description 	= [[A fast fighter jet that flies high and shoots down. It can't fly forever without landing, though.]]
 u.model 		= "models/props_phx/construct/metal_plate1_tri.mdl"
 
 
 i = i + 1
 u = mw_units[i]
 u.code 			= "prot"
-u.name 			= "Gatling"			
+u.name 			= "Gatling"
 u.class 		= "ent_melon_gatling"
-u.cost 			= 450				
-u.welded_cost 	= 100				
+u.cost 			= 450
+u.welded_cost 	= 100
 u.population 	= 2
 u.spawn_time 	= 5
-u.description 	= [[A gunner with an electric motor to spin up its barrels immediately. Shoots slower as it runs out of energy. Will slowly recharge its batteries with a handcrank when idle.]]	
+u.description 	= [[A gunner with an electric motor to spin up its barrels immediately. Shoots slower as it runs out of energy. Will slowly recharge its batteries with a handcrank when idle.]]
 u.model 		= "models/Mechanics/gears/gear12x24.mdl"
 
 i = i + 1
 u = mw_units[i]
 u.code 			= "prot"
-u.name 			= "Molotov"			
+u.name 			= "Molotov"
 u.class 		= "ent_melon_molotov"
-u.cost 			= 200				
-u.welded_cost 	= -1				
+u.cost 			= 200
+u.welded_cost 	= -1
 u.population 	= 2
 u.spawn_time 	= 5
 u.offset 		= Vector(0,0,10)
-u.description 	= [[A bomb that leaves behind a flaming, dangerous area on the floor.]]	
+u.description 	= [[A bomb that leaves behind a flaming, dangerous area on the floor.]]
 u.model 		= "models/props_junk/propanecanister001a.mdl"
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Droid"			
+u.name 			= "Droid"
 u.class 		= "ent_melon_droid"
-u.cost 			= 300				
-u.welded_cost 	= 300				
+u.cost 			= 300
+u.welded_cost 	= 300
 u.population 	= 2
 u.spawn_time 	= 8
 u.offset 		= Vector(0,0,10)
-u.description 	= [[A more damaging, tougher Marine that requires energy to fire.]]	
+u.description 	= [[A more damaging, tougher Marine that requires energy to fire.]]
 u.model 		= "models/props_c17/utilityconnecter006c.mdl"
 u.button_color 	= button_energy_color
 u.isBonusUnit   = true
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Long-boy"			
+u.name 			= "Long-boy"
 u.class 		= "ent_melon_longboy"
-u.cost 			= 8000				
-u.welded_cost 	= 8000				
+u.cost 			= 8000
+u.welded_cost 	= 8000
 u.population 	= 5
 u.spawn_time 	= 15
 u.offset 		= Vector(0,0,0)
-u.description 	= [[A very long range superweapon that needs to deploy to attack. It has to be charged with energy and it can be toggled by looking at it and pressing E.]]	
+u.description 	= [[A very long range superweapon that needs to deploy to attack. It has to be charged with energy and it can be toggled by looking at it and pressing E.]]
 u.model 		= "models/props_trainstation/trainstation_ornament001.mdl"
 u.button_color 	= button_energy_color
 
 i = i + 1
 u = mw_units[i]
 u.code 			= "--banned--"
-u.name 			= "Forcefield"			
+u.name 			= "Forcefield"
 u.class 		= "ent_melon_forcefield"
-u.cost 			= 0				
-u.welded_cost 	= -1			
-u.population 	= 0				
-u.spawn_time 	= 20000	
+u.cost 			= 0
+u.welded_cost 	= -1
+u.population 	= 0
+u.spawn_time 	= 20000
 u.offset        = Vector(0,0,42)
-u.description 	= [[A forcefield that blocks bullets from the enemy team.]]	
+u.description 	= [[A forcefield that blocks bullets from the enemy team.]]
 u.model 		= "models/hunter/tubes/tube4x4x2to2x2.mdl"
 
 
@@ -2302,11 +2302,11 @@ function _CreatePanel()
 		end
 		local button = vgui.Create("DButton", pl.panel)
 		button:SetSize(40,40)
-		button:SetPos(185+135,325)
+		button:SetPos(185 + 135,325)
 		button:SetText("P")
 		function button:DoClick()
 			LocalPlayer():ConCommand("mw_code prot")
-			factionSelection:SetPos(180+135, 320)
+			factionSelection:SetPos(180 + 135, 320)
 		end
 		button.Paint = function(s, w, h)
 			draw.RoundedBox( 6, 0, 0, w, h, Color(20,170,230) )
@@ -2344,7 +2344,7 @@ function _CreatePanel()
 		--local scroll = vgui.Create( "DScrollPanel", pl.panel )
 		--scroll:SetSize( 440, 450 )
 		--scroll:SetPos( 120, 10 )
-			
+
 		local info = vgui.Create( "RichText", pl.panel )
 		info:SetPos( 120, 20 )
 		info:SetSize( 450,450 )
@@ -2689,20 +2689,20 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			_MakeCheckbox( 20, y, scroll, "Player Colors", "mw_admin_player_colors", "[Show a colored circle over players]")
 			]]
 			y = y+80
-				
+
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(15, y)
 			label:SetSize(200,60)
 			label:SetFontInternal( "DermaLarge" )
 			label:SetText([[Spawn normal
 				base]])
-			for i=1, 8 do
+			for i = 1, 8 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(40,40)
 				button:SetPos(145+i*45,y)
 				button:SetText("")
 				function button:DoClick()
-					LocalPlayer():ConCommand("mw_team "..tostring(i))
+					LocalPlayer():ConCommand("mw_team " .. tostring(i))
 					LocalPlayer():ConCommand("mw_action 2")
 					pl.mw_frame:Remove()
 					pl.mw_frame = nil
@@ -4763,7 +4763,7 @@ to start a game and turn off cheats]]
 	]]
 end
 
-local function isInRangeLoop( entClass, buildDist )
+local function isInRangeLoop( vector, teamIndex, entClass, buildDist )
 	for _, v in ipairs( ents.FindByClass( entClass ) ) do
 		if vector:Distance( v:GetPos() ) < buildDist then
 			if v:GetNWInt( "mw_melonTeam", 0 ) == teamIndex then
@@ -4776,10 +4776,10 @@ end
 function MW_isInRange( vector, teamIndex ) -- Why does this not just use findinsphere? 
 	local canBuild = false
 
-	if isInRangeLoop( "ent_melon_main_building", 800 ) then return true end
-	if isInRangeLoop( "ent_melon_station", 250 ) then return true end
-	if isInRangeLoop( "ent_melon_main_unit", 250 ) then return true end
-	if isInRangeLoop( "ent_melon_main_building_grand_war", 1600 ) then return true end
+	if isInRangeLoop( vector, teamIndex, "ent_melon_main_building", 800 ) then return true end
+	if isInRangeLoop( vector, teamIndex, "ent_melon_station", 250 ) then return true end
+	if isInRangeLoop( vector, teamIndex, "ent_melon_main_unit", 250 ) then return true end
+	if isInRangeLoop( vector, teamIndex, "ent_melon_main_building_grand_war", 1600 ) then return true end
 
 	local foundPoints = ents.FindByClass( "ent_melon_outpost_point" )
 

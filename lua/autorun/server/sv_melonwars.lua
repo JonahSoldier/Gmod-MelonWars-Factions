@@ -500,6 +500,46 @@ net.Receive( "UseLargeWaterTank", function( len, pl )
 	ent:Remove()
 end )
 
+local function isInRangeLoop( vector, teamIndex, entClass, buildDist )
+	for _, v in ipairs( ents.FindByClass( entClass ) ) do
+		if vector:Distance( v:GetPos() ) < buildDist then
+			if v:GetNWInt( "mw_melonTeam", 0 ) == teamIndex then
+				return true
+			end
+		end
+	end
+end
+
+local function MW_Server_IsInBuildRange( vector, teamIndex ) -- This is copied from the clientside function, it's coded pretty weirdly so don't blame me for that. - Jonah
+	--[[if (cvars.Bool("mw_admin_allow_free_placing") or MW_isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then		-- mw_units[unit_index].buildAnywere or
+		if (cvars.Bool("mw_admin_allow_free_placing") or MW_noEnemyNear(trace.HitPos, mw_melonTeam)) then
+		end
+	end]]
+	local canBuild = false
+	if isInRangeLoop( vector, teamIndex, "ent_melon_main_building", 800 ) then return true end
+	if isInRangeLoop( vector, teamIndex, "ent_melon_station", 250 ) then return true end
+	if isInRangeLoop( vector, teamIndex, "ent_melon_main_unit", 250 ) then return true end
+	if isInRangeLoop( vector, teamIndex, "ent_melon_main_building_grand_war", 1600 ) then return true end
+
+	local foundPoints = ents.FindByClass( "ent_melon_outpost_point" )
+
+	for _, v in ipairs( foundPoints ) do
+		if vector:Distance( v:GetPos() ) < 600 then
+			if (teamgrid == nil or teamgrid[v:GetNWInt("capTeam", 0)] == nil or teamgrid[v:GetNWInt("capTeam", 0)][teamIndex] == nil) then
+				canBuild = v:GetNWInt("capTeam", 0) == teamIndex
+			elseif (v:GetNWInt("capTeam", 0) == teamIndex or teamgrid[v:GetNWInt("capTeam", 0)][teamIndex]) then
+				canBuild = true
+			end
+		end
+	end
+
+	return canBuild
+end
+
+local function MW_Server_UpdateWater( team, credits )
+	mw_teamCredits[team] = credits
+end
+
 net.Receive( "MW_SpawnUnit", function( len, pl )
 	local class = net.ReadString()
 	local unit_index = net.ReadInt(16)
@@ -533,46 +573,6 @@ net.Receive( "MW_SpawnUnit", function( len, pl )
 		pl:PrintMessage( HUD_PRINTTALK, "== Too far from an outpost! ==" )
 	end
 end )
-
-local function MW_Server_UpdateWater( team, credits )
-	mw_teamCredits[team] = credits
-end
-
-local function isInRangeLoop( entClass, buildDist, teamIndex )
-	for _, v in ipairs( ents.FindByClass( entClass ) ) do
-		if vector:Distance( v:GetPos() ) < buildDist then
-			if v:GetNWInt( "mw_melonTeam", 0 ) == teamIndex then
-				return true
-			end
-		end
-	end
-end
-
-local function MW_Server_IsInBuildRange( vector, teamIndex ) -- This is copied from the clientside function, it's coded pretty weirdly so don't blame me for that. - Jonah
-	--[[if (cvars.Bool("mw_admin_allow_free_placing") or MW_isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then		-- mw_units[unit_index].buildAnywere or
-		if (cvars.Bool("mw_admin_allow_free_placing") or MW_noEnemyNear(trace.HitPos, mw_melonTeam)) then
-		end
-	end]]
-	local canBuild = false
-	if isInRangeLoop( "ent_melon_main_building", 800, teamIndex ) then return true end
-	if isInRangeLoop( "ent_melon_station", 250, teamIndex ) then return true end
-	if isInRangeLoop( "ent_melon_main_unit", 250, teamIndex ) then return true end
-	if isInRangeLoop( "ent_melon_main_building_grand_war", 1600, teamIndex ) then return true end
-
-	local foundPoints = ents.FindByClass( "ent_melon_outpost_point" )
-
-	for _, v in ipairs( foundPoints ) do
-		if vector:Distance( v:GetPos() ) < 600 then
-			if (teamgrid == nil or teamgrid[v:GetNWInt("capTeam", 0)] == nil or teamgrid[v:GetNWInt("capTeam", 0)][teamIndex] == nil) then
-				canBuild = v:GetNWInt("capTeam", 0) == teamIndex
-			elseif (v:GetNWInt("capTeam", 0) == teamIndex or teamgrid[v:GetNWInt("capTeam", 0)][teamIndex]) then
-				canBuild = true
-			end
-		end
-	end
-
-	return canBuild
-end
 
 function SpawnUnitAtPos( class, unit_index, pos, ang, cost, spawntime, _team, attach, parent, pl, spawndelay )
 	local newMarine = ents.Create( class )
@@ -1281,6 +1281,40 @@ function MW_SpawnProp(model, pos, ang, _team, parent, health, cost, pl, spawntim
 	return newMarine
 end
 
+local function MW_SpawnBaseAtPos(_team, vector, pl, grandwar, unit)
+	local offset = Vector(0,0,0)
+
+	local class = "ent_melon_main_building"
+	if (grandwar) then
+		class = "ent_melon_main_building_grand_war"
+	end
+	if (unit) then
+		class = "ent_melon_main_unit"
+		offset = Vector(0,0,50)
+	end
+	local newMarine = ents.Create( class )
+	if not IsValid( newMarine ) then return end -- Check whether we successfully made an entity, if not - bail
+	newMarine:SetPos( vector + offset )
+
+	sound.Play( "garrysmod/content_downloaded.wav", vector, 60, 90, 1 )
+
+	mw_melonTeam = _team
+
+	newMarine.mw_spawntime = 0
+
+	newMarine:Spawn()
+	newMarine:SetNWInt("mw_melonTeam", _team)
+
+	newMarine:Ini(_team)
+
+	if not IsValid(pl) then return end
+	sound.Play( "garrysmod/content_downloaded.wav", pl:GetPos(), 60, 90, 1 )
+	undo.Create("Melon Marine")
+	undo.AddEntity( newMarine )
+	undo.SetPlayer( pl)
+	undo.Finish()
+end
+
 net.Receive( "SpawnBase", function( len, pl )
 	local trace = net.ReadTable()
 	local _team = net.ReadInt(8)
@@ -1325,40 +1359,6 @@ net.Receive( "SpawnWaterTank", function( len, pl )
 	e:SetPos(trace.HitPos)
 	e:Spawn()
 end )
-
-local function MW_SpawnBaseAtPos(_team, vector, pl, grandwar, unit)
-	local offset = Vector(0,0,0)
-
-	local class = "ent_melon_main_building"
-	if (grandwar) then
-		class = "ent_melon_main_building_grand_war"
-	end
-	if (unit) then
-		class = "ent_melon_main_unit"
-		offset = Vector(0,0,50)
-	end
-	local newMarine = ents.Create( class )
-	if not IsValid( newMarine ) then return end -- Check whether we successfully made an entity, if not - bail
-	newMarine:SetPos( vector+offset )
-
-	sound.Play( "garrysmod/content_downloaded.wav", vector, 60, 90, 1 )
-
-	mw_melonTeam = _team
-
-	newMarine.mw_spawntime = 0
-
-	newMarine:Spawn()
-	newMarine:SetNWInt("mw_melonTeam", _team)
-
-	newMarine:Ini(_team)
-
-	if not IsValid(pl) then return end
-	sound.Play( "garrysmod/content_downloaded.wav", pl:GetPos(), 60, 90, 1 )
-	undo.Create("Melon Marine")
-	undo.AddEntity( newMarine )
-	undo.SetPlayer( pl)
-	undo.Finish()
-end
 
 net.Receive( "SellEntity", function( len, pl )
 	local entity = net.ReadEntity()
