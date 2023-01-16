@@ -480,7 +480,7 @@ u.model 		= "models/props_wasteland/light_spotlight01_lamp.mdl"
 
 
 i = i + 1
-firstBuilding = i --------------------------------- First building
+local firstBuilding = i --------------------------------- First building
 
 
 u = mw_units[i]
@@ -1169,8 +1169,11 @@ u.canOverlap 	= false
 u.energy 		= true
 u.button_color 	= button_barrack_color
 
+
 i = i + 1
-firstEnergy = i ----------------------------------First energy
+local firstEnergy = i ----------------------------------First energy
+
+
 u = mw_units[i]
 u.name 			= "Relay"
 u.class 		= "ent_melon_energy_relay"
@@ -1326,8 +1329,11 @@ u.canOverlap 	= false
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
+
 i = i + 1
-firstContraption = i ---------------------------- First Contraption
+local firstContraption = i ---------------------------- First Contraption
+
+
 u = mw_units[i]
 u.name 			= "Engine"
 u.class 		= "ent_melon_engine"
@@ -1473,7 +1479,7 @@ end
 local basePropCount = 25
 mw_base_props = {}
 local u = nil
-for i=1, basePropCount do
+for i = 1, basePropCount do
 	mw_base_props[i] = BaseProp()
 end
 
@@ -1725,59 +1731,9 @@ u.hp = 25
 local w = 700
 local h = 500
 
-function TOOL:MenuButton( pl, y, h, text, number )
-	local button = vgui.Create( "DButton", pl.mw_frame )
-	button:SetSize( 100, h )
-	button:SetPos( 10, y )
-	button:SetText( text )
-	button:SetFont( "CloseCaption_Normal" )
-	function button:DoClick()
-		pl.panel:Remove()
-		pl.mw_menu = number
-		_CreatePanel()
-	end
-end
-
-function TOOL:Reload()
-	if cvars.Bool("mw_admin_cutscene") then return end
-	if not CLIENT then return end
-	local pl = LocalPlayer()
-	if pl.mw_frame ~= nil then return end
---	CREATE FRAME
-	pl.mw_frame = vgui.Create("DFrame")
-	pl.mw_frame:SetSize(w,h)
-	pl.mw_frame:SetPos(ScrW()/2-w/2+150,ScrH()/2-h/3)
-	pl.mw_frame:SetTitle("Melon Wars")
-	pl.mw_frame:MakePopup()
-	pl.mw_frame:ShowCloseButton()
-	local button = vgui.Create("DButton", pl.mw_frame)
-	button:SetSize(90,18)
-	button:SetPos(w-93,3)
-	button:SetText("Press R to close")
-	function button:DoClick()
-		pl.mw_frame:Remove()
-		pl.mw_frame = nil
-	end
-
-	_CreatePanel()
-
-	local h = 70
-	self:MenuButton(pl, 30+h*0, h, "Units", 0)
-	self:MenuButton(pl, 30+h*1, h, "Buildings", 1)
-	self:MenuButton(pl, 30+h*2, h, "Base", 2)
-	self:MenuButton(pl, 30+h*3, h, "Energy", 3)
-	self:MenuButton(pl, 30+h*4, h, "Contrap.", 4)
-
-	self:MenuButton(pl, 390, 25, "Help", 6)
-	self:MenuButton(pl, 415, 25, "Team", 5)
-	self:MenuButton(pl, 440, 25, "Admin", 7)
-	self:MenuButton(pl, 470, 25, "Player", 8)
---	button:SetEnabled( pl:IsAdmin() )
-end
-
-function _MakeCheckbox (x, y, parent, textstr, command, labelstr, inverted)
-	local checkbox = vgui.Create( "DButton", parent )--  Create the checkbox
-	checkbox:SetPos( x, y )--  Set the position
+local function _MakeCheckbox (x, y, parent, textstr, command, labelstr, inverted)
+	local checkbox = vgui.Create( "DButton", parent ) --  Create the checkbox
+	checkbox:SetPos( x, y ) --  Set the position
 	checkbox:SetSize(60,30)
 	checkbox:SetText("")
 	local checked = (GetConVarNumber( command ) == 1)
@@ -1826,7 +1782,123 @@ function _MakeCheckbox (x, y, parent, textstr, command, labelstr, inverted)
 	return checkbox
 end
 
-function _CreatePanel()
+local function DefaultInfo()
+	if not CLIENT then return end
+	local pl = LocalPlayer()
+
+	pl.info = vgui.Create("DLabel", pl.panel)
+	pl.info:SetPos(190, 190)
+	pl.info:SetSize(370,200)
+	pl.info:SetWrap(true)
+	pl.info:SetFontInternal( "Trebuchet24" )
+	pl.info:SetText("Hover over a button to see more info about the units")
+	pl.mw_hover = 0
+
+	pl.info_name = vgui.Create("DLabel", pl.panel)
+	pl.info_name:SetPos(190, 50)
+	pl.info_name:SetSize(370,100)
+	pl.info_name:SetWrap(true)
+	pl.info_name:SetFontInternal( "DermaLarge" )
+	pl.info_name:SetText("-")
+
+	pl.info_cost = vgui.Create("DLabel", pl.panel)
+	pl.info_cost:SetPos(190, 110)
+	pl.info_cost:SetSize(370,100)
+	pl.info_cost:SetWrap(true)
+	pl.info_cost:SetFontInternal( "DermaLarge" )
+	pl.info_cost:SetText("Cost: ")
+
+	pl.info_turret_cost = vgui.Create("DLabel", pl.panel)
+	pl.info_turret_cost:SetPos(190, 140)
+	pl.info_turret_cost:SetSize(370,100)
+	pl.info_turret_cost:SetWrap(true)
+	pl.info_turret_cost:SetFontInternal( "Trebuchet24" )
+	pl.info_turret_cost:SetText("")
+
+	pl.info_power = vgui.Create("DLabel", pl.panel)
+	pl.info_power:SetPos(400, 110)
+	pl.info_power:SetSize(370,100)
+	pl.info_power:SetWrap(true)
+	pl.info_power:SetFontInternal( "DermaLarge" )
+	pl.info_power:SetText("Power")
+
+	pl.info_time = vgui.Create("DLabel", pl.panel)
+	pl.info_time:SetPos(400, 140)
+	pl.info_time:SetSize(370,100)
+	pl.info_time:SetWrap(true)
+	pl.info_time:SetFontInternal( "Trebuchet24" )
+	pl.info_time:SetText("")
+end
+
+local function _MakeButton(number, posnumber, parent) -- Make Button
+	if not CLIENT then return end
+	local pl = LocalPlayer()
+
+	local button = vgui.Create("DButton", parent) -- Unit button
+	button:SetSize(120,40)
+	button:SetPos(10,10+(posnumber-1)*45)
+	button:SetFont("CloseCaption_Normal")
+	button:SetText(mw_units[number].name)
+	function button:DoClick()
+		LocalPlayer():ConCommand("mw_chosen_unit "..tostring(number))
+		LocalPlayer():ConCommand("mw_action 1")
+		pl.mw_frame:Remove()
+		pl.mw_frame = nil
+	end
+	local color = mw_units[number].button_color
+	button.Paint = function(s, w, h)
+		draw.RoundedBox( 6, 0, 0, w, h, Color(color.r-40,color.g-40,color.b-40) )
+		draw.RoundedBox( 3, 5, 5, w-10, h-10, color )
+	end
+	function button:OnCursorEntered()
+		pl.mw_hover = number
+		pl.info:SetText(mw_units[number].description)
+		if (cvars.Number("mw_admin_credit_cost") == 1) then
+			pl.info_cost:SetText("Cost: "..mw_units[number].cost)
+			if (mw_units[number].welded_cost == -1) then
+				pl.info_turret_cost:SetText("")
+			else
+				pl.info_turret_cost:SetText("Turret cost: "..mw_units[number].welded_cost)
+			end
+		else
+			pl.info_cost:SetText("")
+			pl.info_turret_cost:SetText("")
+		end
+		pl.info_power:SetText("Power: "..mw_units[number].population)
+		if (cvars.Number("mw_admin_spawn_time") == 1) then
+			pl.info_time:SetText("Spawn time: "..mw_units[number].spawn_time.."s")
+		else
+			pl.info_time:SetText("")
+		end
+		pl.info_name:SetText(mw_units[number].name)
+	end
+end
+
+local function _MakeHelpButton(name, number, info, text1, text2, text3, text4, text5) -- Make HELP Button
+	local button = vgui.Create("DButton", LocalPlayer().panel)
+	button:SetSize(100,40)
+	button:SetPos(10,10+number*(40+5))
+	button:SetText(name)
+	button:SetFontInternal("CloseCaption_Normal")
+	function button:DoClick()
+		info:SetFontInternal("Trebuchet24")
+		info:SetText(text1)
+		if (text2 ~= nil) then info:AppendText(text2) end
+		if (text3 ~= nil) then info:AppendText(text3) end
+		if (text4 ~= nil) then info:AppendText(text4) end
+		if (text5 ~= nil) then info:AppendText(text5) end
+		timer.Simple( 0.001, function() info:GotoTextStart() end )
+
+		if (name == "About") then
+			if (LocalPlayer():GetInfo("mw_code") == "about" or LocalPlayer():GetInfo("mw_code") == "ABOUT") then
+				chat.AddText( "Well done" )
+				LocalPlayer():ConCommand("mw_action 945")
+			end
+		end
+	end
+end
+
+local function _CreatePanel()
 	if not CLIENT then return end
 	local pl = LocalPlayer()
 
@@ -2085,8 +2157,8 @@ function _CreatePanel()
 			surface.DrawRect( 135, a-5, 20, 20)
 		end
 
-		for i=firstContraption, unitCount do
-			_MakeButton(i, i-firstContraption+1, scroll)
+		for i = firstContraption, unitCount do
+			_MakeButton(i, i - firstContraption + 1, scroll)
 		end
 
 		DefaultInfo()
@@ -3200,124 +3272,54 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 	end
 end
 
--- Button Functions (Start)
-
-function _MakeHelpButton(name, number, info, text1, text2, text3, text4, text5) -- Make HELP Button
-	local button = vgui.Create("DButton", LocalPlayer().panel)
-	button:SetSize(100,40)
-	button:SetPos(10,10+number*(40+5))
-	button:SetText(name)
-	button:SetFontInternal("CloseCaption_Normal")
+function TOOL:MenuButton( pl, y, h, text, number )
+	local button = vgui.Create( "DButton", pl.mw_frame )
+	button:SetSize( 100, h )
+	button:SetPos( 10, y )
+	button:SetText( text )
+	button:SetFont( "CloseCaption_Normal" )
 	function button:DoClick()
-		info:SetFontInternal("Trebuchet24")
-		info:SetText(text1)
-		if (text2 ~= nil) then info:AppendText(text2) end
-		if (text3 ~= nil) then info:AppendText(text3) end
-		if (text4 ~= nil) then info:AppendText(text4) end
-		if (text5 ~= nil) then info:AppendText(text5) end
-		timer.Simple( 0.001, function() info:GotoTextStart() end )
-
-		if (name == "About") then
-			if (LocalPlayer():GetInfo("mw_code") == "about" or LocalPlayer():GetInfo("mw_code") == "ABOUT") then
-				chat.AddText( "Well done" )
-				LocalPlayer():ConCommand("mw_action 945")
-			end
-		end
+		pl.panel:Remove()
+		pl.mw_menu = number
+		_CreatePanel()
 	end
 end
 
-function _MakeButton(number, posnumber, parent) -- Make Button
+function TOOL:Reload()
+	if cvars.Bool("mw_admin_cutscene") then return end
 	if not CLIENT then return end
 	local pl = LocalPlayer()
-
-	local button = vgui.Create("DButton", parent) -- Unit button
-	button:SetSize(120,40)
-	button:SetPos(10,10+(posnumber-1)*45)
-	button:SetFont("CloseCaption_Normal")
-	button:SetText(mw_units[number].name)
+	if pl.mw_frame ~= nil then return end
+--	CREATE FRAME
+	pl.mw_frame = vgui.Create("DFrame")
+	pl.mw_frame:SetSize(w, h)
+	pl.mw_frame:SetPos(ScrW() / 2 - w / 2 + 150, ScrH() / 2 - h / 3)
+	pl.mw_frame:SetTitle("Melon Wars")
+	pl.mw_frame:MakePopup()
+	pl.mw_frame:ShowCloseButton()
+	local button = vgui.Create("DButton", pl.mw_frame)
+	button:SetSize(90, 18)
+	button:SetPos(w - 93, 3)
+	button:SetText("Press R to close")
 	function button:DoClick()
-		LocalPlayer():ConCommand("mw_chosen_unit "..tostring(number))
-		LocalPlayer():ConCommand("mw_action 1")
 		pl.mw_frame:Remove()
 		pl.mw_frame = nil
 	end
-	local color = mw_units[number].button_color
-	button.Paint = function(s, w, h)
-		draw.RoundedBox( 6, 0, 0, w, h, Color(color.r-40,color.g-40,color.b-40) )
-		draw.RoundedBox( 3, 5, 5, w-10, h-10, color )
-	end
-	function button:OnCursorEntered()
-		pl.mw_hover = number
-		pl.info:SetText(mw_units[number].description)
-		if (cvars.Number("mw_admin_credit_cost") == 1) then
-			pl.info_cost:SetText("Cost: "..mw_units[number].cost)
-			if (mw_units[number].welded_cost == -1) then
-				pl.info_turret_cost:SetText("")
-			else
-				pl.info_turret_cost:SetText("Turret cost: "..mw_units[number].welded_cost)
-			end
-		else
-			pl.info_cost:SetText("")
-			pl.info_turret_cost:SetText("")
-		end
-		pl.info_power:SetText("Power: "..mw_units[number].population)
-		if (cvars.Number("mw_admin_spawn_time") == 1) then
-			pl.info_time:SetText("Spawn time: "..mw_units[number].spawn_time.."s")
-		else
-			pl.info_time:SetText("")
-		end
-		pl.info_name:SetText(mw_units[number].name)
-	end
-end
 
--- Button Functions (End)
+	_CreatePanel()
 
-function DefaultInfo()
-	if not CLIENT then return end
-	local pl = LocalPlayer()
+	local h = 70
+	self:MenuButton(pl, 30 + h * 0, h, "Units", 0)
+	self:MenuButton(pl, 30 + h * 1, h, "Buildings", 1)
+	self:MenuButton(pl, 30 + h * 2, h, "Base", 2)
+	self:MenuButton(pl, 30 + h * 3, h, "Energy", 3)
+	self:MenuButton(pl, 30 + h * 4, h, "Contrap.", 4)
 
-	pl.info = vgui.Create("DLabel", pl.panel)
-	pl.info:SetPos(190, 190)
-	pl.info:SetSize(370,200)
-	pl.info:SetWrap(true)
-	pl.info:SetFontInternal( "Trebuchet24" )
-	pl.info:SetText("Hover over a button to see more info about the units")
-	pl.mw_hover = 0
-
-	pl.info_name = vgui.Create("DLabel", pl.panel)
-	pl.info_name:SetPos(190, 50)
-	pl.info_name:SetSize(370,100)
-	pl.info_name:SetWrap(true)
-	pl.info_name:SetFontInternal( "DermaLarge" )
-	pl.info_name:SetText("-")
-
-	pl.info_cost = vgui.Create("DLabel", pl.panel)
-	pl.info_cost:SetPos(190, 110)
-	pl.info_cost:SetSize(370,100)
-	pl.info_cost:SetWrap(true)
-	pl.info_cost:SetFontInternal( "DermaLarge" )
-	pl.info_cost:SetText("Cost: ")
-
-	pl.info_turret_cost = vgui.Create("DLabel", pl.panel)
-	pl.info_turret_cost:SetPos(190, 140)
-	pl.info_turret_cost:SetSize(370,100)
-	pl.info_turret_cost:SetWrap(true)
-	pl.info_turret_cost:SetFontInternal( "Trebuchet24" )
-	pl.info_turret_cost:SetText("")
-
-	pl.info_power = vgui.Create("DLabel", pl.panel)
-	pl.info_power:SetPos(400, 110)
-	pl.info_power:SetSize(370,100)
-	pl.info_power:SetWrap(true)
-	pl.info_power:SetFontInternal( "DermaLarge" )
-	pl.info_power:SetText("Power")
-
-	pl.info_time = vgui.Create("DLabel", pl.panel)
-	pl.info_time:SetPos(400, 140)
-	pl.info_time:SetSize(370,100)
-	pl.info_time:SetWrap(true)
-	pl.info_time:SetFontInternal( "Trebuchet24" )
-	pl.info_time:SetText("")
+	self:MenuButton(pl, 390, 25, "Help", 6)
+	self:MenuButton(pl, 415, 25, "Team", 5)
+	self:MenuButton(pl, 440, 25, "Admin", 7)
+	self:MenuButton(pl, 470, 25, "Player", 8)
+--	button:SetEnabled( pl:IsAdmin() )
 end
 
 function TOOL:DrawToolScreen( width, height )

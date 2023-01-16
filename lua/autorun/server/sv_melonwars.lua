@@ -127,8 +127,17 @@ end )
 CreateConVar ( "mw_save_name", "default", 8192, "Set the name of the file to save with 'mw_save'" ) -- May also be called "mw_save_name_custom" in certain unused code
 CreateConVar ( "mw_save_path", "default", 8192, "Set the path of the file to save with 'mw_save'" )
 
-mw_team_colors = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
-mw_team_names = {"Red", "Blue", "Yellow", "Green", "Purple", "Cyan", "Orange", "Pink"}
+mw_team_colors = {
+	Color(255,50,50,255),
+	Color(50,50,255,255),
+	Color(255,200,50,255),
+	Color(30,200,30,255),
+	Color(100,0,80,255),
+	Color(100,255,255,255),
+	Color(255,120,0,255),
+	Color(255,100,150,255)
+}
+-- mw_team_names = {"Red", "Blue", "Yellow", "Green", "Purple", "Cyan", "Orange", "Pink"}
 --[[
 mw_special_steam_decoration = {}
 --  Doorsday
@@ -191,7 +200,7 @@ mw_special_steam_skins["STEAM_0:1:93155236"] = {
 
 local function MW_Initialize()
 	mw_team_colors[0] = Color( 100, 100, 100, 255 )
-	mw_team_names[0] = { "Gray" }
+	-- mw_team_names[0] = { "Gray" }
 end
 hook.Add( "Initialize", "MelonWars_InitializeTeams", MW_Initialize )
 
@@ -202,7 +211,7 @@ hook.Add( "AddToolMenuTabs", "MelonWars_AddTabs", MW_AddTabs ) -- Hook the Tab t
 
 mw_teamCredits = {2000,2000,2000,2000,2000,2000,2000,2000}
 mw_teamUnits = {0,0,0,0,0,0,0,0}
-teamUnlocks = {0,0,0,0,0,0,0,0}
+-- teamUnlocks = {0,0,0,0,0,0,0,0}
 
 teamgrid = teamgrid or {}
 
@@ -1153,7 +1162,7 @@ net.Receive( "ContraptionAutoValidate", function( len, pl )
 					if not string.StartWith(i.Class,"ent_melon" ) then
 						-- Spawns a prop and runs getmass on it to validate its price
 
-						propCheck=ents.Create("prop_physics")
+						local propCheck = ents.Create("prop_physics")
 						propCheck:SetModel(i.Model)
 						propCheck:Spawn()
 
