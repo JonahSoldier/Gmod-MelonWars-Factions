@@ -17,12 +17,10 @@ function MW_BeginSelection() -- Previously concommand.Add( "+mw_select", functio
 	ply.mw_selectionEndingPoint = trace.HitPos
 	sound.Play( "buttons/lightswitch2.wav", ply:GetPos(), 75, 100, 1 )
 
-	if ply:KeyDown( IN_SPEED ) then
-	else
-		if istable( ply.foundMelons ) then
-			table.Empty( ply.foundMelons )
-		end
-	end
+	if ply:KeyDown( IN_SPEED ) then return end
+	if not istable( ply.foundMelons ) then return end
+
+	table.Empty( ply.foundMelons )
 end
 
 net.Receive( "MW_ReturnSelection", function( len, pl )
@@ -56,19 +54,19 @@ function DrawBuildRanges(zoneEntity, zoneRadius)
 	-- LocalPlayer().BuildZone:DeleteOnRemove( zoneEntity )
 end
 ]]
-function MW_UpdateGhostEntity (model, pos, offset, angle, newColor, ghostSphereRange, ghostSpherePos)
+function MW_UpdateGhostEntity(model, pos, offset, angle, newColor, ghostSphereRange, ghostSpherePos)
 	if (newColor == nil) then
 		newColor = Color(100,100,100)
 	end
-	if (tostring(LocalPlayer().GhostEntity) == "[NULL Entity]" or not IsValid(LocalPlayer().GhostEntity)) then
+	if (tostring( LocalPlayer().GhostEntity ) == "[NULL Entity]" or not IsValid( LocalPlayer().GhostEntity )) then
 		LocalPlayer().GhostEntity = ents.CreateClientProp( model )
 		LocalPlayer().GhostEntity:SetSolid( SOLID_VPHYSICS );
 		LocalPlayer().GhostEntity:SetMoveType( MOVETYPE_NONE )
 		LocalPlayer().GhostEntity:SetNotSolid( true );
 		LocalPlayer().GhostEntity:SetRenderMode( RENDERMODE_TRANSALPHA )
 		LocalPlayer().GhostEntity:SetRenderFX( kRenderFxPulseFast )
-		LocalPlayer().GhostEntity:SetMaterial("models/debug/debugwhite")
-		LocalPlayer().GhostEntity:SetColor( Color(newColor.r*1.5, newColor.g*1.5, newColor.b*1.5, 150) )
+		LocalPlayer().GhostEntity:SetMaterial( "models/debug/debugwhite" )
+		LocalPlayer().GhostEntity:SetColor( Color( newColor.r * 1.5, newColor.g * 1.5, newColor.b * 1.5, 150 ) )
 		LocalPlayer().GhostEntity:SetModel( model )
 		LocalPlayer().GhostEntity:SetPos( pos + offset )
 		LocalPlayer().GhostEntity:SetAngles( angle )
@@ -79,11 +77,11 @@ function MW_UpdateGhostEntity (model, pos, offset, angle, newColor, ghostSphereR
 		LocalPlayer().GhostEntity:SetAngles( angle )
 		local obbmins = LocalPlayer().GhostEntity:OBBMins()
 		local obbmaxs = LocalPlayer().GhostEntity:OBBMaxs()
-		obbmins:Rotate(angle)
-		obbmaxs:Rotate(angle)
-		local mins = Vector(LocalPlayer().GhostEntity:GetPos().x+obbmins.x, LocalPlayer().GhostEntity:GetPos().y+obbmins.y, pos.z+5)
-		local maxs = Vector(LocalPlayer().GhostEntity:GetPos().x+obbmaxs.x, LocalPlayer().GhostEntity:GetPos().y+obbmaxs.y, pos.z+20)
-		local overlappingEntities = ents.FindInBox( mins, maxs)
+		obbmins:Rotate( angle )
+		obbmaxs:Rotate( angle )
+		local mins = Vector( LocalPlayer().GhostEntity:GetPos().x + obbmins.x, LocalPlayer().GhostEntity:GetPos().y + obbmins.y, pos.z + 5 )
+		local maxs = Vector( LocalPlayer().GhostEntity:GetPos().x + obbmaxs.x, LocalPlayer().GhostEntity:GetPos().y + obbmaxs.y, pos.z + 20 )
+		local overlappingEntities = ents.FindInBox( mins, maxs )
 		--[[
 		local vPoint = LocalPlayer().GhostEntity:GetPos()+obbmins+Vector(0,0,1)
 		local effectdata = EffectData()
@@ -98,18 +96,14 @@ function MW_UpdateGhostEntity (model, pos, offset, angle, newColor, ghostSphereR
 		util.Effect( "MuzzleEffect", effectdata )
 		]]
 		LocalPlayer().canPlace = true
-		if LocalPlayer().mw_action == 1 then
-			if not mw_units[LocalPlayer():GetInfoNum("mw_chosen_unit", 0)].canOverlap then
-				for k, v in pairs(overlappingEntities) do
-					if (v.Base ~= nil) then
-						if (string.StartWith( v.Base, "ent_melon_" )) then
-							LocalPlayer().canPlace = false
-						end
-					end
+		if LocalPlayer().mw_action == 1 and not mw_units[LocalPlayer():GetInfoNum( "mw_chosen_unit", 0 )].canOverlap then
+			for k, v in pairs( overlappingEntities ) do
+				if v.Base ~= nil and string.StartWith( v.Base, "ent_melon_" ) then
+					LocalPlayer().canPlace = false
 				end
 			end
 		end
-		if (LocalPlayer().canPlace) then
+		if LocalPlayer().canPlace then
 			LocalPlayer().GhostEntity:SetColor( Color(newColor.r, newColor.g, newColor.b, 150 ))
 			LocalPlayer().GhostEntity:SetRenderFX( kRenderFxPulseSlow )
 		else
@@ -127,8 +121,8 @@ function MW_UpdateGhostEntity (model, pos, offset, angle, newColor, ghostSphereR
 			LocalPlayer().GhostSphere:SetRenderMode( RENDERMODE_TRANSALPHA )
 			LocalPlayer().GhostSphere:SetRenderFX( kRenderFxPulseSlow )
 			LocalPlayer().GhostSphere:SetMaterial("models/debug/debugwhite")
-			LocalPlayer().GhostSphere:SetColor( Color(newColor.r*1.5, newColor.g*1.5, newColor.b*1.5, 50) )
-			LocalPlayer().GhostSphere:SetModelScale(0.021*ghostSphereRange)
+			LocalPlayer().GhostSphere:SetColor( Color( newColor.r * 1.5, newColor.g * 1.5, newColor.b * 1.5, 50 ) )
+			LocalPlayer().GhostSphere:SetModelScale( 0.021 * ghostSphereRange )
 			LocalPlayer().GhostSphere:Spawn()
 		end
 	else
@@ -136,7 +130,7 @@ function MW_UpdateGhostEntity (model, pos, offset, angle, newColor, ghostSphereR
 			local color = LocalPlayer().GhostSphere:GetColor()
 			LocalPlayer().GhostSphere:SetColor( Color(color.r, color.g, color.b, 50) )
 			LocalPlayer().GhostSphere:SetPos( Vector(pos.x, pos.y, ghostSpherePos.z ) )
-			LocalPlayer().GhostSphere:SetModelScale(0.021*ghostSphereRange)
+			LocalPlayer().GhostSphere:SetModelScale( 0.021 * ghostSphereRange )
 		else
 			LocalPlayer().GhostSphere:Remove()
 		end
@@ -271,7 +265,7 @@ net.Receive( "ContraptionSaveClient", function ( len, pl )
 	local last = net.ReadBool()
 	local size = net.ReadUInt( 16 )
 	local data = net.ReadData( size )
-	mrtsNetworkBuffer = mrtsNetworkBuffer..data
+	mrtsNetworkBuffer = mrtsNetworkBuffer .. data
 	if not last then return end
 	local text = util.Decompress( mrtsNetworkBuffer )
 	file.CreateDir( "melonwars/contraptions" )
@@ -284,11 +278,11 @@ end )
 net.Receive("ContraptionValidateClient", function (len, pl)
 	local contrapFiles = file.Find("melonwars/contraptions/*.txt", "DATA")
 
-	for i=1, table.Count(contrapFiles) do
-		timer.Simple( i*0.1, function()
+	for i = 1, table.Count(contrapFiles) do
+		timer.Simple( i * 0.1, function()
 			local name = string.gsub(contrapFiles[i], ".txt", "") -- Removes .txt from the name, because other parts of the code add it back in later
 
-			local text =  file.Read("melonwars/contraptions/"..contrapFiles[i], "DATA" )
+			local text =  file.Read( "melonwars/contraptions/" .. contrapFiles[i], "DATA" )
 			local compressed_text = util.Compress(text)
 			if not compressed_text then compressed_text = text end
 
@@ -380,7 +374,7 @@ net.Receive( "EditorSetTeam", function( len, pl )
 	local w = 250
 	local h = 160
 	frame:SetSize(w,h)
-	frame:SetPos(ScrW()/2-w/2+150,ScrH()/2-h/3)
+	frame:SetPos( ScrW() / 2 - w / 2 + 150, ScrH() / 2 - h / 3 )
 	frame:SetTitle("Set team")
 	frame:MakePopup()
 	frame:ShowCloseButton()
@@ -392,10 +386,10 @@ net.Receive( "EditorSetTeam", function( len, pl )
 		frame:Remove()
 		frame = nil
 	end
-	for i=1, 8 do
+	for i = 1, 8 do
 		button = vgui.Create("DButton", frame)
 		button:SetSize(29,100)
-		button:SetPos(5+30*(i-1),50)
+		button:SetPos( 5 + 30 * ( i - 1 ), 50 )
 		button:SetText("")
 		function button:DoClick()
 			net.Start("ServerSetTeam")
@@ -420,7 +414,7 @@ net.Receive( "EditorSetStage", function( len, pl )
 	local w = 250
 	local h = 100
 	frame:SetSize(w,h)
-	frame:SetPos(ScrW()/2-w/2+150,ScrH()/2-h/3)
+	frame:SetPos( ScrW() / 2 - w / 2 + 150, ScrH() / 2 - h / 3 )
 	frame:SetTitle("Set Stage")
 	frame:MakePopup()
 	frame:ShowCloseButton()
@@ -464,7 +458,7 @@ net.Receive( "EditorSetWaypoint", function( len, pl )
 	local w = 250
 	local h = 110
 	frame:SetSize(w,h)
-	frame:SetPos(ScrW()/2-w/2+150,ScrH()/2-h/3)
+	frame:SetPos( ScrW() / 2 - w / 2 + 150, ScrH() / 2 - h / 3 )
 	frame:SetTitle("Set Waypoint")
 	frame:MakePopup()
 	frame:ShowCloseButton()
@@ -510,24 +504,24 @@ end )
 function MW_VoidExplosion(ent, amount, sizeMul)
 	-- if (CurTime()-ent:GetCreationTime() < 5) then return end
 	local particleSize = math.random(12, 18)
-	local fireworkSize = math.random(300, 400)*sizeMul
+	local fireworkSize = math.random(300, 400) * sizeMul
 	local teamColor = ent:GetColor();
 	local emitter = ParticleEmitter( ent:GetPos() ) -- Particle emitter in this position
 	for i = 0, amount do -- SMOKE
 		local part = emitter:Add( "effects/yellowflare", ent:GetPos() ) -- Create a new particle at pos
 		if ( part ) then
-			part:SetDieTime( math.Rand(0.5, 1.0)*sizeMul ) -- How long the particle should "live"
+			part:SetDieTime( math.Rand( 0.5, 1.0 ) * sizeMul ) -- How long the particle should "live"
 			local c = math.Rand(0.8, 1.0)
 			local _c = 1-c
-			part:SetColor(teamColor.r*c+255*_c,teamColor.g*c+255*_c,teamColor.b*c+255*_c)
+			part:SetColor( teamColor.r * c + 255 * _c,teamColor.g * c + 255 * _c, teamColor.b * c + 255 * _c )
 			part:SetStartAlpha( 255 )
 			part:SetEndAlpha( 255 ) -- Particle size at the end of its lifetime
 			part:SetStartSize( particleSize )
 			part:SetEndSize( 0 ) -- Size when removed
 			part:SetAirResistance(50)
-			local vec = AngleRand():Forward()*fireworkSize
-			part:SetGravity( -vec*3 ) -- Gravity of the particle
-			part:SetVelocity( vec*0.8 ) -- Initial velocity of the particle
+			local vec = AngleRand():Forward() * fireworkSize
+			part:SetGravity( -vec * 3 ) -- Gravity of the particle
+			part:SetVelocity( vec * 0.8 ) -- Initial velocity of the particle
 		end
 	end
 	emitter:Finish()
@@ -545,9 +539,9 @@ function MW_SickEffect(ent, amount)
 			part:SetStartSize( math.random(12, 18) )
 			part:SetEndSize( 0 ) -- Size when removed
 			part:SetAirResistance(50)
-			local vec = AngleRand():Forward()*math.random(10, 50)
+			local vec = AngleRand():Forward() * math.random(10, 50)
 			part:SetGravity( Vector(0,0,50) ) -- Gravity of the particle
-			part:SetVelocity( vec*0.8 ) -- Initial velocity of the particle
+			part:SetVelocity( vec * 0.8 ) -- Initial velocity of the particle
 		end
 	end
 	emitter:Finish()
@@ -565,10 +559,10 @@ function MW_SickExplosion(ent, amount)
 			part:SetStartSize( math.random(20, 30) )
 			part:SetEndSize( 0 ) -- Size when removed
 			part:SetAirResistance(250)
-			local vec = AngleRand():Forward()*math.random(100, 5000)
+			local vec = AngleRand():Forward() * math.random(100, 5000)
 			vec.z = math.abs(vec.z)
 			part:SetGravity( Vector(0,0,50) ) -- Gravity of the particle
-			part:SetVelocity( vec*0.8 ) -- Initial velocity of the particle
+			part:SetVelocity( vec * 0.8 ) -- Initial velocity of the particle
 		end
 	end
 	emitter:Finish()
@@ -577,7 +571,7 @@ end
 function MW_SiloSmoke(ent, amount)
 	local emitter = ParticleEmitter( ent:GetPos() ) -- Particle emitter in this position
 	for i = 1, amount do -- SMOKE
-		local part = emitter:Add( "effects/yellowflare", ent:GetPos()+Vector(math.random(-30, 30), math.random(-30, 30), 0) ) -- Create a new particle at pos
+		local part = emitter:Add( "effects/yellowflare", ent:GetPos() + Vector(math.random(-30, 30), math.random(-30, 30), 0) ) -- Create a new particle at pos
 		if ( part ) then
 			part:SetDieTime( math.Rand(1.0, 2.0) ) -- How long the particle should "live"
 			part:SetColor(100, 255, 0)
@@ -640,7 +634,7 @@ net.Receive( "MW_UnitDecoration", function(len, pl)
 	local tbl = net.ReadTable()
 
 	local prop = ClientsideModel( tbl.prop )
-	prop:SetPos(entity:GetPos()+VectorRand(-3, 3))
+	prop:SetPos( entity:GetPos() + VectorRand( -3, 3 ) )
 	prop:SetAngles(AngleRand())
 	prop:SetModelScale(tbl.scale)
 	prop:SetMoveParent(entity)

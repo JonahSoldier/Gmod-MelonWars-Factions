@@ -1746,16 +1746,16 @@ local function _MakeCheckbox (x, y, parent, textstr, command, labelstr, inverted
 		end
 	end
 	function checkbox:DoClick()
-		local commandstring = command.." "..tostring(1-GetConVarNumber( command ))
+		local commandstring = command .. " " .. tostring( 1 - GetConVar( command ):GetInt() )
 
 		LocalPlayer():ConCommand(commandstring)
 		net.Start("SetMWConvar")
 			net.WriteString(command)
-			net.WriteBool(1-GetConVarNumber( command ))
+			net.WriteBool( 1 - GetConVar( command ):GetInt() )
 		net.SendToServer()
 
 		local checked = (GetConVarNumber( command ) ~= 1)
-		if (inverted) then checked = not checked end
+		if inverted then checked = not checked end
 		checkbox.Paint = function(s, w, h)
 			draw.RoundedBox( 8, 0, 0, w, h, color_white )
 			draw.RoundedBox( 6, 2, 2, w-4, h-4, color_black )
@@ -1766,14 +1766,14 @@ local function _MakeCheckbox (x, y, parent, textstr, command, labelstr, inverted
 	end
 	if (textstr ~= nil) then
 		local label = vgui.Create("DLabel", parent)
-		label:SetPos( x+70, y)
+		label:SetPos( x + 70, y)
 		label:SetSize(370,30)
 		label:SetFontInternal( "Trebuchet24" )
 		label:SetText(textstr)
 	end
 	if (labelstr ~= nil) then
 		local label = vgui.Create("DLabel", parent)
-		label:SetPos( x+250, y)
+		label:SetPos( x + 250, y)
 		label:SetSize(370,30)
 		label:SetFontInternal( "Trebuchet18" )
 		label:SetText(labelstr)
@@ -1836,12 +1836,12 @@ local function _MakeButton(number, posnumber, parent) -- Make Button
 
 	local button = vgui.Create("DButton", parent) -- Unit button
 	button:SetSize(120,40)
-	button:SetPos(10,10+(posnumber-1)*45)
+	button:SetPos( 10, 10 + ( posnumber - 1 ) * 45 )
 	button:SetFont("CloseCaption_Normal")
 	button:SetText(mw_units[number].name)
 	function button:DoClick()
-		LocalPlayer():ConCommand("mw_chosen_unit "..tostring(number))
-		LocalPlayer():ConCommand("mw_action 1")
+		LocalPlayer():ConCommand( "mw_chosen_unit " .. tostring( number ) )
+		LocalPlayer():ConCommand( "mw_action 1" )
 		pl.mw_frame:Remove()
 		pl.mw_frame = nil
 	end
@@ -1854,19 +1854,19 @@ local function _MakeButton(number, posnumber, parent) -- Make Button
 		pl.mw_hover = number
 		pl.info:SetText(mw_units[number].description)
 		if (cvars.Number("mw_admin_credit_cost") == 1) then
-			pl.info_cost:SetText("Cost: "..mw_units[number].cost)
+			pl.info_cost:SetText( "Cost: " .. mw_units[number].cost )
 			if (mw_units[number].welded_cost == -1) then
 				pl.info_turret_cost:SetText("")
 			else
-				pl.info_turret_cost:SetText("Turret cost: "..mw_units[number].welded_cost)
+				pl.info_turret_cost:SetText( "Turret cost: " .. mw_units[number].welded_cost )
 			end
 		else
 			pl.info_cost:SetText("")
 			pl.info_turret_cost:SetText("")
 		end
-		pl.info_power:SetText("Power: "..mw_units[number].population)
+		pl.info_power:SetText( "Power: " .. mw_units[number].population )
 		if (cvars.Number("mw_admin_spawn_time") == 1) then
-			pl.info_time:SetText("Spawn time: "..mw_units[number].spawn_time.."s")
+			pl.info_time:SetText( "Spawn time: " .. mw_units[number].spawn_time .. "s" )
 		else
 			pl.info_time:SetText("")
 		end
@@ -1877,7 +1877,7 @@ end
 local function _MakeHelpButton(name, number, info, text1, text2, text3, text4, text5) -- Make HELP Button
 	local button = vgui.Create("DButton", LocalPlayer().panel)
 	button:SetSize(100,40)
-	button:SetPos(10,10+number*(40+5))
+	button:SetPos( 10, 10 + number * 45 )
 	button:SetText(name)
 	button:SetFontInternal("CloseCaption_Normal")
 	function button:DoClick()
@@ -1919,16 +1919,16 @@ local function _CreatePanel()
 		lines.Paint = function(s, w, h)
 			surface.SetDrawColor( color_white )
 			if (pl.mw_hover ~= 0) then
-				local a = pl.mw_hover*45-25
-				surface.DrawRect( 135, a, 20, 20)
+				local a = pl.mw_hover * 45 - 25
+				surface.DrawRect( 135, a, 20, 20 )
 			end
 		end
 		local ipos = 1
-		for i=1, firstBuilding-1 do
+		for i = 1, firstBuilding-1 do
 			if (cvars.Bool("mw_admin_allow_manual_placing") or mw_units[i].welded_cost ~= -1) then
 				if ((mw_units[i].code == nil or LocalPlayer():GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVarNumber("mw_admin_bonusunits") == 1)) then
 					_MakeButton(i, ipos, scroll)
-					ipos = ipos+1
+					ipos = ipos + 1
 				end
 			end
 		end
@@ -1989,9 +1989,9 @@ local function _CreatePanel()
 		lines:SetSize(w-120, 900)
 		lines:SetPos(0,0)
 		lines.Paint = function(s, w, h)
-			local a = (pl.mw_hover-firstBuilding+1)*45-18
+			local a = ( pl.mw_hover - firstBuilding + 1 ) * 45 - 18
 			surface.SetDrawColor(color_white)
-			surface.DrawRect( 135, a-5, 20, 20)
+			surface.DrawRect( 135, a-5, 20, 20 )
 		end
 		--[[local lines = vgui.Create("DPanel", scroll)
 		lines:SetSize(w-120, h-30)
@@ -2011,11 +2011,11 @@ local function _CreatePanel()
 			end
 		end]]
 		local ipos = 1
-		for i=firstBuilding, firstEnergy-1 do
+		for i = firstBuilding, firstEnergy - 1 do
 			if (mw_units[i].code == nil or LocalPlayer():GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVarNumber("mw_admin_bonusunits") == 1) then
 				if mw_units[i].name ~= "Contraption Assembler" or cvars.Number("mw_admin_ban_contraptions") == 0 then
 					_MakeButton(i, ipos, scroll)
-					ipos = ipos+1
+					ipos = ipos + 1
 				end
 			end
 		end
@@ -2053,24 +2053,24 @@ local function _CreatePanel()
 			ListItem:SetSize( 75, 75 ) -- Set the size of it
 			ListItem:SetModel(v.model)
 			function ListItem:DoClick()
-				pl:ConCommand("mw_chosen_prop "..tostring(k))
-				pl:ConCommand("mw_action 3")
+				pl:ConCommand( "mw_chosen_prop " .. tostring( k ) )
+				pl:ConCommand( "mw_action 3" )
 				pl.mw_frame:Remove()
 				pl.mw_frame = nil
 			end
 			function ListItem:OnCursorEntered()
-				prop_info:SetText(v.name.."\nHealth: "..v.hp.."\nCost: "..v.cost)
-				prop_window:SetModel(v.model)
-				prop_window:SetCamPos(prop_window:GetEntity():GetPos()+Vector(150,0,50))
-				function prop_window:LayoutEntity(Entity)
-					Entity:SetAngles(v.angle+Angle(0,CurTime()*50,0))
+				prop_info:SetText( v.name .. "\nHealth: " .. v.hp .. "\nCost: " .. v.cost )
+				prop_window:SetModel( v.model )
+				prop_window:SetCamPos( prop_window:GetEntity():GetPos() + Vector( 150, 0, 50 ) )
+				function prop_window:LayoutEntity( Entity )
+					Entity:SetAngles( v.angle + Angle( 0, CurTime() * 50, 0 ) )
 				end
 				--prop_window:SetLookAt(prop_window:GetEntity():OBBCenter())
 			end
 		end
 
-		_MakeCheckbox( 380, h-100, pl.panel, "Offset", "mw_prop_offset")
-		_MakeCheckbox( 380, h-150, pl.panel, "Angle Snap", "mw_prop_snap")
+		_MakeCheckbox( 380, h - 100, pl.panel, "Offset", "mw_prop_offset" )
+		_MakeCheckbox( 380, h - 150, pl.panel, "Angle Snap", "mw_prop_snap" )
 		-- }
 		local button = vgui.Create("DButton", pl.panel)
 		button:SetSize(220,50)
@@ -2096,9 +2096,9 @@ local function _CreatePanel()
 		lines:SetSize(w-120, 450)
 		lines:SetPos(0,0)
 		lines.Paint = function(s, w, h)
-			local a = (pl.mw_hover-firstEnergy+1)*45-18
+			local a = ( pl.mw_hover - firstEnergy + 1 ) * 45 - 18
 			surface.SetDrawColor(color_white)
-			surface.DrawRect( 135, a-5, 20, 20)
+			surface.DrawRect( 135, a - 5, 20, 20 )
 		end
 		--[[local lines = vgui.Create("DPanel", scroll)
 		lines:SetSize(w-120, h-30)
@@ -2117,8 +2117,8 @@ local function _CreatePanel()
 				surface.DrawRect( 130, a, 30, 5)
 			end
 		end]]
-		for i=firstEnergy, firstContraption-1 do
-			_MakeButton(i, i-firstEnergy+1, scroll)
+		for i = firstEnergy, firstContraption - 1 do
+			_MakeButton( i, i - firstEnergy + 1, scroll )
 		end
 
 		DefaultInfo()
@@ -2152,9 +2152,9 @@ local function _CreatePanel()
 		lines:SetSize(w-120, 550)
 		lines:SetPos(0,0)
 		lines.Paint = function(s, w, h)
-			local a = (pl.mw_hover-firstContraption+1)*45-18
+			local a = ( pl.mw_hover - firstContraption + 1 ) * 45 - 18
 			surface.SetDrawColor(color_white)
-			surface.DrawRect( 135, a-5, 20, 20)
+			surface.DrawRect( 135, a - 5, 20, 20 )
 		end
 
 		for i = firstContraption, unitCount do
@@ -2280,16 +2280,16 @@ local function _CreatePanel()
 
 		local selection = vgui.Create("DPanel", pl.panel)
 		if (cvars.Number("mw_team") ~= 0) then
-			selection:SetPos(135+cvars.Number("mw_team")*45, 195)
+			selection:SetPos( 135 + cvars.Number( "mw_team" ) * 45, 195 )
 		else
-			selection:SetPos(135+45, 260)
+			selection:SetPos( 180, 260 )
 		end
 		selection:SetSize(50,50)
 		selection.Paint = function(s, w, h)
 			draw.RoundedBox( 10, 0, 0, w, h, color_white )
 		end
 
-		for i=1, 8 do
+		for i = 1, 8 do
 			local button = vgui.Create("DButton", pl.panel)
 			button:SetSize(40,40)
 			button:SetPos(140+i*45,200)
@@ -2394,12 +2394,12 @@ local function _CreatePanel()
 		label:SetText("Gray team:")
 
 		local button = vgui.Create("DButton", pl.panel)
-		button:SetSize(40,40)
-		button:SetPos(140+45,265)
+		button:SetSize( 40, 40 )
+		button:SetPos( 185, 265 )
 		button:SetText("")
 		function button:DoClick()
-			LocalPlayer():ConCommand("mw_team "..tostring(0))
-			selection:SetPos(135+45, 260)
+			LocalPlayer():ConCommand( "mw_team " .. tostring( 0 ) )
+			selection:SetPos( 180, 260 )
 
 			net.Start("MW_UpdateClientInfo")
 				net.WriteInt(0, 8)
@@ -2411,7 +2411,7 @@ local function _CreatePanel()
 		end
 	elseif (pl.mw_menu == 6) then																--Help menu
 		-- { HELP MENU
-		local h = 40
+		-- local h = 40
 
 		--local scroll = vgui.Create( "DScrollPanel", pl.panel )
 		--scroll:SetSize( 440, 450 )
@@ -2711,7 +2711,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetSize(370,40)
 			label:SetFontInternal( "Trebuchet18" )
 			label:SetText("[Set preferences for a match of MelonWars]")
-			y = y+50
+			y = y + 50
 			local button = vgui.Create("DButton", scroll)
 			button:SetSize(200,40)
 			button:SetPos(20,y)
@@ -2739,7 +2739,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetSize(370,40)
 			label:SetFontInternal( "Trebuchet18" )
 			label:SetText("[Set preferences for messing around]")
-			y = y+80
+			y = y + 80
 
 
 			local label = vgui.Create("DLabel", scroll)
@@ -2748,19 +2748,19 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetFontInternal( "DermaLarge" )
 			label:SetText("Game control Options")
 
-			y = y+40
-			_MakeCheckbox( 20, y, scroll, "PAUSE", "mw_admin_playing", "[Stops units, income and controls]", true)
+			y = y + 40
+			_MakeCheckbox( 20, y, scroll, "PAUSE", "mw_admin_playing", "[Stops units, income and controls]", true )
 
-			y = y+40
-			_MakeCheckbox( 20, y, scroll, "Lock Teams", "mw_admin_locked_teams", "[Prevent players from changing team or faction]", false)
+			y = y + 40
+			_MakeCheckbox( 20, y, scroll, "Lock Teams", "mw_admin_locked_teams", "[Prevent players from changing team or faction]", false )
 
-			y = y+40
-			_MakeCheckbox( 20, y, scroll, "Extra unit options", "mw_admin_bonusunits", "[Balance not guaranteed]", false)
+			y = y + 40
+			_MakeCheckbox( 20, y, scroll, "Extra unit options", "mw_admin_bonusunits", "[Balance not guaranteed]", false )
 			--[[
 			y = y+40
-			_MakeCheckbox( 20, y, scroll, "Player Colors", "mw_admin_player_colors", "[Show a colored circle over players]")
+			_MakeCheckbox( 20, y, scroll, "Player Colors", "mw_admin_player_colors", "[Show a colored circle over players]" )
 			]]
-			y = y+80
+			y = y + 80
 
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(15, y)
@@ -2771,7 +2771,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			for i = 1, 8 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(40,40)
-				button:SetPos(145+i*45,y)
+				button:SetPos( 145 + i * 45, y )
 				button:SetText("")
 				function button:DoClick()
 					LocalPlayer():ConCommand("mw_team " .. tostring(i))
@@ -2800,7 +2800,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			for i = 1, 8 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(40,40)
-				button:SetPos(145+i*45,y)
+				button:SetPos( 145 + i * 45, y )
 				button:SetText("")
 				function button:DoClick()
 					LocalPlayer():ConCommand("mw_team " .. tostring(i))
@@ -2829,11 +2829,11 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			for i = 1, 8 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(40,40)
-				button:SetPos(145+i*45,y)
+				button:SetPos( 145 + i * 45, y )
 				button:SetText("")
 				function button:DoClick()
-					LocalPlayer():ConCommand("mw_team "..tostring(i))
-					LocalPlayer():ConCommand("mw_action 25")
+					LocalPlayer():ConCommand( "mw_team " .. tostring( i ) )
+					LocalPlayer():ConCommand( "mw_action 25" )
 					pl.mw_frame:Remove()
 					pl.mw_frame = nil
 
@@ -2847,7 +2847,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 				end
 			end
 
-			y = y+80
+			y = y + 80
 
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(15, y)
@@ -2868,7 +2868,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 				draw.RoundedBox( 4, 2, 2, w-4, h-4, Color(255, 255, 255, 255) )
 			end
 
-			y = y+60
+			y = y + 60
 
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(15, y)
@@ -2889,7 +2889,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 				draw.RoundedBox( 4, 2, 2, w-4, h-4, Color(255, 255, 255, 255) )
 			end
 
-			y = y+60
+			y = y + 60
 
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(15, y)
@@ -2910,7 +2910,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 				draw.RoundedBox( 4, 2, 2, w-4, h-4, Color(255, 255, 255, 255) )
 			end
 
-			y = y+80
+			y = y + 80
 
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(20, y)
@@ -2918,15 +2918,15 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetFontInternal( "DermaLarge" )
 			label:SetText("Alternative Gameplay Options")
 
-			y = y+40
+			y = y + 40
 
 			_MakeCheckbox( 20, y, scroll, "No manual placing", "mw_admin_allow_manual_placing", "[Prevents spawning of mobile units]", true)
 
-			y = y+40
+			y = y + 40
 
 			_MakeCheckbox( 20, y, scroll, "Ban Contraptions", "mw_admin_ban_contraptions", "[Disable contraption assemblers]", false)
 
-			y = y+60
+			y = y + 60
 
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(20, y)
@@ -2934,18 +2934,18 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetFontInternal( "DermaLarge" )
 			label:SetText("Cheats")
 
-			y = y+40
-			_MakeCheckbox( 20, y, scroll, "Instant Spawn", "mw_admin_spawn_time", "[Makes units spawn instantly]", true)
-			y = y+40
-			_MakeCheckbox( 20, y, scroll, "Infinite Water", "mw_admin_credit_cost", "[Allows you to spawn units without cost]", true)
-			y = y+40
-			_MakeCheckbox( 20, y, scroll, "Build anywhere", "mw_admin_allow_free_placing", "[Allows you to spawn units anywhere]")
-			y = y+40
-			_MakeCheckbox( 20, y, scroll, "Control any team", "mw_admin_move_any_team", "[Allows you to control units regardless of team]")
-			y = y+40
-			_MakeCheckbox( 20, y, scroll, "Immortal Units", "mw_admin_immortality", "[Units cant die. Useful for photography]")
+			y = y + 40
+			_MakeCheckbox( 20, y, scroll, "Instant Spawn", "mw_admin_spawn_time", "[Makes units spawn instantly]", true )
+			y = y + 40
+			_MakeCheckbox( 20, y, scroll, "Infinite Water", "mw_admin_credit_cost", "[Allows you to spawn units without cost]", true )
+			y = y + 40
+			_MakeCheckbox( 20, y, scroll, "Build anywhere", "mw_admin_allow_free_placing", "[Allows you to spawn units anywhere]" )
+			y = y + 40
+			_MakeCheckbox( 20, y, scroll, "Control any team", "mw_admin_move_any_team", "[Allows you to control units regardless of team]" )
+			y = y + 40
+			_MakeCheckbox( 20, y, scroll, "Immortal Units", "mw_admin_immortality", "[Units cant die. Useful for photography]" )
 
-			y = y+60
+			y = y + 60
 			local button = vgui.Create("DButton", scroll)
 			button:SetSize(200,40)
 			button:SetPos(20,y)
@@ -2965,7 +2965,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetSize(370,40)
 			label:SetFontInternal( "Trebuchet18" )
 			label:SetText("[Set all credits back to the default]")
-			y = y+45
+			y = y + 45
 			local button = vgui.Create("DButton", scroll)
 			button:SetSize(200,40)
 			button:SetPos(20,y)
@@ -2985,33 +2985,33 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetSize(370,40)
 			label:SetFontInternal( "Trebuchet18" )
 			label:SetText("[Set all Power back to the 0]")
-			y = y+70
+			y = y + 70
 			-----------------------------------------------------------  Power
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(20, y)
 			label:SetSize(200,40)
 			label:SetFontInternal( "DermaLarge" )
-			label:SetText("Power: "..tostring(cvars.Number("mw_admin_max_units")))
+			label:SetText( "Power: " .. tostring( cvars.Number( "mw_admin_max_units" ) ) )
 			local default = vgui.Create("DPanel", scroll)
 			default:SetSize(360,60)
-			default:SetPos(200,y-10)
+			default:SetPos( 200, y - 10 )
 			default.Paint = function(s, w, h)
 					draw.RoundedBox( 0, 108, 0, 12, h, Color(10,150,10) )
 					draw.RoundedBox( 0, 0, 0, 12*6, h, Color(10,40,80) )
 					draw.RoundedBox( 0, 12*15, 0, 12*15, h, Color(80,10,10) )
 				end
 			local slider = vgui.Create("DPanel", scroll)
-			slider:SetSize(cvars.Number("mw_admin_max_units")*1.2,40)
+			slider:SetSize( cvars.Number( "mw_admin_max_units" ) * 1.2, 40 )
 			slider:SetPos(200,y)
-			for i=1, 30 do
-				local button = vgui.Create("DButton", scroll)
-				button:SetSize(15,40)
-				button:SetPos(185+i*12,y)
-				button:SetText("")
+			for i = 1, 30 do
+				local button = vgui.Create( "DButton", scroll )
+				button:SetSize( 15, 40 )
+				button:SetPos( 185 + i * 12, y )
+				button:SetText( "" )
 				function button:DoClick()
-					LocalPlayer():ConCommand("mw_admin_max_units "..tostring(i*10))
-					slider:SetSize(i*12, 40)
-					label:SetText("Power: "..tostring(i*10))
+					LocalPlayer():ConCommand( "mw_admin_max_units " .. tostring( i * 10 ) )
+					slider:SetSize( i * 12, 40 )
+					label:SetText( "Power: " .. tostring( i * 10 ) )
 					--pl.mw_frame:Remove()
 					--pl.mw_frame = nil
 				end
@@ -3020,7 +3020,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 				end
 			end
 			----------------------------------------------------------- Starting Credits
-			y = y+70
+			y = y + 70
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(20, y-20)
 			label:SetSize(200,80)
@@ -3037,7 +3037,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			local slider = vgui.Create("DPanel", scroll)
 			slider:SetSize(cvars.Number("mw_admin_starting_credits")*12/200,40)
 			slider:SetPos(200,y)
-			for i=1, 30 do
+			for i = 1, 30 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(15,40)
 				button:SetPos(185+i*12,y)
@@ -3054,7 +3054,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 				end
 			end
 
-			y = y+70
+			y = y + 70
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(20, y-20)
 			label:SetSize(200,80)
@@ -3071,27 +3071,27 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			local slider = vgui.Create("DPanel", scroll)
 			slider:SetSize(cvars.Number("mw_admin_base_income")*12/5,40)
 			slider:SetPos(200,y)
-			for i=1, 30 do
+			for i = 1, 30 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(15,40)
-				button:SetPos(185+i*12,y)
+				button:SetPos( 185 + i * 12, y )
 				button:SetText("")
 				function button:DoClick()
-					LocalPlayer():ConCommand("mw_admin_base_income "..tostring(i*5))
-					slider:SetSize(i*12, 40)
-					label:SetText("Water Income:\n"..tostring(i*5))
+					LocalPlayer():ConCommand( "mw_admin_base_income " .. tostring( i * 5 ) )
+					slider:SetSize( i * 12, 40 )
+					label:SetText( "Water Income:\n" .. tostring( i * 5 ) )
 					--pl.mw_frame:Remove()
 					--pl.mw_frame = nil
 				end
 				button.Paint = function(s, w, h)
-					draw.RoundedBox( 0, w-1, 0, 1, h, Color(100,100,100) )
+					draw.RoundedBox( 0, w - 1, 0, 1, h, Color(100,100,100) )
 				end
 			end
 
-			y = y+120
+			y = y + 120
 			-------------------------------------------------------- TEAMS
 			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(20, y-45)
+			label:SetPos( 20, y - 45 )
 			label:SetSize(370,40)
 			label:SetFontInternal( "DermaLarge" )
 			label:SetText("Alliances")
@@ -3210,8 +3210,8 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 		end
 
 		local label = vgui.Create("DLabel", scroll)
-		label:SetPos(20, y+40)
-		label:SetSize(450,80)
+		label:SetPos( 20, y + 40 )
+		label:SetSize( 450, 80 )
 		label:SetFontInternal( "Trebuchet24" )
 		label:SetText("The transparency of HQ build range bubbles")
 
@@ -3221,11 +3221,11 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 
 		local labelstr = "Allows players to start matches if a certain percentage are ready"
 		local textstr = "[Ready Up]"
-		local checkbox = vgui.Create( "DButton", scroll )--  Create the checkbox
-		checkbox:SetPos( 20, y )--  Set the position
+		local checkbox = vgui.Create( "DButton", scroll ) -- Create the checkbox
+		checkbox:SetPos( 20, y ) -- Set the position
 		checkbox:SetSize(60,30)
 		checkbox:SetText("")
-		local checked = (GetConVarNumber("mw_player_ready") ~= 1)
+		local checked = GetConVar( "mw_player_ready" ):GetInt() ~= 1
 		if (inverted) then checked = not checked end
 		checkbox.Paint = function(s, w, h)
 			draw.RoundedBox( 8, 0, 0, w, h, color_white )
@@ -3235,11 +3235,11 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			end
 		end
 		function checkbox:DoClick()
-			local commandstring = "mw_player_ready "..tostring(1-GetConVarNumber("mw_player_ready"))
+			local commandstring = "mw_player_ready " .. tostring( 1 - GetConVar( "mw_player_ready" ):GetInt() )
 
 			LocalPlayer():ConCommand(commandstring)
 
-			local checked = (GetConVarNumber("mw_player_ready") ~= 1)
+			local checked = GetConVar( "mw_player_ready" ):GetInt() ~= 1
 			if (inverted) then checked = not checked end
 			checkbox.Paint = function(s, w, h)
 				draw.RoundedBox( 8, 0, 0, w, h, color_white )
@@ -3459,7 +3459,7 @@ function TOOL:RightClick( tr )
 			net.SendToServer()
 		end
 	else
-		self.Owner:ConCommand( "mw_chosen_unit 0" ) -- Stop spawning
+		self:GetOwner():ConCommand( "mw_chosen_unit 0" ) -- Stop spawning
 	end
 
 	LocalPlayer():ConCommand("mw_action 0")
@@ -3769,7 +3769,7 @@ function TOOL:Think()
 		--[[ Weird code to make the trace sorta act like there's a solid platform on the z level the selection started at:
 		 I can't find a way to calculate the length between the player's eye position and the point we're aiming to hit
 		 so I'm going to see if this really ghetto solution works and/or if it's laggy ]]
-		local targetpos = EyePos()
+		-- local targetpos = EyePos()
 
 		local specialTrace = util.TraceLine( {
 			start = ply:EyePos(),
@@ -4225,19 +4225,19 @@ function TOOL:MakeContraptionMenu()
 		local sizePenalty = 0
 		for _, ent in pairs( duptable ) do
 			if (ent.realvalue ~= nil) then
-				cost = cost+ent.realvalue
+				cost = cost + ent.realvalue
 				if (ent.spawnDelay == nil) then
-					spawnTime = spawnTime + ent.realvalue/25
+					spawnTime = spawnTime + ent.realvalue / 25
 				end
 			end
 			if (ent.population ~= nil) then
-				power = power+ent.population
+				power = power + ent.population
 			end
 			if (ent.Pos ~= nil) then
-				sizePenalty = sizePenalty+(ent.Pos):LengthSqr()/1000
+				sizePenalty = sizePenalty + (ent.Pos):LengthSqr() / 1000
 			end
 			if (ent.spawnDelay ~= nil) then
-				spawnTime = spawnTime + ent.spawnDelay*2
+				spawnTime = spawnTime + ent.spawnDelay * 2
 			end
 		end
 		LocalPlayer().contrapCost = cost
@@ -4394,7 +4394,7 @@ function SelectContraption(pl, path, contraptionName, contraptionCost, contrapti
 	local maxs = fulltable.Maxs
 	local size = maxs.x-mins.x+maxs.y-mins.y+maxs.z-mins.z ]]
 	pl.selectedFile = path
-	cost = math.Round(cost+sizePenalty)
+	cost = math.Round( cost + sizePenalty )
 
 	pl.selectedAssembler:SetNWFloat("slowThinkTimer", spawnTime)
 
@@ -4413,11 +4413,11 @@ function TOOL:DrawHUD()
 	if game.SinglePlayer() then
 		local w = 550
 		local h = 320
-		local x = ScrW()/2-w/2
-		local y = ScrH()/2-h/2
+		local x = ScrW() / 2 - w / 2
+		local y = ScrH() / 2 - h / 2
 
-		draw.RoundedBox( 15, x, y, w, h, Color(255, 80+80*math.sin(CurTime()*3), 0, 255) )
-		draw.RoundedBox( 10, x+10, y+10, w-20, h-20, Color(0,0,0,150) )
+		draw.RoundedBox( 15, x, y, w, h, Color(255, 80 + 80 * math.sin( CurTime() * 3 ), 0, 255) )
+		draw.RoundedBox( 10, x + 10, y + 10, w - 20, h - 20, Color( 0, 0, 0, 150 ) )
 		draw.DrawText(
 [[I'm sorry, but this tool does not work in
 singleplayer. Please start a 2 player game
@@ -4426,8 +4426,8 @@ if you want to use this addon on your own.
 You'll have more fun if you play with
 someone. Join the MelonWars:RTS steam
 group to find MelonWars players!]],
- "DermaLarge", x+w/2, y+30, color_white, TEXT_ALIGN_CENTER )
-		draw.DrawText("https:--steamcommunity.com/groups/melonwarsrts", "Trebuchet24", x+w/2, y+270, color_white, TEXT_ALIGN_CENTER )
+ "DermaLarge", x + w / 2, y + 30, color_white, TEXT_ALIGN_CENTER )
+		draw.DrawText("https:--steamcommunity.com/groups/melonwarsrts", "Trebuchet24", x + w / 2, y + 270, color_white, TEXT_ALIGN_CENTER )
 		return
 	end
 
@@ -4701,8 +4701,8 @@ to start a game and turn off cheats]]
 			local teamColor = mw_team_colors[cvars.Number("mw_team")]--LocalPlayer().mw_hudColor -- changed
 			local w = 300
 			local h = 150
-			local x = ScrW()-w
-			local y = ScrH()-h
+			local x = ScrW() - w
+			local y = ScrH() - h
 
 			draw.RoundedBox( 10, mx-130, my+40, 260, 25, Color(0,0,0,100) )
 			draw.DrawText( "Click to spawn contraption", "Trebuchet24", mx, my+40, Color(255,255,255,200), TEXT_ALIGN_CENTER )
@@ -4767,10 +4767,8 @@ end
 
 local function isInRangeLoop( vector, teamIndex, entClass, buildDist )
 	for _, v in ipairs( ents.FindByClass( entClass ) ) do
-		if vector:Distance( v:GetPos() ) < buildDist then
-			if v:GetNWInt( "mw_melonTeam", 0 ) == teamIndex then
-				return true
-			end
+		if vector:Distance( v:GetPos() ) < buildDist and v:GetNWInt( "mw_melonTeam", 0 ) == teamIndex then
+			return true
 		end
 	end
 end
