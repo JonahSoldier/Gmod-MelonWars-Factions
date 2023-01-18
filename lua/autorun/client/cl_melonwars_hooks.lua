@@ -91,7 +91,7 @@ hook.Add( "PostDrawTranslucentRenderables", "MelonWars_AddHalos", function()
 
 	for i = table.Count(zoneTable), 1, -1 do
 		local alphaMultiplier = GetConVar("mw_buildalpha_multiplier"):GetFloat()
-		zoneRadius = zoneTable[i]:GetNWInt( "scale" , 0 )
+		local zoneRadius = zoneTable[i]:GetNWInt( "scale" , 0 )
 
 		render.SetColorMaterial()
 		render.DrawSphere( zoneTable[i]:GetPos(), zoneRadius, 35, 12, Color( 255, 255, 255, 10 * alphaMultiplier ) ) -- pos, radius, qualitylongitude, qualitylatitude, colour
@@ -329,7 +329,7 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 	local hit = ply.controlTrace.Hit
 	if hit then
 		DrawMelonCross( spos, color_white )
-		targetEntity = ply.controlTrace.Entity
+		local targetEntity = ply.controlTrace.Entity
 		if IsValid( targetEntity ) and not targetEntity:IsWorld() then
 			spos = targetEntity:GetPos():ToScreen()
 			DrawMelonCross( spos, Color( 255, 200, 0, 255 ) )

@@ -1,6 +1,6 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
+
 include('shared.lua')
 
 function ENT:Initialize()
@@ -14,24 +14,24 @@ function ENT:Initialize()
 	self.maxHP = 120
 	self.range = 650
 	self.minRange = 100
-	
+
 	self.ai_chases = false
 
 	self.careForFriendlyFire = true
 	self.careForWalls = true
 	self.shotOffset = Vector(0,0,15)
-	
+
 	self.fireDelay = 7
-	
+
 	self.damping = 5
-	
+
 	self.population = 5
-	
+
 	self.nextShot = CurTime()+3
-	
+
 	self.shotSound = "weapons/ar2/npc_ar2_altfire.wav"
 	self.tracer = "AR2Tracer"
-	
+
 	self.slowThinkTimer = 0.5
 
 	MW_Setup ( self )
@@ -69,7 +69,7 @@ function ENT:Shoot ( ent, forceTargetPos )
 			else
 				targetPos = forceTargetPos
 			end
-			
+
 			local shootVector = 150*(targetPos-(ent:GetPos()+Vector(0,0,50)) + Vector(0, 0, 40) + Vector(math.random(-self.spread,self.spread),math.random(-self.spread,self.spread),math.random(-self.spread,self.spread)))
 			--local shootVector = (targetPos-ent:GetPos() + Vector(0, 0, 700))*36
 			local bullet = ents.Create( "ent_melonbullet_cannonball" )
@@ -80,7 +80,7 @@ function ENT:Shoot ( ent, forceTargetPos )
 			bullet:Spawn()
 			bullet:SetSolid( SOLID_VPHYSICS )         -- Toolbox
 			bullet:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
-			bulletphys = bullet:GetPhysicsObject()
+			local bulletphys = bullet:GetPhysicsObject()
 			bulletphys:ApplyForceCenter( shootVector )
 			bulletphys:SetDamping(0.3,3)
 			ent.fired = true

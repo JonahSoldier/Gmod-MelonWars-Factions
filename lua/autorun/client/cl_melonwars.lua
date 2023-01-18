@@ -3,26 +3,6 @@ if engine.ActiveGamemode() ~= "sandbox" then return end
 mw_team_colors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
 mw_team_colors[0] = Color(100,100,100,255)
 
-function MW_BeginSelection() -- Previously concommand.Add( "+mw_select", function( ply )
-	local ply = LocalPlayer()
-	ply.mw_selecting = true
-	local trace = util.TraceLine( {
-		start = ply:EyePos(),
-		endpos = ply:EyePos() + ply:EyeAngles():Forward() * 10000,
-		filter = function( ent ) if ( ent:GetClass() ~= "player" ) then return true end end,
-		mask = MASK_SOLID + MASK_WATER
-	} )
-
-	ply.mw_selectionStartingPoint = trace.HitPos
-	ply.mw_selectionEndingPoint = trace.HitPos
-	sound.Play( "buttons/lightswitch2.wav", ply:GetPos(), 75, 100, 1 )
-
-	if ply:KeyDown( IN_SPEED ) then return end
-	if not istable( ply.foundMelons ) then return end
-
-	table.Empty( ply.foundMelons )
-end
-
 net.Receive( "MW_ReturnSelection", function( len, pl )
 	local returnedSelectionID = net.ReadInt(20)
 
@@ -54,170 +34,6 @@ function DrawBuildRanges(zoneEntity, zoneRadius)
 	-- LocalPlayer().BuildZone:DeleteOnRemove( zoneEntity )
 end
 ]]
-function MW_UpdateGhostEntity(model, pos, offset, angle, newColor, ghostSphereRange, ghostSpherePos)
-	if (newColor == nil) then
-		newColor = Color(100,100,100)
-	end
-	if (tostring( LocalPlayer().GhostEntity ) == "[NULL Entity]" or not IsValid( LocalPlayer().GhostEntity )) then
-		LocalPlayer().GhostEntity = ents.CreateClientProp( model )
-		LocalPlayer().GhostEntity:SetSolid( SOLID_VPHYSICS );
-		LocalPlayer().GhostEntity:SetMoveType( MOVETYPE_NONE )
-		LocalPlayer().GhostEntity:SetNotSolid( true );
-		LocalPlayer().GhostEntity:SetRenderMode( RENDERMODE_TRANSALPHA )
-		LocalPlayer().GhostEntity:SetRenderFX( kRenderFxPulseFast )
-		LocalPlayer().GhostEntity:SetMaterial( "models/debug/debugwhite" )
-		LocalPlayer().GhostEntity:SetColor( Color( newColor.r * 1.5, newColor.g * 1.5, newColor.b * 1.5, 150 ) )
-		LocalPlayer().GhostEntity:SetModel( model )
-		LocalPlayer().GhostEntity:SetPos( pos + offset )
-		LocalPlayer().GhostEntity:SetAngles( angle )
-		LocalPlayer().GhostEntity:Spawn()
-	else
-		LocalPlayer().GhostEntity:SetModel( model )
-		LocalPlayer().GhostEntity:SetPos( pos + offset )
-		LocalPlayer().GhostEntity:SetAngles( angle )
-		local obbmins = LocalPlayer().GhostEntity:OBBMins()
-		local obbmaxs = LocalPlayer().GhostEntity:OBBMaxs()
-		obbmins:Rotate( angle )
-		obbmaxs:Rotate( angle )
-		local mins = Vector( LocalPlayer().GhostEntity:GetPos().x + obbmins.x, LocalPlayer().GhostEntity:GetPos().y + obbmins.y, pos.z + 5 )
-		local maxs = Vector( LocalPlayer().GhostEntity:GetPos().x + obbmaxs.x, LocalPlayer().GhostEntity:GetPos().y + obbmaxs.y, pos.z + 20 )
-		local overlappingEntities = ents.FindInBox( mins, maxs )
-		--[[
-		local vPoint = LocalPlayer().GhostEntity:GetPos()+obbmins+Vector(0,0,1)
-		local effectdata = EffectData()
-		effectdata:SetOrigin( vPoint )
-		effectdata:SetScale(0)
-		util.Effect( "MuzzleEffect", effectdata )
-
-		vPoint = LocalPlayer().GhostEntity:GetPos()+obbmaxs
-		effectdata = EffectData()
-		effectdata:SetOrigin( vPoint )
-		effectdata:SetScale(0)
-		util.Effect( "MuzzleEffect", effectdata )
-		]]
-		LocalPlayer().canPlace = true
-		if LocalPlayer().mw_action == 1 and not mw_units[LocalPlayer():GetInfoNum( "mw_chosen_unit", 0 )].canOverlap then
-			for k, v in pairs( overlappingEntities ) do
-				if v.Base ~= nil and string.StartWith( v.Base, "ent_melon_" ) then
-					LocalPlayer().canPlace = false
-				end
-			end
-		end
-		if LocalPlayer().canPlace then
-			LocalPlayer().GhostEntity:SetColor( Color(newColor.r, newColor.g, newColor.b, 150 ))
-			LocalPlayer().GhostEntity:SetRenderFX( kRenderFxPulseSlow )
-		else
-			LocalPlayer().GhostEntity:SetColor( Color(150, 0, 0, 150 ))
-			LocalPlayer().GhostEntity:SetRenderFX( kRenderFxDistort )
-		end
-	end
-
-	if (tostring(LocalPlayer().GhostSphere) == "[NULL Entity]" or not IsValid(LocalPlayer().GhostSphere)) then
-		if (LocalPlayer().mw_action == 1 and ghostSphereRange > 0) then
-			LocalPlayer().GhostSphere = ents.CreateClientProp( "models/hunter/tubes/circle2x2.mdl" )
-			LocalPlayer().GhostSphere:SetSolid( SOLID_VPHYSICS );
-			LocalPlayer().GhostSphere:SetMoveType( MOVETYPE_NONE )
-			LocalPlayer().GhostSphere:SetNotSolid( true );
-			LocalPlayer().GhostSphere:SetRenderMode( RENDERMODE_TRANSALPHA )
-			LocalPlayer().GhostSphere:SetRenderFX( kRenderFxPulseSlow )
-			LocalPlayer().GhostSphere:SetMaterial("models/debug/debugwhite")
-			LocalPlayer().GhostSphere:SetColor( Color( newColor.r * 1.5, newColor.g * 1.5, newColor.b * 1.5, 50 ) )
-			LocalPlayer().GhostSphere:SetModelScale( 0.021 * ghostSphereRange )
-			LocalPlayer().GhostSphere:Spawn()
-		end
-	else
-		if (LocalPlayer().mw_action == 1 and ghostSphereRange > 0) then
-			local color = LocalPlayer().GhostSphere:GetColor()
-			LocalPlayer().GhostSphere:SetColor( Color(color.r, color.g, color.b, 50) )
-			LocalPlayer().GhostSphere:SetPos( Vector(pos.x, pos.y, ghostSpherePos.z ) )
-			LocalPlayer().GhostSphere:SetModelScale( 0.021 * ghostSphereRange )
-		else
-			LocalPlayer().GhostSphere:Remove()
-		end
-	end
-end
-
-function MW_FinishSelection() -- Previously concommand.Add( "-mw_select", function( ply )
-	sound.Play( "buttons/lightswitch2.wav", LocalPlayer():GetPos(), 50, 80, 1 )
-	LocalPlayer().mw_selecting = false
-
-	-- Finds all the entities in the selection sphere
-
-	-- local foundEnts = ents.FindInSphere((ply.mw_selEnd+ply.mw_selStart)/2, ply.mw_selStart:Distance(ply.mw_selEnd)/2+0.1 )
-	-- local selectEnts = table.Copy( foundEnts )
-	-- if not ply:KeyDown(IN_SPEED) then ply.foundMelons = {} end
-	--Busca de esas entidades cuales son sandias, y cuales son del equipo correcto
-
-	--[[for k, v in pairs( selectEnts ) do
-		if (v.moveType ~= MOVETYPE_NONE) then
-			local tbl = constraint.GetAllConstrainedEntities( v )
-			if (istable(tbl)) then
-				for kk, vv in pairs (tbl) do
-					if (not table.HasValue(selectEnts, vv)) then
-						table.insert(foundEnts, vv)
-					else
-					end
-				end
-			end
-		end
-	end]]
-	-- print("========== Selection:")
-	-- for k, v in pairs( foundEnts ) do
-	-- 	if (v.Base ~= nil) then
-	-- 		if (v.Base == "ent_melon_base") then
-	-- 			if (cvars.Bool("mw_admin_move_any_team", false) or v:GetNWInt("mw_melonTeam", -1) == ply:GetInfoNum( "mw_team", -1 )) then
-	-- 				-- if (v:GetNWInt("mw_melonTeam", 0) ~= 0) then
-	-- 					table.insert(ply.foundMelons, v)
-	-- 					-- print(k..": "..tostring(v)..", added succesfully")
-	-- 					--"Added "..tostring(v).." succesfully"
-	-- 				-- else
-	-- 					-- print(k..": "..tostring(v).." !!! didnt add to the selection because the unit had no team ("..v:GetNWInt("mw_melonTeam", -1)..")")
-	-- 				--"Didn't add "..tostring(v).." because it had no team"
-	-- 				-- end
-	-- 			else
-	-- 				-- print(k..": "..tostring(v)..", didnt add to the selection because the unit was not in your team ("..v:GetNWInt("mw_melonTeam", -1)..")")
-	-- 				if (v:GetNWInt("mw_melonTeam", -1) == -1) then
-	-- 					error("Selected unit has team -1!")
-	-- 				end
-	-- 			--	"Didn't add "..tostring(v).." because it wasn't my team"
-	-- 			end
-	-- 		else
-	-- 			-- print(k..": "..tostring(v)..", didnt add to the selection because the Base was not ent_melon_base ("..v.Base..")")
-	-- 		--"Didn't add "..tostring(v).." because it was a base prop"
-	-- 		end
-	-- 	else
-	-- 		-- print(k..": "..tostring(v)..", didnt add to the selection because Base was null")
-	-- 	end
-	-- end
-	--Le envia al client la lista de sandias para que pueda dibujar los halos
-	--[[
-	net.Start("Selection")
-		net.WriteInt(table.Count(ply.foundMelons),16)
-		for k,v in pairs(ply.foundMelons) do
-			net.WriteEntity(v)
-		end
-	net.Send(ply)
-	]]--
-
-	-- print("Sending my selection to the server. Total selected units: "..table.Count(ply.foundMelons))
-	-- print("Entity im pointing at: "..tostring(ply:GetEyeTrace().Entity))
-	-- print("Selection table,")
-	-- PrintTable(ply.foundMelons)
-	--[[net.Start("MW_SelectContraption")
-		net.WriteUInt(table.Count(LocalPlayer().foundMelons)+1, 16)
-		net.WriteEntity(ply:GetEyeTrace().Entity)
-		for k, v in pairs(ply.foundMelons) do
-			net.WriteEntity(v)
-		end
-	net.SendToServer()]]--
-
-	-- sound.Play( "buttons/lightswitch2.wav", ply:GetPos(), 75, 90, 1 )
-	-- ply.mw_selEnd = Vector(0,0,0)
-	-- ply.mw_selStart = Vector(0,0,0)
-	-- ply:SetNWVector("mw_selStart", Vector(0,0,0))
-	-- ply:SetNWBool("LocalPlayer().mw_selecting",  Vector(0,0,0))
-end
-
 net.Receive( "MW_SelectContraption", function( len, pl )
 	local count = net.ReadUInt( 16 )
 	-- print("Receiving extra selections from the server ("..count..")")
@@ -312,6 +128,13 @@ net.Receive("ContraptionValidateClient", function (len, pl)
 	end
 end)
 
+local function ResourcesChanged( dif )
+	local tool = LocalPlayer():GetTool()
+	if tool == nil then return end
+	if tool.Mode ~= "melon_universal_tool" then return end
+	tool:IndicateIncome( dif )
+end
+
 net.Receive( "MW_TeamCredits", function( len, pl )
 	local previousCredits = LocalPlayer().mw_credits
 	LocalPlayer().mw_credits = net.ReadInt( 32 )
@@ -321,13 +144,6 @@ net.Receive( "MW_TeamCredits", function( len, pl )
 	if difference == 0 then return end
 	ResourcesChanged( difference )
 end )
-
-function ResourcesChanged( dif )
-	local tool = LocalPlayer():GetTool()
-	if tool == nil then return end
-	if tool.Mode ~= "melon_universal_tool" then return end
-	tool:IndicateIncome( dif )
-end
 
 net.Receive( "MW_TeamUnits", function( len, pl )
 	LocalPlayer().mw_units = net.ReadInt(16)
@@ -501,32 +317,6 @@ net.Receive( "EditorSetWaypoint", function( len, pl )
 	end
 end )
 
-function MW_VoidExplosion(ent, amount, sizeMul)
-	-- if (CurTime()-ent:GetCreationTime() < 5) then return end
-	local particleSize = math.random(12, 18)
-	local fireworkSize = math.random(300, 400) * sizeMul
-	local teamColor = ent:GetColor();
-	local emitter = ParticleEmitter( ent:GetPos() ) -- Particle emitter in this position
-	for i = 0, amount do -- SMOKE
-		local part = emitter:Add( "effects/yellowflare", ent:GetPos() ) -- Create a new particle at pos
-		if ( part ) then
-			part:SetDieTime( math.Rand( 0.5, 1.0 ) * sizeMul ) -- How long the particle should "live"
-			local c = math.Rand(0.8, 1.0)
-			local _c = 1-c
-			part:SetColor( teamColor.r * c + 255 * _c,teamColor.g * c + 255 * _c, teamColor.b * c + 255 * _c )
-			part:SetStartAlpha( 255 )
-			part:SetEndAlpha( 255 ) -- Particle size at the end of its lifetime
-			part:SetStartSize( particleSize )
-			part:SetEndSize( 0 ) -- Size when removed
-			part:SetAirResistance(50)
-			local vec = AngleRand():Forward() * fireworkSize
-			part:SetGravity( -vec * 3 ) -- Gravity of the particle
-			part:SetVelocity( vec * 0.8 ) -- Initial velocity of the particle
-		end
-	end
-	emitter:Finish()
-end
-
 function MW_SickEffect(ent, amount)
 	local emitter = ParticleEmitter( ent:GetPos() ) -- Particle emitter in this position
 	for i = 1, amount do -- SMOKE
@@ -540,27 +330,6 @@ function MW_SickEffect(ent, amount)
 			part:SetEndSize( 0 ) -- Size when removed
 			part:SetAirResistance(50)
 			local vec = AngleRand():Forward() * math.random(10, 50)
-			part:SetGravity( Vector(0,0,50) ) -- Gravity of the particle
-			part:SetVelocity( vec * 0.8 ) -- Initial velocity of the particle
-		end
-	end
-	emitter:Finish()
-end
-
-function MW_SickExplosion(ent, amount)
-	local emitter = ParticleEmitter( ent:GetPos() ) -- Particle emitter in this position
-	for i = 1, amount do -- SMOKE
-		local part = emitter:Add( "effects/yellowflare", ent:GetPos() ) -- Create a new particle at pos
-		if ( part ) then
-			part:SetDieTime( math.Rand(3.0, 5.0) ) -- How long the particle should "live"
-			part:SetColor(100, 255, 0)
-			part:SetStartAlpha( 255 )
-			part:SetEndAlpha( 255 ) -- Particle size at the end of its lifetime
-			part:SetStartSize( math.random(20, 30) )
-			part:SetEndSize( 0 ) -- Size when removed
-			part:SetAirResistance(250)
-			local vec = AngleRand():Forward() * math.random(100, 5000)
-			vec.z = math.abs(vec.z)
 			part:SetGravity( Vector(0,0,50) ) -- Gravity of the particle
 			part:SetVelocity( vec * 0.8 ) -- Initial velocity of the particle
 		end
@@ -623,7 +392,6 @@ function MW_Firework(ent, amount, sizeMul)
 	emitter:Finish()
 end
 ]]
-
 net.Receive( "MWControlUnit" , function(len, pl)
 	local u = net.ReadEntity()
 	LocalPlayer().controllingUnit = u

@@ -1,6 +1,6 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
+
 include('shared.lua')
 
 function ENT:Initialize()
@@ -10,9 +10,9 @@ function ENT:Initialize()
 	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
 	self:SetMoveType(MOVETYPE_VPHYSICS)
 	self:SetMaterial( "models/debug/debugwhite" )
-	
+
 	self.deathSound = "ambient/explosions/explode_9.wav"
-	
+
 	self.careForFriendlyFire = false
 
 	self.speed = 100
@@ -24,10 +24,10 @@ function ENT:Initialize()
 
 	self.idsInside = {}
 
-	
+
 	self.targetPos = Vector(0,0,0)
 	self.distance = 0
-	
+
 	self:SetColor(Color(100,100,100, 255))
 	local trail = util.SpriteTrail(self, 0, Color(255,255,255), false, 10, 1, 2, 1/(15+1)*0.5, "effects/beam_generic01.vmt")
 
@@ -78,19 +78,19 @@ function ENT:Think()
 			self.targetPos = target:GetPos()
 		end
 		self.targetPos = self:GetNWVector("targetPos", nil)
-	
+
 		self.distance = self:GetPos():Distance(self.targetPos)
 		if (self.targetPos == Vector(0,0,0)) then self:Remove() end
 		local targetVec = self.targetPos+self.random+targetOffset*self.distance
 		self:SetPos(self:GetPos()+(targetVec-self:GetPos()):GetNormalized()*self.speed )
 		self:SetAngles( (targetVec-self:GetPos()):Angle()+Angle(90,0,0))
 		self:NextThink(CurTime()+0.05)
-	
+
 		if(self.distance < self.speed*85 and not self.incomingSoundPlayed) then
 			for k, v in pairs( player.GetAll() ) do
 				sound.Play( "d3_citadel.timestop_winddown", v:GetPos())
 			end
-		
+
 			self.incomingSoundPlayed = true
 		end
 
@@ -102,17 +102,17 @@ function ENT:Think()
 				self:Explode()
 			end
 		end
-	
+
 		self.counter = self:GetNWInt("count", 0)
 		return true
 	else
 		if (self:GetNWInt("count", 0)>0) then
-			
+
 			self.counter = self.counter-1
 			self:FreeUnits(self.counter)
 			sound.Play( "doors/door_metal_medium_open1.wav", self:GetPos() )
 			self:NextThink(CurTime()+1)
-			return true 
+			return true
 		end
 	end
 end
@@ -126,11 +126,11 @@ function ENT:Explode()
 
 		v:SetHealth( 100 )
 		v:SetArmor( 100 )
-		util.BlastDamage( self, self, v:GetPos(), 25, 50 ) --ghetto way of making ears ring 
-		
+		util.BlastDamage( self, self, v:GetPos(), 25, 50 ) --ghetto way of making ears ring
+
 		v:SetHealth( 100 )
 		v:SetArmor( 100 )
-		
+
 		local MWhasColourModifier = true
 		/*local MWColourModifierTable = {
 			[ "$pp_colour_addr" ] = 0.0,
@@ -146,12 +146,12 @@ function ENT:Explode()
 
 		for i=1, 100 do
 			timer.Simple( i/20, function()
-				MWColourModifierTable = {
+				local MWColourModifierTable = {
 					[ "$pp_colour_addr" ] = 0,
 					[ "$pp_colour_addg" ] = 0,
 					[ "$pp_colour_addb" ] = 0,
-					[ "$pp_colour_brightness" ] = 0-15/i, 
-					[ "$pp_colour_contrast" ] = 1+5/i, 
+					[ "$pp_colour_brightness" ] = 0-15/i,
+					[ "$pp_colour_contrast" ] = 1+5/i,
 					[ "$pp_colour_colour" ] = 1,
 					[ "$pp_colour_mulr" ] = -10+i/10,
 					[ "$pp_colour_mulg" ] = 5-i/20,
@@ -163,14 +163,14 @@ function ENT:Explode()
 				net.Send(v)
 			end)
 		end
-		
+
 		timer.Simple( 5, function()
 			net.Start("MWColourMod")
 				net.WriteBool(false) --hasColourModifier
 			net.Send(v)
 		end)
 	end
-	
+
 	timer.Simple( 0.1, function()
 		if (self:IsValid()) then
 			util.BlastDamage( self, self, self:GetPos(), 650, 250)
@@ -183,7 +183,7 @@ function ENT:Explode()
 			end
 
 			local count = table.Count(debri_props)
-			
+
 			for i = 1, count do --nicked the code from the HQ to make it spit out radioactive debris
 				local debris = ents.Create( "ent_melonium_plate" )
 				debris:Ignite( 500 )

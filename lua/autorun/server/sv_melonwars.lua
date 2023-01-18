@@ -239,7 +239,7 @@ local function playerSpawn( ply )
 end
 hook.Add( "PlayerSpawn", "MelonWars_Spawn", playerSpawn )
 ]]
-function MWSendMessage( pl, message, notificationType, length )
+local function MWSendMessage( pl, message, notificationType, length )
 	net.Start("MWMessage")
 		net.WriteString(message)
 		net.WriteInt(notificationType,4)
@@ -318,6 +318,7 @@ net.Receive("MW_RequestSelection", function(len, pl)
 	local hitEnt = net.ReadEntity()
 
 	-- local allFoundEntities = ents.FindInSphere( center, radius ) -- I'm guessing this is part of the workaround for selection glitch
+	local allFoundEntities = {}
 	local foundEntities = {}
 
 	if radius > 15 then
@@ -657,7 +658,7 @@ function SpawnUnitAtPos( class, unit_index, pos, ang, cost, spawntime, _team, at
 	return newMarine
 end
 
-function MW_CalculateContraptionValues(betadupetable, pl)
+local function MW_CalculateContraptionValues( betadupetable, pl )
 	local cost = 0
 	local power = 0
 
@@ -745,7 +746,7 @@ function MW_CalculateContraptionValues(betadupetable, pl)
 	return "success", cost, power
 end
 
-function MW_GetBetaContraptionTable(dupetable, pl)
+local function MW_GetBetaContraptionTable( dupetable, pl )
 	local betadupetable = {}
 
 	-- Save Entities
@@ -835,7 +836,7 @@ function MW_GetBetaContraptionTable(dupetable, pl)
 
 	return betadupetable
 end
-
+--[[
 function MW_CreateContraptionFromTable(localPos, dupetable, pl)
 	local entities = {}
 	local constraints = {}
@@ -936,7 +937,7 @@ function MW_CreateContraptionFromTable(localPos, dupetable, pl)
 
 	return entities, constraints
 end
-
+]]
 net.Receive( "ContraptionSave", function( len, pl )
 	local name = net.ReadString()
 	local entity = net.ReadEntity()
@@ -1211,25 +1212,7 @@ net.Receive( "RequestContraptionLoadToAssembler", function( len, pl )
 	--net.SendToServer()
 end )
 
-net.Receive( "MW_SpawnProp", function( len, pl )
-	local index = net.ReadInt(16)
-	local trace = net.ReadTable()
-	local cost = net.ReadInt(16)
-	local _team = net.ReadInt(8)
-	local spawntime = net.ReadInt(16)
-	local propAngle = net.ReadAngle()
-
-	local offset = Vector(0,0,mw_base_props[index].offset.z)
-	if (cvars.Bool("mw_prop_offset") == true) then
-		offset = mw_base_props[index].offset
-	end
-	local xoffset = Vector( offset.x * ( math.cos( propAngle.y / 180 * math.pi ) ), offset.x * ( math.sin( propAngle.y / 180 * math.pi ) ), 0 )
-	local yoffset = Vector( offset.y * ( -math.sin( propAngle.y / 180 * math.pi ) ), offset.y * ( math.cos( propAngle.y / 180 * math.pi ) ), 0 )
-	offset = xoffset + yoffset + Vector( 0, 0, offset.z )
-	MW_SpawnProp(mw_base_props[index].model, trace.HitPos + trace.HitNormal + offset, propAngle + mw_base_props[index].angle, _team, trace.Entity, mw_base_props[index].hp, cost, pl, spawntime)
-end )
-
-function MW_SpawnProp(model, pos, ang, _team, parent, health, cost, pl, spawntime)
+local function MW_SpawnProp(model, pos, ang, _team, parent, health, cost, pl, spawntime)
 	local newMarine = ents.Create( "ent_melon_wall" )
 	if not IsValid( newMarine ) then return end -- Check whether we successfully made an entity, if not - bail
 	--if ( IsValid( trace.Entity ) and trace.Entity.Base == "ent_melon_base" ) then return end
@@ -1279,6 +1262,24 @@ function MW_SpawnProp(model, pos, ang, _team, parent, health, cost, pl, spawntim
 
 	return newMarine
 end
+
+net.Receive( "MW_SpawnProp", function( len, pl )
+	local index = net.ReadInt(16)
+	local trace = net.ReadTable()
+	local cost = net.ReadInt(16)
+	local _team = net.ReadInt(8)
+	local spawntime = net.ReadInt(16)
+	local propAngle = net.ReadAngle()
+
+	local offset = Vector(0,0,mw_base_props[index].offset.z)
+	if (cvars.Bool("mw_prop_offset") == true) then
+		offset = mw_base_props[index].offset
+	end
+	local xoffset = Vector( offset.x * ( math.cos( propAngle.y / 180 * math.pi ) ), offset.x * ( math.sin( propAngle.y / 180 * math.pi ) ), 0 )
+	local yoffset = Vector( offset.y * ( -math.sin( propAngle.y / 180 * math.pi ) ), offset.y * ( math.cos( propAngle.y / 180 * math.pi ) ), 0 )
+	offset = xoffset + yoffset + Vector( 0, 0, offset.z )
+	MW_SpawnProp(mw_base_props[index].model, trace.HitPos + trace.HitNormal + offset, propAngle + mw_base_props[index].angle, _team, trace.Entity, mw_base_props[index].hp, cost, pl, spawntime)
+end )
 
 local function MW_SpawnBaseAtPos(_team, vector, pl, grandwar, unit)
 	local offset = Vector(0,0,0)
@@ -1709,6 +1710,8 @@ net.Receive( "MW_Order", function( len, ply ) -- Previously concommand.Add( "mw_
 			table.remove(foundMelons, k)
 		end
 	end
+
+	local movedMelons
 
 	if rally then
 		for _, v in ipairs( foundMelons ) do

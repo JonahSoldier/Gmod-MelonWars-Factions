@@ -4,11 +4,11 @@ function ENT:Initialize()
 	self.birth = CurTime()
 end
 
-Laser = Material( "vgui/wave.png", "noclamp smooth" )
+-- Laser = Material( "vgui/wave.png", "noclamp smooth" )
 function ENT:Draw()
-    -- self.BaseClass.Draw(self) -- Overrides Draw
-    self:DrawModel() -- Draws Model Client Side
-	
+	-- self.BaseClass.Draw(self) -- Overrides Draw
+	self:DrawModel() -- Draws Model Client Side
+
 	if (self:GetNWBool("done",false) == false) then
 		--[[render.SetMaterial( Laser )
 		local angle = LocalPlayer():EyeAngles()+Angle(-90,0,0)

@@ -1,9 +1,9 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
+
 include('shared.lua')
 
-function PropDefaults( ent )
+function ENT:PropDefaults( ent )
 
 	ent.hp = 1
 	ent:SetNWFloat( "maxhealth", 1 )
@@ -16,61 +16,19 @@ function PropDefaults( ent )
 	ent:SetMaterial( "Models/effects/comball_sphere" )
 
 	ent.onFire = false
-	
+
 	ent.deathEffect = "cball_explode"
-	
+
 	ent.damage = 0
-	
+
 	ent.Angles = Angle(0,0,0)
-end
-
-function PropSetup( ent )
-	
-	if (SERVER) then
-		ent:SetNWEntity( "targetEntity", ent.targetEntity )
-		
-		--ent:SetModel( ent.modelString )
-		
-		ent:SetSolid( SOLID_VPHYSICS )         -- Toolbox
-		
-		ent:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
-		
-		if (ent.moveType == 0) then
-			local weld = constraint.Weld( ent, game.GetWorld(), 0, 0, 0, true , false )
-			canMove = false
-		end
-		
-		ent.phys = ent:GetPhysicsObject()
-		if (IsValid(ent.phys)) then
-			ent.phys:Wake()
-		end
-
-		if (ent.changeAngles) then
-			ent:SetAngles( ent.Angles )
-		end
-
-		if (cvars.Number("mw_admin_spawn_time") == 1 and ent.mw_spawntime ~= nil) then
-			timer.Simple( ent.mw_spawntime-CurTime(), function()
-				if (IsValid(ent)) then	
-					MW_PropSpawn(ent)
-				end
-			end)
-		else
-			MW_PropSpawn(ent)
-		end
-	end
-	
-	local mw_melonTeam = ent:GetNWInt("mw_melonTeam", 0)
-		
-	local newColor = mw_team_colors[mw_melonTeam]
-	ent:SetColor(newColor)
 end
 
 function MW_PropSpawn(ent)
 	if (SERVER) then
-		
+
 		ent:SetMoveType( ent.moveType )   -- after all, gmod is a physics
-		
+
 		ent:SetMaterial(ent.materialString)
 		ent.spawned = true
 		ent.HP = ent.maxHP
@@ -97,7 +55,7 @@ end
 --[[
 function ENT:OnTakeDamage( damage )
 	if (damage:GetDamage() > 0) then
-		if ((damage:GetAttacker():GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not damage:GetAttacker():GetVar('careForFriendlyFire')) and not damage:GetAttacker():IsPlayer()) then 
+		if ((damage:GetAttacker():GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not damage:GetAttacker():GetVar('careForFriendlyFire')) and not damage:GetAttacker():IsPlayer()) then
 			local HP = self:GetNWFloat("health", 1) - damage:GetDamage()
 			self:SetNWFloat( "health", HP )
 			if (HP <= 0) then

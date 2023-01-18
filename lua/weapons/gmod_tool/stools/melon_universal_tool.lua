@@ -143,7 +143,7 @@ for i = 1, unitCount do
 	mw_units[i] = Unit()
 end
 
-local function BarracksText ( number, max )
+local function BarracksText( number, max )
 	return "This is a building that produces a " .. mw_units[number].name .. " every " .. tostring(mw_units[number].spawn_time * 3) .. " seconds, up to " .. max .. " at any given time, at half the price. Select this building and command it to move somewhere to set a rally point for its deployed units. Look at it and press E to toggle it on and off."
 end
 
@@ -3466,6 +3466,28 @@ function TOOL:RightClick( tr )
 	LocalPlayer().mw_cooldown = CurTime()
 end
 
+local function MW_BeginSelection() -- Previously concommand.Add( "+mw_select", function( ply )
+	if not CLIENT then return end
+
+	local ply = LocalPlayer()
+	ply.mw_selecting = true
+	local trace = util.TraceLine( {
+		start = ply:EyePos(),
+		endpos = ply:EyePos() + ply:EyeAngles():Forward() * 10000,
+		filter = function( ent ) if ( ent:GetClass() ~= "player" ) then return true end end,
+		mask = MASK_SOLID + MASK_WATER
+	} )
+
+	ply.mw_selectionStartingPoint = trace.HitPos
+	ply.mw_selectionEndingPoint = trace.HitPos
+	sound.Play( "buttons/lightswitch2.wav", ply:GetPos(), 75, 100, 1 )
+
+	if ply:KeyDown( IN_SPEED ) then return end
+	if not istable( ply.foundMelons ) then return end
+
+	table.Empty( ply.foundMelons )
+end
+
 function TOOL:LeftClick( tr )
 	if not CLIENT then return end
 	local pl = LocalPlayer()
@@ -3511,12 +3533,12 @@ function TOOL:LeftClick( tr )
 	elseif action == 1 then
 		if pl.mw_spawnTimer >= CurTime() - 0.1 then return end
 		if (cvars.Bool("mw_admin_playing")) then
-			attach = pl:GetInfoNum("mw_unit_option_welded", 0)
-			unit_index = pl:GetInfoNum("mw_chosen_unit", 0)
+			local attach = pl:GetInfoNum("mw_unit_option_welded", 0)
+			local unit_index = pl:GetInfoNum("mw_chosen_unit", 0)
 			if (cvars.Bool("mw_admin_allow_free_placing") or MW_noEnemyNear(trace.HitPos, mw_melonTeam)) then
 				if (mw_units[unit_index].population == 0 or pl.mw_units+mw_units[unit_index].population <= cvars.Number("mw_admin_max_units")) then
 					if (LocalPlayer().canPlace) then
-						local cost = 0
+						local cost, mw_delay = 0
 						local class = ""
 
 						if (unit_index > 0) then
@@ -3636,7 +3658,7 @@ function TOOL:LeftClick( tr )
 		local prop_index = pl:GetInfoNum("mw_chosen_prop", 0)
 		local cost = mw_base_props[prop_index].cost
 		if not cvars.Bool("mw_admin_playing") then return end
-		attach = pl:GetInfoNum("mw_unit_option_welded", 0)
+		-- local attach = pl:GetInfoNum("mw_unit_option_welded", 0)
 		if not (cvars.Bool("mw_admin_allow_free_placing") or MW_isInRange(trace.HitPos, mw_melonTeam)) then return end
 		if not (cvars.Bool("mw_admin_allow_free_placing") or MW_noEnemyNear(trace.HitPos, mw_melonTeam)) then return end
 		if not (pl.mw_credits >= cost or not cvars.Bool("mw_admin_credit_cost")) then return end
@@ -3748,7 +3770,7 @@ function TOOL:LeftClick( tr )
 end
 
 function TOOL.BuildCPanel( CPanel )
- 	if not CLIENT then return end
+	if not CLIENT then return end
 	-- CPanel:AddControl("Label", { Text = "Options" , Description = "These options only affect mw_units" })
 	--[[ CPanel:AddControl("CheckBox", {
 		Label = "Rocketeer",
@@ -3756,6 +3778,175 @@ function TOOL.BuildCPanel( CPanel )
 		Description = "Makes the unit mw_hover a few meters above ground while moving. Multiplies price by 3."
 	}) ]]
 	CPanel:AddControl("Label", { Text = "Reload to open the menu" })
+end
+
+local function MW_UpdateGhostEntity(model, pos, offset, angle, newColor, ghostSphereRange, ghostSpherePos)
+	if not CLIENT then return end
+	local locPly = LocalPlayer()
+
+	if newColor == nil then
+		newColor = Color(100,100,100)
+	end
+	if tostring( locPly.GhostEntity ) == "[NULL Entity]" or not IsValid( locPly.GhostEntity ) then
+		locPly.GhostEntity = ents.CreateClientProp( model )
+		locPly.GhostEntity:SetSolid( SOLID_VPHYSICS )
+		locPly.GhostEntity:SetMoveType( MOVETYPE_NONE )
+		locPly.GhostEntity:SetNotSolid( true )
+		locPly.GhostEntity:SetRenderMode( RENDERMODE_TRANSALPHA )
+		locPly.GhostEntity:SetRenderFX( kRenderFxPulseFast )
+		locPly.GhostEntity:SetMaterial( "models/debug/debugwhite" )
+		locPly.GhostEntity:SetColor( Color( newColor.r * 1.5, newColor.g * 1.5, newColor.b * 1.5, 150 ) )
+		locPly.GhostEntity:SetModel( model )
+		locPly.GhostEntity:SetPos( pos + offset )
+		locPly.GhostEntity:SetAngles( angle )
+		locPly.GhostEntity:Spawn()
+	else
+		locPly.GhostEntity:SetModel( model )
+		locPly.GhostEntity:SetPos( pos + offset )
+		locPly.GhostEntity:SetAngles( angle )
+		local obbmins = locPly.GhostEntity:OBBMins()
+		local obbmaxs = locPly.GhostEntity:OBBMaxs()
+		obbmins:Rotate( angle )
+		obbmaxs:Rotate( angle )
+		local mins = Vector( locPly.GhostEntity:GetPos().x + obbmins.x, locPly.GhostEntity:GetPos().y + obbmins.y, pos.z + 5 )
+		local maxs = Vector( locPly.GhostEntity:GetPos().x + obbmaxs.x, locPly.GhostEntity:GetPos().y + obbmaxs.y, pos.z + 20 )
+		local overlappingEntities = ents.FindInBox( mins, maxs )
+		--[[
+		local vPoint = locPly.GhostEntity:GetPos()+obbmins+Vector(0,0,1)
+		local effectdata = EffectData()
+		effectdata:SetOrigin( vPoint )
+		effectdata:SetScale(0)
+		util.Effect( "MuzzleEffect", effectdata )
+
+		vPoint = locPly.GhostEntity:GetPos()+obbmaxs
+		effectdata = EffectData()
+		effectdata:SetOrigin( vPoint )
+		effectdata:SetScale(0)
+		util.Effect( "MuzzleEffect", effectdata )
+		]]
+		locPly.canPlace = true
+		if locPly.mw_action == 1 and not mw_units[locPly:GetInfoNum( "mw_chosen_unit", 0 )].canOverlap then
+			for _, v in pairs( overlappingEntities ) do
+				if v.Base ~= nil and string.StartWith( v.Base, "ent_melon_" ) then
+					locPly.canPlace = false
+				end
+			end
+		end
+		if locPly.canPlace then
+			locPly.GhostEntity:SetColor( Color(newColor.r, newColor.g, newColor.b, 150 ))
+			locPly.GhostEntity:SetRenderFX( kRenderFxPulseSlow )
+		else
+			locPly.GhostEntity:SetColor( Color(150, 0, 0, 150 ))
+			locPly.GhostEntity:SetRenderFX( kRenderFxDistort )
+		end
+	end
+
+	if tostring( locPly.GhostSphere ) == "[NULL Entity]" or not IsValid( locPly.GhostSphere ) then
+		if locPly.mw_action == 1 and ghostSphereRange > 0 then
+			locPly.GhostSphere = ents.CreateClientProp( "models/hunter/tubes/circle2x2.mdl" )
+			locPly.GhostSphere:SetSolid( SOLID_VPHYSICS )
+			locPly.GhostSphere:SetMoveType( MOVETYPE_NONE )
+			locPly.GhostSphere:SetNotSolid( true )
+			locPly.GhostSphere:SetRenderMode( RENDERMODE_TRANSALPHA )
+			locPly.GhostSphere:SetRenderFX( kRenderFxPulseSlow )
+			locPly.GhostSphere:SetMaterial("models/debug/debugwhite")
+			locPly.GhostSphere:SetColor( Color( newColor.r * 1.5, newColor.g * 1.5, newColor.b * 1.5, 50 ) )
+			locPly.GhostSphere:SetModelScale( 0.021 * ghostSphereRange )
+			locPly.GhostSphere:Spawn()
+		end
+	else
+		if locPly.mw_action == 1 and ghostSphereRange > 0 then
+			local color = locPly.GhostSphere:GetColor()
+			locPly.GhostSphere:SetColor( Color(color.r, color.g, color.b, 50) )
+			locPly.GhostSphere:SetPos( Vector(pos.x, pos.y, ghostSpherePos.z ) )
+			locPly.GhostSphere:SetModelScale( 0.021 * ghostSphereRange )
+		else
+			locPly.GhostSphere:Remove()
+		end
+	end
+end
+
+local function MW_FinishSelection() -- Previously concommand.Add( "-mw_select", function( ply )
+	if not CLIENT then return end
+
+	sound.Play( "buttons/lightswitch2.wav", LocalPlayer():GetPos(), 50, 80, 1 )
+	LocalPlayer().mw_selecting = false
+
+	-- Finds all the entities in the selection sphere
+
+	-- local foundEnts = ents.FindInSphere((ply.mw_selEnd+ply.mw_selStart)/2, ply.mw_selStart:Distance(ply.mw_selEnd)/2+0.1 )
+	-- local selectEnts = table.Copy( foundEnts )
+	-- if not ply:KeyDown(IN_SPEED) then ply.foundMelons = {} end
+	--Busca de esas entidades cuales son sandias, y cuales son del equipo correcto
+
+	--[[for k, v in pairs( selectEnts ) do
+		if (v.moveType ~= MOVETYPE_NONE) then
+			local tbl = constraint.GetAllConstrainedEntities( v )
+			if (istable(tbl)) then
+				for kk, vv in pairs (tbl) do
+					if (not table.HasValue(selectEnts, vv)) then
+						table.insert(foundEnts, vv)
+					else
+					end
+				end
+			end
+		end
+	end]]
+	-- print("========== Selection:")
+	-- for k, v in pairs( foundEnts ) do
+	-- 	if (v.Base ~= nil) then
+	-- 		if (v.Base == "ent_melon_base") then
+	-- 			if (cvars.Bool("mw_admin_move_any_team", false) or v:GetNWInt("mw_melonTeam", -1) == ply:GetInfoNum( "mw_team", -1 )) then
+	-- 				-- if (v:GetNWInt("mw_melonTeam", 0) ~= 0) then
+	-- 					table.insert(ply.foundMelons, v)
+	-- 					-- print(k..": "..tostring(v)..", added succesfully")
+	-- 					--"Added "..tostring(v).." succesfully"
+	-- 				-- else
+	-- 					-- print(k..": "..tostring(v).." !!! didnt add to the selection because the unit had no team ("..v:GetNWInt("mw_melonTeam", -1)..")")
+	-- 				--"Didn't add "..tostring(v).." because it had no team"
+	-- 				-- end
+	-- 			else
+	-- 				-- print(k..": "..tostring(v)..", didnt add to the selection because the unit was not in your team ("..v:GetNWInt("mw_melonTeam", -1)..")")
+	-- 				if (v:GetNWInt("mw_melonTeam", -1) == -1) then
+	-- 					error("Selected unit has team -1!")
+	-- 				end
+	-- 			--	"Didn't add "..tostring(v).." because it wasn't my team"
+	-- 			end
+	-- 		else
+	-- 			-- print(k..": "..tostring(v)..", didnt add to the selection because the Base was not ent_melon_base ("..v.Base..")")
+	-- 		--"Didn't add "..tostring(v).." because it was a base prop"
+	-- 		end
+	-- 	else
+	-- 		-- print(k..": "..tostring(v)..", didnt add to the selection because Base was null")
+	-- 	end
+	-- end
+	--Le envia al client la lista de sandias para que pueda dibujar los halos
+	--[[
+	net.Start("Selection")
+		net.WriteInt(table.Count(ply.foundMelons),16)
+		for k,v in pairs(ply.foundMelons) do
+			net.WriteEntity(v)
+		end
+	net.Send(ply)
+	]]--
+
+	-- print("Sending my selection to the server. Total selected units: "..table.Count(ply.foundMelons))
+	-- print("Entity im pointing at: "..tostring(ply:GetEyeTrace().Entity))
+	-- print("Selection table,")
+	-- PrintTable(ply.foundMelons)
+	--[[net.Start("MW_SelectContraption")
+		net.WriteUInt(table.Count(LocalPlayer().foundMelons)+1, 16)
+		net.WriteEntity(ply:GetEyeTrace().Entity)
+		for k, v in pairs(ply.foundMelons) do
+			net.WriteEntity(v)
+		end
+	net.SendToServer()]]--
+
+	-- sound.Play( "buttons/lightswitch2.wav", ply:GetPos(), 75, 90, 1 )
+	-- ply.mw_selEnd = Vector(0,0,0)
+	-- ply.mw_selStart = Vector(0,0,0)
+	-- ply:SetNWVector("mw_selStart", Vector(0,0,0))
+	-- ply:SetNWBool("LocalPlayer().mw_selecting",  Vector(0,0,0))
 end
 
 function TOOL:Think()
@@ -4052,7 +4243,7 @@ function TOOL:Think()
 				ang = trace.HitNormal:Angle()+mw_units[unit_index].angle
 			end
 
-			MW_UpdateGhostEntity (mw_units[unit_index].model, trace.HitPos, trace.HitNormal * 5+offset, ang, newColor, mw_units[unit_index].energyRange, trace.HitPos)
+			MW_UpdateGhostEntity(mw_units[unit_index].model, trace.HitPos, trace.HitNormal * 5+offset, ang, newColor, mw_units[unit_index].energyRange, trace.HitPos)
 		end
 	elseif (LocalPlayer().mw_action == 3) then
 		local newColor = mw_team_colors[ply:GetInfoNum("mw_team", 0)]
@@ -4068,7 +4259,7 @@ function TOOL:Think()
 		else
 			offset = Vector(0,0,mw_base_props[prop_index].offset.z)
 		end
-		MW_UpdateGhostEntity (mw_base_props[prop_index].model, LocalPlayer():GetEyeTrace().HitPos, Vector(0,0,1)+offset, ply.propAngle + mw_base_props[prop_index].angle, newColor, 0, trace.HitPos, mw_units[unit_index].defenseRange)
+		MW_UpdateGhostEntity (mw_base_props[prop_index].model, LocalPlayer():GetEyeTrace().HitPos, Vector(0,0,1)+offset, ply.propAngle + mw_base_props[prop_index].angle, newColor, 0, trace.HitPos, mw_units[prop_index].defenseRange)
 	else
 		if IsValid(LocalPlayer().GhostEntity) then
 			LocalPlayer().GhostEntity:Remove()
@@ -4210,6 +4401,87 @@ function TOOL:IndicateIncome(amount)
 	indicator.value = amount
 end
 
+local function SelectContraption(pl, path, contraptionName, contraptionCost, contraptionPower)
+	local cost = 0
+	local power = 0
+	local spawnTime = 0
+	local fulltable = util.JSONToTable(file.Read( path ))
+	local duptable = fulltable.Entities
+	local sizePenalty = 0
+	for _, ent in pairs( duptable ) do
+		if (ent.realvalue ~= nil) then
+			cost = cost+ent.realvalue
+			if (ent.spawnDelay == nil) then
+				spawnTime = spawnTime + ent.realvalue/25
+			end
+		end
+		if (ent.population ~= nil) then
+			power = power+ent.population
+		end
+		if (ent.Pos ~= nil) then
+			sizePenalty = sizePenalty+(ent.Pos):LengthSqr()/1000
+		end
+		if (ent.spawnDelay ~= nil) then
+			spawnTime = spawnTime + ent.spawnDelay*2
+		end
+	end
+	--[[ local mins = fulltable.Mins
+	local maxs = fulltable.Maxs
+	local size = maxs.x-mins.x+maxs.y-mins.y+maxs.z-mins.z ]]
+	pl.selectedFile = path
+	cost = math.Round( cost + sizePenalty )
+
+	pl.selectedAssembler:SetNWFloat("slowThinkTimer", spawnTime)
+
+	--pl.selectedAssembler.slowThinkTimer = cost/100
+	--pl.selectedAssembler:SetNWFloat("nextSlowThink", CurTime()+cost/100)
+	--pl.selectedAssembler.nextSlowThink = CurTime()+cost/100
+	--pl.selectedAssembler.unitspawned = false
+	--pl.selectedAssembler:SetNWBool("spawned", false)
+	contraptionName:SetText("Contraption: "..string.sub(path, string.len( "melonwars/contraptions/" )+1, string.len( path )-4))
+	contraptionCost:SetText("Cost: "..cost)
+	contraptionPower:SetText("Power: "..power)
+	return cost, power
+end
+
+local function StartBuildingContraption( assembler, _file, cost, power )
+	if assembler:GetNWBool( "active" ) then return end
+	if LocalPlayer().mw_units >= cvars.Number( "mw_admin_max_units" ) then return end
+	if LocalPlayer().mw_credits < LocalPlayer().contrapCost or cvars.Bool( "mw_admin_credit_cost" ) then return end
+	if LocalPlayer().contrapPower ~= 0 or LocalPlayer().mw_units+LocalPlayer().contrapPower > cvars.Number( "mw_admin_max_units" ) then return end
+
+	assembler.nextSlowThink = CurTime()+assembler:GetNWFloat("slowThinkTimer", 0)
+	assembler:SetNWFloat("nextSlowThink", CurTime()+assembler:GetNWFloat("slowThinkTimer", 0))
+	assembler.unitspawned = false
+	assembler:SetNWBool("active", true)
+	assembler.player = LocalPlayer()
+	assembler.file = _file
+	assembler.contrapCost = cost
+	assembler.contrapPower = power
+
+	net.Start("RequestContraptionLoadToAssembler")
+		net.WriteEntity(assembler)
+		net.WriteUInt(LocalPlayer().contrapPower, 16)
+		net.WriteString(_file)
+		net.WriteFloat(assembler:GetNWFloat("slowThinkTimer", 0))
+	--	net.WriteVector(LocalPlayer().selectedAssembler:GetPos())
+	net.SendToServer()
+
+	if cvars.Bool("mw_admin_credit_cost") then
+		local newCredits = LocalPlayer().mw_credits-LocalPlayer().contrapCost
+		net.Start("MW_UpdateServerInfo")
+			net.WriteInt(cvars.Number("mw_team"), 8)
+			net.WriteInt(newCredits, 32)
+		net.SendToServer()
+		net.Start("MW_UpdateClientInfo")
+			net.WriteInt(cvars.Number("mw_team"), 8)
+		net.SendToServer()
+	end
+
+	LocalPlayer().cmenuframe:Remove()
+	LocalPlayer().cmenuframe = nil
+end
+
 function TOOL:MakeContraptionMenu()
 	if LocalPlayer().cmenuframe ~= nil then
 		if LocalPlayer().selectedAssembler.file == nil then return end
@@ -4326,87 +4598,6 @@ function TOOL:MakeContraptionMenu()
 	function browser:OnSelect( path, pnl )
 		LocalPlayer().contrapCost, LocalPlayer().contrapPower = SelectContraption(LocalPlayer(), path, contraptionName, contraptionCost, contraptionPower)
 	end
-end
-
-function StartBuildingContraption( assembler, _file, cost, power )
-	if assembler:GetNWBool( "active" ) then return end
-	if LocalPlayer().mw_units >= cvars.Number( "mw_admin_max_units" ) then return end
-	if LocalPlayer().mw_credits < LocalPlayer().contrapCost or cvars.Bool( "mw_admin_credit_cost" ) then return end
-	if LocalPlayer().contrapPower ~= 0 or LocalPlayer().mw_units+LocalPlayer().contrapPower > cvars.Number( "mw_admin_max_units" ) then return end
-
-	assembler.nextSlowThink = CurTime()+assembler:GetNWFloat("slowThinkTimer", 0)
-	assembler:SetNWFloat("nextSlowThink", CurTime()+assembler:GetNWFloat("slowThinkTimer", 0))
-	assembler.unitspawned = false
-	assembler:SetNWBool("active", true)
-	assembler.player = LocalPlayer()
-	assembler.file = _file
-	assembler.contrapCost = cost
-	assembler.contrapPower = power
-
-	net.Start("RequestContraptionLoadToAssembler")
-		net.WriteEntity(assembler)
-		net.WriteUInt(LocalPlayer().contrapPower, 16)
-		net.WriteString(_file)
-		net.WriteFloat(assembler:GetNWFloat("slowThinkTimer", 0))
-	--	net.WriteVector(LocalPlayer().selectedAssembler:GetPos())
-	net.SendToServer()
-
-	if cvars.Bool("mw_admin_credit_cost") then
-		local newCredits = LocalPlayer().mw_credits-LocalPlayer().contrapCost
-		net.Start("MW_UpdateServerInfo")
-			net.WriteInt(cvars.Number("mw_team"), 8)
-			net.WriteInt(newCredits, 32)
-		net.SendToServer()
-		net.Start("MW_UpdateClientInfo")
-			net.WriteInt(cvars.Number("mw_team"), 8)
-		net.SendToServer()
-	end
-
-	LocalPlayer().cmenuframe:Remove()
-	LocalPlayer().cmenuframe = nil
-end
-
-function SelectContraption(pl, path, contraptionName, contraptionCost, contraptionPower)
-	local cost = 0
-	local power = 0
-	local spawnTime = 0
-	local fulltable = util.JSONToTable(file.Read( path ))
-	local duptable = fulltable.Entities
-	local sizePenalty = 0
-	for _, ent in pairs( duptable ) do
-		if (ent.realvalue ~= nil) then
-			cost = cost+ent.realvalue
-			if (ent.spawnDelay == nil) then
-				spawnTime = spawnTime + ent.realvalue/25
-			end
-		end
-		if (ent.population ~= nil) then
-			power = power+ent.population
-		end
-		if (ent.Pos ~= nil) then
-			sizePenalty = sizePenalty+(ent.Pos):LengthSqr()/1000
-		end
-		if (ent.spawnDelay ~= nil) then
-			spawnTime = spawnTime + ent.spawnDelay*2
-		end
-	end
-	--[[ local mins = fulltable.Mins
-	local maxs = fulltable.Maxs
-	local size = maxs.x-mins.x+maxs.y-mins.y+maxs.z-mins.z ]]
-	pl.selectedFile = path
-	cost = math.Round( cost + sizePenalty )
-
-	pl.selectedAssembler:SetNWFloat("slowThinkTimer", spawnTime)
-
-	--pl.selectedAssembler.slowThinkTimer = cost/100
-	--pl.selectedAssembler:SetNWFloat("nextSlowThink", CurTime()+cost/100)
-	--pl.selectedAssembler.nextSlowThink = CurTime()+cost/100
-	--pl.selectedAssembler.unitspawned = false
-	--pl.selectedAssembler:SetNWBool("spawned", false)
-	contraptionName:SetText("Contraption: "..string.sub(path, string.len( "melonwars/contraptions/" )+1, string.len( path )-4))
-	contraptionCost:SetText("Cost: "..cost)
-	contraptionPower:SetText("Power: "..power)
-	return cost, power
 end
 
 function TOOL:DrawHUD()

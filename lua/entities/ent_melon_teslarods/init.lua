@@ -1,6 +1,6 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
+
 include('shared.lua')
 
 function ENT:Initialize()
@@ -15,17 +15,17 @@ function ENT:Initialize()
 	self.sphereRadius = 0
 	self.shotSound = "weapons/stunstick/stunstick_impact1.wav"
 	self.shotOffset = Vector(0,0,50.25) --Originally 30, increased to spite mortars.
-	
+
 	self.canMove = false
 	self.canBeSelected = false
 	self.moveType = MOVETYPE_NONE
 
 	self.population = 0
-	
+
 	self.slowThinkTimer = 0.75
 
 	MW_Setup ( self )
-	
+
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 	self:GetPhysicsObject():EnableMotion(false)
 	self:SetNotSolid(true)
@@ -78,7 +78,7 @@ function ENT:SlowThink ( ent )
 		/*local effectdata = EffectData()
 		effectdata:SetScale(3000)
 		effectdata:SetMagnitude(3000)
-		effectdata:SetStart( self:GetPos() + Vector(0,0,45)) 
+		effectdata:SetStart( self:GetPos() + Vector(0,0,45))
 		effectdata:SetOrigin( v:GetPos() )
 		util.Effect( "AirboatGunTracer", effectdata )*/
 		sound.Play( ent.shotSound, ent:GetPos() )
@@ -116,10 +116,10 @@ end
 
 function ENT:Shoot ( ent )
 end
-
+--[[
 function MW_CleanUp_Network() --This unit is still being counted as an energy unit for some reason so I have to do this for it to reduce power/not cause script errors when removed
 end
-
+]]
 function ENT:DeathEffect ( ent )
 	MW_DefaultDeathEffect ( ent )
 end
