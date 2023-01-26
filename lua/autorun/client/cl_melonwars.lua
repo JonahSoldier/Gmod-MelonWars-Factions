@@ -71,13 +71,13 @@ mrtsMessageReceivingEntity = nil
 mrtsMessageReceivingState = "idle"
 mrtsNetworkBuffer = ""
 
-net.Receive( "BeginContraptionSaveClient", function( len, pl )
+net.Receive( "BeginContraptionSaveClient", function()
 	mrtsMessageReceivingState = net.ReadString()
 	mrtsMessageReceivingEntity = net.ReadEntity()
 	mrtsNetworkBuffer = ""
 end )
 
-net.Receive( "ContraptionSaveClient", function ( len, pl )
+net.Receive( "ContraptionSaveClient", function()
 	local last = net.ReadBool()
 	local size = net.ReadUInt( 16 )
 	local data = net.ReadData( size )
@@ -91,7 +91,7 @@ net.Receive( "ContraptionSaveClient", function ( len, pl )
 	mrtsNetworkBuffer = ""
 end )
 
-net.Receive("ContraptionValidateClient", function (len, pl)
+net.Receive( "ContraptionValidateClient", function()
 	local contrapFiles = file.Find("melonwars/contraptions/*.txt", "DATA")
 
 	for i = 1, table.Count(contrapFiles) do
@@ -110,12 +110,12 @@ net.Receive("ContraptionValidateClient", function (len, pl)
 			-- 29 contrap files aren't reaching the serverside function properly (Out of 52, my contraptions are being used for testing.)
 			-- ^^ I had a corrupted contraption file. It was hitting that then failing to do anything after it
 
-			for i = 1, parts do
+			for ii = 1, parts do
 				local endbyte = math.min( start + send_size, len )
 				local size = endbyte - start
 				local data = compressed_text:sub( start + 1, endbyte + 1 )
 				net.Start( "ContraptionAutoValidate" )
-					net.WriteBool( i == parts )
+					net.WriteBool( ii == parts )
 					net.WriteUInt( size, 16 )
 					net.WriteData( data, size )
 					net.WriteString(name)
@@ -126,7 +126,7 @@ net.Receive("ContraptionValidateClient", function (len, pl)
 			print("Validated " .. tostring(i) .. " contraption files")
 		end)
 	end
-end)
+end )
 
 local function ResourcesChanged( dif )
 	local tool = LocalPlayer():GetTool()
@@ -135,7 +135,7 @@ local function ResourcesChanged( dif )
 	tool:IndicateIncome( dif )
 end
 
-net.Receive( "MW_TeamCredits", function( len, pl )
+net.Receive( "MW_TeamCredits", function()
 	local previousCredits = LocalPlayer().mw_credits
 	LocalPlayer().mw_credits = net.ReadInt( 32 )
 	local newCredits = LocalPlayer().mw_credits
@@ -145,15 +145,15 @@ net.Receive( "MW_TeamCredits", function( len, pl )
 	ResourcesChanged( difference )
 end )
 
-net.Receive( "MW_TeamUnits", function( len, pl )
+net.Receive( "MW_TeamUnits", function()
 	LocalPlayer().mw_units = net.ReadInt(16)
 end )
-
-net.Receive( "ChatTimer", function( len, pl )
+--[[
+net.Receive( "ChatTimer", function( len, pl ) -- Nothing currently sends ChatTimer!
 	LocalPlayer().chatTimer = 1000
 end )
-
-net.Receive( "RequestContraptionLoadToClient", function( len, pl )
+]]
+net.Receive( "RequestContraptionLoadToClient", function()
 	local _file = net.ReadString()
 	local ent = net.ReadEntity()
 
@@ -217,14 +217,14 @@ net.Receive( "EditorSetTeam", function( len, pl )
 			frame:Remove()
 			frame = nil
 		end
-		button.Paint = function(s, w, h)
+		button.Paint = function()
 			draw.RoundedBox( 6, 0, 0, w, h, Color(30,30,30,255) )
 			draw.RoundedBox( 4, 2, 2, w-4, h-4, mw_team_colors[i] )
 		end
 	end
 end )
-
-net.Receive( "EditorSetStage", function( len, pl )
+--[[
+net.Receive( "EditorSetStage", function( len, pl ) -- Nothing currently sends EditorSetStage!
 	local ent = net.ReadEntity()
 	local frame = vgui.Create("DFrame")
 	local w = 250
@@ -259,14 +259,14 @@ net.Receive( "EditorSetStage", function( len, pl )
 	end
 end )
 
-net.Receive( "DrawWireframeBox", function( len, pl )
+net.Receive( "DrawWireframeBox", function( len, pl ) -- Nothing currently sends DrawWireframeBox!
 	local pos = net.ReadVector()
 	local min = net.ReadVector()
 	local max = net.ReadVector()
 	render.DrawWireframeBox( pos, Angle(0,0,0), min, max, Color(255,255,255,255), false )
 end )
 
-net.Receive( "EditorSetWaypoint", function( len, pl )
+net.Receive( "EditorSetWaypoint", function( len, pl ) -- Nothing currently sends EditorSetWaypoint!
 	local ent = net.ReadEntity()
 	local waypoint = net.ReadInt(4)
 	local path = net.ReadInt(4)
@@ -316,7 +316,7 @@ net.Receive( "EditorSetWaypoint", function( len, pl )
 		frame = nil
 	end
 end )
-
+]]
 function MW_SickEffect(ent, amount)
 	local emitter = ParticleEmitter( ent:GetPos() ) -- Particle emitter in this position
 	for i = 1, amount do -- SMOKE

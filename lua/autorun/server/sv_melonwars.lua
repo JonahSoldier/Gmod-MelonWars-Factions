@@ -4,7 +4,7 @@ if engine.ActiveGamemode() ~= "sandbox" then return end
 -- function GM:Initialize()
 -- Net vars for sending the team and credits to the client
 util.AddNetworkString( "MW_TeamCredits" )
-util.AddNetworkString( "MW_TeamUpdate" )
+-- util.AddNetworkString( "MW_TeamUpdate" )
 util.AddNetworkString( "MW_TeamUnits" )
 util.AddNetworkString( "MW_UpdateClientInfo" )
 util.AddNetworkString( "MW_UpdateServerInfo" )
@@ -29,19 +29,19 @@ util.AddNetworkString( "SandboxMode" )
 
 util.AddNetworkString( "ToggleBarracks" )
 util.AddNetworkString( "MW_Activate" )
-util.AddNetworkString( "ActivateGate" )
-util.AddNetworkString( "ActivateWaypoints" )
+--[[ util.AddNetworkString( "ActivateGate" )
+util.AddNetworkString( "ActivateWaypoints" ) ]]
 util.AddNetworkString( "PropellerReady" )
 util.AddNetworkString( "UseWaterTank" )
 util.AddNetworkString( "UseLargeWaterTank" )
 
 util.AddNetworkString( "RestartQueue" )
 
-util.AddNetworkString( "CalcContraption" )
+-- util.AddNetworkString( "CalcContraption" )
 
 util.AddNetworkString( "UpdateClientTeams" )
 util.AddNetworkString( "UpdateServerTeams" )
-util.AddNetworkString( "RequestServerTeams" )
+-- util.AddNetworkString( "RequestServerTeams" )
 
 -- Contraptions
 util.AddNetworkString( "ContraptionSave" )
@@ -56,27 +56,27 @@ util.AddNetworkString( "ContraptionValidateClient" )
 
 util.AddNetworkString( "EditorSetTeam" ) -- Unit marker
 util.AddNetworkString( "ServerSetTeam" )
-util.AddNetworkString( "EditorSetStage" ) -- Main base marker
+--[[ util.AddNetworkString( "EditorSetStage" ) -- Main base marker
 util.AddNetworkString( "ServerSetStage" )
 util.AddNetworkString( "EditorSetWaypoint" ) -- Waypoint
 util.AddNetworkString( "ServerSetWaypoint" )
 util.AddNetworkString( "DrawWireframeBox" )
---[[ util.AddNetworkString( "EditorSetSpawnpoint" ) -- Waypoint
+util.AddNetworkString( "EditorSetSpawnpoint" ) -- Waypoint
 util.AddNetworkString( "ServerSetSpawnpoint" ) ]]
 
-util.AddNetworkString( "ChatTimer" )
+-- util.AddNetworkString( "ChatTimer" )
 
 util.AddNetworkString( "MWControlUnit" )
 util.AddNetworkString( "MWControlShoot" )
 
 util.AddNetworkString( "MWBrute" )
-util.AddNetworkString( "MWMessage" )
+-- util.AddNetworkString( "MWMessage" )
 
 -- (Most of) JonahSoldier's network stuff
 util.AddNetworkString( "MWColourMod" )
 util.AddNetworkString( "SetMWConvar" )
 util.AddNetworkString( "MWReadyUp" )
-util.AddNetworkString( "MWClient_modifySpawnTime" )
+-- util.AddNetworkString( "MWClient_modifySpawnTime" )
 
 
 net.Receive( "SetMWConvar", function( len, pl )
@@ -95,7 +95,7 @@ net.Receive( "MWReadyUp", function( len, pl )
 		ReadyCount = ReadyCount + v:GetInfoNum( "mw_player_ready", 0 ) -- Adds all values of mw_player_ready to the readycount
 	end
 
-	if ReadyCount / table.Count( player.GetAll() ) <= GetConVar( "mw_admin_readyup_percentage" ):GetFloat() then return end
+	if ReadyCount / #player.GetAll() <= GetConVar( "mw_admin_readyup_percentage" ):GetFloat() then return end
 	-- This really isn't a good way to do this, but I'm not sure if there's any way to directly call the code without having to do something else fucky like
 	-- Sending more signals between the client and server to trigger the network function meant to do this.
 
@@ -238,15 +238,15 @@ local function playerSpawn( ply )
 	end
 end
 hook.Add( "PlayerSpawn", "MelonWars_Spawn", playerSpawn )
-]]
-local function MWSendMessage( pl, message, notificationType, length )
+
+local function MWSendMessage( pl, message, notificationType, length ) -- This function is called later in the file, but MWMessage is never received!
 	net.Start("MWMessage")
 		net.WriteString(message)
 		net.WriteInt(notificationType,4)
 		net.WriteFloat(length)
 	net.Send(pl)
 end
-
+]]
 local function takedmg( target, dmginfo )
 	if not IsValid( target and dmginfo ) then return end
 	if dmginfo:GetAttacker():GetClass() == "player" then return end
@@ -395,12 +395,12 @@ net.Receive( "MW_Activate", function( len, pl )
 		ent:Actuate();
 	end
 end)
-
-net.Receive( "ActivateGate", function( len, pl )
+--[[
+net.Receive( "ActivateGate", function( len, pl ) -- Nothing currently sends ActivateGate!
 	local ent = net.ReadEntity()
 	ent:Actuate();
 end)
-
+]]
 net.Receive( "MW_UpdateClientInfo", function( len, pl )
 	local a = net.ReadInt(8)
 	-- pl:SetColor(mw_team_colors[a])
@@ -471,15 +471,15 @@ net.Receive( "UseWaterTank", function( len, pl )
 		end
 	end
 
-	local effectdata = EffectData()
-	effectdata:SetOrigin( ent:GetPos() )
+	local effectData1 = EffectData()
+	effectData1:SetOrigin( ent:GetPos() )
 	for i = 0, 10 do
-		util.Effect( "balloon_pop", effectdata )
+		util.Effect( "balloon_pop", effectData1 )
 	end
-	local effectdata = EffectData()
-	effectdata:SetOrigin( ent:GetPos())
-	effectdata:SetScale(10)
-	util.Effect( "watersplash", effectdata )
+	local effectData2 = EffectData()
+	effectData2:SetOrigin( ent:GetPos())
+	effectData2:SetScale(10)
+	util.Effect( "watersplash", effectData2 )
 	ent:Remove()
 end )
 
@@ -496,15 +496,15 @@ net.Receive( "UseLargeWaterTank", function( len, pl )
 		end
 	end
 
-	local effectdata = EffectData()
-	effectdata:SetOrigin( ent:GetPos() )
+	local effectData1 = EffectData()
+	effectData1:SetOrigin( ent:GetPos() )
 	for i = 0, 10 do
-		util.Effect( "balloon_pop", effectdata )
+		util.Effect( "balloon_pop", effectData1 )
 	end
-	local effectdata = EffectData()
-	effectdata:SetOrigin( ent:GetPos())
-	effectdata:SetScale(10)
-	util.Effect( "watersplash", effectdata )
+	local effectData2 = EffectData()
+	effectData2:SetOrigin( ent:GetPos())
+	effectData2:SetScale(10)
+	util.Effect( "watersplash", effectData2 )
 	ent:Remove()
 end )
 
@@ -823,14 +823,14 @@ local function MW_GetBetaContraptionTable( dupetable, pl )
 	betadupetable.Mins = dupetable.Mins
 
 	local result, cost, power = MW_CalculateContraptionValues(betadupetable,pl)
-
+	--[[
 	if (result ~= "success") then
 		print(result)
 		MWSendMessage(pl, result, 1, 4)
 	else
 		MWSendMessage(pl, "Contraption saved succesfully", 0, 4)
 	end
-
+	]]
 	betadupetable.Cost = cost
 	betadupetable.Power = power
 
@@ -938,7 +938,7 @@ function MW_CreateContraptionFromTable(localPos, dupetable, pl)
 	return entities, constraints
 end
 ]]
-net.Receive( "ContraptionSave", function( len, pl )
+net.Receive( "ContraptionSave", function( pl )
 	local name = net.ReadString()
 	local entity = net.ReadEntity()
 	--file.CreateDir( "melonwars/contraptions" )
@@ -1085,7 +1085,7 @@ net.Receive( "ContraptionLoad", function( len, pl )
 	mrtsNetworkBuffer = ""
 end )
 
-net.Receive( "ContraptionAutoValidate", function( len, pl )
+net.Receive( "ContraptionAutoValidate", function( pl )
 	local last = net.ReadBool()
 	local size = net.ReadInt(16)
 	local data = net.ReadData(size)
@@ -1109,10 +1109,9 @@ net.Receive( "ContraptionAutoValidate", function( len, pl )
 
 	local unitStatsValidation = util.JSONToTable(util.Decompress(file.Read("melonwars/validation/unitvalues.txt"))) -- hehehe this line of code is very long
 
-
-	for k, v in pairs(dupetable) do
+	for _, v in pairs(dupetable) do
 		if istable(v) then
-			for k, i in pairs(v) do
+			for _, i in pairs(v) do
 				if (i.Base == "ent_melon_base") then
 					-- Validation for melon entities.
 					-- I could A: Reference a separate file with a list of all units and their default stats in it
@@ -1122,11 +1121,11 @@ net.Receive( "ContraptionAutoValidate", function( len, pl )
 					genericStatCheck:Spawn()
 
 					genericStatCheck:Welded(genericStatCheck,genericStatCheck)
-					table.Merge( i , genericStatCheck:GetTable())
+					table.Merge( i, genericStatCheck:GetTable())
 
 					genericStatCheck:Remove()
 
-					for k, p in pairs(unitStatsValidation) do -- I feel like I'm violating some sort of coding convention by doing this
+					for _, p in pairs(unitStatsValidation) do -- I feel like I'm violating some sort of coding convention by doing this
 						if i.Class == p.class then
 							if p.welded_cost == nil or p.welded_cost == -1 then
 								i.realvalue = p.cost
@@ -1180,8 +1179,8 @@ net.Receive( "ContraptionAutoValidate", function( len, pl )
 	net.Send(pl)
 	for i = 1, parts do
 		local endbyte = math.min( start + send_size, len )
-		local size = endbyte - start
-		local data = compressed_text:sub( start + 1, endbyte + 1 )
+		size = endbyte - start
+		data = compressed_text:sub( start + 1, endbyte + 1 )
 		net.Start( "ContraptionSaveClient" )
 			net.WriteBool( i == parts )
 			net.WriteUInt( size, 16 )
@@ -1212,7 +1211,7 @@ net.Receive( "RequestContraptionLoadToAssembler", function( len, pl )
 	--net.SendToServer()
 end )
 
-local function MW_SpawnProp(model, pos, ang, _team, parent, health, cost, pl, spawntime)
+local function MW_SpawnProp(model, pos, ang, _team, parent, health, cost, pl, spawntime, offset)
 	local newMarine = ents.Create( "ent_melon_wall" )
 	if not IsValid( newMarine ) then return end -- Check whether we successfully made an entity, if not - bail
 	--if ( IsValid( trace.Entity ) and trace.Entity.Base == "ent_melon_base" ) then return end
@@ -1245,7 +1244,7 @@ local function MW_SpawnProp(model, pos, ang, _team, parent, health, cost, pl, sp
 		newMarine:SetOwner(pl)
 		undo.Create("Melon Marine")
 		 undo.AddEntity( newMarine )
-		 undo.SetPlayer( pl)
+		 undo.SetPlayer( pl )
 		undo.Finish()
 	end
 
@@ -1263,7 +1262,7 @@ local function MW_SpawnProp(model, pos, ang, _team, parent, health, cost, pl, sp
 	return newMarine
 end
 
-net.Receive( "MW_SpawnProp", function( len, pl )
+net.Receive( "MW_SpawnProp", function( pl )
 	local index = net.ReadInt(16)
 	local trace = net.ReadTable()
 	local cost = net.ReadInt(16)
@@ -1278,7 +1277,7 @@ net.Receive( "MW_SpawnProp", function( len, pl )
 	local xoffset = Vector( offset.x * ( math.cos( propAngle.y / 180 * math.pi ) ), offset.x * ( math.sin( propAngle.y / 180 * math.pi ) ), 0 )
 	local yoffset = Vector( offset.y * ( -math.sin( propAngle.y / 180 * math.pi ) ), offset.y * ( math.cos( propAngle.y / 180 * math.pi ) ), 0 )
 	offset = xoffset + yoffset + Vector( 0, 0, offset.z )
-	MW_SpawnProp(mw_base_props[index].model, trace.HitPos + trace.HitNormal + offset, propAngle + mw_base_props[index].angle, _team, trace.Entity, mw_base_props[index].hp, cost, pl, spawntime)
+	MW_SpawnProp(mw_base_props[index].model, trace.HitPos + trace.HitNormal + offset, propAngle + mw_base_props[index].angle, _team, trace.Entity, mw_base_props[index].hp, cost, pl, spawntime, offset)
 end )
 
 local function MW_SpawnBaseAtPos(_team, vector, pl, grandwar, unit)
@@ -1692,7 +1691,7 @@ net.Receive( "MW_Order", function( len, ply ) -- Previously concommand.Add( "mw_
 
 	-- local foundMelons = ply.foundMelons
 	foundMelons = {}
-	local position = net.ReadVector();
+	-- local position = net.ReadVector();
 	local rally = net.ReadBool()
 	local alt = net.ReadBool()
 	local entity = net.ReadEntity();
@@ -1983,18 +1982,18 @@ net.Receive( "UpdateServerTeams", function( len, pl )
 		net.Send( v )
 	end
 end )
-
-net.Receive( "RequestServerTeams", function( len, pl )
+--[[
+net.Receive( "RequestServerTeams", function( len, pl ) -- Nothing currently sends RequestServerTeams!
 	net.Start( "UpdateClientTeams" )
 		net.WriteTable( teamgrid )
 	net.Send( pl )
 end )
-
+]]
 net.Receive( "ServerSetTeam", function( len, pl )
 	local ent = net.ReadEntity()
 	ent.mw_melonTeam = net.ReadInt( 4 )
 end )
-
+--[[
 net.Receive( "ServerSetWaypoint", function( len, pl )
 	local ent = net.ReadEntity()
 	ent.waypoint = net.ReadInt( 8 )
@@ -2002,7 +2001,7 @@ net.Receive( "ServerSetWaypoint", function( len, pl )
 	ent:SetNWInt( "waypoint", ent.waypoint )
 	ent:SetNWInt( "path", ent.path )
 end )
-
+]]
 local function MWSign( x )
 	if x > 0 then return 1 end
 	if x < 0 then return -1 end

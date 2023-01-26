@@ -1632,7 +1632,7 @@ u.hp = 40
 i = i + 1
 u = mw_base_props[i]
 u.name = "Slim Full Ramp"
-u.model = "models/hunter/triangles/2x1x1.mdl"
+u.model = "models/hunter/triangles / 2x1x1.mdl"
 u.offset = Vector(48.3,0,23.1)
 u.angle = Angle(0,90,0)
 u.cost = 75
@@ -1736,7 +1736,7 @@ local function _MakeCheckbox (x, y, parent, textstr, command, labelstr, inverted
 	checkbox:SetPos( x, y ) --  Set the position
 	checkbox:SetSize(60,30)
 	checkbox:SetText("")
-	local checked = (GetConVarNumber( command ) == 1)
+	local checked = GetConVar( command ):GetInt() == 1
 	if (inverted) then checked = not checked end
 	checkbox.Paint = function(s, w, h)
 		draw.RoundedBox( 8, 0, 0, w, h, color_white )
@@ -1754,7 +1754,7 @@ local function _MakeCheckbox (x, y, parent, textstr, command, labelstr, inverted
 			net.WriteBool( 1 - GetConVar( command ):GetInt() )
 		net.SendToServer()
 
-		local checked = (GetConVarNumber( command ) ~= 1)
+		checked = GetConVar( command ):GetInt() ~= 1
 		if inverted then checked = not checked end
 		checkbox.Paint = function(s, w, h)
 			draw.RoundedBox( 8, 0, 0, w, h, color_white )
@@ -1889,12 +1889,11 @@ local function _MakeHelpButton(name, number, info, text1, text2, text3, text4, t
 		if (text5 ~= nil) then info:AppendText(text5) end
 		timer.Simple( 0.001, function() info:GotoTextStart() end )
 
-		if (name == "About") then
-			if (LocalPlayer():GetInfo("mw_code") == "about" or LocalPlayer():GetInfo("mw_code") == "ABOUT") then
-				chat.AddText( "Well done" )
-				LocalPlayer():ConCommand("mw_action 945")
-			end
-		end
+		if name ~= "About" then return end
+		if not ( LocalPlayer():GetInfo("mw_code") == "about" or LocalPlayer():GetInfo("mw_code") == "ABOUT" ) then return end
+
+		chat.AddText( "Well done" )
+		LocalPlayer():ConCommand("mw_action 945")
 	end
 end
 
@@ -1926,7 +1925,7 @@ local function _CreatePanel()
 		local ipos = 1
 		for i = 1, firstBuilding-1 do
 			if (cvars.Bool("mw_admin_allow_manual_placing") or mw_units[i].welded_cost ~= -1) then
-				if ((mw_units[i].code == nil or LocalPlayer():GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVarNumber("mw_admin_bonusunits") == 1)) then
+				if ((mw_units[i].code == nil or LocalPlayer():GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVar( "mw_admin_bonusunits" ):GetInt() == 1)) then
 					_MakeButton(i, ipos, scroll)
 					ipos = ipos + 1
 				end
@@ -1949,8 +1948,8 @@ local function _CreatePanel()
 			label:SetColor(orangeColor)
 		else
 			--[[
-			local checkbox = vgui.Create( "DCheckBox", pl.panel )--  Create the checkbox
-			checkbox:SetPos( 180, 15 )--  Set the position
+			local checkbox = vgui.Create( "DCheckBox", pl.panel ) - -  Create the checkbox
+			checkbox:SetPos( 180, 15 ) - -  Set the position
 			checkbox:SetValue( cvars.Bool("mw_unit_option_welded"))
 			checkbox:SetSize(60,30)
 			checkbox:SetConVar( "mw_unit_option_welded" )
@@ -2001,7 +2000,7 @@ local function _CreatePanel()
 			surface.SetDrawColor(color_white)
 			if (pl.mw_hover ~= 0) then
 				surface.DrawRect( 160, 120, w-250, 5 )
-				local a = (pl.mw_hover-firstBuilding+1)*45-18
+				local a = (pl.mw_hover-firstBuilding+1) * 45-18
 				if (a < 120) then
 					surface.DrawRect( 160, a, 5, 120-(a))
 				else
@@ -2012,7 +2011,7 @@ local function _CreatePanel()
 		end]]
 		local ipos = 1
 		for i = firstBuilding, firstEnergy - 1 do
-			if (mw_units[i].code == nil or LocalPlayer():GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVarNumber("mw_admin_bonusunits") == 1) then
+			if (mw_units[i].code == nil or LocalPlayer():GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVar( "mw_admin_bonusunits" ):GetInt() == 1) then
 				if mw_units[i].name ~= "Contraption Assembler" or cvars.Number("mw_admin_ban_contraptions") == 0 then
 					_MakeButton(i, ipos, scroll)
 					ipos = ipos + 1
@@ -2108,7 +2107,7 @@ local function _CreatePanel()
 			surface.SetDrawColor(color_white)
 			if (pl.mw_hover ~= 0) then
 				surface.DrawRect( 160, 120, w-250, 5 )
-				local a = (pl.mw_hover-firstBuilding+1)*45-18
+				local a = (pl.mw_hover-firstBuilding+1) * 45-18
 				if (a < 120) then
 					surface.DrawRect( 160, a, 5, 120-(a))
 				else
@@ -2169,17 +2168,17 @@ local function _CreatePanel()
 		scroll:SetPos( 20, 20 )
 
 		if (cvars.Number("mw_admin_credit_cost") == 0) then
-			local tool_info = vgui.Create("DLabel", pl.panel)
-			tool_info:SetPos(20, 30)
-			tool_info:SetSize(200,50)
-			tool_info:SetFontInternal( "Trebuchet24" )
-			tool_info:SetText("Save contraption: ")
+			local toolInfo1 = vgui.Create("DLabel", pl.panel)
+			toolInfo1:SetPos(20, 30)
+			toolInfo1:SetSize(200,50)
+			toolInfo1:SetFontInternal( "Trebuchet24" )
+			toolInfo1:SetText("Save contraption: ")
 
-			local tool_info = vgui.Create("DLabel", pl.panel)
-			tool_info:SetPos(100, 85)
-			tool_info:SetSize(500,30)
-			tool_info:SetFontInternal( "Trebuchet18" )
-			tool_info:SetText("Type the name, press enter and then click on your contraption")
+			local toolInfo2 = vgui.Create("DLabel", pl.panel)
+			toolInfo2:SetPos(100, 85)
+			toolInfo2:SetSize(500,30)
+			toolInfo2:SetFontInternal( "Trebuchet18" )
+			toolInfo2:SetText("Type the name, press enter and then click on your contraption")
 
 			local TextEntry = vgui.Create( "DTextEntry", pl.panel ) -- create the form as a child of frame
 			TextEntry:SetPos( 200, 30 )
@@ -2290,21 +2289,21 @@ local function _CreatePanel()
 		end
 
 		for i = 1, 8 do
-			local button = vgui.Create("DButton", pl.panel)
-			button:SetSize(40,40)
-			button:SetPos(140+i*45,200)
-			button:SetText("")
+			local button = vgui.Create( "DButton", pl.panel )
+			button:SetSize( 40, 40 )
+			button:SetPos( 140 + i * 45, 200 )
+			button:SetText( "" )
 			function button:DoClick()
-				LocalPlayer():ConCommand("mw_team "..tostring(i))
-				selection:SetPos(135+i*45, 195)
+				LocalPlayer():ConCommand( "mw_team " .. tostring( i ) )
+				selection:SetPos( 135 + i * 45, 195 )
 
-				net.Start("MW_UpdateClientInfo")
-					net.WriteInt(i, 8)
+				net.Start( "MW_UpdateClientInfo" )
+					net.WriteInt( i, 8 )
 				net.SendToServer()
 			end
-			button.Paint = function(s, w, h)
-				draw.RoundedBox( 6, 0, 0, w, h, Color(100,100,100,255) )
-				draw.RoundedBox( 4, 2, 2, w-4, h-4, mw_team_colors[i] )
+			button.Paint = function()
+				draw.RoundedBox( 6, 0, 0, w, h, Color( 100, 100, 100, 255 ) )
+				draw.RoundedBox( 4, 2, 2, w - 4, h - 4, mw_team_colors[i] )
 			end
 		end
 
@@ -2337,8 +2336,8 @@ local function _CreatePanel()
 			draw.RoundedBox( 3, 10, 10, w-20, h-20, Color(250,250,250) )
 		end
 
-		if (code == "full") then
-			factionSelection:SetPos(180+45, 320)
+		if code == "full" then
+			factionSelection:SetPos( 225, 320 )
 		end
 		local button = vgui.Create("DButton", pl.panel)
 		button:SetSize(40,40)
@@ -2353,16 +2352,16 @@ local function _CreatePanel()
 			draw.RoundedBox( 3, 10, 10, w-20, h-20, Color(250,250,250) )
 		end
 
-		if (code == "void") then
-			factionSelection:SetPos(180+90, 320)
+		if code == "void" then
+			factionSelection:SetPos( 270, 320 )
 		end
-		local button = vgui.Create("DButton", pl.panel)
-		button:SetSize(40,40)
-		button:SetPos(185+90,325)
+		local button = vgui.Create( "DButton", pl.panel )
+		button:SetSize( 40, 40 )
+		button:SetPos( 275, 325 )
 		button:SetText("V")
 		function button:DoClick()
-			LocalPlayer():ConCommand("mw_code void")
-			factionSelection:SetPos(180+90, 320)
+			LocalPlayer():ConCommand( "mw_code void" )
+			factionSelection:SetPos( 270, 320 )
 		end
 		button.Paint = function(s, w, h)
 			draw.RoundedBox( 6, 0, 0, w, h, Color(210,30,240) )
@@ -2602,7 +2601,7 @@ local function _CreatePanel()
 			y = y + 40
 			_MakeCheckbox( 20, y, scroll, "Extra unit options", "mw_admin_bonusunits", "[Balance not guaranteed]", false )
 			--[[
-			y = y+40
+			y = y + 40
 			_MakeCheckbox( 20, y, scroll, "Player Colors", "mw_admin_player_colors", "[Show a colored circle over players]" )
 			]]
 			y = y + 80
@@ -2870,7 +2869,7 @@ local function _CreatePanel()
 			label:SetPos(20, y-20)
 			label:SetSize(200,80)
 			label:SetFontInternal( "DermaLarge" )
-			label:SetText("Starting Water:\n"..tostring(cvars.Number("mw_admin_starting_credits")))
+			label:SetText("Starting Water:\n" .. tostring(cvars.Number("mw_admin_starting_credits")))
 			local default = vgui.Create("DPanel", scroll)
 			default:SetSize(360,60)
 			default:SetPos(200,y-10)
@@ -2880,22 +2879,22 @@ local function _CreatePanel()
 					draw.RoundedBox( 0, 12*15, 0, 12*15, h, Color(80,10,10) )
 				end
 			local slider = vgui.Create("DPanel", scroll)
-			slider:SetSize(cvars.Number("mw_admin_starting_credits")*12/200,40)
+			slider:SetSize(cvars.Number("mw_admin_starting_credits") * 12 / 200,40)
 			slider:SetPos(200,y)
 			for i = 1, 30 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(15,40)
-				button:SetPos(185+i*12,y)
+				button:SetPos(185 + i * 12, y)
 				button:SetText("")
 				function button:DoClick()
-					LocalPlayer():ConCommand("mw_admin_starting_credits "..tostring(i*200))
-					slider:SetSize(i*12, 40)
-					label:SetText("Starting Water:\n"..tostring(i*200))
+					LocalPlayer():ConCommand("mw_admin_starting_credits " .. tostring(i * 200))
+					slider:SetSize(i * 12, 40)
+					label:SetText("Starting Water:\n" .. tostring(i * 200))
 					--pl.mw_frame:Remove()
 					--pl.mw_frame = nil
 				end
-				button.Paint = function(s, w, h)
-					draw.RoundedBox( 0, w-1, 0, 1, h, Color(100,100,100) )
+				button.Paint = function()
+					draw.RoundedBox( 0, w - 1, 0, 1, h, Color(100,100,100) )
 				end
 			end
 
@@ -2904,7 +2903,7 @@ local function _CreatePanel()
 			label:SetPos(20, y-20)
 			label:SetSize(200,80)
 			label:SetFontInternal( "DermaLarge" )
-			label:SetText("Water Income:\n"..tostring(cvars.Number("mw_admin_base_income")))
+			label:SetText("Water Income:\n" .. tostring(cvars.Number("mw_admin_base_income")))
 			local default = vgui.Create("DPanel", scroll)
 			default:SetSize(360,60)
 			default:SetPos(200,y-10)
@@ -2914,7 +2913,7 @@ local function _CreatePanel()
 					draw.RoundedBox( 0, 12*8, 0, 12*22, h, Color(80,10,10) )
 				end
 			local slider = vgui.Create("DPanel", scroll)
-			slider:SetSize(cvars.Number("mw_admin_base_income")*12/5,40)
+			slider:SetSize(cvars.Number("mw_admin_base_income") * 12/5,40)
 			slider:SetPos(200,y)
 			for i = 1, 30 do
 				local button = vgui.Create("DButton", scroll)
@@ -2944,7 +2943,7 @@ local function _CreatePanel()
 			grid:SetPos( 160, y )
 			grid:SetCols( 8 )
 			grid:SetColWide( 30 )
-			for i=1, 8 do
+			for i = 1, 8 do
 				for j=1, 8 do
 					local checkbox = vgui.Create( "DButton" ) -- Create the checkbox
 					checkbox:SetPos( 20, y ) -- Set the position
@@ -2965,8 +2964,8 @@ local function _CreatePanel()
 								draw.RoundedBox( 4, 0, 0, w, h, Color(150,150,150) )
 								draw.RoundedBox( 2, 2, 2, w-4, h-4, Color(0,0,0) )
 								if (teamgrid[9-i][j]) then
-									draw.RoundedBox( 0, 4, 4, w/2-4, h-8, mw_team_colors[9-i] )
-									draw.RoundedBox( 0, 4+w/2-4, 4, w/2-4, h-8, mw_team_colors[j] )
+									draw.RoundedBox( 0, 4, 4, w / 2-4, h-8, mw_team_colors[9-i] )
+									draw.RoundedBox( 0, 4+w / 2-4, 4, w / 2-4, h-8, mw_team_colors[j] )
 								end
 							end
 						else
@@ -2990,7 +2989,7 @@ local function _CreatePanel()
 			grid:SetPos( 160, y-35 )
 			grid:SetCols( 8 )
 			grid:SetColWide( 30 )
-			for i=1, 8 do
+			for i = 1, 8 do
 				local DPanel = vgui.Create( "DPanel" )
 				DPanel:SetSize( 30, 30 ) -- Set the size of the panel
 				DPanel.Paint = function(s, w, h)
@@ -3004,7 +3003,7 @@ local function _CreatePanel()
 			grid:SetPos( 160-35, y )
 			grid:SetCols( 1 )
 			grid:SetColWide( 30 )
-			for i=8, 1, -1 do
+			for i = 8, 1, -1 do
 				local DPanel = vgui.Create( "DPanel" )
 					DPanel:SetSize( 30, 30 ) -- Set the size of the panel
 				DPanel.Paint = function(s, w, h)
@@ -3029,25 +3028,25 @@ local function _CreatePanel()
 		scroll:SetSize(px, py)
 		-------------------------------------------------------- Start
 		--Build sphere alpha
-		y = y+70
+		y = y + 70
 		local label = vgui.Create("DLabel", scroll)
 		label:SetPos(20, y-20)
 		label:SetSize(250,80)
 		label:SetFontInternal( "DermaLarge" )
-		label:SetText("BuildSphere Alpha:\n"..tostring(math.Round(GetConVar("mw_buildalpha_multiplier"):GetFloat(),1)))
+		label:SetText("BuildSphere Alpha:\n" .. tostring(math.Round(GetConVar("mw_buildalpha_multiplier"):GetFloat(),1)))
 
 		local slider = vgui.Create("DPanel", scroll)
-		slider:SetSize(GetConVar("mw_buildalpha_multiplier"):GetFloat()*120,40)
-		slider:SetPos(65,y+20)
-		for i=1, 35 do
+		slider:SetSize(GetConVar("mw_buildalpha_multiplier"):GetFloat() * 120,40)
+		slider:SetPos(65,y + 20)
+		for i = 1, 35 do
 			local button = vgui.Create("DButton", scroll)
 			button:SetSize(15,40)
-			button:SetPos(50+i*12,y+20)
+			button:SetPos(50+i*12,y + 20)
 			button:SetText("")
 			function button:DoClick()
-				LocalPlayer():ConCommand("mw_buildalpha_multiplier "..tostring(math.Round(i/10,1)))
+				LocalPlayer():ConCommand("mw_buildalpha_multiplier " .. tostring(math.Round(i/10,1)))
 				slider:SetSize(i*12, 40)
-				label:SetText("BuildSphere Alpha:\n"..tostring(math.Round(i/10,1)))
+				label:SetText("BuildSphere Alpha:\n" .. tostring(math.Round(i/10,1)))
 			end
 			button.Paint = function(s, w, h)
 				draw.RoundedBox( 0, w-1, 0, 1, h, Color(100,100,100) )
@@ -3195,7 +3194,7 @@ function TOOL:DrawToolScreen( width, height )
 
 	-- New Year
 	-- RECORDAR DESCOMENTAR EL CODIGO ANTERIOR
---[[	surface.SetDrawColor( HSVToColor( (CurTime()*50)%360, 1, 0.2 ) );
+--[[	surface.SetDrawColor( HSVToColor( (CurTime() * 50)%360, 1, 0.2 ) );
 	surface.DrawRect( 0, 0, width, height );
 	local txt = "Happy Holidays!"
 	local len = string.len(txt);
@@ -3207,8 +3206,8 @@ function TOOL:DrawToolScreen( width, height )
 	local colorFrequency = 10;
 	local colorSpeed = 180;
 	for i = 1, len do
-		local color = HSVToColor( (CurTime()*colorSpeed+i*colorFrequency)%360, 1, 1 )
-		draw.SimpleText( string.sub(txt, i, i), "DermaLarge", width / 2 + (-len/2 + i)*letterWidth, height / 2+math.sin(i*frequency+CurTime()*speed)*amplitude, color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		local color = HSVToColor( (CurTime() * colorSpeed+i*colorFrequency)%360, 1, 1 )
+		draw.SimpleText( string.sub(txt, i, i), "DermaLarge", width / 2 + (-len / 2 + i) * letterWidth, height / 2+math.sin(i*frequency + CurTime() * speed) * amplitude, color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 	end ]]
 end
 --[[
@@ -3240,7 +3239,7 @@ function MW_OpenPatchNotes()
 	local w = 700
 	local h = 500
 	frame:SetSize(w,h)
-	frame:SetPos(ScrW()/2-w/2,ScrH()/2-h/2)
+	frame:SetPos(ScrW() / 2-w / 2,ScrH() / 2-h / 2)
 	frame:SetTitle("Patch Notes")
 	frame:MakePopup()
 end
@@ -3290,10 +3289,10 @@ function TOOL:RightClick( tr )
 	if LocalPlayer().mw_cooldown >= ( CurTime() - 0.05 ) then return end
 
 	if cvars.Number( "mw_chosen_unit" ) == 0 then
-		-- self.Owner:ConCommand( "mw_order" ) -- To order
+		-- self:GetOwner():ConCommand( "mw_order" ) -- To order
 		if istable( LocalPlayer().foundMelons ) then
 			net.Start( "MW_Order" )
-				net.WriteVector( LocalPlayer():GetEyeTrace().HitPos )
+				-- net.WriteVector( LocalPlayer():GetEyeTrace().HitPos )
 				net.WriteBool( LocalPlayer():KeyDown(IN_SPEED) )
 				net.WriteBool( LocalPlayer():KeyDown(IN_WALK) )
 				for _, v in pairs( LocalPlayer().foundMelons ) do
@@ -3364,7 +3363,7 @@ function TOOL:LeftClick( tr )
 
 	local action = pl:GetInfoNum("mw_action", 0)
 	if action == 0 then
-		--[[ if (pl.mw_selectTimer > CurTime()-0.3 and pl.mw_selectTimer < CurTime()-0.05) then
+		--[[ if (pl.mw_selectTimer > CurTime() - 0.3 and pl.mw_selectTimer < CurTime() - 0.05) then
 			if (trace.Entity.Base == "ent_melon_base") then
 				MW_TypeSelection()
 			end
@@ -3381,7 +3380,7 @@ function TOOL:LeftClick( tr )
 			local attach = pl:GetInfoNum("mw_unit_option_welded", 0)
 			local unit_index = pl:GetInfoNum("mw_chosen_unit", 0)
 			if (cvars.Bool("mw_admin_allow_free_placing") or MW_noEnemyNear(trace.HitPos, mw_melonTeam)) then
-				if (mw_units[unit_index].population == 0 or pl.mw_units+mw_units[unit_index].population <= cvars.Number("mw_admin_max_units")) then
+				if (mw_units[unit_index].population == 0 or pl.mw_units + mw_units[unit_index].population <= cvars.Number("mw_admin_max_units")) then
 					if (LocalPlayer().canPlace) then
 						local cost, mw_delay = 0
 						local class = ""
@@ -3422,9 +3421,9 @@ function TOOL:LeftClick( tr )
 									if (cvars.Number("mw_admin_spawn_time") == 1) then
 										if (cvars.Bool("mw_admin_allow_free_placing") or mw_units[unit_index].buildAnywere or MW_isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
 											if (pl.mw_spawntime < CurTime()) then
-												pl.mw_spawntime = CurTime() + mw_units[unit_index].spawn_time*pl.spawnTimeMult -- spawntimemult has been added here so I can compensate for matches with uneven numbers of commanders
+												pl.mw_spawntime = CurTime() + mw_units[unit_index].spawn_time * pl.spawnTimeMult -- spawntimemult has been added here so I can compensate for matches with uneven numbers of commanders
 											else
-												pl.mw_spawntime = pl.mw_spawntime + mw_units[unit_index].spawn_time*pl.spawnTimeMult
+												pl.mw_spawntime = pl.mw_spawntime + mw_units[unit_index].spawn_time * pl.spawnTimeMult
 											end
 										end
 									end
@@ -3434,7 +3433,7 @@ function TOOL:LeftClick( tr )
 
 								local spawnAngle
 								if (mw_units[unit_index].normalAngle) then
-									spawnAngle = trace.HitNormal:Angle()+mw_units[unit_index].angle
+									spawnAngle = trace.HitNormal:Angle() + mw_units[unit_index].angle
 								else
 									if (mw_units[unit_index].changeAngles) then
 										spawnAngle = pl.propAngle + mw_units[unit_index].angle
@@ -3443,14 +3442,14 @@ function TOOL:LeftClick( tr )
 									end
 								end
 
-								local spawnPosition = trace.HitPos+Vector(0,0,1)+trace.HitNormal*5+mw_units[unit_index].offset
+								local spawnPosition = trace.HitPos + Vector(0,0,1) + trace.HitNormal*5+mw_units[unit_index].offset
 
 								 net.Start("MW_SpawnUnit")
 									net.WriteString(class)
 									net.WriteInt(unit_index, 16)
 									net.WriteTable(trace)
 									net.WriteInt(cost, 16)
-									net.WriteInt(pl.mw_spawntime*cvars.Number("mw_admin_spawn_time"), 16)
+									net.WriteInt(pl.mw_spawntime * cvars.Number("mw_admin_spawn_time"), 16)
 									net.WriteInt(mw_melonTeam, 8)
 									net.WriteInt(mw_delay, 16)
 									net.WriteBool(attach)
@@ -3520,7 +3519,7 @@ function TOOL:LeftClick( tr )
 			net.WriteTable(trace)
 			net.WriteInt(cost, 16)
 			net.WriteInt(mw_melonTeam, 8)
-			net.WriteInt(pl.mw_spawntime*cvars.Number("mw_admin_spawn_time"), 16)
+			net.WriteInt(pl.mw_spawntime * cvars.Number("mw_admin_spawn_time"), 16)
 			net.WriteAngle(pl.propAngle)
 		net.SendToServer()
 		if (cvars.Bool("mw_admin_credit_cost")) then
@@ -3528,7 +3527,7 @@ function TOOL:LeftClick( tr )
 			pl.mw_credits = pl.mw_credits-cost
 		end
 
-		--pl.mw_units = pl.mw_units+unit_population[unit_index]
+		--pl.mw_units = pl.mw_units + unit_population[unit_index]
 		net.Start("MW_UpdateServerInfo")
 			net.WriteInt(mw_melonTeam ,8)
 			net.WriteInt(pl.mw_credits ,32)
@@ -3543,7 +3542,7 @@ function TOOL:LeftClick( tr )
 			net.SendToServer()
 		end
 		self:GetOwner():ConCommand("mw_action 0")
-	elseif (action == 5) then  --Sell Tool
+	-- elseif (action == 5) then  --Sell Tool
 	elseif (action == 6) then  --Contraption Load
 		--[[ net.Start("ContraptionLoad")
 			net.WriteString(file.Read(pl.selectedFile))
@@ -3657,13 +3656,13 @@ local function MW_UpdateGhostEntity(model, pos, offset, angle, newColor, ghostSp
 		local maxs = Vector( locPly.GhostEntity:GetPos().x + obbmaxs.x, locPly.GhostEntity:GetPos().y + obbmaxs.y, pos.z + 20 )
 		local overlappingEntities = ents.FindInBox( mins, maxs )
 		--[[
-		local vPoint = locPly.GhostEntity:GetPos()+obbmins+Vector(0,0,1)
+		local vPoint = locPly.GhostEntity:GetPos() + obbmins + Vector(0,0,1)
 		local effectdata = EffectData()
 		effectdata:SetOrigin( vPoint )
 		effectdata:SetScale(0)
 		util.Effect( "MuzzleEffect", effectdata )
 
-		vPoint = locPly.GhostEntity:GetPos()+obbmaxs
+		vPoint = locPly.GhostEntity:GetPos() + obbmaxs
 		effectdata = EffectData()
 		effectdata:SetOrigin( vPoint )
 		effectdata:SetScale(0)
@@ -3719,7 +3718,7 @@ local function MW_FinishSelection() -- Previously concommand.Add( "-mw_select", 
 
 	-- Finds all the entities in the selection sphere
 
-	-- local foundEnts = ents.FindInSphere((ply.mw_selEnd+ply.mw_selStart)/2, ply.mw_selStart:Distance(ply.mw_selEnd)/2+0.1 )
+	-- local foundEnts = ents.FindInSphere((ply.mw_selEnd+ply.mw_selStart) / 2, ply.mw_selStart:Distance(ply.mw_selEnd) / 2+0.1 )
 	-- local selectEnts = table.Copy( foundEnts )
 	-- if not ply:KeyDown(IN_SPEED) then ply.foundMelons = {} end
 	--Busca de esas entidades cuales son sandias, y cuales son del equipo correcto
@@ -3744,25 +3743,25 @@ local function MW_FinishSelection() -- Previously concommand.Add( "-mw_select", 
 	-- 			if (cvars.Bool("mw_admin_move_any_team", false) or v:GetNWInt("mw_melonTeam", -1) == ply:GetInfoNum( "mw_team", -1 )) then
 	-- 				-- if (v:GetNWInt("mw_melonTeam", 0) ~= 0) then
 	-- 					table.insert(ply.foundMelons, v)
-	-- 					-- print(k..": "..tostring(v)..", added succesfully")
-	-- 					--"Added "..tostring(v).." succesfully"
+	-- 					-- print(k..": " .. tostring(v) .. ", added succesfully")
+	-- 					--"Added " .. tostring(v) .. " succesfully"
 	-- 				-- else
-	-- 					-- print(k..": "..tostring(v).." !!! didnt add to the selection because the unit had no team ("..v:GetNWInt("mw_melonTeam", -1)..")")
-	-- 				--"Didn't add "..tostring(v).." because it had no team"
+	-- 					-- print(k..": " .. tostring(v) .. " !!! didnt add to the selection because the unit had no team (" ..v:GetNWInt("mw_melonTeam", -1) .. ")")
+	-- 				--"Didn't add " .. tostring(v) .. " because it had no team"
 	-- 				-- end
 	-- 			else
-	-- 				-- print(k..": "..tostring(v)..", didnt add to the selection because the unit was not in your team ("..v:GetNWInt("mw_melonTeam", -1)..")")
+	-- 				-- print(k..": " .. tostring(v) .. ", didnt add to the selection because the unit was not in your team (" ..v:GetNWInt("mw_melonTeam", -1) .. ")")
 	-- 				if (v:GetNWInt("mw_melonTeam", -1) == -1) then
 	-- 					error("Selected unit has team -1!")
 	-- 				end
-	-- 			--	"Didn't add "..tostring(v).." because it wasn't my team"
+	-- 			--	"Didn't add " .. tostring(v) .. " because it wasn't my team"
 	-- 			end
 	-- 		else
-	-- 			-- print(k..": "..tostring(v)..", didnt add to the selection because the Base was not ent_melon_base ("..v.Base..")")
-	-- 		--"Didn't add "..tostring(v).." because it was a base prop"
+	-- 			-- print(k..": " .. tostring(v) .. ", didnt add to the selection because the Base was not ent_melon_base (" ..v.Base..")")
+	-- 		--"Didn't add " .. tostring(v) .. " because it was a base prop"
 	-- 		end
 	-- 	else
-	-- 		-- print(k..": "..tostring(v)..", didnt add to the selection because Base was null")
+	-- 		-- print(k..": " .. tostring(v) .. ", didnt add to the selection because Base was null")
 	-- 	end
 	-- end
 	--Le envia al client la lista de sandias para que pueda dibujar los halos
@@ -3775,12 +3774,12 @@ local function MW_FinishSelection() -- Previously concommand.Add( "-mw_select", 
 	net.Send(ply)
 	]]--
 
-	-- print("Sending my selection to the server. Total selected units: "..table.Count(ply.foundMelons))
-	-- print("Entity im pointing at: "..tostring(ply:GetEyeTrace().Entity))
+	-- print("Sending my selection to the server. Total selected units: " .. table.Count(ply.foundMelons))
+	-- print("Entity im pointing at: " .. tostring(ply:GetEyeTrace().Entity))
 	-- print("Selection table,")
 	-- PrintTable(ply.foundMelons)
 	--[[net.Start("MW_SelectContraption")
-		net.WriteUInt(table.Count(LocalPlayer().foundMelons)+1, 16)
+		net.WriteUInt(table.Count(LocalPlayer().foundMelons) + 1, 16)
 		net.WriteEntity(ply:GetEyeTrace().Entity)
 		for k, v in pairs(ply.foundMelons) do
 			net.WriteEntity(v)
@@ -3867,12 +3866,12 @@ function TOOL:Think()
 		ply.propAngle = Vector( vector.x, vector.y, 0 ):Angle()
 		if ply:GetInfoNum( "mw_chosen_unit", 0 ) ~= 0 then
 			if mw_units[ply:GetInfoNum( "mw_chosen_unit", 0 )].angleSnap then
-				ply.propAngle = Angle( ply.propAngle.p, 180+math.Round(ply.propAngle.y/90)*90, ply.propAngle.r )
+				ply.propAngle = Angle( ply.propAngle.p, 180+math.Round(ply.propAngle.y / 90) * 90, ply.propAngle.r )
 			end
 		end
 	elseif cvars.Number("mw_prop_snap") == 1 then
 		ply.propAngle = Vector( vector.x, vector.y, 0 ):Angle()
-		ply.propAngle = Angle( ply.propAngle.p, math.Round(ply.propAngle.y/45)*45, ply.propAngle.r )
+		ply.propAngle = Angle( ply.propAngle.p, math.Round(ply.propAngle.y / 45) * 45, ply.propAngle.r )
 	else
 		ply.propAngle = Vector( vector.x, vector.y, 0 ):Angle()
 	end
@@ -3920,9 +3919,9 @@ function TOOL:Think()
 							 	net.WriteInt(newTeam,8)
 							net.SendToServer()
 						-- end
-					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_singleplayer" )) then
+					--[[ elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_singleplayer" )) then
 						net.Start("ActivateWaypoints")
-						net.SendToServer()
+						net.SendToServer() ]]
 					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_propeller" ) or string.StartWith( tr.Entity:GetClass(), "ent_melon_hover" )) then
 						-- if (correctTeam) then
 							net.Start("PropellerReady")
@@ -4036,7 +4035,7 @@ function TOOL:Think()
 		end
 		if not self.ctrlPressed then
 			self.ctrlPressed = true
-			-- self.Owner:ConCommand( "mw_stop" ) -- parar
+			-- self:GetOwner():ConCommand( "mw_stop" ) -- parar
 			if (istable(LocalPlayer().foundMelons)) then
 			local count = table.Count(LocalPlayer().foundMelons)
 			if (count > 0) then
@@ -4080,12 +4079,12 @@ function TOOL:Think()
 		local unit_index = ply:GetInfoNum("mw_chosen_unit", 0)
 		if unit_index > 0 and mw_units[unit_index].offset ~= nil then
 			local offset = mw_units[unit_index].offset
-			local xoffset = Vector(offset.x*(math.cos(ply.propAngle.y/180*math.pi)), offset.x*(math.sin(ply.propAngle.y/180*math.pi)),0)
-			local yoffset = Vector(offset.y*(-math.sin(ply.propAngle.y/180*math.pi)), offset.y*(math.cos(ply.propAngle.y/180*math.pi)),0)
+			local xoffset = Vector(offset.x * (math.cos(ply.propAngle.y / 180*math.pi)), offset.x * (math.sin(ply.propAngle.y / 180*math.pi)),0)
+			local yoffset = Vector(offset.y * (-math.sin(ply.propAngle.y / 180*math.pi)), offset.y * (math.cos(ply.propAngle.y / 180*math.pi)),0)
 			offset = xoffset+yoffset+Vector(0,0,offset.z)
 			local ang = ply.propAngle+mw_units[unit_index].angle
 			if (mw_units[unit_index].normalAngle) then
-				ang = trace.HitNormal:Angle()+mw_units[unit_index].angle
+				ang = trace.HitNormal:Angle() + mw_units[unit_index].angle
 			end
 
 			MW_UpdateGhostEntity(mw_units[unit_index].model, trace.HitPos, trace.HitNormal * 5+offset, ang, newColor, mw_units[unit_index].energyRange, trace.HitPos)
@@ -4098,13 +4097,13 @@ function TOOL:Think()
 		if (cvars.Bool("mw_prop_offset") == true) then
 			offset = mw_base_props[prop_index].offset
 			--offset:Rotate( ply.propAngle )
-			local xoffset = Vector(offset.x*(math.cos(ply.propAngle.y/180*math.pi)), offset.x*(math.sin(ply.propAngle.y/180*math.pi)),0)
-			local yoffset = Vector(offset.y*(-math.sin(ply.propAngle.y/180*math.pi)), offset.y*(math.cos(ply.propAngle.y/180*math.pi)),0)
+			local xoffset = Vector(offset.x * (math.cos(ply.propAngle.y / 180*math.pi)), offset.x * (math.sin(ply.propAngle.y / 180*math.pi)),0)
+			local yoffset = Vector(offset.y * (-math.sin(ply.propAngle.y / 180*math.pi)), offset.y * (math.cos(ply.propAngle.y / 180*math.pi)),0)
 			offset = xoffset+yoffset+Vector(0,0,offset.z)
 		else
 			offset = Vector(0,0,mw_base_props[prop_index].offset.z)
 		end
-		MW_UpdateGhostEntity (mw_base_props[prop_index].model, LocalPlayer():GetEyeTrace().HitPos, Vector(0,0,1)+offset, ply.propAngle + mw_base_props[prop_index].angle, newColor, 0, trace.HitPos, mw_units[prop_index].defenseRange)
+		MW_UpdateGhostEntity (mw_base_props[prop_index].model, LocalPlayer():GetEyeTrace().HitPos, Vector(0,0,1) + offset, ply.propAngle + mw_base_props[prop_index].angle, newColor, 0, trace.HitPos, mw_units[prop_index].defenseRange)
 	else
 		if IsValid(LocalPlayer().GhostEntity) then
 			LocalPlayer().GhostEntity:Remove()
@@ -4116,8 +4115,8 @@ function TOOL:Think()
 end
 
 function TOOL:DoSelection(startingPos, endingPos)
-	local center = (startingPos+endingPos)/2;
-	local radius = (startingPos-endingPos):Length()/2
+	local center = (startingPos + endingPos) / 2;
+	local radius = (startingPos-endingPos):Length() / 2
 
 	local foundEntities = {}
 	local allFoundEntities = {}
@@ -4139,11 +4138,11 @@ function TOOL:DoSelection(startingPos, endingPos)
 		LocalPlayer().mw_selectionID = 0
 	end
 
-	LocalPlayer().mw_selectionID = (LocalPlayer().mw_selectionID+1)%255
+	LocalPlayer().mw_selectionID = ( LocalPlayer().mw_selectionID + 1 ) % 255
 
 	local clickedUnit = LocalPlayer():GetEyeTrace().Entity
 
-	if LocalPlayer().lastSelectionTime+0.3>CurTime() and (IsValid(clickedUnit)) then
+	if LocalPlayer().lastSelectionTime + 0.3 > CurTime() and IsValid( clickedUnit ) then
 		if string.StartWith(clickedUnit:GetClass(),"ent_melon_") then
 			allFoundEntities = ents.FindInSphere( center, 300 )
 			net.Start("MW_RequestSelection")
@@ -4160,24 +4159,24 @@ function TOOL:DoSelection(startingPos, endingPos)
 				start = center,
 				endpos = center + Vector(0,0,2000),
 				filter = function( ent ) if ( ent:GetClass() == "prop_physics" ) then return true end end,
-				mask = MASK_SOLID+MASK_WATER
+				mask = MASK_SOLID + MASK_WATER
 			} )
 
 			local depthTrace = util.TraceLine( {
 				start = center,
 				endpos = center - Vector(0,0,2000),
 				filter = function( ent ) if ( ent:GetClass() == "prop_physics" ) then return true end end,
-				mask = MASK_SOLID+MASK_WATER
+				mask = MASK_SOLID + MASK_WATER
 			} )
 
 			local depth = depthTrace.HitPos:Distance(center)
 			local height = heightTrace.HitPos:Distance(center) -- Using the normal distance function is a bit more computationally expensive but hopefully this shouldn't be bad enough to be an issue
 
-			if(depth < 25) then depth = 25 end
-			if(height < 25) then height = 25 end
+			if depth < 25 then depth = 25 end
+			if height < 25 then height = 25 end
 
 
-			if(clickedUnit:GetClass()=="ent_melon_jetpack") then
+			if clickedUnit:GetClass() == "ent_melon_jetpack" then
 				allFoundEntities = ents.FindInBox(center - Vector(radius,radius,50), center + Vector(radius,radius,50) )
 			else
 				allFoundEntities = ents.FindInBox(center - Vector(radius,radius,depth), center + Vector(radius,radius,height) )
@@ -4189,7 +4188,7 @@ function TOOL:DoSelection(startingPos, endingPos)
 			for k, v in pairs(allFoundEntities) do
 				local xCoord2, yCoord2, zCoord2 = v:GetPos():Unpack()
 				local processedPosition = Vector(xCoord2, yCoord2, 0)
-				if(processedPosition:DistToSqr(processedCenter)>radius*radius) then -- makes sure we select in just a cylinder, not a box.
+				if processedPosition:DistToSqr( processedCenter ) > radius * radius then -- makes sure we select in just a cylinder, not a box.
 					table.remove( allFoundEntities, k )
 				end
 			end
@@ -4204,7 +4203,7 @@ function TOOL:DoSelection(startingPos, endingPos)
 			net.SendToServer()
 		else
 			-- print("The network thing should've run here")
-			if(clickedUnit.Base == "ent_melon_base") then
+			if clickedUnit.Base == "ent_melon_base" then
 				table.Empty(allFoundEntities)
 				table.insert(allFoundEntities, 1, hitEnt)
 			else
@@ -4241,7 +4240,7 @@ end
 
 function TOOL:IndicateIncome(amount)
 	local indicator = incomeIndicators[currentIncomeIndicator]
-	currentIncomeIndicator = (currentIncomeIndicator+1)%(#incomeIndicators)+1
+	currentIncomeIndicator = (currentIncomeIndicator+1)%(#incomeIndicators) + 1
 	indicator.time = CurTime()
 	indicator.value = amount
 end
@@ -4255,37 +4254,37 @@ local function SelectContraption(pl, path, contraptionName, contraptionCost, con
 	local sizePenalty = 0
 	for _, ent in pairs( duptable ) do
 		if (ent.realvalue ~= nil) then
-			cost = cost+ent.realvalue
+			cost = cost + ent.realvalue
 			if (ent.spawnDelay == nil) then
-				spawnTime = spawnTime + ent.realvalue/25
+				spawnTime = spawnTime + ent.realvalue / 25
 			end
 		end
 		if (ent.population ~= nil) then
-			power = power+ent.population
+			power = power + ent.population
 		end
 		if (ent.Pos ~= nil) then
-			sizePenalty = sizePenalty+(ent.Pos):LengthSqr()/1000
+			sizePenalty = sizePenalty + (ent.Pos):LengthSqr() / 1000
 		end
 		if (ent.spawnDelay ~= nil) then
-			spawnTime = spawnTime + ent.spawnDelay*2
+			spawnTime = spawnTime + ent.spawnDelay * 2
 		end
 	end
 	--[[ local mins = fulltable.Mins
 	local maxs = fulltable.Maxs
-	local size = maxs.x-mins.x+maxs.y-mins.y+maxs.z-mins.z ]]
+	local size = maxs.x-mins.x + maxs.y-mins.y + maxs.z-mins.z ]]
 	pl.selectedFile = path
 	cost = math.Round( cost + sizePenalty )
 
 	pl.selectedAssembler:SetNWFloat("slowThinkTimer", spawnTime)
 
 	--pl.selectedAssembler.slowThinkTimer = cost/100
-	--pl.selectedAssembler:SetNWFloat("nextSlowThink", CurTime()+cost/100)
-	--pl.selectedAssembler.nextSlowThink = CurTime()+cost/100
+	--pl.selectedAssembler:SetNWFloat("nextSlowThink", CurTime() + cost/100)
+	--pl.selectedAssembler.nextSlowThink = CurTime() + cost/100
 	--pl.selectedAssembler.unitspawned = false
 	--pl.selectedAssembler:SetNWBool("spawned", false)
-	contraptionName:SetText("Contraption: "..string.sub(path, string.len( "melonwars/contraptions/" )+1, string.len( path )-4))
-	contraptionCost:SetText("Cost: "..cost)
-	contraptionPower:SetText("Power: "..power)
+	contraptionName:SetText("Contraption: " .. string.sub(path, string.len( "melonwars/contraptions/" ) + 1, string.len( path ) - 4))
+	contraptionCost:SetText("Cost: " .. cost)
+	contraptionPower:SetText("Power: " .. power)
 	return cost, power
 end
 
@@ -4293,10 +4292,10 @@ local function StartBuildingContraption( assembler, _file, cost, power )
 	if assembler:GetNWBool( "active" ) then return end
 	if LocalPlayer().mw_units >= cvars.Number( "mw_admin_max_units" ) then return end
 	if LocalPlayer().mw_credits < LocalPlayer().contrapCost or cvars.Bool( "mw_admin_credit_cost" ) then return end
-	if LocalPlayer().contrapPower ~= 0 or LocalPlayer().mw_units+LocalPlayer().contrapPower > cvars.Number( "mw_admin_max_units" ) then return end
+	if LocalPlayer().contrapPower ~= 0 or LocalPlayer().mw_units + LocalPlayer().contrapPower > cvars.Number( "mw_admin_max_units" ) then return end
 
-	assembler.nextSlowThink = CurTime()+assembler:GetNWFloat("slowThinkTimer", 0)
-	assembler:SetNWFloat("nextSlowThink", CurTime()+assembler:GetNWFloat("slowThinkTimer", 0))
+	assembler.nextSlowThink = CurTime() + assembler:GetNWFloat("slowThinkTimer", 0)
+	assembler:SetNWFloat("nextSlowThink", CurTime() + assembler:GetNWFloat("slowThinkTimer", 0))
 	assembler.unitspawned = false
 	assembler:SetNWBool("active", true)
 	assembler.player = LocalPlayer()
@@ -4371,9 +4370,9 @@ function TOOL:MakeContraptionMenu()
 	LocalPlayer().cmenuframe = vgui.Create("DFrame")
 	local w = 400
 	local h = 400
-	local freeze = net.ReadBool()
-	LocalPlayer().cmenuframe:SetSize(w,h)
-	LocalPlayer().cmenuframe:SetPos(ScrW()/2-w/2,ScrH()/2-h/2)
+	-- local freeze = net.ReadBool()
+	LocalPlayer().cmenuframe:SetSize(w, h)
+	LocalPlayer().cmenuframe:SetPos(ScrW() / 2 - w / 2, ScrH() / 2 - h / 2)
 	LocalPlayer().cmenuframe:SetTitle("Contraption Legalizer")
 	LocalPlayer().cmenuframe:MakePopup()
 
@@ -4454,16 +4453,9 @@ function TOOL:DrawHUD()
 
 		draw.RoundedBox( 15, x, y, w, h, Color(255, 80 + 80 * math.sin( CurTime() * 3 ), 0, 255) )
 		draw.RoundedBox( 10, x + 10, y + 10, w - 20, h - 20, Color( 0, 0, 0, 150 ) )
-		draw.DrawText(
-[[I'm sorry, but this tool does not work in
-singleplayer. Please start a 2 player game
-if you want to use this addon on your own.
-
-You'll have more fun if you play with
-someone. Join the MelonWars:RTS steam
-group to find MelonWars players!]],
- "DermaLarge", x + w / 2, y + 30, color_white, TEXT_ALIGN_CENTER )
-		draw.DrawText("https:--steamcommunity.com/groups/melonwarsrts", "Trebuchet24", x + w / 2, y + 270, color_white, TEXT_ALIGN_CENTER )
+		draw.DrawText( "I'm sorry, but this tool does not work in\nsingleplayer. Please start a 2 player game\nif you want to use this addon on your own.\n\n" ..
+			"You'll have more fun if you play with\nsomeone. Join the MelonWars:RTS Steam\ngroup to find MelonWars players!", "DermaLarge", x + w / 2, y + 30, color_white, TEXT_ALIGN_CENTER )
+		draw.DrawText( "https:--steamcommunity.com/groups/melonwarsrts", "Trebuchet24", x + w / 2, y + 270, color_white, TEXT_ALIGN_CENTER )
 		return
 	end
 
@@ -4471,20 +4463,20 @@ group to find MelonWars players!]],
 
 	local pl = LocalPlayer()
 	local w = 300
-	local h = 280
+	-- local h = 280
 	local x = ScrW() - w
 	local y = ScrH()
 
 	local mx = gui.MouseX()
-	if (mx == 0) then mx = ScrW()/2 end
+	if (mx == 0) then mx = ScrW() / 2 end
 	local my = gui.MouseY()
-	if (my == 0) then my = ScrH()/2 end
+	if (my == 0) then my = ScrH() / 2 end
 
 	local cbx, cby = chat.GetChatBoxPos()
 	local cbw, cbh = chat.GetChatBoxSize()
 
 	if (pl.cutsceneOpacity > 0) then
-		draw.RoundedBox( 5, cbx, cby+30, cbw-30, cbh-80, Color(0,0,0,pl.cutsceneOpacity) )
+		draw.RoundedBox( 5, cbx, cby + 30, cbw-30, cbh-80, Color(0,0,0,pl.cutsceneOpacity) )
 	end
 
 	if (GetConVar( "mw_admin_cutscene" ):GetBool()) then
@@ -4497,15 +4489,15 @@ group to find MelonWars players!]],
 		surface.SetTextColor( 255, 255, 255, 255 )
 		surface.SetTextPos( mx-50, my-17 )
 		surface.DrawText( "PAUSED" )
-		draw.DrawText( "R: Open menu", "DermaLarge", x+w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
+		draw.DrawText( "R: Open menu", "DermaLarge", x + w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
 	else
 		local pos = 1
 		local teamColor = cvars.Number("mw_team")
 		local size = 50
-		for i=1, 8 do
+		for i = 1, 8 do
 			if (teamgrid[i][teamColor] == true) then
 				draw.RoundedBox( 0, x-pos*size, y-size, size, size, Color(20,20,20,255) )
-				draw.RoundedBox( 5, x+4-pos*size, y+4-size, size-8, size-8, mw_team_colors[i] )
+				draw.RoundedBox( 5, x + 4-pos*size, y + 4-size, size-8, size-8, mw_team_colors[i] )
 				pos = pos + 1
 			end
 		end
@@ -4518,8 +4510,8 @@ group to find MelonWars players!]],
 
 		local unit_id = cvars.Number("mw_chosen_unit")
 
-		if (math.floor(LocalPlayer().mw_spawntime-CurTime()) > 0) then
-			draw.DrawText( "Spawning Queue: "..math.floor(LocalPlayer().mw_spawntime-CurTime()), "DermaLarge", ScrW()/2, ScrH()-80, color_white, TEXT_ALIGN_CENTER )
+		if (math.floor(LocalPlayer().mw_spawntime - CurTime()) > 0) then
+			draw.DrawText( "Spawning Queue: " .. math.floor(LocalPlayer().mw_spawntime-CurTime()), "DermaLarge", ScrW() / 2, ScrH() - 80, color_white, TEXT_ALIGN_CENTER )
 		end
 
 		local cheats = false
@@ -4527,58 +4519,54 @@ group to find MelonWars players!]],
 		local freeunits = not cvars.Bool("mw_admin_credit_cost")
 		if (freeunits) then
 			cheats = true
-			draw.DrawText( "> Infinite Water", "DermaLarge", 10, ScrH()-cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
+			draw.DrawText( "> Infinite Water", "DermaLarge", 10, ScrH() - cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
 			cheatsOffset = cheatsOffset + 40
 		end
 
 		local freeplacing = cvars.Bool("mw_admin_allow_free_placing")
 		if (freeplacing) then
 			cheats = true
-			draw.DrawText( "> Build anywhere", "DermaLarge", 10, ScrH()-cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
+			draw.DrawText( "> Build anywhere", "DermaLarge", 10, ScrH() - cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
 			cheatsOffset = cheatsOffset + 40
 		end
 
 		local controlany = cvars.Bool("mw_admin_move_any_team")
 		if (controlany) then
 			cheats = true
-			draw.DrawText( "> Control any team", "DermaLarge", 10, ScrH()-cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
+			draw.DrawText( "> Control any team", "DermaLarge", 10, ScrH() - cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
 			cheatsOffset = cheatsOffset + 40
 		end
 
 		local instantspawn = not cvars.Bool("mw_admin_spawn_time")
 		if (instantspawn) then
 			cheats = true
-			draw.DrawText( "> Instant spawn", "DermaLarge", 10, ScrH()-cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
+			draw.DrawText( "> Instant spawn", "DermaLarge", 10, ScrH() - cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
 			cheatsOffset = cheatsOffset + 40
 		end
 
 		local immortality = cvars.Bool("mw_admin_immortality")
 		if (immortality) then
 			cheats = true
-			draw.DrawText( "> Immortal units", "DermaLarge", 10, ScrH()-cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
+			draw.DrawText( "> Immortal units", "DermaLarge", 10, ScrH() - cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
 			cheatsOffset = cheatsOffset + 40
 		end
 
 		if (cheats) then
 			cheatsOffset = cheatsOffset + 20
-			draw.DrawText(
-[[Go to the admin menu to set these
-options, or press the start game button
-to start a game and turn off cheats]]
-				, "Trebuchet18", 10, ScrH()-cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
+			draw.DrawText( "Go to the admin menu to set these\noptions, or press the start game button\nto start a game and turn off cheats", "Trebuchet18", 10, ScrH() - cheatsOffset, Color( 255, 255, 255, 100 ), TEXT_ALIGN_LEFT )
 			cheatsOffset = cheatsOffset + 30
-			draw.DrawText( "Current Cheats:", "DermaLarge", 10, ScrH()-cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
+			draw.DrawText( "Current Cheats:", "DermaLarge", 10, ScrH() - cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
 		end
 
 		if (pl.mw_action == 2) then --spawning main building
 			local w = 300
-			local h = 280
-			local x = ScrW()-w
+			-- local h = 280
+			local x = ScrW() - w
 			local y = ScrH()
 
-			draw.DrawText( "R: Open menu", "DermaLarge", x+w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "LMB: Spawn Main Building", "DermaLarge", x+w-10, y-100, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "RMB: Cancel", "DermaLarge", x+w-10, y-60, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "R: Open menu", "DermaLarge", x + w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "LMB: Spawn Main Building", "DermaLarge", x + w-10, y-100, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "RMB: Cancel", "DermaLarge", x + w-10, y-60, color_white, TEXT_ALIGN_RIGHT )
 		elseif (pl.mw_action == 1) then --spawning
 			local teamColor = Color(100,100,100,255)
 			if (cvars.Number("mw_team") ~= 0) then
@@ -4587,135 +4575,135 @@ to start a game and turn off cheats]]
 			if (unit_id > 0) then
 				local w = 300
 				local h = 280
-				local x = ScrW()-w
-				local y = ScrH()-h
+				local x = ScrW() - w
+				local y = ScrH() - h
 
 				draw.RoundedBox( 15, x, y, w, h, teamColor )
-				draw.RoundedBox( 10, x+10, y+10, w-20, h-20, Color(0,0,0,230) )
-				draw.DrawText( mw_units[unit_id].name, "DermaLarge", x+w/2, y+30, color_white, TEXT_ALIGN_CENTER )
-				for i=1, mw_units[unit_id].population do
-					draw.RoundedBox( 1, x+w/2-(mw_units[unit_id].population+1)/2*15+i*15-7, y+65, 10, 10, color_white )
+				draw.RoundedBox( 10, x + 10, y + 10, w-20, h-20, Color(0,0,0,230) )
+				draw.DrawText( mw_units[unit_id].name, "DermaLarge", x + w / 2, y + 30, color_white, TEXT_ALIGN_CENTER )
+				for i = 1, mw_units[unit_id].population do
+					draw.RoundedBox( 1, x + w / 2-(mw_units[unit_id].population+1) / 2*15+i*15-7, y + 65, 10, 10, color_white )
 				end
 				if (freeunits) then
-					draw.DrawText( "- Infinite Water -", "Trebuchet18", x+w/2, y+120, color_white, TEXT_ALIGN_CENTER )
-					draw.DrawText( "To enable water cost go to the admin menu", "Trebuchet18", x+w/2, y+140, color_white, TEXT_ALIGN_CENTER )
+					draw.DrawText( "- Infinite Water -", "Trebuchet18", x + w / 2, y + 120, color_white, TEXT_ALIGN_CENTER )
+					draw.DrawText( "To enable water cost go to the admin menu", "Trebuchet18", x + w / 2, y + 140, color_white, TEXT_ALIGN_CENTER )
 				else
-					draw.DrawText( "Cost: "..mw_units[unit_id].cost, "DermaLarge", x+30, y+90, color_white, TEXT_ALIGN_LEFT )
+					draw.DrawText( "Cost: " .. mw_units[unit_id].cost, "DermaLarge", x + 30, y + 90, color_white, TEXT_ALIGN_LEFT )
 					if (mw_units[unit_id].welded_cost ~= -1) then
-						draw.DrawText( "Welded Cost (RMB): "..mw_units[unit_id].welded_cost, "Trebuchet18", x+30, y+130, color_white, TEXT_ALIGN_LEFT )
+						draw.DrawText( "Welded Cost (RMB): " .. mw_units[unit_id].welded_cost, "Trebuchet18", x + 30, y + 130, color_white, TEXT_ALIGN_LEFT )
 					end
-					draw.DrawText( "Water: "..tostring(self:GetOwner().mw_credits), "DermaLarge", x+30, y+160, color_white, TEXT_ALIGN_LEFT )
+					draw.DrawText( "Water: " .. tostring(self:GetOwner().mw_credits), "DermaLarge", x + 30, y + 160, color_white, TEXT_ALIGN_LEFT )
 				end
-				draw.DrawText( "Power: "..tostring(self:GetOwner().mw_units).." / "..tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x+30, y+200, color_white, TEXT_ALIGN_LEFT )
+				draw.DrawText( "Power: " .. tostring(self:GetOwner().mw_units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 200, color_white, TEXT_ALIGN_LEFT )
 
-				draw.DrawText( "R: Open menu", "DermaLarge", x+w-10, y-120, color_white, TEXT_ALIGN_RIGHT )
-				draw.DrawText( "LMB: Spawn", "DermaLarge", x+w-10, y-80, color_white, TEXT_ALIGN_RIGHT )
-				draw.DrawText( "RMB: Cancel", "DermaLarge", x+w-10, y-40, color_white, TEXT_ALIGN_RIGHT )
+				draw.DrawText( "R: Open menu", "DermaLarge", x + w-10, y-120, color_white, TEXT_ALIGN_RIGHT )
+				draw.DrawText( "LMB: Spawn", "DermaLarge", x + w-10, y-80, color_white, TEXT_ALIGN_RIGHT )
+				draw.DrawText( "RMB: Cancel", "DermaLarge", x + w-10, y-40, color_white, TEXT_ALIGN_RIGHT )
 
 				--if (math.floor(LocalPlayer().mw_spawntime-CurTime()) > 0) then
-				--	draw.DrawText( "Spawning Queue: "..math.floor(LocalPlayer().mw_spawntime-CurTime()), "DermaLarge", ScrW()/2, ScrH()-80, color_white, TEXT_ALIGN_CENTER )
+				--	draw.DrawText( "Spawning Queue: " .. math.floor(LocalPlayer().mw_spawntime-CurTime()), "DermaLarge", ScrW() / 2, ScrH() - 80, color_white, TEXT_ALIGN_CENTER )
 				--end
 
 				if (cvars.Bool("mw_unit_option_welded") and mw_units[unit_id].welded_cost ~= -1) then
-					draw.RoundedBox( 10, mx-100, my+40, 200, 45, Color(0,0,0,100) )
-					draw.DrawText( "Spawning "..mw_units[unit_id].name, "Trebuchet24", mx, my+40, Color(255,255,0,255), TEXT_ALIGN_CENTER )
-					draw.DrawText( "as turret", "Trebuchet24", mx, my+60, Color(255,255,0,255), TEXT_ALIGN_CENTER )
+					draw.RoundedBox( 10, mx-100, my + 40, 200, 45, Color(0,0,0,100) )
+					draw.DrawText( "Spawning " .. mw_units[unit_id].name, "Trebuchet24", mx, my + 40, Color(255,255,0,255), TEXT_ALIGN_CENTER )
+					draw.DrawText( "as turret", "Trebuchet24", mx, my + 60, Color(255,255,0,255), TEXT_ALIGN_CENTER )
 
 					draw.RoundedBox( 2, mx-21, my-3, 17, 5, Color(50,50,50))
-					draw.RoundedBox( 2, mx+4, my-3, 17, 5, Color(50,50,50))
-					draw.RoundedBox( 2, mx-4, my-31-math.sin(CurTime()*3)*10, 7, 12, Color(50,50,50))
+					draw.RoundedBox( 2, mx + 4, my-3, 17, 5, Color(50,50,50))
+					draw.RoundedBox( 2, mx-4, my-31-math.sin(CurTime() * 3) * 10, 7, 12, Color(50,50,50))
 					draw.RoundedBox( 1, mx-20, my-2, 15, 3, teamColor)
-					draw.RoundedBox( 1, mx+5, my-2, 15, 3, teamColor)
-					draw.RoundedBox( 1, mx-3, my-30-math.sin(CurTime()*3)*10, 5, 10, teamColor)
+					draw.RoundedBox( 1, mx + 5, my-2, 15, 3, teamColor)
+					draw.RoundedBox( 1, mx-3, my-30-math.sin(CurTime() * 3) * 10, 5, 10, teamColor)
 				else
-					draw.RoundedBox( 10, mx-160, my+40, 320, 25, Color(0,0,0,100) )
-					draw.DrawText( "Spawning "..mw_units[unit_id].name, "Trebuchet24", mx, my+40, Color(255,255,255,200), TEXT_ALIGN_CENTER )
-					local a = math.sin(CurTime()*3)*5
+					draw.RoundedBox( 10, mx-160, my + 40, 320, 25, Color(0,0,0,100) )
+					draw.DrawText( "Spawning " .. mw_units[unit_id].name, "Trebuchet24", mx, my + 40, Color(255,255,255,200), TEXT_ALIGN_CENTER )
+					local a = math.sin(CurTime() * 3) * 5
 
 					draw.RoundedBox( 2, mx-4, my-23-a, 7, 12, Color(50,50,50))
-					draw.RoundedBox( 2, mx-4, my+12+a, 7, 12, Color(50,50,50))
+					draw.RoundedBox( 2, mx-4, my + 12+a, 7, 12, Color(50,50,50))
 					draw.RoundedBox( 2, mx-24-a, my-3, 12, 7, Color(50,50,50))
-					draw.RoundedBox( 2, mx+11+a, my-3, 12, 7, Color(50,50,50))
+					draw.RoundedBox( 2, mx + 11+a, my-3, 12, 7, Color(50,50,50))
 
 					draw.RoundedBox( 1, mx-3, my-22-a, 5, 10, teamColor)
-					draw.RoundedBox( 1, mx-3, my+13+a, 5, 10, teamColor)
+					draw.RoundedBox( 1, mx-3, my + 13+a, 5, 10, teamColor)
 					draw.RoundedBox( 1, mx-23-a, my-2, 10, 5, teamColor)
-					draw.RoundedBox( 1, mx+12+a, my-2, 10, 5, teamColor)
+					draw.RoundedBox( 1, mx + 12+a, my-2, 10, 5, teamColor)
 				end
 			else
 				local name = ""
-				draw.RoundedBox( 10, mx-115, my+40, 230, 45, Color(0,0,0,100) )
-				draw.DrawText( "Spawning "..name, "Trebuchet24", mx, my+40, Color(255,255,0,255), TEXT_ALIGN_CENTER )
+				draw.RoundedBox( 10, mx-115, my + 40, 230, 45, Color(0,0,0,100) )
+				draw.DrawText( "Spawning " ..name, "Trebuchet24", mx, my + 40, Color(255,255,0,255), TEXT_ALIGN_CENTER )
 
 				draw.RoundedBox( 2, mx-21, my-3, 17, 5, Color(50,50,50))
-				draw.RoundedBox( 2, mx+4, my-3, 17, 5, Color(50,50,50))
-				draw.RoundedBox( 2, mx-4, my-31-math.sin(CurTime()*3)*10, 7, 12, Color(50,50,50))
+				draw.RoundedBox( 2, mx + 4, my-3, 17, 5, Color(50,50,50))
+				draw.RoundedBox( 2, mx-4, my-31-math.sin(CurTime() * 3) * 10, 7, 12, Color(50,50,50))
 				draw.RoundedBox( 1, mx-20, my-2, 15, 3, teamColor)
-				draw.RoundedBox( 1, mx+5, my-2, 15, 3, teamColor)
-				draw.RoundedBox( 1, mx-3, my-30-math.sin(CurTime()*3)*10, 5, 10, teamColor)
+				draw.RoundedBox( 1, mx + 5, my-2, 15, 3, teamColor)
+				draw.RoundedBox( 1, mx-3, my-30-math.sin(CurTime() * 3) * 10, 5, 10, teamColor)
 			end
-		elseif(pl.mw_action == 0) then -- LocalPlayer().mw_selecting
+		elseif pl.mw_action == 0 then -- LocalPlayer().mw_selecting
 			local teamColor = LocalPlayer().mw_hudColor -- self:GetOwner().mw_hudColor
 
 			local w = 300
 			local h = 150
-			local x = ScrW()-w
-			local y = ScrH()-h
+			local x = ScrW() - w
+			local y = ScrH() - h
 
-			draw.DrawText( "R: Open menu", "DermaLarge", x+w-10, y-235, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "LMB (Hold and drag): Select", "DermaLarge", x+w-10, y-195, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "LMB double click: Select unit type", "CloseCaption_Normal", x+w-10, y-165, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "Hold Shift to add to selection", "CloseCaption_Normal", x+w-10, y-145, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "RMB: Move selected", "DermaLarge", x+w-10, y-115, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "Alt + RMB: force target or follow ally", "CloseCaption_Normal", x+w-10, y-85, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "Shift + RMB: Add waypoint", "CloseCaption_Normal", x+w-10, y-65, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "Left Ctrl: Stop selected units", "CloseCaption_Normal", x+w-10, y-45, color_white, TEXT_ALIGN_RIGHT )
-			-- draw.DrawText( "Left Ctrl + RMB: Disperse", "CloseCaption_Normal", x+w-10, y-25, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "R: Open menu", "DermaLarge", x + w-10, y-235, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "LMB (Hold and drag): Select", "DermaLarge", x + w-10, y-195, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "LMB double click: Select unit type", "CloseCaption_Normal", x + w-10, y-165, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "Hold Shift to add to selection", "CloseCaption_Normal", x + w-10, y-145, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "RMB: Move selected", "DermaLarge", x + w-10, y-115, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "Alt + RMB: force target or follow ally", "CloseCaption_Normal", x + w-10, y-85, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "Shift + RMB: Add waypoint", "CloseCaption_Normal", x + w-10, y-65, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "Left Ctrl: Stop selected units", "CloseCaption_Normal", x + w-10, y-45, color_white, TEXT_ALIGN_RIGHT )
+			-- draw.DrawText( "Left Ctrl + RMB: Disperse", "CloseCaption_Normal", x + w-10, y-25, color_white, TEXT_ALIGN_RIGHT )
 
 			draw.RoundedBox( 15, x, y, w, h, teamColor )
-			draw.RoundedBox( 10, x+10, y+10, w-20, h-20, Color(0,0,0,230) )
+			draw.RoundedBox( 10, x + 10, y + 10, w-20, h-20, Color(0,0,0,230) )
 			if (freeunits) then
-				draw.DrawText( "- Infinite Water -", "Trebuchet18", x+w/2, y+20, color_white, TEXT_ALIGN_CENTER )
-				draw.DrawText( "To enable water cost go to the admin menu", "Trebuchet18", x+w/2, y+40, color_white, TEXT_ALIGN_CENTER )
+				draw.DrawText( "- Infinite Water -", "Trebuchet18", x + w / 2, y + 20, color_white, TEXT_ALIGN_CENTER )
+				draw.DrawText( "To enable water cost go to the admin menu", "Trebuchet18", x + w / 2, y + 40, color_white, TEXT_ALIGN_CENTER )
 			else
-				draw.DrawText( "Water: "..tostring(self:GetOwner().mw_credits), "DermaLarge", x+30, y+30, color_white, TEXT_ALIGN_LEFT )
+				draw.DrawText( "Water: " .. tostring(self:GetOwner().mw_credits), "DermaLarge", x + 30, y + 30, color_white, TEXT_ALIGN_LEFT )
 			end
-			draw.DrawText( "Power: "..tostring(self:GetOwner().mw_units).." / "..tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x+30, y+70, color_white, TEXT_ALIGN_LEFT )
-		elseif(pl.mw_action == 3) then
+			draw.DrawText( "Power: " .. tostring(self:GetOwner().mw_units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 70, color_white, TEXT_ALIGN_LEFT )
+		elseif pl.mw_action == 3 then
 			local prop_id = LocalPlayer():GetInfoNum("mw_chosen_prop", 1) -- changed
 
 			local teamColor = LocalPlayer().mw_hudColor -- changed
 			local w = 300
 			local h = 250
-			local x = ScrW()-w
-			local y = ScrH()-h
+			local x = ScrW() - w
+			local y = ScrH() - h
 
 			draw.RoundedBox( 15, x, y, w, h, teamColor )
-			draw.RoundedBox( 10, x+10, y+10, w-20, h-20, Color(0,0,0,230) )
-			draw.DrawText( "Base Builder", "DermaLarge", x+w/2, y+30, color_white, TEXT_ALIGN_CENTER )
-			draw.DrawText( mw_base_props[prop_id].name, "DermaLarge", x+w-20, y+70, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "HP: "..mw_base_props[prop_id].hp, "DermaLarge", x+30, y+100, color_white, TEXT_ALIGN_LEFT )
-			draw.DrawText( "Cost: "..mw_base_props[prop_id].cost, "DermaLarge", x+30, y+130, color_white, TEXT_ALIGN_LEFT )
-			draw.DrawText( "Water: "..tostring(LocalPlayer().mw_credits), "DermaLarge", x+30, y+180, color_white, TEXT_ALIGN_LEFT ) -- changed
-		elseif(pl.mw_action == 4) then
+			draw.RoundedBox( 10, x + 10, y + 10, w-20, h-20, Color(0,0,0,230) )
+			draw.DrawText( "Base Builder", "DermaLarge", x + w / 2, y + 30, color_white, TEXT_ALIGN_CENTER )
+			draw.DrawText( mw_base_props[prop_id].name, "DermaLarge", x + w-20, y + 70, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "HP: " .. mw_base_props[prop_id].hp, "DermaLarge", x + 30, y + 100, color_white, TEXT_ALIGN_LEFT )
+			draw.DrawText( "Cost: " .. mw_base_props[prop_id].cost, "DermaLarge", x + 30, y + 130, color_white, TEXT_ALIGN_LEFT )
+			draw.DrawText( "Water: " .. tostring(LocalPlayer().mw_credits), "DermaLarge", x + 30, y + 180, color_white, TEXT_ALIGN_LEFT ) -- changed
+		elseif pl.mw_action == 4 then
 			local teamColor = mw_team_colors[cvars.Number("mw_team")] -- self:GetOwner().mw_hudColor
 			local w = 300
 			local h = 150
-			local x = ScrW()-w
-			local y = ScrH()-h
+			local x = ScrW() - w
+			local y = ScrH() - h
 
-			draw.RoundedBox( 10, mx-125, my+40, 250, 25, Color(0,0,0,100) )
-			draw.DrawText( "Click on your contraption", "Trebuchet24", mx, my+40, Color(255,255,255,200), TEXT_ALIGN_CENTER )
+			draw.RoundedBox( 10, mx-125, my + 40, 250, 25, Color(0,0,0,100) )
+			draw.DrawText( "Click on your contraption", "Trebuchet24", mx, my + 40, Color(255,255,255,200), TEXT_ALIGN_CENTER )
 
-			draw.DrawText( "R: Open menu", "DermaLarge", x+w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "LMB: Save Contraption", "DermaLarge", x+w-10, y-100, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "RMB: Cancel", "DermaLarge", x+w-10, y-60, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "R: Open menu", "DermaLarge", x + w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "LMB: Save Contraption", "DermaLarge", x + w-10, y-100, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "RMB: Cancel", "DermaLarge", x + w-10, y-60, color_white, TEXT_ALIGN_RIGHT )
 
 			draw.RoundedBox( 15, x, y, w, h, teamColor )
-			draw.RoundedBox( 10, x+10, y+10, w-20, h-20, Color(0,0,0,230) )
-			draw.DrawText( "Water: "..tostring(LocalPlayer().mw_credits), "DermaLarge", x+30, y+30, color_white, TEXT_ALIGN_LEFT ) -- changed
-			draw.DrawText( "Power: "..tostring(LocalPlayer().mw_units).." / "..tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x+30, y+70, color_white, TEXT_ALIGN_LEFT ) -- changed
-		elseif(pl.mw_action == 5) then
+			draw.RoundedBox( 10, x + 10, y + 10, w-20, h-20, Color(0,0,0,230) )
+			draw.DrawText( "Water: " .. tostring(LocalPlayer().mw_credits), "DermaLarge", x + 30, y + 30, color_white, TEXT_ALIGN_LEFT ) -- changed
+			draw.DrawText( "Power: " .. tostring(LocalPlayer().mw_units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 70, color_white, TEXT_ALIGN_LEFT ) -- changed
+		elseif pl.mw_action == 5 then
 			local teamColor = mw_team_colors[cvars.Number("mw_team")] -- LocalPlayer().mw_hudColor -- changed
 			local w = 160
 			local h = 30
@@ -4726,50 +4714,50 @@ to start a game and turn off cheats]]
 			draw.DrawText( "Hold LMB: Sell target", "DermaLarge", x-10, y-240, color_white, TEXT_ALIGN_RIGHT )
 			draw.DrawText( "RMB: Cancel", "DermaLarge", x-10, y-200, color_white, TEXT_ALIGN_RIGHT )
 
-			draw.RoundedBox( 3, ScrW()/2-w/2, ScrH()/2+20, w, h, Color(0,0,0, 200) )
-			draw.RoundedBox( 0, ScrW()/2-w/2+3, ScrH()/2+20+3, pl.mw_sell*(w-6), h-6, Color(0,230,0, 200) )
-			draw.DrawText( "Hold click to sell", "Trebuchet18", ScrW()/2, ScrH()/2+25, color_white, TEXT_ALIGN_CENTER )
+			draw.RoundedBox( 3, ScrW() / 2-w / 2, ScrH() / 2 + 20, w, h, Color(0,0,0, 200) )
+			draw.RoundedBox( 0, ScrW() / 2-w / 2+3, ScrH() / 2+20+3, pl.mw_sell*(w-6), h-6, Color(0,230,0, 200) )
+			draw.DrawText( "Hold click to sell", "Trebuchet18", ScrW() / 2, ScrH() / 2+25, color_white, TEXT_ALIGN_CENTER )
 
 			draw.RoundedBox( 15, x-300, y-150, 300, 150, teamColor )
 			draw.RoundedBox( 10, x-300+10, y-140, 300-20, 130, Color(0,0,0,230) )
-			draw.DrawText( "Water: "..tostring(LocalPlayer().mw_credits), "DermaLarge", x-270, y-100, color_white, TEXT_ALIGN_LEFT )
-		elseif(pl.mw_action == 6) then
+			draw.DrawText( "Water: " .. tostring(LocalPlayer().mw_credits), "DermaLarge", x-270, y-100, color_white, TEXT_ALIGN_LEFT )
+		elseif pl.mw_action == 6 then
 			local teamColor = mw_team_colors[cvars.Number("mw_team")]--LocalPlayer().mw_hudColor -- changed
 			local w = 300
 			local h = 150
 			local x = ScrW() - w
 			local y = ScrH() - h
 
-			draw.RoundedBox( 10, mx-130, my+40, 260, 25, Color(0,0,0,100) )
-			draw.DrawText( "Click to spawn contraption", "Trebuchet24", mx, my+40, Color(255,255,255,200), TEXT_ALIGN_CENTER )
+			draw.RoundedBox( 10, mx-130, my + 40, 260, 25, Color(0,0,0,100) )
+			draw.DrawText( "Click to spawn contraption", "Trebuchet24", mx, my + 40, Color(255,255,255,200), TEXT_ALIGN_CENTER )
 
-			draw.DrawText( "R: Open menu", "DermaLarge", x+w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "LMB: Load Contraption", "DermaLarge", x+w-10, y-100, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "RMB: Cancel", "DermaLarge", x+w-10, y-60, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "R: Open menu", "DermaLarge", x + w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "LMB: Load Contraption", "DermaLarge", x + w-10, y-100, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "RMB: Cancel", "DermaLarge", x + w-10, y-60, color_white, TEXT_ALIGN_RIGHT )
 
 			draw.RoundedBox( 15, x, y, w, h, teamColor )
-			draw.RoundedBox( 10, x+10, y+10, w-20, h-20, Color(0,0,0,230) )
-			draw.DrawText( "Water: "..tostring(LocalPlayer().mw_credits), "DermaLarge", x+30, y+30, color_white, TEXT_ALIGN_LEFT )
-			draw.DrawText( "Power: "..tostring(LocalPlayer().mw_units).." / "..tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x+30, y+70, color_white, TEXT_ALIGN_LEFT )
+			draw.RoundedBox( 10, x + 10, y + 10, w-20, h-20, Color(0,0,0,230) )
+			draw.DrawText( "Water: " .. tostring(LocalPlayer().mw_credits), "DermaLarge", x + 30, y + 30, color_white, TEXT_ALIGN_LEFT )
+			draw.DrawText( "Power: " .. tostring(LocalPlayer().mw_units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 70, color_white, TEXT_ALIGN_LEFT )
 		end
 
 		if (cvars.Bool("mw_income_indicator")) then
 			for k, v in pairs(incomeIndicators) do
-				local time = CurTime()-v.time
+				local time = CurTime() - v.time
 				local text = tostring(v.value)
-				local indColor = Color(255,0,0,200-time*100)
+				local indColor = Color(255,0,0,200-time * 100)
 				if (v.value > 0) then
-					text = "+"..text
-					indColor = Color(0,255,0,200-time*100)
+					text = "+" .. text
+					indColor = Color(0,255,0,200-time * 100)
 				end
-				draw.DrawText( text, "DermaLarge", ScrW()-w-time*40, ScrH()-150+k*10, indColor, TEXT_ALIGN_RIGHT )
+				draw.DrawText( text, "DermaLarge", ScrW() - w-time * 40, ScrH() - 150+k*10, indColor, TEXT_ALIGN_RIGHT )
 			end
 		end
 
 		surface.SetDrawColor(LocalPlayer().mw_hudColor)
 
 		if (pl.mw_action ~= 16) then
-			for i=0, 3 do
+			for i = 0, 3 do
 				surface.DrawOutlinedRect( mx-5-i, my-4-i, 9+i*2, 9+i*2 )
 			end
 			surface.SetDrawColor(color_black)
@@ -4786,17 +4774,17 @@ to start a game and turn off cheats]]
 		if weapon:GetClass() ~= "gmod_tool" then return end-- TODO: Here I should deactivate the spawnmenu once the game started
 		--if not IsValid(v:GetTool()) then return end
 		--if v:GetTool().Mode ~= "melon_universal_tool" then return end
-		local pos = v:GetPos()+Vector(0,0,85)
+		local pos = v:GetPos() + Vector(0,0,85)
 		local distance = EyePos():Distance(pos)
 		local screenPos = pos:ToScreen()
 		local size = 10000/distance
 		local teamColor = mw_team_colors[v:GetInfoNum( "mw_team", -1 )]
 		size = math.max(size, 15)
-		draw.RoundedBox( size/2, screenPos.x-size/2, screenPos.y-size/2, size, size, color_black )
+		draw.RoundedBox( size / 2, screenPos.x-size / 2, screenPos.y-size / 2, size, size, color_black )
 		size = size-4
-		draw.RoundedBox( size/2, screenPos.x-size/2, screenPos.y-size/2, size, size, color_white )
+		draw.RoundedBox( size / 2, screenPos.x-size / 2, screenPos.y-size / 2, size, size, color_white )
 		size = size-2
-		draw.RoundedBox( size/2, screenPos.x-size/2, screenPos.y-size/2, size, size, teamColor )
+		draw.RoundedBox( size / 2, screenPos.x-size / 2, screenPos.y-size / 2, size, size, teamColor )
 	end
 	]]
 end
