@@ -4841,7 +4841,7 @@ function MW_noEnemyNear( vector, teamIndex )
 	return canBuild
 end
 
-net.Receive( "UpdateClientTeams", function( len, pl )
+net.Receive( "UpdateClientTeams", function()
 	teamgrid = net.ReadTable()
 end )
 
