@@ -938,7 +938,7 @@ function MW_CreateContraptionFromTable(localPos, dupetable, pl)
 	return entities, constraints
 end
 ]]
-net.Receive( "ContraptionSave", function( pl )
+net.Receive( "ContraptionSave", function( _, pl )
 	local name = net.ReadString()
 	local entity = net.ReadEntity()
 	--file.CreateDir( "melonwars/contraptions" )
@@ -1085,7 +1085,7 @@ net.Receive( "ContraptionLoad", function( len, pl )
 	mrtsNetworkBuffer = ""
 end )
 
-net.Receive( "ContraptionAutoValidate", function( pl )
+net.Receive( "ContraptionAutoValidate", function( _, pl )
 	local last = net.ReadBool()
 	local size = net.ReadInt(16)
 	local data = net.ReadData(size)
@@ -1262,7 +1262,7 @@ local function MW_SpawnProp(model, pos, ang, _team, parent, health, cost, pl, sp
 	return newMarine
 end
 
-net.Receive( "MW_SpawnProp", function( pl )
+net.Receive( "MW_SpawnProp", function( _, pl )
 	local index = net.ReadInt(16)
 	local trace = net.ReadTable()
 	local cost = net.ReadInt(16)

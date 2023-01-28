@@ -190,7 +190,7 @@ local function MWDrawSelectionCircle(startingPos, endingPos)
 	surface.DrawRect( centerScreenPos.x - centerSize / 2, centerScreenPos.y - centerSize / 2, centerSize, centerSize )
 end
 
-local function DrawMelonCross ( pos, drawColor )
+local function DrawMelonCross( pos, drawColor )
 	surface.SetDrawColor( color_black )
 	surface.DrawRect( pos.x - 2, pos.y - 10, 9, 25 )
 	surface.DrawRect( pos.x - 10, pos.y - 2, 25, 9 )
@@ -354,12 +354,6 @@ local function MyCalcView( ply, pos, angles, fov )
 	return view
 end
 hook.Add( "CalcView", "MelonWars_MyCalcView", MyCalcView )
-
-local function MW_Move( ply, mv )
-	if not IsValid( ply.controllingUnit ) then return end
-	return true
-end
-hook.Add( "Move", "MelonWars_MoveUnit", MW_Move )
 
 hook.Add( "RenderScreenspaceEffects", "MelonWars_ColourMod", function()
 	if not LocalPlayer().MWhasColourModifier then return end
