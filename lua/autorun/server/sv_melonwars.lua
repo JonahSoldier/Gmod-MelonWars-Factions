@@ -536,6 +536,7 @@ local function MW_Server_IsInBuildRange( vector, teamIndex ) -- This is copied f
 			elseif v:GetNWInt("capTeam", 0) == teamIndex or teamgrid[v:GetNWInt("capTeam", 0)][teamIndex] then
 				canBuild = true
 			end
+			if canBuild then break end
 		end
 	end
 
