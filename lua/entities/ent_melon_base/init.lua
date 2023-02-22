@@ -105,21 +105,21 @@ function MW_Defaults( ent )
 end
 
 function ENT:Ini( teamnumber, affectPopulation )
-	self:SetNWInt("mw_melonTeam", teamnumber)
-	self:SetNWInt("mw_sick", 0)
+	self:SetNWInt( "mw_melonTeam", teamnumber )
+	self:SetNWInt( "mw_sick", 0 )
 	self:MelonSetColor( teamnumber )
-	self.nextSlowThink = CurTime()+1
-	if (affectPopulation ~= false) then
-		MW_UpdatePopulation(self.population, teamnumber)
+	self.nextSlowThink = CurTime() + 1
+	if affectPopulation ~= false then
+		MW_UpdatePopulation( self.population, teamnumber )
 	end
-	if (teamnumber == 0) then
+	if teamnumber == 0 then
 		self.chaseStance = true
 	end
 
 	self.mw_melonTeam = teamnumber
 
-	if (teamnumber == -1) then
-		error( "Unit "..tostring(self).." spawned with team -1!" )
+	if teamnumber == -1 then
+		error( "Unit " .. tostring( self ) .. " spawned with team -1!" )
 	end
 end
 
@@ -132,19 +132,24 @@ end
 
 function ENT:MelonSetColor( teamnumber )
 	local newColor
-	if (teamnumber == 0) then
-		newColor = Color(50,50,50,255)
+	if teamnumber == 0 then
+		newColor = Color( 50, 50, 50, 255 )
 	else
 		newColor = unit_colors[teamnumber]
 	end
-	self:SetColor(newColor)
+	self:SetColor( newColor )
+	self:ModifyColor()
 end
+
+function ENT:ModifyColor() -- Meant to be overridden by certain units if necessary
+end
+
 --[[
 function ENT:OnDuplicated( entTable )
 	self:SetPos(self:GetPos()-self.posOffset)
 end
 ]]
-local function MW_Spawn(ent)
+local function MW_Spawn( ent )
 	if not SERVER then return end
 	ent:SetMoveType( ent.moveType )   -- after all, gmod is a physics
 	ent:SetMaterial(ent.materialString)
@@ -159,9 +164,9 @@ local function MW_Spawn(ent)
 		baseSize = ent.sphereRadius
 	else
 		local mins = ent.phys:GetAABB()
-		baseSize = (-mins.x-mins.y)*0.6
+		baseSize = (-mins.x-mins.y) * 0.6
 	end
-	ent:SetNWFloat( "baseSize", baseSize+5 )
+	ent:SetNWFloat( "baseSize", baseSize + 5 )
 
 	hook.Run("MelonWarsEntitySpawned", ent)
 end
