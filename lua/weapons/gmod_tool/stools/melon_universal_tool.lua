@@ -4811,7 +4811,7 @@ function MW_isInRange( vector, teamIndex ) -- Why does this not just use findins
 		if not canBuild then
 			if vector:Distance(v:GetPos()) < 600 then
 				if teamgrid == nil or teamgrid[v:GetNWInt( "capTeam", 0 )] == nil or teamgrid[v:GetNWInt( "capTeam", 0 )][teamIndex] == nil then
-					canBuild = (v:GetNWInt( "capTeam", 0 ) == teamIndex)
+					canBuild = v:GetNWInt( "capTeam", 0 ) == teamIndex
 				elseif v:GetNWInt( "capTeam", 0 ) == teamIndex or teamgrid[v:GetNWInt( "capTeam", 0 )][teamIndex] then
 					canBuild = true
 				end
