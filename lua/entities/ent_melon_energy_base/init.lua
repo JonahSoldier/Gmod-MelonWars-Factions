@@ -10,12 +10,83 @@ Network.energy = 0
 Network.capacity = 0
 Network.elements = {}
 
-function MW_Network()
+mw_electric_network = {}
+
+local function MW_Network()
 	local newNetwork = table.Copy( Network )
 	return newNetwork
 end
 
-mw_electric_network = {}
+local function MW_Energy_Network_New(ent)
+	local newNetwork = nil
+	local recycled = false
+	local index = 0
+	for k, v in pairs(mw_electric_network) do
+		if (recycled == false) then
+			if (v.active == false) then
+				v.active = true
+				index = k
+				newNetwork = v
+				recycled = true
+				break
+			end
+		end
+	end
+	if (recycled == false) then
+		newNetwork = MW_Network()
+		index = table.insert(mw_electric_network, newNetwork)
+	end
+
+	newNetwork.name = "Network "..index
+	ent:SetNetwork(index)
+end
+
+local function MW_Energy_Deactivate_Network(nw)
+	nw.active = false
+	nw.capacity = 0
+	table.Empty(nw.elements)
+	nw.energy = 0
+	nw.name = "Network"
+end
+
+local function MW_Energy_Network_Merge(ent, networkA, networkB)
+	--MW_Energy_Network_Insert_Element(ent, networkA)
+	local nwa = mw_electric_network[networkA]
+	local nwb = mw_electric_network[networkB]
+	--nwa.capacity = nwa.capacity + nwb.capacity
+	nwa.energy = nwa.energy + nwb.energy
+	local count = table.Count(nwb.elements)
+	local safety = 0
+	for i=1, count do
+		nwb.elements[1]:SetNetwork(networkA)
+		if (safety >= 10000) then break end
+	end
+	if (safety >= 10000) then error("SAFETY MERGE STOP") end
+	MW_Energy_Deactivate_Network(nwb)
+end
+
+local function MW_CleanUp_Network(network)
+	local deleted = 0
+	for k, v in pairs(mw_electric_network[network].elements) do
+		if not IsValid(mw_electric_network[network].elements[k-deleted]) then
+			table.remove( mw_electric_network[network].elements, k-deleted )
+			deleted = deleted + 1
+		end
+	end
+	if (table.Count(mw_electric_network[network].elements) == 0) then
+		MW_Energy_Deactivate_Network(mw_electric_network[network])
+	end
+end
+
+local function MW_Energy_Network_Insert_Element(ent, network)
+	MW_CleanUp_Network(network)
+	local nw = mw_electric_network[network]
+	nw.active = true
+	nw.capacity = nw.capacity + ent.capacity
+	table.insert(nw.elements, ent)
+	ent.network = network
+	ent:SetNWInt("network", network)
+end
 
 function MW_CalculateConnections(ent, all)
 	timer.Simple(0.05, function ()
@@ -70,83 +141,56 @@ function MW_CalculateConnections(ent, all)
 	end)
 end
 
-function MW_CleanUp_Network(network)
-	local deleted = 0
-	for k, v in pairs(mw_electric_network[network].elements) do
-		if not IsValid(mw_electric_network[network].elements[k-deleted]) then
-			table.remove( mw_electric_network[network].elements, k-deleted )
-			deleted = deleted+1
-		end
-	end
-	if (table.Count(mw_electric_network[network].elements) == 0) then
-		MW_Energy_Deactivate_Network(mw_electric_network[network])
-	end
-end
+local function MW_Energy_Network_Search(ent, targetEnt)
+	local openList = {}
+	local closedList = {}
+	local foundEnt = nil
+	local safety = 0
+	table.insert(openList, ent)
+	while(table.Count(openList) > 0 and foundEnt == nil and safety < 10000) do
+		local current = openList[1]
 
-function MW_Energy_Network_New(ent)
-	local newNetwork = nil
-	local recycled = false
-	local index = 0
-	for k, v in pairs(mw_electric_network) do
-		if (recycled == false) then
-			if (v.active == false) then
-				v.active = true
-				index = k
-				newNetwork = v
-				recycled = true
-				break
+		current.alreadySearched = true
+		table.insert(closedList, current)
+		table.RemoveByValue(openList, current)
+		for k, v in pairs(current.connections) do
+			if (v == ent) then continue end
+			if (v.alreadySearched == false) then
+				if (v == targetEnt) then
+					foundEnt = v
+					current.alreadySet = true
+				end
+				table.insert(openList, v)
+				v.alreadySearched = true
 			end
 		end
+		safety = safety + 1
 	end
-	if (recycled == false) then
-		newNetwork = MW_Network()
-		index = table.insert(mw_electric_network, newNetwork)
+	if (safety == 10000) then
+		error("SAFETY SEARCH STOP")
 	end
-
-	newNetwork.name = "Network "..index
-	ent:SetNetwork(index)
-end
-
-function MW_Energy_Network_Merge(ent, networkA, networkB)
-	--MW_Energy_Network_Insert_Element(ent, networkA)
-	local nwa = mw_electric_network[networkA]
-	local nwb = mw_electric_network[networkB]
-	--nwa.capacity = nwa.capacity + nwb.capacity
-	nwa.energy = nwa.energy + nwb.energy
-	local count = table.Count(nwb.elements)
-	local safety = 0
-	for i=1, count do
-		nwb.elements[1]:SetNetwork(networkA)
-		if (safety >= 10000) then break end
+	local found = (foundEnt ~= nil)
+	table.Add(closedList, openList)
+	for k, v in pairs(closedList) do
+		v.alreadySearched = false
 	end
-	if (safety >= 10000) then error("SAFETY MERGE STOP") end
-	MW_Energy_Deactivate_Network(nwb)
-end
-
-function MW_Energy_Network_Insert_Element(ent, network)
-	MW_CleanUp_Network(network)
-	local nw = mw_electric_network[network]
-	nw.active = true
-	nw.capacity = nw.capacity + ent.capacity
-	table.insert(nw.elements, ent)
-	ent.network = network
-	ent:SetNWInt("network", network)
+	return closedList, found
 end
 
 function MW_Energy_Network_Remove_Element(ent)
 	local network = ent.network
 	local nw = mw_electric_network[network]
 	if (nw ~= nil) then
-		nw.energy = nw.energy-ent:GetEnergy() 
+		nw.energy = nw.energy-ent:GetEnergy()
 		nw.capacity = nw.capacity - ent.capacity
 		table.RemoveByValue( nw.elements, ent )
 		local touched = {}
 		local ambassador = nil
 		local totalSeparatedEnergy = 0
-		for k, v in pairs(ent.connections) do 
+		for k, v in pairs(ent.connections) do
 			if (k == 1) then
 				ambassador = v
-				v.alreadySet = true 
+				v.alreadySet = true
 				table.insert(touched, v)
 			else
 				local searched, found = MW_Energy_Network_Search(v, ambassador)
@@ -186,50 +230,6 @@ function MW_Energy_Network_Remove_Element(ent)
 		table.Empty(touched)
 	end
 	MW_CleanUp_Network(network)
-end
-
-function MW_Energy_Network_Search(ent, targetEnt)
-	local openList = {}
-	local closedList = {}
-	local foundEnt = nil
-	local safety = 0
-	table.insert(openList, ent)
-	while(table.Count(openList) > 0 and foundEnt == nil and safety < 10000) do
-		local current = openList[1]
-		
-		current.alreadySearched = true
-		table.insert(closedList, current)
-		table.RemoveByValue(openList, current)
-		for k, v in pairs(current.connections) do
-			if (v == ent) then continue end
-			if (v.alreadySearched == false) then
-				if (v == targetEnt) then
-					foundEnt = v
-					current.alreadySet = true
-				end
-				table.insert(openList, v)
-				v.alreadySearched = true
-			end
-		end
-		safety = safety + 1
-	end
-	if (safety == 10000) then
-		error("SAFETY SEARCH STOP")
-	end
-	local found = (foundEnt ~= nil)
-	table.Add(closedList, openList)
-	for k, v in pairs(closedList) do
-		v.alreadySearched = false
-	end
-	return closedList, found
-end
-
-function MW_Energy_Deactivate_Network(nw)
-	nw.active = false
-	nw.capacity = 0
-	table.Empty(nw.elements)
-	nw.energy = 0
-	nw.name = "Network"
 end
 
 function MW_Energy_Defaults( ent )
@@ -291,10 +291,10 @@ function ENT:Energy_Add_State()
 	self:SetNWInt("state", state)
 end
 
-function ENT:OnRemove() 
+function ENT:OnRemove()
 	if (istable(self.connections)) then
 		for k, v in pairs(self.connections) do
-			table.RemoveByValue(v.connections, self) 
+			table.RemoveByValue(v.connections, self)
 		end
 	end
 	MW_Energy_Network_Remove_Element(self)
@@ -326,7 +326,7 @@ function ENT:GetEnergy(network)
 	if(self.network > 0) then
 		return math.floor(mw_electric_network[self.network].energy*(self.capacity/mw_electric_network[self.network].capacity))
 	else
-		return 0 
+		return 0
 	end
 end
 

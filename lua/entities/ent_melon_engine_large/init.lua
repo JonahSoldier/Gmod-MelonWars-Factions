@@ -1,6 +1,6 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
+
 include('shared.lua')
 
 function ENT:Initialize()
@@ -71,26 +71,26 @@ function ENT:Update( ent )
 		ent:SetNWVector( "targetPos", ent.targetPos )
 
 		ent:SetNWEntity( "followEntity", ent.followEntity )
-		
+
 		if (ent.canMove) then
 			local phys = self.phys
-			
+
 			local const = constraint.FindConstraints( self, "Weld" )
 			if (table.Count(const) == 0) then
 				self.damage = 5
 			end
-			
+
 			if (IsValid(phys)) then
 				---------------------------------------------------------------------------Movimiento
 				if (ent.moving) then
 					local moveVector = (ent.targetPos-ent:GetPos()):GetNormalized()*self.speed-self:GetVelocity()
-					force = Vector(moveVector.x, moveVector.y, 0)
+					local force = Vector(moveVector.x, moveVector.y, 0)
 					--Takes the average between the prev moveforce and the desired new moveforce, prevents it from shaking violently without any noticeable effect on its ability to move
 					ent.moveForce = (ent.moveForce + force*self.thrustforce)/2
-					
+
 				else
 					local moveVector = -ent:GetVelocity()*0.2
-					force = Vector(moveVector.x, moveVector.y, 0)
+					local force = Vector(moveVector.x, moveVector.y, 0)
 					ent.moveForce = force
 				end
 			end

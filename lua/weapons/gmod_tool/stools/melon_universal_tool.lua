@@ -143,7 +143,7 @@ for i = 1, unitCount do
 	mw_units[i] = Unit()
 end
 
-local function BarracksText ( number, max )
+local function BarracksText( number, max )
 	return "This is a building that produces a " .. mw_units[number].name .. " every " .. tostring(mw_units[number].spawn_time * 3) .. " seconds, up to " .. max .. " at any given time, at half the price. Select this building and command it to move somewhere to set a rally point for its deployed units. Look at it and press E to toggle it on and off."
 end
 
@@ -285,7 +285,7 @@ u.class 		= "ent_melon_voidling"
 u.cost 			= 20
 u.welded_cost 	= -1
 u.population 	= 1
-u.spawn_time 	= 1/3
+u.spawn_time 	= 1 / 3
 u.description 	= [[A little entity of Void that seeks equilibrium. It will throw itself at enemies to deal damage and die in the process. When sacrificing a voidling to a shredder, you gain a small Water profit.]]
 u.model 		= "models/hunter/misc/sphere025x025.mdl"
 u.code 			= "--banned--"
@@ -399,79 +399,79 @@ u.model 		= "models/hunter/tubes/tube4x4x2to2x2.mdl"
 i = i + 1
 u = mw_units[i]
 u.code = "prot"
-u.name 			= "Heavy Flamethrower"			
+u.name 			= "Heavy Flamethrower"
 u.class 		= "ent_melon_flamethrower"
-u.cost 			= 9000				
-u.welded_cost 	= 3000			
-u.population 	= 8				
-u.spawn_time 	= 35	
+u.cost 			= 9000
+u.welded_cost 	= 3000
+u.population 	= 8
+u.spawn_time 	= 35
 u.offset        = Vector(0,0,42)
-u.description 	= [[Fire.]]	
+u.description 	= [[Fire.]]
 u.model 		= "models/props_citizen_tech/firetrap_propanecanister01a.mdl"
 u.isBonusUnit   = true
 
 i = i + 1
 u = mw_units[i]
 u.code = "full"
-u.name 			= "EMP Device"			
+u.name 			= "EMP Device"
 u.class 		= "ent_melon_emp"
-u.cost 			= 100			
-u.welded_cost 	= 1			
-u.population 	= 2				
-u.spawn_time 	= 5	
+u.cost 			= 100
+u.welded_cost 	= 1
+u.population 	= 2
+u.spawn_time 	= 5
 u.offset        = Vector(0,0,5)
-u.description 	= [[Needs to be charged before it can detonate. Stuns and slows units for 10 seconds, and drains energy from units and buildings. If it detonates near part of an energy grid it'll disable every building in it for 15 seconds, and the part that was hit for 30. The effects stack, so you can use multiple to disable things longer.]]	
+u.description 	= [[Needs to be charged before it can detonate. Stuns and slows units for 10 seconds, and drains energy from units and buildings. If it detonates near part of an energy grid it'll disable every building in it for 15 seconds, and the part that was hit for 30. The effects stack, so you can use multiple to disable things longer.]]
 u.model 		= "models/maxofs2d/hover_classic.mdl"
 u.isBonusUnit   = true
 
 i = i + 1
 u = mw_units[i]
 u.code 			= "admin"
-u.name 			= "Siege Gun"			
+u.name 			= "Siege Gun"
 u.class 		= "ent_melon_siegegun"
-u.cost 			= 100			
-u.welded_cost 	= 1			
-u.population 	= 2				
-u.spawn_time 	= 5	
+u.cost 			= 100
+u.welded_cost 	= 1
+u.population 	= 2
+u.spawn_time 	= 5
 u.offset        = Vector(0,0,32)
-u.description 	= [[explode.]]	
+u.description 	= [[explode.]]
 u.model 		= "models/props_trainstation/trashcan_indoor001b.mdl"
 
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Doot"			
+u.name 			= "Doot"
 u.class 		= "ent_melon_doot"
-u.cost 			= 25				
-u.welded_cost 	= 20				
-u.population 	= 1				
+u.cost 			= 25
+u.welded_cost 	= 20
+u.population 	= 1
 u.spawn_time 	= 0.5-- 1
-u.description 	= [[Such spoops]]	
+u.description 	= [[Such spoops]]
 u.model 		= "models/Gibs/HGIBS.mdl"
 u.isBonusUnit   = true
 
 i = i + 1
 u = mw_units[i]
 u.code 			= "void"
-u.name 			= "Mammoth"			
+u.name 			= "Mammoth"
 u.class 		= "ent_melon_void_mamoth"
-u.cost 			= 1000				
-u.welded_cost 	= -1				
-u.population 	= 3				
+u.cost 			= 1000
+u.welded_cost 	= -1
+u.population 	= 3
 u.spawn_time 	= 10
 u.offset 		= Vector(0,0,10)
-u.description 	= [[A big entity of Void, powerful and slow. Has a lot of health, deals extra damage to buildings and captures points quicker.]]	
+u.description 	= [[A big entity of Void, powerful and slow. Has a lot of health, deals extra damage to buildings and captures points quicker.]]
 u.model 		= "models/mechanics/wheels/wheel_spike_48.mdl"
 u.isBonusUnit   = true
 
 i = i + 1
 u = mw_units[i]
 u.code 			= "admin"
-u.name 			= "Engineer"			
+u.name 			= "Engineer"
 u.class 		= "ent_melon_engineer"
-u.cost 			= 300				
-u.welded_cost 	= 100				
-u.population 	= 1					
+u.cost 			= 300
+u.welded_cost 	= 100
+u.population 	= 1
 u.spawn_time 	= 3
 u.angle 		= Angle(90, 0, 0)
 u.offset 		= Vector(0,0,10)
@@ -480,18 +480,18 @@ u.model 		= "models/props_wasteland/light_spotlight01_lamp.mdl"
 
 
 i = i + 1
-firstBuilding = i --------------------------------- First building
+local firstBuilding = i --------------------------------- First building
 
 
 u = mw_units[i]
-u.name 			= "City Energy Network Connection"	
-u.code 			= "admin"		
-u.class 		= "ent_melon_energy_uplink"	
-u.cost 			= 9					
-u.welded_cost 	= -1					
-u.population 	= 0						
-u.spawn_time 	= 10	
-u.description 	= [[Swhy3]]				
+u.name 			= "City Energy Network Connection"
+u.code 			= "admin"
+u.class 		= "ent_melon_energy_uplink"
+u.cost 			= 9
+u.welded_cost 	= -1
+u.population 	= 0
+u.spawn_time 	= 10
+u.description 	= [[Swhy3]]
 u.model 		= "models/props_lab/teleportbulkeli.mdl"
 u.offset 		= Vector(0,0,100)
 u.angle 		= Angle(90, -90, 90)
@@ -499,26 +499,26 @@ u.angle 		= Angle(90, -90, 90)
 i = i + 1
 u = mw_units[i]
 u.code 			= "full"
-u.name 			= "Refuel Station"			
-u.class 		= "ent_melon_refuel"	
-u.cost 			= 500				
-u.welded_cost 	= -1					
-u.population 	= 2						
-u.spawn_time 	= 20	
-u.description 	= [[A ground-station for the refueling of fighters. Essential, provided you have a safe enough place to put it.]]				
+u.name 			= "Refuel Station"
+u.class 		= "ent_melon_refuel"
+u.cost 			= 500
+u.welded_cost 	= -1
+u.population 	= 2
+u.spawn_time 	= 20
+u.description 	= [[A ground-station for the refueling of fighters. Essential, provided you have a safe enough place to put it.]]
 u.model 		= "models/xqm/jetenginepropellerlarge.mdl"
 u.offset 		= Vector(0,0,-2)
 u.angle 		= Angle(90, 0, 0)
 
-i=i+1
+i = i + 1
 u = mw_units[i]
-u.name 			= "Turret"			
-u.class 		= "ent_melon_turret"	
-u.cost 			= 350					
-u.welded_cost 	= -1					
-u.population 	= 2						
-u.spawn_time 	= 10	
-u.description 	= [[Static defense, a heavy machinegun with good health and firepower]]				
+u.name 			= "Turret"
+u.class 		= "ent_melon_turret"
+u.cost 			= 350
+u.welded_cost 	= -1
+u.population 	= 2
+u.spawn_time 	= 10
+u.description 	= [[Static defense, a heavy machinegun with good health and firepower]]
 u.model 		= "models/combine_turrets/ground_turret.mdl"
 u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(180, 180, 0)
@@ -526,26 +526,26 @@ u.energyRange		= 500
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Shredder"				
+u.name 			= "Shredder"
 u.class 		= "ent_melon_shredder"
-u.cost 			= 100					
-u.welded_cost 	= -1					
-u.population 	= 0						
+u.cost 			= 100
+u.welded_cost 	= -1
+u.population 	= 0
 u.spawn_time 	= 5
-u.description 	= [[A set of spinning blades, used to recycle melons, get resources back, and sometimes make smoothies. It has low health, so use as defense at your own risk. (It doesn't give credits for friendly free units)]]			
+u.description 	= [[A set of spinning blades, used to recycle melons, get resources back, and sometimes make smoothies. It has low health, so use as defense at your own risk. (It doesn't give credits for friendly free units)]]
 u.model 		= "models/props_c17/TrapPropeller_Blade.mdl"
 u.offset 		= Vector(0,0,0)
 
 i = i + 1
 u = mw_units[i]
 u.code 			= "prot"
-u.name 			= "Electrified Debris"			
-u.class 		= "ent_melon_teslarods"	
-u.cost 			= 150					
-u.welded_cost 	= -1					
-u.population 	= 0						
-u.spawn_time 	= 10	
-u.description 	= [[A haphazard spread of metal rods connected to an underground power source. Due to its design, it is near impossible to dispatch without use of explosives or excessively high temperatures.]]				
+u.name 			= "Electrified Debris"
+u.class 		= "ent_melon_teslarods"
+u.cost 			= 150
+u.welded_cost 	= -1
+u.population 	= 0
+u.spawn_time 	= 10
+u.description 	= [[A haphazard spread of metal rods connected to an underground power source. Due to its design, it is near impossible to dispatch without use of explosives or excessively high temperatures.]]
 u.model 		= "models/props_rooftop/antennaclusters01a.mdl"
 u.offset 		= Vector(0,0,60)
 u.angle 		= Angle(0, 0, 0)
@@ -640,12 +640,12 @@ if CLIENT then
 	end
 end
 ]]
-u.class 		= "ent_melon_energy_siphon"	
-u.cost 			= 1250					
-u.welded_cost 	= -1					
-u.population 	= 5						
-u.spawn_time 	= 10	
-u.description 	= [[Connects to enemy energy networks and drains their energy whilst adding to yours at a rate of 5e/s per-attached device. Can be built outside of build range provided a friendly unit is nearby.]]				
+u.class 		= "ent_melon_energy_siphon"
+u.cost 			= 1250
+u.welded_cost 	= -1
+u.population 	= 5
+u.spawn_time 	= 10
+u.description 	= [[Connects to enemy energy networks and drains their energy whilst adding to yours at a rate of 5e/s per-attached device. Can be built outside of build range provided a friendly unit is nearby.]]
 u.model 		= "models/props_c17/substation_stripebox01a.mdl"
 u.offset 		= Vector(0,0,60)
 u.button_color 	= button_energy_color
@@ -669,13 +669,13 @@ u.energyRange	= defaultenergyrange
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Tesla Tower"			
-u.class 		= "ent_melon_tesla_tower"	
-u.cost 			= 300					
-u.welded_cost 	= -1					
-u.population 	= 1						
-u.spawn_time 	= 10	
-u.description 	= [[Static defense that consumes energy to zap up to 5 targets at once. Requires energy to fire.]]				
+u.name 			= "Tesla Tower"
+u.class 		= "ent_melon_tesla_tower"
+u.cost 			= 300
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 10
+u.description 	= [[Static defense that consumes energy to zap up to 5 targets at once. Requires energy to fire.]]
 u.model 		= "models/props_c17/FurnitureBoiler001a.mdl"
 u.offset 		= Vector(0,0,40)
 u.angle 		= Angle(0, 0, 0)
@@ -685,13 +685,13 @@ u.energyRange	= defaultenergyrange
 i = i + 1
 u = mw_units[i]
 u.code 			= "full"
-u.name 			= "Particle Tower"			
-u.class 		= "ent_melon_laser_tower"	
-u.cost 			= 12000					
-u.welded_cost 	= -1					
-u.population 	= 5						
-u.spawn_time 	= 80	
-u.description 	= [[Static assault weapon that fires a beam of energy at targets resulting in an explosion after a few seconds. (Alt right click on a unit to target it, alt right click on the world to clear targets, will fire until targeted unit is killed)]]				
+u.name 			= "Particle Tower"
+u.class 		= "ent_melon_laser_tower"
+u.cost 			= 12000
+u.welded_cost 	= -1
+u.population 	= 5
+u.spawn_time 	= 80
+u.description 	= [[Static assault weapon that fires a beam of energy at targets resulting in an explosion after a few seconds. (Alt right click on a unit to target it, alt right click on the world to clear targets, will fire until targeted unit is killed)]]
 u.model 		= "models/props_wasteland/lighthouse_fresnel_light_base.mdl"
 u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(0, 0, 0)
@@ -701,13 +701,13 @@ u.energyRange	= defaultenergyrange
 i = i + 1
 u = mw_units[i]
 u.code 			= "void"
-u.name 			= "Anti-Power Reactor"			
-u.class 		= "ent_melon_energy_powerupgrader"	
-u.cost 			= 2000				
-u.welded_cost 	= -1					
-u.population 	= 0						
-u.spawn_time 	= 60	
-u.description 	= [[A large void machine that uses energy to generate negative power, reducing the power usage of its team when it's on up to a maximum of -35. Limit of one per team.]]				
+u.name 			= "Anti-Power Reactor"
+u.class 		= "ent_melon_energy_powerupgrader"
+u.cost 			= 2000
+u.welded_cost 	= -1
+u.population 	= 0
+u.spawn_time 	= 60
+u.description 	= [[A large void machine that uses energy to generate negative power, reducing the power usage of its team when it's on up to a maximum of -35. Limit of one per team.]]
 u.model 		= "models/props_c17/substation_circuitbreaker01a.mdl"
 u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(0, 0, 0)
@@ -717,13 +717,13 @@ u.energyRange	= defaultenergyrange
 i = i + 1
 u = mw_units[i]
 u.code 			= "void"
-u.name 			= "Unit Launcher"			
-u.class 		= "ent_melon_unit_launcher"	
-u.cost 			= 2500					
-u.welded_cost 	= -1					
-u.population 	= 1						
-u.spawn_time 	= 40	
-u.description 	= [[A large mortar used to fire shells full of melons at your enemies. Aim/fire by giving move orders to the launcher. Can load up to 10 power. Can't be fired too close to enemy buildings.]]				
+u.name 			= "Unit Launcher"
+u.class 		= "ent_melon_unit_launcher"
+u.cost 			= 2500
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 40
+u.description 	= [[A large mortar used to fire shells full of melons at your enemies. Aim/fire by giving move orders to the launcher. Can load up to 10 power. Can't be fired too close to enemy buildings.]]
 u.model 		= "models/props_citizen_tech/steamengine001a.mdl"
 u.offset 		= Vector(0, 0, 100)
 u.angle 		= Angle(-90, 0, -90)
@@ -734,13 +734,13 @@ u.isBonusUnit   = true
 i = i + 1
 u = mw_units[i]
 u.code 			= "admin"
-u.name 			= "Supergun"			
-u.class 		= "ent_melon_supergun"	
-u.cost 			= 6500					
-u.welded_cost 	= -1					
-u.population 	= 5						
-u.spawn_time 	= 40	
-u.description 	= [[Gun.]]				
+u.name 			= "Supergun"
+u.class 		= "ent_melon_supergun"
+u.cost 			= 6500
+u.welded_cost 	= -1
+u.population 	= 5
+u.spawn_time 	= 40
+u.description 	= [[Gun.]]
 u.model 		= "models/props_citizen_tech/steamengine001a.mdl"
 u.offset 		= Vector(0, 0, 100)
 u.angle 		= Angle(-90, 0, -90)
@@ -750,13 +750,13 @@ u.energyRange	= defaultenergyrange
 i = i + 1
 u = mw_units[i]
 u.code 			= "admin"
-u.name 			= "Melonium Silo"			
-u.class 		= "ent_melon_supermissile"	
-u.cost 			= 6500					
-u.welded_cost 	= -1					
-u.population 	= 5						
-u.spawn_time 	= 40	
-u.description 	= [[Missl.]]				
+u.name 			= "Melonium Silo"
+u.class 		= "ent_melon_supermissile"
+u.cost 			= 6500
+u.welded_cost 	= -1
+u.population 	= 5
+u.spawn_time 	= 40
+u.description 	= [[Missl.]]
 u.model 		= "models/props_citizen_tech/steamengine001a.mdl"
 u.offset 		= Vector(0, 0, 100)
 u.angle 		= Angle(-90, 0, -90)
@@ -766,13 +766,13 @@ u.energyRange	= defaultenergyrange
 i = i + 1
 u = mw_units[i]
 u.code 			= "--banned--"
-u.name 			= "Universal Overclocker"			
-u.class 		= "ent_melon_energy_superoverclocker"	
-u.cost 			= 2250				
-u.welded_cost 	= -1					
-u.population 	= 1						
-u.spawn_time 	= 60	
-u.description 	= [[This is broken don't use it.]]				
+u.name 			= "Universal Overclocker"
+u.class 		= "ent_melon_energy_superoverclocker"
+u.cost 			= 2250
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 60
+u.description 	= [[This is broken don't use it.]]
 u.model 		= "models/props_c17/substation_circuitbreaker01a.mdl"
 u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(0, 0, 0)
@@ -782,13 +782,13 @@ u.energyRange	= defaultenergyrange
 i = i + 1
 u = mw_units[i]
 u.code 			= "admin"
-u.name 			= "Siege Mortar"			
-u.class 		= "ent_melon_supermortar"	
-u.cost 			= 10000					
-u.welded_cost 	= -1					
-u.population 	= 5						
-u.spawn_time 	= 60	
-u.description 	= [[Big gun.]]				
+u.name 			= "Siege Mortar"
+u.class 		= "ent_melon_supermortar"
+u.cost 			= 10000
+u.welded_cost 	= -1
+u.population 	= 5
+u.spawn_time 	= 60
+u.description 	= [[Big gun.]]
 u.model 		= "models/props_citizen_tech/steamengine001a.mdl"
 u.offset 		= Vector(0, 0, 100)
 u.angle 		= Angle(-90, 0, -90)
@@ -797,13 +797,13 @@ u.energyRange	= defaultenergyrange
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Over-Clocker"			
-u.class 		= "ent_melon_overclocker"	
-u.cost 			= 200					
-u.welded_cost 	= -1					
-u.population 	= 0						
-u.spawn_time 	= 10	
-u.description 	= [[Place it right next to a Barracks of any kind. When it's on, it will consume energy and boost the barrack's production rate. (It will disappear if not placed close enough to a barracks)]]				
+u.name 			= "Over-Clocker"
+u.class 		= "ent_melon_overclocker"
+u.cost 			= 200
+u.welded_cost 	= -1
+u.population 	= 0
+u.spawn_time 	= 10
+u.description 	= [[Place it right next to a Barracks of any kind. When it's on, it will consume energy and boost the barrack's production rate. (It will disappear if not placed close enough to a barracks)]]
 u.model 		= "models/props_combine/combine_light001a.mdl"
 u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(0, 0, 0)
@@ -812,13 +812,13 @@ u.energyRange	= defaultenergyrange
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Medical Bay"			
-u.class 		= "ent_melon_medical_bay"	
-u.cost 			= 600					
-u.welded_cost 	= -1					
+u.name 			= "Medical Bay"
+u.class 		= "ent_melon_medical_bay"
+u.cost 			= 600
+u.welded_cost 	= -1
 u.population 	= 1
-u.spawn_time 	= 10	
-u.description 	= [[This building will slowly heal up to 10 units at a time in a big radius. It requires a lot of energy per target, so area attacks might drain a lot of energy]]				
+u.spawn_time 	= 10
+u.description 	= [[This building will slowly heal up to 10 units at a time in a big radius. It requires a lot of energy per target, so area attacks might drain a lot of energy]]
 u.model 		= "models/props_phx/wheels/747wheel.mdl"
 u.offset 		= Vector(0,0,-5)
 u.angle 		= Angle(0, 0, 0)
@@ -827,13 +827,13 @@ u.energyRange	= defaultenergyrange
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Charging Station"			
-u.class 		= "ent_melon_charging_station"	
-u.cost 			= 300					
-u.welded_cost 	= -1					
-u.population 	= 1						
-u.spawn_time 	= 10	
-u.description 	= [[Provides energy to nearby energy dependant units.]]				
+u.name 			= "Charging Station"
+u.class 		= "ent_melon_charging_station"
+u.cost 			= 300
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 10
+u.description 	= [[Provides energy to nearby energy dependant units.]]
 u.model 		= "models/props_c17/substation_transformer01d.mdl"
 u.offset 		= Vector(0,0,24)
 u.angle 		= Angle(0, 0, 0)
@@ -842,13 +842,13 @@ u.energyRange	= defaultenergyrange
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Radar"			
-u.class 		= "ent_melon_radar"	
-u.cost 			= 100					
-u.welded_cost 	= -1					
+u.name 			= "Radar"
+u.class 		= "ent_melon_radar"
+u.cost 			= 100
+u.welded_cost 	= -1
 u.population 	= 0
-u.spawn_time 	= 5	
-u.description 	= [[If energized, it will alert your team of nearby units no matter where you are. It passively consumes the power output of 2 solar panels]]				
+u.spawn_time 	= 5
+u.description 	= [[If energized, it will alert your team of nearby units no matter where you are. It passively consumes the power output of 2 solar panels]]
 u.model 		= "models/props_trainstation/trainstation_column001.mdl"
 u.offset 		= Vector(0,0,-5)
 u.angle 		= Angle(0, 0, 0)
@@ -857,13 +857,13 @@ u.energyRange	= defaultenergyrange
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Forcefield generator"			
-u.class 		= "ent_melon_forcefield_generator"	
-u.cost 			= 750					
-u.welded_cost 	= -1					
+u.name 			= "Forcefield generator"
+u.class 		= "ent_melon_forcefield_generator"
+u.cost 			= 750
+u.welded_cost 	= -1
 u.population 	= 3
-u.spawn_time 	= 15	
-u.description 	= [[Generates a forcefield around itself that uses energy to block enemy bullets while letting friendly bullets and all projectiles through. Stops 1 damage for 2 energy.]]				
+u.spawn_time 	= 15
+u.description 	= [[Generates a forcefield around itself that uses energy to block enemy bullets while letting friendly bullets and all projectiles through. Stops 1 damage for 2 energy.]]
 u.model 		= "models/props_c17/substation_transformer01d.mdl"
 u.offset 		= Vector(0,0,23.5)
 u.angle 		= Angle(0, 0, 0)
@@ -874,13 +874,13 @@ u.isBonusUnit   = true
 i = i + 1
 u = mw_units[i]
 u.code 			= "full"
-u.name 			= "Point Defense Station"			
-u.class 		= "ent_melon_point_defence"	
-u.cost 			= 750					
-u.welded_cost 	= -1					
+u.name 			= "Point Defense Station"
+u.class 		= "ent_melon_point_defence"
+u.cost 			= 750
+u.welded_cost 	= -1
 u.population 	= 3
-u.spawn_time 	= 25	
-u.description 	= [[A Full defense tower that zaps and destroys incoming projectiles. Consumes 75 energy per projectile destroyed.]]				
+u.spawn_time 	= 25
+u.description 	= [[A Full defense tower that zaps and destroys incoming projectiles. Consumes 75 energy per projectile destroyed.]]
 u.model 		= "models/props_docks/channelmarker02a.mdl"
 u.offset 		= Vector(0,0,23.5)
 u.angle 		= Angle(0, 0, 0)
@@ -889,13 +889,13 @@ u.energyRange	= defaultenergyrange
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Marine Barracks"			
+u.name 			= "Marine Barracks"
 u.class 		= "ent_melon_barracks_marine"
-u.cost 			= 750						
-u.welded_cost 	= -1							
-u.population 	= 1						
+u.cost 			= 750
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 10
-u.description   = BarracksText (1, 10)										
+u.description   = BarracksText (1, 10)
 u.model 		= "models/Items/ammocrate_ar2.mdl"
 u.offset 		= Vector(0,0,10)
 u.canOverlap 	= false
@@ -903,13 +903,13 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Medic Academy"			
-u.class 		= "ent_melon_barracks_medic" 
-u.cost 			= 1000						
-u.welded_cost 	= -1							
-u.population 	= 1							
+u.name 			= "Medic Academy"
+u.class 		= "ent_melon_barracks_medic"
+u.cost 			= 1000
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 10
-u.description 	= BarracksText (2, 5)							
+u.description 	= BarracksText (2, 5)
 u.model 		= "models/props_junk/wood_crate002a.mdl"
 u.offset 		= Vector(0,0,10)
 u.canOverlap 	= false
@@ -917,13 +917,13 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Jetpack Flight School"		
-u.class 		= "ent_melon_barracks_jetpack"	
-u.cost 			= 2000							
-u.welded_cost 	= -1								
-u.population 	= 1								
+u.name 			= "Jetpack Flight School"
+u.class 		= "ent_melon_barracks_jetpack"
+u.cost 			= 2000
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 10
-u.description 	= BarracksText (3, 5)							
+u.description 	= BarracksText (3, 5)
 u.model 		= "models/props_wasteland/kitchen_stove002a.mdl"
 u.offset 		= Vector(0,0,-15)
 u.canOverlap 	= false
@@ -931,13 +931,13 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Bomb Factory"				
-u.class 		= "ent_melon_barracks_bomb"	
-u.cost 			= 1800						
-u.welded_cost 	= -1							
-u.population 	= 1							
+u.name 			= "Bomb Factory"
+u.class 		= "ent_melon_barracks_bomb"
+u.cost 			= 1800
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 10
-u.description 	= BarracksText (4, 3)						
+u.description 	= BarracksText (4, 3)
 u.model 		= "models/props_wasteland/laundry_basket001.mdl"
 u.offset 		= Vector(0,0,10)
 u.angle 		= Angle(180,0,0)
@@ -946,13 +946,13 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Gunner Training Camp"		
+u.name 			= "Gunner Training Camp"
 u.class 		= "ent_melon_barracks_gunner"
-u.cost 			= 3000						
-u.welded_cost 	= -1							
-u.population 	= 1						
-u.spawn_time 	= 10	
-u.description 	= BarracksText (5, 5)							
+u.cost 			= 3000
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 10
+u.description 	= BarracksText (5, 5)
 u.model 		= "models/props_combine/combine_interface002.mdl"
 u.offset 		= Vector(0,0,-25)
 u.canOverlap 	= false
@@ -960,13 +960,13 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Missiles Production Line"		
-u.class 		= "ent_melon_barracks_missiles"	
-u.cost 			= 3000							
-u.welded_cost 	= -1								
-u.population 	= 1								
-u.spawn_time 	= 15	
-u.description 	= BarracksText (6, 4)								
+u.name 			= "Missiles Production Line"
+u.class 		= "ent_melon_barracks_missiles"
+u.cost 			= 3000
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 15
+u.description 	= BarracksText (6, 4)
 u.model 		= "models/props_interiors/VendingMachineSoda01a.mdl"
 u.offset 		= Vector(0,0,10)
 u.angle 		= Angle(-90,0,90)
@@ -975,13 +975,13 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Sniper Shooting Range"		
-u.class 		= "ent_melon_barracks_sniper"	
-u.cost 			= 3000							
-u.welded_cost 	= -1								
-u.population 	= 1								
-u.spawn_time 	= 15	
-u.description 	= BarracksText (7, 3)								
+u.name 			= "Sniper Shooting Range"
+u.class 		= "ent_melon_barracks_sniper"
+u.cost 			= 3000
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 15
+u.description 	= BarracksText (7, 3)
 u.model 		= "models/props_wasteland/laundry_cart001.mdl"
 u.offset 		= Vector(0,0,15)
 u.angle 		= Angle(180, 90, 0)
@@ -990,13 +990,13 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Hot Shot Forge"				
-u.class 		= "ent_melon_barracks_hotshot"		
-u.cost 			= 4000							
-u.welded_cost 	= -1								
-u.population 	= 1								
-u.spawn_time 	= 15	
-u.description 	= BarracksText (8, 3)								
+u.name 			= "Hot Shot Forge"
+u.class 		= "ent_melon_barracks_hotshot"
+u.cost 			= 4000
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 15
+u.description 	= BarracksText (8, 3)
 u.model 		= "models/props_wasteland/laundry_dryer002.mdl"
 u.offset 		= Vector(0,0,30)
 u.canOverlap 	= false
@@ -1004,13 +1004,13 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Mortar Production Facility"	
-u.class 		= "ent_melon_barracks_mortar"	
-u.cost 			= 5000							
-u.welded_cost 	= -1								
-u.population 	= 1								
-u.spawn_time 	= 15	
-u.description 	= BarracksText (9, 3)								
+u.name 			= "Mortar Production Facility"
+u.class 		= "ent_melon_barracks_mortar"
+u.cost 			= 5000
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 15
+u.description 	= BarracksText (9, 3)
 u.model 		= "models/XQM/CoasterTrack/train_1.mdl"
 u.offset 		= Vector(0,0,-25)
 u.canOverlap 	= false
@@ -1018,13 +1018,13 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = mw_units[i]
-u.name 			= "Nuke Assembler"				
-u.class 		= "ent_melon_barracks_nuke"		
-u.cost 			= 4500							
-u.welded_cost 	= -1								
-u.population 	= 1								
-u.spawn_time 	= 20	
-u.description 	= BarracksText (10, 1)								
+u.name 			= "Nuke Assembler"
+u.class 		= "ent_melon_barracks_nuke"
+u.cost 			= 4500
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 20
+u.description 	= BarracksText (10, 1)
 u.model 		= "models/props_lab/teleportframe.mdl"
 u.offset 		= Vector(0,0,0)
 u.canOverlap 	= false
@@ -1032,13 +1032,13 @@ u.button_color 	= button_barrack_color
 --[[
 i = i + 1
 u = mw_units[i]
-u.name 			= "Tombstone"				
-u.class 		= "ent_melon_barracks_doot"		
-u.cost 			= 300						
-u.welded_cost 	= -1								
-u.population 	= 1								
-u.spawn_time 	= 10	
-u.description 	= BarracksText (11, 3)								
+u.name 			= "Tombstone"
+u.class 		= "ent_melon_barracks_doot"
+u.cost 			= 300
+u.welded_cost 	= -1
+u.population 	= 1
+u.spawn_time 	= 10
+u.description 	= BarracksText (11, 3)
 u.model 		= "models/props_c17/gravestone002a.mdl"
 u.offset 		= Vector(0,0,0)
 u.canOverlap 	= false
@@ -1047,13 +1047,13 @@ u.button_color 	= button_barrack_color
 i = i + 1
 u = mw_units[i]
 u.code 			= "void"
-u.name 			= "Voidling Reactor"			
+u.name 			= "Voidling Reactor"
 u.class 		= "ent_melon_barracks_voidling"
-u.cost 			= 1500						
-u.welded_cost 	= -1							
-u.population 	= 1						
+u.cost 			= 1500
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 20
-u.description   = BarracksText (12, 5)	
+u.description   = BarracksText (12, 5)
 u.model 		= "models/props_wasteland/laundry_washer001a.mdl"
 u.offset 		= Vector(0,0,25)
 u.canOverlap 	= false
@@ -1062,13 +1062,13 @@ u.button_color 	= button_barrack_color
 i = i + 1
 u = mw_units[i]
 u.code 			= "void"
-u.name 			= "Raider Fabrication Platform"			
+u.name 			= "Raider Fabrication Platform"
 u.class 		= "ent_melon_barracks_void_raider"
-u.cost 			= 500						
-u.welded_cost 	= -1							
-u.population 	= 1						
+u.cost 			= 500
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 30
-u.description   = BarracksText (13, 3)	
+u.description   = BarracksText (13, 3)
 u.model 		= "models/props_vehicles/apc_tire001.mdl"
 u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(-90,0,0)
@@ -1079,13 +1079,13 @@ u.button_color 	= button_barrack_color
 i = i + 1
 u = mw_units[i]
 u.code 			= "void"
-u.name 			= "Mammoth Spawning Vat"			
+u.name 			= "Mammoth Spawning Vat"
 u.class 		= "ent_melon_barracks_void_mamoth"
-u.cost 			= 5000						
-u.welded_cost 	= -1							
-u.population 	= 1						
+u.cost 			= 5000
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 30
-u.description   = BarracksText (13, 3)	
+u.description   = BarracksText (13, 3)
 u.model 		= "models/props_combine/masterinterface.mdl"
 u.offset 		= Vector(0,0,-10)
 u.canOverlap 	= false
@@ -1095,13 +1095,13 @@ u.isBonusUnit   = true
 i = i + 1
 u = mw_units[i]
 u.code 			= "full"
-u.name 			= "Buck University"			
+u.name 			= "Buck University"
 u.class 		= "ent_melon_barracks_buck"
-u.cost 			= 4000						
-u.welded_cost 	= -1							
-u.population 	= 1						
+u.cost 			= 4000
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 40
-u.description   = BarracksText (14, 5)	
+u.description   = BarracksText (14, 5)
 u.model 		= "models/hunter/misc/roundthing2.mdl"
 u.offset 		= Vector(0,0,0)
 u.canOverlap 	= false
@@ -1110,13 +1110,13 @@ u.button_color 	= button_barrack_color
 i = i + 1
 u = mw_units[i]
 u.code 			= "full"
-u.name 			= "Fighter University"			
+u.name 			= "Fighter University"
 u.class 		= "ent_melon_barracks_fighter"
-u.cost 			= 4500						
-u.welded_cost 	= -1							
-u.population 	= 1						
+u.cost 			= 4500
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 40
-u.description   = BarracksText (15, 4)	
+u.description   = BarracksText (15, 4)
 u.model 		= "models/phxtended/trieq2x2x2solid.mdl"
 u.offset 		= Vector(0,0,0)
 u.canOverlap 	= false
@@ -1125,13 +1125,13 @@ u.button_color 	= button_barrack_color
 i = i + 1
 u = mw_units[i]
 u.code 			= "prot"
-u.name 			= "Gatling Depot"			
+u.name 			= "Gatling Depot"
 u.class 		= "ent_melon_barracks_gatling"
-u.cost 			= 2000				
-u.welded_cost 	= -1							
-u.population 	= 1						
+u.cost 			= 2000
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 20
-u.description   = BarracksText (16, 5)	
+u.description   = BarracksText (16, 5)
 u.model 		= "models/props_wasteland/kitchen_stove001a.mdl"
 u.offset 		= Vector(0,0,-10)
 u.canOverlap 	= false
@@ -1140,13 +1140,13 @@ u.button_color 	= button_barrack_color
 i = i + 1
 u = mw_units[i]
 u.code 			= "prot"
-u.name 			= "Molotov Depot"			
+u.name 			= "Molotov Depot"
 u.class 		= "ent_melon_barracks_molotov"
-u.cost 			= 900						
-u.welded_cost 	= -1							
-u.population 	= 1						
+u.cost 			= 900
+u.welded_cost 	= -1
+u.population 	= 1
 u.spawn_time 	= 20
-u.description   = BarracksText (17, 3)	
+u.description   = BarracksText (17, 3)
 u.model 		= "models/props_industrial/oil_storage.mdl"
 u.offset 		= Vector(0,0,-10)
 u.canOverlap 	= false
@@ -1169,8 +1169,11 @@ u.canOverlap 	= false
 u.energy 		= true
 u.button_color 	= button_barrack_color
 
+
 i = i + 1
-firstEnergy = i ----------------------------------First energy
+local firstEnergy = i ----------------------------------First energy
+
+
 u = mw_units[i]
 u.name 			= "Relay"
 u.class 		= "ent_melon_energy_relay"
@@ -1326,8 +1329,11 @@ u.canOverlap 	= false
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
+
 i = i + 1
-firstContraption = i ---------------------------- First Contraption
+local firstContraption = i ---------------------------- First Contraption
+
+
 u = mw_units[i]
 u.name 			= "Engine"
 u.class 		= "ent_melon_engine"
@@ -1473,7 +1479,7 @@ end
 local basePropCount = 25
 mw_base_props = {}
 local u = nil
-for i=1, basePropCount do
+for i = 1, basePropCount do
 	mw_base_props[i] = BaseProp()
 end
 
@@ -1626,7 +1632,7 @@ u.hp = 40
 i = i + 1
 u = mw_base_props[i]
 u.name = "Slim Full Ramp"
-u.model = "models/hunter/triangles/2x1x1.mdl"
+u.model = "models/hunter/triangles / 2x1x1.mdl"
 u.offset = Vector(48.3,0,23.1)
 u.angle = Angle(0,90,0)
 u.cost = 75
@@ -1682,7 +1688,7 @@ u = mw_base_props[i]
 u.name = "Half Pipe"
 u.model = "models/props_phx/construct/metal_plate_curve180.mdl"
 u.offset = Vector(-46,0,48)
-u.angle = Angle(180,0,0)	
+u.angle = Angle(180,0,0)
 u.cost = 50
 u.hp = 75
 
@@ -1725,62 +1731,12 @@ u.hp = 25
 local w = 700
 local h = 500
 
-function TOOL:MenuButton( pl, y, h, text, number )
-	local button = vgui.Create( "DButton", pl.mw_frame )
-	button:SetSize( 100, h )
-	button:SetPos( 10, y )
-	button:SetText( text )
-	button:SetFont( "CloseCaption_Normal" )
-	function button:DoClick()
-		pl.panel:Remove()
-		pl.mw_menu = number
-		_CreatePanel()
-	end
-end
-
-function TOOL:Reload()
-	if cvars.Bool("mw_admin_cutscene") then return end
-	if not CLIENT then return end
-	local pl = LocalPlayer()
-	if pl.mw_frame ~= nil then return end
---	CREATE FRAME
-	pl.mw_frame = vgui.Create("DFrame")
-	pl.mw_frame:SetSize(w,h)
-	pl.mw_frame:SetPos(ScrW()/2-w/2+150,ScrH()/2-h/3)
-	pl.mw_frame:SetTitle("Melon Wars")
-	pl.mw_frame:MakePopup()
-	pl.mw_frame:ShowCloseButton()
-	local button = vgui.Create("DButton", pl.mw_frame)
-	button:SetSize(90,18)
-	button:SetPos(w-93,3)
-	button:SetText("Press R to close")
-	function button:DoClick()
-		pl.mw_frame:Remove()
-		pl.mw_frame = nil
-	end
-
-	_CreatePanel()
-
-	local h = 70
-	self:MenuButton(pl, 30+h*0, h, "Units", 0)
-	self:MenuButton(pl, 30+h*1, h, "Buildings", 1)
-	self:MenuButton(pl, 30+h*2, h, "Base", 2)
-	self:MenuButton(pl, 30+h*3, h, "Energy", 3)
-	self:MenuButton(pl, 30+h*4, h, "Contrap.", 4)
-
-	self:MenuButton(pl, 390, 25, "Help", 6)
-	self:MenuButton(pl, 415, 25, "Team", 5)
-	self:MenuButton(pl, 440, 25, "Admin", 7)
-	self:MenuButton(pl, 470, 25, "Player", 8)
---	button:SetEnabled( pl:IsAdmin() )
-end
-
-function _MakeCheckbox (x, y, parent, textstr, command, labelstr, inverted)
-	local checkbox = vgui.Create( "DButton", parent )--  Create the checkbox
-	checkbox:SetPos( x, y )--  Set the position
+local function _MakeCheckbox (x, y, parent, textstr, command, labelstr, inverted)
+	local checkbox = vgui.Create( "DButton", parent ) --  Create the checkbox
+	checkbox:SetPos( x, y ) --  Set the position
 	checkbox:SetSize(60,30)
 	checkbox:SetText("")
-	local checked = (GetConVarNumber( command ) == 1)
+	local checked = GetConVar( command ):GetInt() == 1
 	if (inverted) then checked = not checked end
 	checkbox.Paint = function(s, w, h)
 		draw.RoundedBox( 8, 0, 0, w, h, color_white )
@@ -1790,16 +1746,16 @@ function _MakeCheckbox (x, y, parent, textstr, command, labelstr, inverted)
 		end
 	end
 	function checkbox:DoClick()
-		local commandstring = command.." "..tostring(1-GetConVarNumber( command ))
+		local commandstring = command .. " " .. tostring( 1 - GetConVar( command ):GetInt() )
 
 		LocalPlayer():ConCommand(commandstring)
 		net.Start("SetMWConvar")
 			net.WriteString(command)
-			net.WriteBool(1-GetConVarNumber( command ))
+			net.WriteBool( 1 - GetConVar( command ):GetInt() )
 		net.SendToServer()
 
-		local checked = (GetConVarNumber( command ) ~= 1)
-		if (inverted) then checked = not checked end
+		checked = GetConVar( command ):GetInt() ~= 1
+		if inverted then checked = not checked end
 		checkbox.Paint = function(s, w, h)
 			draw.RoundedBox( 8, 0, 0, w, h, color_white )
 			draw.RoundedBox( 6, 2, 2, w-4, h-4, color_black )
@@ -1810,14 +1766,14 @@ function _MakeCheckbox (x, y, parent, textstr, command, labelstr, inverted)
 	end
 	if (textstr ~= nil) then
 		local label = vgui.Create("DLabel", parent)
-		label:SetPos( x+70, y)
+		label:SetPos( x + 70, y)
 		label:SetSize(370,30)
 		label:SetFontInternal( "Trebuchet24" )
 		label:SetText(textstr)
 	end
 	if (labelstr ~= nil) then
 		local label = vgui.Create("DLabel", parent)
-		label:SetPos( x+250, y)
+		label:SetPos( x + 250, y)
 		label:SetSize(370,30)
 		label:SetFontInternal( "Trebuchet18" )
 		label:SetText(labelstr)
@@ -1826,7 +1782,122 @@ function _MakeCheckbox (x, y, parent, textstr, command, labelstr, inverted)
 	return checkbox
 end
 
-function _CreatePanel()
+local function DefaultInfo()
+	if not CLIENT then return end
+	local pl = LocalPlayer()
+
+	pl.info = vgui.Create("DLabel", pl.panel)
+	pl.info:SetPos(190, 190)
+	pl.info:SetSize(370,200)
+	pl.info:SetWrap(true)
+	pl.info:SetFontInternal( "Trebuchet24" )
+	pl.info:SetText("Hover over a button to see more info about the units")
+	pl.mw_hover = 0
+
+	pl.info_name = vgui.Create("DLabel", pl.panel)
+	pl.info_name:SetPos(190, 50)
+	pl.info_name:SetSize(370,100)
+	pl.info_name:SetWrap(true)
+	pl.info_name:SetFontInternal( "DermaLarge" )
+	pl.info_name:SetText("-")
+
+	pl.info_cost = vgui.Create("DLabel", pl.panel)
+	pl.info_cost:SetPos(190, 110)
+	pl.info_cost:SetSize(370,100)
+	pl.info_cost:SetWrap(true)
+	pl.info_cost:SetFontInternal( "DermaLarge" )
+	pl.info_cost:SetText("Cost: ")
+
+	pl.info_turret_cost = vgui.Create("DLabel", pl.panel)
+	pl.info_turret_cost:SetPos(190, 140)
+	pl.info_turret_cost:SetSize(370,100)
+	pl.info_turret_cost:SetWrap(true)
+	pl.info_turret_cost:SetFontInternal( "Trebuchet24" )
+	pl.info_turret_cost:SetText("")
+
+	pl.info_power = vgui.Create("DLabel", pl.panel)
+	pl.info_power:SetPos(400, 110)
+	pl.info_power:SetSize(370,100)
+	pl.info_power:SetWrap(true)
+	pl.info_power:SetFontInternal( "DermaLarge" )
+	pl.info_power:SetText("Power")
+
+	pl.info_time = vgui.Create("DLabel", pl.panel)
+	pl.info_time:SetPos(400, 140)
+	pl.info_time:SetSize(370,100)
+	pl.info_time:SetWrap(true)
+	pl.info_time:SetFontInternal( "Trebuchet24" )
+	pl.info_time:SetText("")
+end
+
+local function _MakeButton(number, posnumber, parent) -- Make Button
+	if not CLIENT then return end
+	local pl = LocalPlayer()
+
+	local button = vgui.Create("DButton", parent) -- Unit button
+	button:SetSize(120,40)
+	button:SetPos( 10, 10 + ( posnumber - 1 ) * 45 )
+	button:SetFont("CloseCaption_Normal")
+	button:SetText(mw_units[number].name)
+	function button:DoClick()
+		LocalPlayer():ConCommand( "mw_chosen_unit " .. tostring( number ) )
+		LocalPlayer():ConCommand( "mw_action 1" )
+		pl.mw_frame:Remove()
+		pl.mw_frame = nil
+	end
+	local color = mw_units[number].button_color
+	button.Paint = function(s, w, h)
+		draw.RoundedBox( 6, 0, 0, w, h, Color(color.r-40,color.g-40,color.b-40) )
+		draw.RoundedBox( 3, 5, 5, w-10, h-10, color )
+	end
+	function button:OnCursorEntered()
+		pl.mw_hover = number
+		pl.info:SetText(mw_units[number].description)
+		if (cvars.Number("mw_admin_credit_cost") == 1) then
+			pl.info_cost:SetText( "Cost: " .. mw_units[number].cost )
+			if (mw_units[number].welded_cost == -1) then
+				pl.info_turret_cost:SetText("")
+			else
+				pl.info_turret_cost:SetText( "Turret cost: " .. mw_units[number].welded_cost )
+			end
+		else
+			pl.info_cost:SetText("")
+			pl.info_turret_cost:SetText("")
+		end
+		pl.info_power:SetText( "Power: " .. mw_units[number].population )
+		if (cvars.Number("mw_admin_spawn_time") == 1) then
+			pl.info_time:SetText( "Spawn time: " .. mw_units[number].spawn_time .. "s" )
+		else
+			pl.info_time:SetText("")
+		end
+		pl.info_name:SetText(mw_units[number].name)
+	end
+end
+
+local function _MakeHelpButton(name, number, info, text1, text2, text3, text4, text5) -- Make HELP Button
+	local button = vgui.Create("DButton", LocalPlayer().panel)
+	button:SetSize(100,40)
+	button:SetPos( 10, 10 + number * 45 )
+	button:SetText(name)
+	button:SetFontInternal("CloseCaption_Normal")
+	function button:DoClick()
+		info:SetFontInternal("Trebuchet24")
+		info:SetText(text1)
+		if (text2 ~= nil) then info:AppendText(text2) end
+		if (text3 ~= nil) then info:AppendText(text3) end
+		if (text4 ~= nil) then info:AppendText(text4) end
+		if (text5 ~= nil) then info:AppendText(text5) end
+		timer.Simple( 0.001, function() info:GotoTextStart() end )
+
+		if name ~= "About" then return end
+		if not ( LocalPlayer():GetInfo("mw_code") == "about" or LocalPlayer():GetInfo("mw_code") == "ABOUT" ) then return end
+
+		chat.AddText( "Well done" )
+		LocalPlayer():ConCommand("mw_action 945")
+	end
+end
+
+local function _CreatePanel()
 	if not CLIENT then return end
 	local pl = LocalPlayer()
 
@@ -1847,21 +1918,21 @@ function _CreatePanel()
 		lines.Paint = function(s, w, h)
 			surface.SetDrawColor( color_white )
 			if (pl.mw_hover ~= 0) then
-				local a = pl.mw_hover*45-25
-				surface.DrawRect( 135, a, 20, 20)
+				local a = pl.mw_hover * 45 - 25
+				surface.DrawRect( 135, a, 20, 20 )
 			end
 		end
 		local ipos = 1
-		for i=1, firstBuilding-1 do
+		for i = 1, firstBuilding-1 do
 			if (cvars.Bool("mw_admin_allow_manual_placing") or mw_units[i].welded_cost ~= -1) then
-				if ((mw_units[i].code == nil or LocalPlayer():GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVarNumber("mw_admin_bonusunits") == 1)) then
+				if ((mw_units[i].code == nil or LocalPlayer():GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVar( "mw_admin_bonusunits" ):GetInt() == 1)) then
 					_MakeButton(i, ipos, scroll)
-					ipos = ipos+1
+					ipos = ipos + 1
 				end
 			end
 		end
 
-		if not cvars.Bool("mw_admin_allow_manual_placing") then 
+		if not cvars.Bool("mw_admin_allow_manual_placing") then
 			LocalPlayer():ConCommand("mw_unit_option_welded 1")
 			local label = vgui.Create("DLabel", pl.panel)
 			label:SetPos(170, 15)
@@ -1877,8 +1948,8 @@ function _CreatePanel()
 			label:SetColor(orangeColor)
 		else
 			--[[
-			local checkbox = vgui.Create( "DCheckBox", pl.panel )--  Create the checkbox
-			checkbox:SetPos( 180, 15 )--  Set the position
+			local checkbox = vgui.Create( "DCheckBox", pl.panel ) - -  Create the checkbox
+			checkbox:SetPos( 180, 15 ) - -  Set the position
 			checkbox:SetValue( cvars.Bool("mw_unit_option_welded"))
 			checkbox:SetSize(60,30)
 			checkbox:SetConVar( "mw_unit_option_welded" )
@@ -1892,7 +1963,7 @@ function _CreatePanel()
 			local checkbox = _MakeCheckbox( 180, 15, pl.panel, "Spawn as turret", "mw_unit_option_welded")
 			function checkbox:OnCursorEntered()
 				pl.mw_hover = 0
-				pl.info_name:SetText("Spawn as turret")	
+				pl.info_name:SetText("Spawn as turret")
 				pl.info_cost:SetText("")
 				pl.info_turret_cost:SetText("")
 				pl.info_power:SetText("")
@@ -1917,9 +1988,9 @@ function _CreatePanel()
 		lines:SetSize(w-120, 900)
 		lines:SetPos(0,0)
 		lines.Paint = function(s, w, h)
-			local a = (pl.mw_hover-firstBuilding+1)*45-18
+			local a = ( pl.mw_hover - firstBuilding + 1 ) * 45 - 18
 			surface.SetDrawColor(color_white)
-			surface.DrawRect( 135, a-5, 20, 20)
+			surface.DrawRect( 135, a-5, 20, 20 )
 		end
 		--[[local lines = vgui.Create("DPanel", scroll)
 		lines:SetSize(w-120, h-30)
@@ -1929,7 +2000,7 @@ function _CreatePanel()
 			surface.SetDrawColor(color_white)
 			if (pl.mw_hover ~= 0) then
 				surface.DrawRect( 160, 120, w-250, 5 )
-				local a = (pl.mw_hover-firstBuilding+1)*45-18
+				local a = (pl.mw_hover-firstBuilding+1) * 45-18
 				if (a < 120) then
 					surface.DrawRect( 160, a, 5, 120-(a))
 				else
@@ -1939,11 +2010,11 @@ function _CreatePanel()
 			end
 		end]]
 		local ipos = 1
-		for i=firstBuilding, firstEnergy-1 do
-			if (mw_units[i].code == nil or LocalPlayer():GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVarNumber("mw_admin_bonusunits") == 1) then
+		for i = firstBuilding, firstEnergy - 1 do
+			if (mw_units[i].code == nil or LocalPlayer():GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVar( "mw_admin_bonusunits" ):GetInt() == 1) then
 				if mw_units[i].name ~= "Contraption Assembler" or cvars.Number("mw_admin_ban_contraptions") == 0 then
 					_MakeButton(i, ipos, scroll)
-					ipos = ipos+1
+					ipos = ipos + 1
 				end
 			end
 		end
@@ -1981,24 +2052,24 @@ function _CreatePanel()
 			ListItem:SetSize( 75, 75 ) -- Set the size of it
 			ListItem:SetModel(v.model)
 			function ListItem:DoClick()
-				pl:ConCommand("mw_chosen_prop "..tostring(k))
-				pl:ConCommand("mw_action 3")
+				pl:ConCommand( "mw_chosen_prop " .. tostring( k ) )
+				pl:ConCommand( "mw_action 3" )
 				pl.mw_frame:Remove()
 				pl.mw_frame = nil
 			end
 			function ListItem:OnCursorEntered()
-				prop_info:SetText(v.name.."\nHealth: "..v.hp.."\nCost: "..v.cost)
-				prop_window:SetModel(v.model)
-				prop_window:SetCamPos(prop_window:GetEntity():GetPos()+Vector(150,0,50))
-				function prop_window:LayoutEntity(Entity)
-					Entity:SetAngles(v.angle+Angle(0,CurTime()*50,0))
+				prop_info:SetText( v.name .. "\nHealth: " .. v.hp .. "\nCost: " .. v.cost )
+				prop_window:SetModel( v.model )
+				prop_window:SetCamPos( prop_window:GetEntity():GetPos() + Vector( 150, 0, 50 ) )
+				function prop_window:LayoutEntity( Entity )
+					Entity:SetAngles( v.angle + Angle( 0, CurTime() * 50, 0 ) )
 				end
 				--prop_window:SetLookAt(prop_window:GetEntity():OBBCenter())
 			end
 		end
 
-		_MakeCheckbox( 380, h-100, pl.panel, "Offset", "mw_prop_offset")
-		_MakeCheckbox( 380, h-150, pl.panel, "Angle Snap", "mw_prop_snap")
+		_MakeCheckbox( 380, h - 100, pl.panel, "Offset", "mw_prop_offset" )
+		_MakeCheckbox( 380, h - 150, pl.panel, "Angle Snap", "mw_prop_snap" )
 		-- }
 		local button = vgui.Create("DButton", pl.panel)
 		button:SetSize(220,50)
@@ -2024,9 +2095,9 @@ function _CreatePanel()
 		lines:SetSize(w-120, 450)
 		lines:SetPos(0,0)
 		lines.Paint = function(s, w, h)
-			local a = (pl.mw_hover-firstEnergy+1)*45-18
+			local a = ( pl.mw_hover - firstEnergy + 1 ) * 45 - 18
 			surface.SetDrawColor(color_white)
-			surface.DrawRect( 135, a-5, 20, 20)
+			surface.DrawRect( 135, a - 5, 20, 20 )
 		end
 		--[[local lines = vgui.Create("DPanel", scroll)
 		lines:SetSize(w-120, h-30)
@@ -2036,7 +2107,7 @@ function _CreatePanel()
 			surface.SetDrawColor(color_white)
 			if (pl.mw_hover ~= 0) then
 				surface.DrawRect( 160, 120, w-250, 5 )
-				local a = (pl.mw_hover-firstBuilding+1)*45-18
+				local a = (pl.mw_hover-firstBuilding+1) * 45-18
 				if (a < 120) then
 					surface.DrawRect( 160, a, 5, 120-(a))
 				else
@@ -2045,8 +2116,8 @@ function _CreatePanel()
 				surface.DrawRect( 130, a, 30, 5)
 			end
 		end]]
-		for i=firstEnergy, firstContraption-1 do
-			_MakeButton(i, i-firstEnergy+1, scroll)
+		for i = firstEnergy, firstContraption - 1 do
+			_MakeButton( i, i - firstEnergy + 1, scroll )
 		end
 
 		DefaultInfo()
@@ -2080,15 +2151,15 @@ function _CreatePanel()
 		lines:SetSize(w-120, 550)
 		lines:SetPos(0,0)
 		lines.Paint = function(s, w, h)
-			local a = (pl.mw_hover-firstContraption+1)*45-18
+			local a = ( pl.mw_hover - firstContraption + 1 ) * 45 - 18
 			surface.SetDrawColor(color_white)
-			surface.DrawRect( 135, a-5, 20, 20)
+			surface.DrawRect( 135, a - 5, 20, 20 )
 		end
 
-		for i=firstContraption, unitCount do
-			_MakeButton(i, i-firstContraption+1, scroll)
+		for i = firstContraption, unitCount do
+			_MakeButton(i, i - firstContraption + 1, scroll)
 		end
-		
+
 		DefaultInfo()
 		-- }
 	elseif (pl.mw_menu == -1) then																--Contraption manager menu
@@ -2097,17 +2168,17 @@ function _CreatePanel()
 		scroll:SetPos( 20, 20 )
 
 		if (cvars.Number("mw_admin_credit_cost") == 0) then
-			local tool_info = vgui.Create("DLabel", pl.panel)
-			tool_info:SetPos(20, 30)
-			tool_info:SetSize(200,50)
-			tool_info:SetFontInternal( "Trebuchet24" )
-			tool_info:SetText("Save contraption: ")
+			local toolInfo1 = vgui.Create("DLabel", pl.panel)
+			toolInfo1:SetPos(20, 30)
+			toolInfo1:SetSize(200,50)
+			toolInfo1:SetFontInternal( "Trebuchet24" )
+			toolInfo1:SetText("Save contraption: ")
 
-			local tool_info = vgui.Create("DLabel", pl.panel)
-			tool_info:SetPos(100, 85)
-			tool_info:SetSize(500,30)
-			tool_info:SetFontInternal( "Trebuchet18" )
-			tool_info:SetText("Type the name, press enter and then click on your contraption")
+			local toolInfo2 = vgui.Create("DLabel", pl.panel)
+			toolInfo2:SetPos(100, 85)
+			toolInfo2:SetSize(500,30)
+			toolInfo2:SetFontInternal( "Trebuchet18" )
+			toolInfo2:SetText("Type the name, press enter and then click on your contraption")
 
 			local TextEntry = vgui.Create( "DTextEntry", pl.panel ) -- create the form as a child of frame
 			TextEntry:SetPos( 200, 30 )
@@ -2208,31 +2279,31 @@ function _CreatePanel()
 
 		local selection = vgui.Create("DPanel", pl.panel)
 		if (cvars.Number("mw_team") ~= 0) then
-			selection:SetPos(135+cvars.Number("mw_team")*45, 195)
+			selection:SetPos( 135 + cvars.Number( "mw_team" ) * 45, 195 )
 		else
-			selection:SetPos(135+45, 260)
+			selection:SetPos( 180, 260 )
 		end
 		selection:SetSize(50,50)
 		selection.Paint = function(s, w, h)
 			draw.RoundedBox( 10, 0, 0, w, h, color_white )
 		end
 
-		for i=1, 8 do
-			local button = vgui.Create("DButton", pl.panel)
-			button:SetSize(40,40)
-			button:SetPos(140+i*45,200)
-			button:SetText("")
+		for i = 1, 8 do
+			local button = vgui.Create( "DButton", pl.panel )
+			button:SetSize( 40, 40 )
+			button:SetPos( 140 + i * 45, 200 )
+			button:SetText( "" )
 			function button:DoClick()
-				LocalPlayer():ConCommand("mw_team "..tostring(i))
-				selection:SetPos(135+i*45, 195)
+				LocalPlayer():ConCommand( "mw_team " .. tostring( i ) )
+				selection:SetPos( 135 + i * 45, 195 )
 
-				net.Start("MW_UpdateClientInfo")
-					net.WriteInt(i, 8)
+				net.Start( "MW_UpdateClientInfo" )
+					net.WriteInt( i, 8 )
 				net.SendToServer()
 			end
-			button.Paint = function(s, w, h)
-				draw.RoundedBox( 6, 0, 0, w, h, Color(100,100,100,255) )
-				draw.RoundedBox( 4, 2, 2, w-4, h-4, mw_team_colors[i] )
+			button.Paint = function()
+				draw.RoundedBox( 6, 0, 0, w, h, Color( 100, 100, 100, 255 ) )
+				draw.RoundedBox( 4, 2, 2, w - 4, h - 4, mw_team_colors[i] )
 			end
 		end
 
@@ -2265,8 +2336,8 @@ function _CreatePanel()
 			draw.RoundedBox( 3, 10, 10, w-20, h-20, Color(250,250,250) )
 		end
 
-		if (code == "full") then
-			factionSelection:SetPos(180+45, 320)
+		if code == "full" then
+			factionSelection:SetPos( 225, 320 )
 		end
 		local button = vgui.Create("DButton", pl.panel)
 		button:SetSize(40,40)
@@ -2281,16 +2352,16 @@ function _CreatePanel()
 			draw.RoundedBox( 3, 10, 10, w-20, h-20, Color(250,250,250) )
 		end
 
-		if (code == "void") then
-			factionSelection:SetPos(180+90, 320)
+		if code == "void" then
+			factionSelection:SetPos( 270, 320 )
 		end
-		local button = vgui.Create("DButton", pl.panel)
-		button:SetSize(40,40)
-		button:SetPos(185+90,325)
+		local button = vgui.Create( "DButton", pl.panel )
+		button:SetSize( 40, 40 )
+		button:SetPos( 275, 325 )
 		button:SetText("V")
 		function button:DoClick()
-			LocalPlayer():ConCommand("mw_code void")
-			factionSelection:SetPos(180+90, 320)
+			LocalPlayer():ConCommand( "mw_code void" )
+			factionSelection:SetPos( 270, 320 )
 		end
 		button.Paint = function(s, w, h)
 			draw.RoundedBox( 6, 0, 0, w, h, Color(210,30,240) )
@@ -2322,12 +2393,12 @@ function _CreatePanel()
 		label:SetText("Gray team:")
 
 		local button = vgui.Create("DButton", pl.panel)
-		button:SetSize(40,40)
-		button:SetPos(140+45,265)
+		button:SetSize( 40, 40 )
+		button:SetPos( 185, 265 )
 		button:SetText("")
 		function button:DoClick()
-			LocalPlayer():ConCommand("mw_team "..tostring(0))
-			selection:SetPos(135+45, 260)
+			LocalPlayer():ConCommand( "mw_team " .. tostring( 0 ) )
+			selection:SetPos( 180, 260 )
 
 			net.Start("MW_UpdateClientInfo")
 				net.WriteInt(0, 8)
@@ -2339,7 +2410,7 @@ function _CreatePanel()
 		end
 	elseif (pl.mw_menu == 6) then																--Help menu
 		-- { HELP MENU
-		local h = 40
+		-- local h = 40
 
 		--local scroll = vgui.Create( "DScrollPanel", pl.panel )
 		--scroll:SetSize( 440, 450 )
@@ -2350,247 +2421,92 @@ function _CreatePanel()
 		info:SetSize( 450,450 )
 		info:SetWrap( true )
 		info:SetContentAlignment( 7 )
-		timer.Simple( 0.001, function() info:SetFontInternal("Trebuchet24") end )
-		info:SetText(
-[[
-Thanks for downloading and using the MelonWars:RTS addon. I hope you enjoy it.
+		timer.Simple( 0.001, function() info:SetFontInternal( "Trebuchet24" ) end )
+		info:SetText( "Thanks for downloading and using the MelonWars:RTS addon. I hope you enjoy it.\n\nChoose a category on the left to see info about a certain topic!" )
 
-Choose a category on the left to see info about a certain topic!
-]])
-
-		_MakeHelpButton("About", 0, info,
-[[
-What is this mod?
-
-This is a remake of a 2006 addon called WarMelons:RTS by Lap and MegaJohnny. It's a strategy game that is played in sandbox, allowing you to build contraptions and your own maps with the familiar controls of standard Garry's Mod. 
-
-The original addon was discontinued and broke when Gmod 13 came out, and I never heard of the developer again. I missed the addon so much that I looked for it everywhere. After more than a year without success, I decided to learn Lua and make my own version. 
-
-This addon isn't quite the same as the original, but I hope it will fill the void that WarMelons left. 
-- Marum
-
-
-Credits:
-
-Faction Mod creator:
-JonahSoldier
-
-Faction Mod contributors:
-thecraftianman
-
-]],--[[i had to do this closing and opening of strings because some strange limit that trimed the text]][[
-The creator of this addon:
-Marum
-
-The creators of the original:
-Lap and MegaJohnny
-
-Testers and supporters:
-X marks it
-(Xen)SunnY
-BOOM! The_Rusty_Geek
-Dagren
-Fush
-Broh
-Jwanito
-Mr. Thompson
-Arheisel
-Hipnox
-
-Suggestions:
-Squid-Inked (Tesla Tower)
-Durendal5150 (Radar)
-
-Thanks to:
-Members of the MelonWars:RTS Discord, and you, for subscribing!
-
-
-Shoutout to Ludsoe, who is also making a WarMelons remake!
-]])
+		_MakeHelpButton( "About", 0, info, "What is this mod?\n\n" ..
+			"This is a remake of a 2006 addon called WarMelons:RTS by Lap and MegaJohnny. It's a strategy game that is played in sandbox, allowing you to build contraptions and your own maps with the familiar controls of standard Garry's Mod.\n\n" ..
+			"The original addon was discontinued and broke when Gmod 13 came out, and I never heard of the developer again. " ..
+			"I missed the addon so much that I looked for it everywhere. After more than a year without success, I decided to learn Lua and make my own version.\n\n" ..
+			"This addon isn't quite the same as the original, but I hope it will fill the void that WarMelons left.\n- Marum\n\n" ..
+			"Credits:\n\nFaction Mod creator:\nJonahSoldier\n\nFaction Mod contributors:\nthecraftianman\n" ..
+			"The creator of this addon:\nMarum\n\nThe creators of the original:\nLap and MegaJohnny\n\n" ..
+			"Testers and supporters:\nX marks it\n(Xen)SunnY\nBOOM! The_Rusty_Geek\nDagren\nFush\nBroh\nJwanito\nMr. Thompson\nArheisel\nHipnox\n\n" ..
+			"Suggestions:\nSquid-Inked (Tesla Tower)\nDurendal5150 (Radar)\n\n",
+			"Thanks to:\nMembers of the MelonWars:RTS Discord, and you, for subscribing!\n\nShoutout to Ludsoe, who is also making a WarMelons remake!" )
 		info:SetFontInternal("Trebuchet24")
 
-		_MakeHelpButton("Help", 1, info, 
-[[
-Introduction:
+		_MakeHelpButton( "Help", 1, info, "Introduction:\n\nThis addon is a tool that allows you and your friends to play a Real Time Strategy game, much like StarCraft or Age of Empires, but much simpler.\n\n" ..
+			"Getting Started:\n\nIf you are seeing this, you probably know how to equip this tool already, but just in case you forget, I'll explain how to equip it.\n\n" ..
+			"Hold Q (or your spawn menu key), and go to the Tools tab, on the upper right.\n\nUnder the category 'MelonWars: RTS', there's the Player Tool. This is pretty much all you need to play.\n\n" ..
+			"Select the Player Tool. With this tool equipped, you can now press your Reload key (R by default) to open up the Melon Wars menu. You are going to be using this menu a lot.\n" ..
+			"Feel free to navigate this menu on your own. For more help on how the menu works and what to do, please choose the 'Menu' category, to the left." )
 
-This addon is a tool that allows you and your friends to play a Real Time Strategy game, much like StarCraft, or Age of Empires, but much simpler.
+		_MakeHelpButton( "Menu", 2, info, "The Melon Wars Menu:\n\nThis menu can be opened and closed with the Reload key while you have the Player Tool equipped, and it has everything you need to play MelonWars.\n\n" ..
+			"You have different submenus on the left:\nUnits, Buildings, Base, Energy, Contrap., Team, Help and Admin.\n\n" ..
+			"From the Units category, you can spawn different kinds of melons to fight for your team. Inside, you can see info about each unit. Click on a unit to start spawning. The crosshair will change while you are spawning units.\n\n" ..
+			"The Buildings menu works similarly to the Units menu, but has different kinds of utility houses and machines to help you improve your army.\n\n" ..
+			"From the Base category, you can select props to spawn as defense and walls. You can see the prop's health and cost on the right, as well as toggle Angle Snap and Offset. " ..
+			"The Angle Snap option allows you to snap props to 15 degree intervals. The Offset, if disabled, spawns the prop at its origin, rather than a custom point.\n\n",
+			"The Energy menu contains buildings that generate, store or transport Energy.\n\n" ..
+			"The Contrap. menu is where you spawn contraption parts from, as well as manage your saved contraptions. To learn what a contraption is, go to the Contrap. help tab.\n\n" ..
+			"In the Team menu, you can choose which team you want to be on.\n\nThe Help menu is this menu right here!\n\n" ..
+			"And finally, the Admin menu is where the server owner can set all of the options for the gamemode." )
 
+		_MakeHelpButton( "Spawning", 3, info, "How do I spawn units?\n\n" ..
+			"Once you've selected a unit from the Units menu or a building from the Buildings menu, your toolgun will be set to Spawn the selected unit. While selecting, your crosshair changes, and the selected unit is displayed below it.\n\n" ..
+			"While the toolgun is set to spawn, click on the ground to spawn the selected unit. Units have a Water cost and a Power cost. " ..
+			"Water is the game's main resource, and it will be depleted when spawning units unless the admin option 'Free Water' is set to true (which it is by default). Power usage increases the more units you have, and you can't spawn units if your power has reached its max.\n\n" ..
+			"From the Units menu, you can also select an option to spawn units as Turrets, which reduces their cost but spawns them welded to what you are looking at. Some units can't be spawned as turrets, such as Nukes and Jetpacks." )
 
-Getting Started:
+		_MakeHelpButton( "Units", 4, info, "What does each unit do?\n\n" ..
+			"Marines:\nThe Marines are the generic soldier. They have accurate rifles, but they aren't very long range. Marines are usually used as cannon fodder to push against slow firing units, but don't underestimate the strength of Marines in big numbers.\n\n" ..
+			"Medic:\nThe Medic doesn't like to fight, but he likes seeing others fight. It cannot deal damage in any way. Its only goal is to keep all of its nearby friends healthy and ready for the next battle. " ..
+			"Having multiple medics in a squad can drastically increase the squad's durability, and they can keep important units alive. They hurt themselves while healing, and can't heal each other.\n\n" ..
+			"Bomb:\nThe Bomb is willing to die for its team. It will explode if it gets killed or if there are enemy units in range. A well placed bomb can take down an entire squad in no time, but they are fragile, so protect them until they get to the target. ",
+			"A Bomb spawned as turret will become a Mine and bury into the ground. Be careful about having bombs in your midst, as an enemy sniper can make it explode and take a chunk of your army with it.\n\n" ..
+			"Jetpack:\nThe Jetpack is a promoted marine that takes to the skies with a rocket pack. " ..
+			"He flies a few meters off the ground at all times, and he specializes in going over walls, transiting harsh terrain, flanking from outside the map, and flying over squads to take down valuable defended targets.\n\n" ..
+			"Gunner:\nThe Gunner is a tough and slow unit that carries a minigun. Its gun will spin faster as the battle goes on, so it will deal a lot more damage if it manages to survive 18 seconds of continuous firing.\n\n" ..
+			"Missiles:\nThe Missiles is the brother of the Gunner, but it was given a bazooka instead of a machinegun. It fires homing missiles that deal low area damage. It's useful for taking down crowds of weak enemies, taking down a squad's medics, and shooting down flocks of Jetpacks.\n\n" ..
+			"Sniper:\nThe Sniper is one of the most damaging units in the game. It shoots very slowly, but it makes every shot count. They are useful for taking down valuable targets, like a bomb in the middle of the enemy army, or quickly taking down a mortar. " ..
+			"It's taller than most units to be able to shoot over its allies heads, but its gun is so unwieldy that it cannot shoot while running, making it easily killable on its own. Be sure to escort and protect it, as its shots can be heard from anywhere on the map, and it is sure to become a target.\n\n" ..
+			"Mortar:\nThe Mortar is a powerful armored unit that can quickly take down enemy squads. It shoots mortar shells in an arc, which might not be ideal if the enemy is swift to move out of the way, but if that bomb hits a crowd, it will hurt a lot. The mortar is the only unit that can fire over walls, making it a good siege unit.\n\n" ..
+			"Nuke:\nThe Nuke is the ultimate breaching weapon. It's slow, but it carries a powerful blast. When it spawns, it informs every player of the imminent danger. " ..
+			"It takes 1.5 seconds to explode after it gets to the enemy wall, but it doesn't explode as big if it gets killed before it detonates, so take good care of it until it does. Additionally, it will only automatically target enemy walls in order to avoid enemy kamikazes from triggering it." )
 
-If you are seeing this, you probably know how to equip this tool, but just in case you loose it, i'll explain how to equip it.
+		_MakeHelpButton( "Buildings", 5, info, "What does each building do?\n\n" ..
+			"Barracks:\nThe Barracks are a building that produces Marines at one third of the rate they can be spawned with the toolgun, but they spawn ready for battle and half the price. " ..
+			"It will produce up to 10 Marines at any given time. The Barracks can be turned on or off by holding the Player Tool, looking at it and pressing the E key.\nEach unit has its own barracks!\n\n" ..
+			"Turret:\nThe Turret is your go-to static defense. It has a good damage output, and the longest range in the game. It can't move, even if it's spawned onto a contraption.\n\n" ..
+			"Shredder:\nThe Shredder is used to recycle melons and get 90% of their value back. It's good for getting rid of your army if you want to replace your low tier units with higher tier ones.\n\n" ..
+			"Elevator Pad:\nThe Elevator Pad is used as an elevator. Every unit on top of it will be levitated upwards up to a certain height. ",
+			"Because you can't spawn mobile units onto base props, if you want to, say, make a bomb ambush tower to drop bombs onto your attackers, those bombs can't be spawned directly on the tower. Just use a Pad to get them up there.\n\n" ..
+			"Gate:\nThe Gate is useful for making entrances and exits to your base. You can open and close it by looking at it and pressing E with the Player Tool equipped.\n\n" ..
+			"Large Gate:\nThe Large Gate can be operated the same way as the small gate, but it requires energy to open and close. It's wider and taller, allowing for bigger armies or contraptions to go through.\n\n" ..
+			"Contraption Assembler:\nThis workshop can build any contraption that you've previously saved with the Contraption Manager. Use it to produce tanks, ships, or any vehicle you can imagine and build!\n\n" ..
+			"Tesla Tower:\nThis building requires energy to function, but it's a powerful AOE static defense that will zap the 5 closest enemies in a big range. It can get overwhelmed by big squads, and it will consume a LOT of energy while firing.\n\n" ..
+			"Over-Clocker:\nSpawn this bad boy right next to a barracks of any kind and watch it increase its production rate! (And consume all of your Energy.) You can't turn it on and off with E.\n\n" ..
+			"Radar:\nThe Radar constantly consumes energy, equivalent to one Solar Panel, and cannot be turned off. If the Radar detects an enemy unit, an exclamation mark will pop up on the player's HUD showing the place of the detection.\n\n" ..
+			"Medical Bay:\nUses a lot of energy, but has the healing capabilities of 10 Medics in a way bigger radius. It's meant to keep all the units in your base at full health. Be careful though, as having to heal a lot of units at once can really drain your Energy supply." )
 
-Hold Q (or your spawn menu key), and go to the Tools tab, on the upper right.
+		_MakeHelpButton( "Energy", 6, info, "What is Energy for?\n\n" ..
+			"Energy is used to power certain buildings that need it to operate. Buildings that interact with Energy appear with Yellow buttons on the spawn menu.\n" ..
+			"Buildings use a lot more power than what a player usually generates, so it's a good idea to store it in Batteries in order to have enough when you need it.\n\n" ..
+			"How do I connect buildings?\n\nTo connect Energy buildings, use the Relay located in the Energy submenu. For buildings to work, you will need to connect some sort of battery to the network." )
 
-Under the category 'MelonWars: RTS', there's the Player Tool. This is pretty much all you need to play.
+		_MakeHelpButton( "Contrap.", 7, info, "What is a contraption?\n\nA contraption is a machine built by the player that can be used in melon combat as a vehicle. It can be used for ramming, as a tank, as transport, or anything you can imagine.\n\n" ..
+			"How do I build them?\n\nBuild a contraption just like you would in Sandbox. Beware that parts like thrusters, hoverballs, and wheels will get removed when you 'legalize' the contraption.\n\n" ..
+			"What is legalizing?\n\nIn order to make your contraption legal inside the MelonWars battle, you have to save it using the Contraption Manager, located under the Contrap. menu, and spawn it using a Contraption Assembler.\n\n" ..
+			"How do I make my contraption move?\n\nUnder the Contrap. submenu, you have Thrusters, Wheels, Propellers and Hover Pads. " ..
+			"The Thruster is a powerful melon that cannot shoot, but it is very strong and can move even if attached to a contraption. The Wheel can be used to help your contraption roll across the ground. The Propeller and Hover Pad can be used to make your contraption hover above ground." )
 
-Select the Player Tool. With this tool equiped, you can now press your Reload key (R by default) to open up the Melon Wars menu. You are going to be using this menu a lot.
-Feel free to navigate this menu on your own. For more help on how the menu works and what to do, please choose the 'Menu' category, to the left.
-]])
-
-		_MakeHelpButton("Menu", 2, info,
-[[
-The Melon Wars Menu:
-
-This menu can be opened and closed with the Reload key while you have the Player Tool equiped, and it has everything you need to play MelonWars.
-
-You have diferent submenues on the left:
-units, Buildings, Base, Energy, Contrap., Team, Help and Admin.
-
-From the units category you can spawn different kinds of melons to fight for your team. Inside, you can see info about each unit. Click on a unit to start spawning. The crosshair will change while you are spawning units.
-]],--[[I had to do this closing and opening of strings because of some strange limit that trimmed the text]][[
-
-The buildings menu works similarly to the units menu, but has different kinds of utility houses and machines to help you improve your army.
-
-From the Base category you can select props to spawn as defense and walls. You can see the props health and cost on the right, and toggle Angle snap and Offset. The Angle snap option allows you to snap props to 15 degree intervals. The Offset, if disabled, spawns the prop at its origin, rather than a custom point.
-
-The Energy menu contains builgins that generate, store or transport Energy.
-
-The Contrap. menu is where you spawn contraption parts from, aswell as manage your saved contraptions. To know what is a contraption go to the Contrap. help tab.
-
-In the Team menu you can choose which team you wan't to be on.
-
-The Help menu is this menu right here!
-
-And finally, the Admin menu is where the server owner can set all of the options for the gamemode.
-]])		
-	
-		_MakeHelpButton("Spawning", 3, info,
-[[
-How do i spawn units?
-
-Once you selected a unit from the units menu, or a building from the Buildings menu, your toolgun will be set to Spawn the selected unit. While selecting, your crosshair changes, and the selected unit is displayed below it.
-
-While the toolgun is set to spawn, click on the ground to spawn the selected unit. units have a Water cost and a Power cost. Water is the game's main resource, and it will be depleted when spawning units, unless the admin option "Free Water" is set to true (which it is by default). Power usage increases the more units you have, and you can't spawn units if your power has reached its max.
-
-From the units menu, you can also select an option to spawn units as Turrets, which reduces their cost, but they spawn welded to what you are looking at. Some units can't be spawned as turrets, such as Nukes and Jetpacks.
-]])		
-
-		_MakeHelpButton("Units", 4, info,
-[[
-What does each unit do?
-
-Marines:
-The Marines are the generic soldier. They have accurate rifles, but not very long range. Marines are usually used as cannon fodder to push against slow firing units, but don't underestimate the strength of Marines in big numbers.
-
-Medic:
-The Medic doesn't like to fight, but he likes seeing others fight. It cannot deal damage in any way. Its only goal is to keep all of its nearby friends healthy and ready for the next battle. Having multiple medics in a squad can drastically increase the squad's durability, and they can keep important units alive. They hurt themselves while healing, and can't heal each other.
-]],[[
-
-Bomb:
-The Bomb is willing to die for its team. He will explode if he gets killed or if there are enemy units in range. A well placed bomb can take down an entire squad in no time, but they are fragile, so protect them until they get to the target. A Bomb spawned as turret will become a Mine, and bury into the ground. Be careful about having bombs in your midst, as an enemy sniper can make it explode and take a chunk of your army with it.
-
-Jetpack:
-The Jetpack is a promoted marine that takes to the skies with a rocket pack. He flies a few meters of the ground at all times, and he specializes in going over walls, transiting harsh terrain, flanking from outside the map, and flying over squads to take down valuable defended targets.
-
-Gunner:
-The Gunner is a tough and slow unit that carries a minigun. Their gun will spin faster as the battle goes on, so it will deal a lot more damage if it manages to survive 18 seconds of continuous firing.
-]],[[
-
-Missiles:
-The Missiles is the brother of the Gunner, but he was given a bazooka instead of a machinegun. It fires homing missiles that deal low area damage. Its useful to take down crowds of weak enemies, taking down a squads medics, and shooting down flocks of Jetpacks.
-
-Sniper:
-The Sniper is one of the most damaging units in the game. It shoots very slowly, but it makes every shot count. They are useful for taking down valuable targets, like a bomb in the middle of the enemy army, or quickly take down a mortar. Its taller than most units to be able to shoot over its allies heads, but its gun is so unweildy he cannot shoot while running, making him easily killable on its own. Be sure to escort and protect him, as his shots can be heared from anywhere on the map, and he is sure to become a target.
-
-Mortar:
-The Mortar is a powerful armoured unit that can quickly take down enemy squads. It shoots mortal shells in an arc, which might not be ideal if the enemy is swift to move out of the way, but if that bomb hits a crowd, it will hurt a lot. The mortar is the only unit that can fire over walls, making it a good siege unit.
-
-Nuke:
-The Nuke is the ultimate breaching weapon. Its slow, but it carries a powerful blast. When it spawns, it informs every player of the imminent danger. It takes it 1.5 seconds to explode after it gets to the enemy wall, but it doesn't explode as big if it gets killed before it detonates, so take good care of it until it does. It will only automatically target enemy walls too, to avoid enemy kamikazes from triggering it.
-]])		
-
-		_MakeHelpButton("Buildings", 5, info,
-[[
-What does each building do?
-
-Barracks:
-The Barracks are a building that produces Marines at one third of the rate they can be spawned with the toolgun, but they spawn ready for battle and half the price. It will produce up to 10 Marines at any given time. The Barracks can be turned on or off by holding the Player Tool, looking at it and pressing the E key.
-Each unit has its own barracks!
-
-Turret:
-The turret is your go to static defense. It has a good damage output, and the longest range in the game. It can't move, even if its spawned onto a contraption.
-]],[[
-
-Shredder:
-The shredder is used to recycle melons, and get 90% of their value back. Its good to get rid of your army if you want to replace your low tier units with higher tier ones.
-
-Elevator Pad:
-The elevator pad is used as an elevator. Every unit on top of it will be levitated upwards, up to a certain height. As you cant spawn mobile units onto base props, if you want to, say, make a bomb ambush tower to drop bombs onto your attackers, those bombs can't be spawned directly on the tower. Just use a Pad to get them up there.
-]],[[
-
-Gate:
-The gate is useful for making entrances and exits for your base. You can open and close it by looking at it and pressing E with the Player Tool equiped.
-
-Large Gate:
-The large gate requires energy to open and close, but can be operated the same way as the small gate. Its wider and taller, allowing for bigger armies or contraptions to go through.
-]],[[
-
-Contraption Assembler:
-This workshop can build any contraption that you've previously saved with the contraption manager. Use it to produce Tanks, Ships or any vehicle you can imagine and build!
-
-Tesla Tower:
-This building requires energy to function, but is a powerful AOE static defense, that will zap the 5 closest enemies in a big range. It can get overwelmed by big squads, and it will consume a LOT of energy while firing.
-
-Over-Clocker:
-Spawn this bad boy right next to a barracks of any kind, and watch it increase its production rate! (and consume all of your energy). You cant turn it on and off with E.
-]],[[
-
-Radar:
-The radar constantly consumes energy, equivalent to one Solar Panel, and cannot be turned off. If the radar detects an enemy unit, an exclamation mark will popup on the player's hud, showing the place of the detection.
-
-Medical Bay:
-Uses a lot of energy, but has the healing capabilities of 10 medics in a way bigger radius. Its meant to keep all the units in your base at full health. Be careful tho, as having to heal a lot of units at once can really drain your energy supply.
-]])
-		_MakeHelpButton("Energy", 6, info,
-[[
-What is Energy for?
-
-Energy is used to power certain buildings that need it to operate. Buildings that interact with Energy appear with Yellow buttons on the spawn menu.
-Buildings use a lot more power than what a player usually generates, so its a good idea to store it in Batteries, so you have enough when you need it.
-]],[[
-
-How do i connect buildings?
-
-To connect energy buildings, use the Relay, located in the Energy submenu. For buildings to work, you will need to connect some sort of battery to the network.
-]],[[
-]])
-		_MakeHelpButton("Contrap.", 7, info,
-[[
-What is a contraption?
-
-A contraption is a machine built by the player that can be used in melon combat as a vehicle. It can be used for ramming, as a tank, as transport, or anything you can imagine.
-
-How do i build them?
-
-Build a contraption just like you would in sandbox. Beware that parts like thrusters, hoverballs and wheels will get removed when you 'Legalize' the contraption.
-
-What is legalizing?
-
-In order to make your contraption legal inside the melonwars battle, you have to Save it using the Contraption Manager, under the Contrap. menu, and spawn it using a Contraption Assembler.
-]],[[
-
-How do i make my contraption move?
-
-Under the "Contrap." submenu, you have Thrusters, Wheels, Propellers and Hover Pads. The Thruster is a powerful melon that cannot shoot, but is very strong and can move even if attached to a contraption. The Wheel can be used to help your contraption roll across the ground. The Propeller and hover-Pad can be used to make your contraption hover above ground.]])
-
-		_MakeHelpButton("Setup", 8, info,
-[[
-How do i set up a game?
-
-In order to set up a game, you should build an arena out of props or go to a melonwars map. The admin should ask the players what colors they want to be, and spawn a Base (or Grand War Base) from the admin menu for each player at diferent locations.
-
-Be sure to ask every player to set their team in the Teams tab in this menu.
-
-Spawn a few outposts and capture points around the arena as objectives, and once everything is set up, press the Start Match button.
-]],[[
-
-The admin can also set alliances from the Admin tab.
-
-Once the match starts, its a battle to destroy the enemies bases. Last team standing wins!
-
-Remember, this is as much a gamemode as it is a toy, so there is no actual "End" to the match, other than whatever you make it. You can play until the last base is destroyed, until only one player has units or any other condition you can imagine. Just be sure to be clear about it with all players before starting.
-]])
+		_MakeHelpButton("Setup", 8, info, "How do I set up a game?\n\n" ..
+			"In order to set up a game, you should build an arena out of props or go to a MelonWars map. The admin should ask the players what colors they want to be, then spawn a Base (or Grand War Base) from the Admin menu for each player at different locations.\n\n" ..
+			"Be sure to ask every player to set their team in the Teams tab in this menu.\n\nSpawn a few outposts and capture points around the arena as objectives, and once everything is set up, press the Start Match button.\n\n" ..
+			"The admin can also set alliances from the Admin tab.\n\nOnce the match starts, it's a battle to destroy the enemies' bases. Last team standing wins!\n\n" ..
+			"Remember, this is as much a gamemode as it is a toy, so there is no actual 'end' to the match other than whatever you make it. " ..
+			"You can play until the last base is destroyed, until only one player has units, or any other condition you can imagine. Just be sure to be clear about it with all players before starting." )
 
 	--[[
 	local button = vgui.Create("DButton", LocalPlayer().panel)
@@ -2639,7 +2555,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetSize(370,40)
 			label:SetFontInternal( "Trebuchet18" )
 			label:SetText("[Set preferences for a match of MelonWars]")
-			y = y+50
+			y = y + 50
 			local button = vgui.Create("DButton", scroll)
 			button:SetSize(200,40)
 			button:SetPos(20,y)
@@ -2667,7 +2583,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetSize(370,40)
 			label:SetFontInternal( "Trebuchet18" )
 			label:SetText("[Set preferences for messing around]")
-			y = y+80
+			y = y + 80
 
 
 			local label = vgui.Create("DLabel", scroll)
@@ -2676,19 +2592,19 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetFontInternal( "DermaLarge" )
 			label:SetText("Game control Options")
 
-			y = y+40
-			_MakeCheckbox( 20, y, scroll, "PAUSE", "mw_admin_playing", "[Stops units, income and controls]", true)
+			y = y + 40
+			_MakeCheckbox( 20, y, scroll, "PAUSE", "mw_admin_playing", "[Stops units, income and controls]", true )
 
-			y = y+40
-			_MakeCheckbox( 20, y, scroll, "Lock Teams", "mw_admin_locked_teams", "[Prevent players from changing team or faction]", false)
+			y = y + 40
+			_MakeCheckbox( 20, y, scroll, "Lock Teams", "mw_admin_locked_teams", "[Prevent players from changing team or faction]", false )
 
-			y = y+40
-			_MakeCheckbox( 20, y, scroll, "Extra unit options", "mw_admin_bonusunits", "[Balance not guaranteed]", false)
+			y = y + 40
+			_MakeCheckbox( 20, y, scroll, "Extra unit options", "mw_admin_bonusunits", "[Balance not guaranteed]", false )
 			--[[
-			y = y+40
-			_MakeCheckbox( 20, y, scroll, "Player Colors", "mw_admin_player_colors", "[Show a colored circle over players]")
+			y = y + 40
+			_MakeCheckbox( 20, y, scroll, "Player Colors", "mw_admin_player_colors", "[Show a colored circle over players]" )
 			]]
-			y = y+80
+			y = y + 80
 
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(15, y)
@@ -2699,7 +2615,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			for i = 1, 8 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(40,40)
-				button:SetPos(145+i*45,y)
+				button:SetPos( 145 + i * 45, y )
 				button:SetText("")
 				function button:DoClick()
 					LocalPlayer():ConCommand("mw_team " .. tostring(i))
@@ -2717,7 +2633,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 				end
 			end
 
-			y = y+80
+			y = y + 80
 
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(15, y)
@@ -2725,10 +2641,10 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetFontInternal( "DermaLarge" )
 			label:SetText([[Spawn grand
 				war base]])
-			for i=1, 8 do
+			for i = 1, 8 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(40,40)
-				button:SetPos(145+i*45,y)
+				button:SetPos( 145 + i * 45, y )
 				button:SetText("")
 				function button:DoClick()
 					LocalPlayer():ConCommand("mw_team " .. tostring(i))
@@ -2746,7 +2662,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 				end
 			end
 
-			y = y+80
+			y = y + 80
 
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(15, y)
@@ -2754,17 +2670,17 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetFontInternal( "DermaLarge" )
 			label:SetText([[Spawn
 				Ornament]])
-			for i=1, 8 do
+			for i = 1, 8 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(40,40)
-				button:SetPos(145+i*45,y)
+				button:SetPos( 145 + i * 45, y )
 				button:SetText("")
 				function button:DoClick()
-					LocalPlayer():ConCommand("mw_team "..tostring(i))
-					LocalPlayer():ConCommand("mw_action 25")
+					LocalPlayer():ConCommand( "mw_team " .. tostring( i ) )
+					LocalPlayer():ConCommand( "mw_action 25" )
 					pl.mw_frame:Remove()
 					pl.mw_frame = nil
-						
+
 					net.Start("MW_UpdateClientInfo")
 						net.WriteInt(i, 8)
 					net.SendToServer()
@@ -2775,7 +2691,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 				end
 			end
 
-			y = y+80
+			y = y + 80
 
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(15, y)
@@ -2796,7 +2712,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 				draw.RoundedBox( 4, 2, 2, w-4, h-4, Color(255, 255, 255, 255) )
 			end
 
-			y = y+60
+			y = y + 60
 
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(15, y)
@@ -2817,7 +2733,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 				draw.RoundedBox( 4, 2, 2, w-4, h-4, Color(255, 255, 255, 255) )
 			end
 
-			y = y+60
+			y = y + 60
 
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(15, y)
@@ -2838,7 +2754,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 				draw.RoundedBox( 4, 2, 2, w-4, h-4, Color(255, 255, 255, 255) )
 			end
 
-			y = y+80
+			y = y + 80
 
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(20, y)
@@ -2846,15 +2762,15 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetFontInternal( "DermaLarge" )
 			label:SetText("Alternative Gameplay Options")
 
-			y = y+40
-				
+			y = y + 40
+
 			_MakeCheckbox( 20, y, scroll, "No manual placing", "mw_admin_allow_manual_placing", "[Prevents spawning of mobile units]", true)
 
-			y = y+40
-				
+			y = y + 40
+
 			_MakeCheckbox( 20, y, scroll, "Ban Contraptions", "mw_admin_ban_contraptions", "[Disable contraption assemblers]", false)
 
-			y = y+60
+			y = y + 60
 
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(20, y)
@@ -2862,18 +2778,18 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetFontInternal( "DermaLarge" )
 			label:SetText("Cheats")
 
-			y = y+40
-			_MakeCheckbox( 20, y, scroll, "Instant Spawn", "mw_admin_spawn_time", "[Makes units spawn instantly]", true)
-			y = y+40
-			_MakeCheckbox( 20, y, scroll, "Infinite Water", "mw_admin_credit_cost", "[Allows you to spawn units without cost]", true)
-			y = y+40
-			_MakeCheckbox( 20, y, scroll, "Build anywhere", "mw_admin_allow_free_placing", "[Allows you to spawn units anywhere]")
-			y = y+40
-			_MakeCheckbox( 20, y, scroll, "Control any team", "mw_admin_move_any_team", "[Allows you to control units regardless of team]")
-			y = y+40
-			_MakeCheckbox( 20, y, scroll, "Immortal Units", "mw_admin_immortality", "[Units cant die. Useful for photography]")
+			y = y + 40
+			_MakeCheckbox( 20, y, scroll, "Instant Spawn", "mw_admin_spawn_time", "[Makes units spawn instantly]", true )
+			y = y + 40
+			_MakeCheckbox( 20, y, scroll, "Infinite Water", "mw_admin_credit_cost", "[Allows you to spawn units without cost]", true )
+			y = y + 40
+			_MakeCheckbox( 20, y, scroll, "Build anywhere", "mw_admin_allow_free_placing", "[Allows you to spawn units anywhere]" )
+			y = y + 40
+			_MakeCheckbox( 20, y, scroll, "Control any team", "mw_admin_move_any_team", "[Allows you to control units regardless of team]" )
+			y = y + 40
+			_MakeCheckbox( 20, y, scroll, "Immortal Units", "mw_admin_immortality", "[Units cant die. Useful for photography]" )
 
-			y = y+60
+			y = y + 60
 			local button = vgui.Create("DButton", scroll)
 			button:SetSize(200,40)
 			button:SetPos(20,y)
@@ -2893,7 +2809,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetSize(370,40)
 			label:SetFontInternal( "Trebuchet18" )
 			label:SetText("[Set all credits back to the default]")
-			y = y+45
+			y = y + 45
 			local button = vgui.Create("DButton", scroll)
 			button:SetSize(200,40)
 			button:SetPos(20,y)
@@ -2913,33 +2829,33 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			label:SetSize(370,40)
 			label:SetFontInternal( "Trebuchet18" )
 			label:SetText("[Set all Power back to the 0]")
-			y = y+70
+			y = y + 70
 			-----------------------------------------------------------  Power
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(20, y)
 			label:SetSize(200,40)
 			label:SetFontInternal( "DermaLarge" )
-			label:SetText("Power: "..tostring(cvars.Number("mw_admin_max_units")))
+			label:SetText( "Power: " .. tostring( cvars.Number( "mw_admin_max_units" ) ) )
 			local default = vgui.Create("DPanel", scroll)
 			default:SetSize(360,60)
-			default:SetPos(200,y-10)
+			default:SetPos( 200, y - 10 )
 			default.Paint = function(s, w, h)
 					draw.RoundedBox( 0, 108, 0, 12, h, Color(10,150,10) )
 					draw.RoundedBox( 0, 0, 0, 12*6, h, Color(10,40,80) )
 					draw.RoundedBox( 0, 12*15, 0, 12*15, h, Color(80,10,10) )
 				end
 			local slider = vgui.Create("DPanel", scroll)
-			slider:SetSize(cvars.Number("mw_admin_max_units")*1.2,40)
+			slider:SetSize( cvars.Number( "mw_admin_max_units" ) * 1.2, 40 )
 			slider:SetPos(200,y)
-			for i=1, 30 do
-				local button = vgui.Create("DButton", scroll)
-				button:SetSize(15,40)
-				button:SetPos(185+i*12,y)
-				button:SetText("")
+			for i = 1, 30 do
+				local button = vgui.Create( "DButton", scroll )
+				button:SetSize( 15, 40 )
+				button:SetPos( 185 + i * 12, y )
+				button:SetText( "" )
 				function button:DoClick()
-					LocalPlayer():ConCommand("mw_admin_max_units "..tostring(i*10))
-					slider:SetSize(i*12, 40)
-					label:SetText("Power: "..tostring(i*10))
+					LocalPlayer():ConCommand( "mw_admin_max_units " .. tostring( i * 10 ) )
+					slider:SetSize( i * 12, 40 )
+					label:SetText( "Power: " .. tostring( i * 10 ) )
 					--pl.mw_frame:Remove()
 					--pl.mw_frame = nil
 				end
@@ -2948,12 +2864,12 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 				end
 			end
 			----------------------------------------------------------- Starting Credits
-			y = y+70
+			y = y + 70
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(20, y-20)
 			label:SetSize(200,80)
 			label:SetFontInternal( "DermaLarge" )
-			label:SetText("Starting Water:\n"..tostring(cvars.Number("mw_admin_starting_credits")))
+			label:SetText("Starting Water:\n" .. tostring(cvars.Number("mw_admin_starting_credits")))
 			local default = vgui.Create("DPanel", scroll)
 			default:SetSize(360,60)
 			default:SetPos(200,y-10)
@@ -2963,31 +2879,31 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 					draw.RoundedBox( 0, 12*15, 0, 12*15, h, Color(80,10,10) )
 				end
 			local slider = vgui.Create("DPanel", scroll)
-			slider:SetSize(cvars.Number("mw_admin_starting_credits")*12/200,40)
+			slider:SetSize(cvars.Number("mw_admin_starting_credits") * 12 / 200,40)
 			slider:SetPos(200,y)
-			for i=1, 30 do
+			for i = 1, 30 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(15,40)
-				button:SetPos(185+i*12,y)
+				button:SetPos(185 + i * 12, y)
 				button:SetText("")
 				function button:DoClick()
-					LocalPlayer():ConCommand("mw_admin_starting_credits "..tostring(i*200))
-					slider:SetSize(i*12, 40)
-					label:SetText("Starting Water:\n"..tostring(i*200))
+					LocalPlayer():ConCommand("mw_admin_starting_credits " .. tostring(i * 200))
+					slider:SetSize(i * 12, 40)
+					label:SetText("Starting Water:\n" .. tostring(i * 200))
 					--pl.mw_frame:Remove()
 					--pl.mw_frame = nil
 				end
-				button.Paint = function(s, w, h)
-					draw.RoundedBox( 0, w-1, 0, 1, h, Color(100,100,100) )
+				button.Paint = function()
+					draw.RoundedBox( 0, w - 1, 0, 1, h, Color(100,100,100) )
 				end
 			end
 
-			y = y+70
+			y = y + 70
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(20, y-20)
 			label:SetSize(200,80)
 			label:SetFontInternal( "DermaLarge" )
-			label:SetText("Water Income:\n"..tostring(cvars.Number("mw_admin_base_income")))
+			label:SetText("Water Income:\n" .. tostring(cvars.Number("mw_admin_base_income")))
 			local default = vgui.Create("DPanel", scroll)
 			default:SetSize(360,60)
 			default:SetPos(200,y-10)
@@ -2997,29 +2913,29 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 					draw.RoundedBox( 0, 12*8, 0, 12*22, h, Color(80,10,10) )
 				end
 			local slider = vgui.Create("DPanel", scroll)
-			slider:SetSize(cvars.Number("mw_admin_base_income")*12/5,40)
+			slider:SetSize(cvars.Number("mw_admin_base_income") * 12/5,40)
 			slider:SetPos(200,y)
-			for i=1, 30 do
+			for i = 1, 30 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(15,40)
-				button:SetPos(185+i*12,y)
+				button:SetPos( 185 + i * 12, y )
 				button:SetText("")
 				function button:DoClick()
-					LocalPlayer():ConCommand("mw_admin_base_income "..tostring(i*5))
-					slider:SetSize(i*12, 40)
-					label:SetText("Water Income:\n"..tostring(i*5))
+					LocalPlayer():ConCommand( "mw_admin_base_income " .. tostring( i * 5 ) )
+					slider:SetSize( i * 12, 40 )
+					label:SetText( "Water Income:\n" .. tostring( i * 5 ) )
 					--pl.mw_frame:Remove()
 					--pl.mw_frame = nil
 				end
 				button.Paint = function(s, w, h)
-					draw.RoundedBox( 0, w-1, 0, 1, h, Color(100,100,100) )
+					draw.RoundedBox( 0, w - 1, 0, 1, h, Color(100,100,100) )
 				end
 			end
 
-			y = y+120
+			y = y + 120
 			-------------------------------------------------------- TEAMS
 			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(20, y-45)
+			label:SetPos( 20, y - 45 )
 			label:SetSize(370,40)
 			label:SetFontInternal( "DermaLarge" )
 			label:SetText("Alliances")
@@ -3027,7 +2943,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			grid:SetPos( 160, y )
 			grid:SetCols( 8 )
 			grid:SetColWide( 30 )
-			for i=1, 8 do
+			for i = 1, 8 do
 				for j=1, 8 do
 					local checkbox = vgui.Create( "DButton" ) -- Create the checkbox
 					checkbox:SetPos( 20, y ) -- Set the position
@@ -3048,8 +2964,8 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 								draw.RoundedBox( 4, 0, 0, w, h, Color(150,150,150) )
 								draw.RoundedBox( 2, 2, 2, w-4, h-4, Color(0,0,0) )
 								if (teamgrid[9-i][j]) then
-									draw.RoundedBox( 0, 4, 4, w/2-4, h-8, mw_team_colors[9-i] )
-									draw.RoundedBox( 0, 4+w/2-4, 4, w/2-4, h-8, mw_team_colors[j] )
+									draw.RoundedBox( 0, 4, 4, w / 2-4, h-8, mw_team_colors[9-i] )
+									draw.RoundedBox( 0, 4+w / 2-4, 4, w / 2-4, h-8, mw_team_colors[j] )
 								end
 							end
 						else
@@ -3073,7 +2989,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			grid:SetPos( 160, y-35 )
 			grid:SetCols( 8 )
 			grid:SetColWide( 30 )
-			for i=1, 8 do
+			for i = 1, 8 do
 				local DPanel = vgui.Create( "DPanel" )
 				DPanel:SetSize( 30, 30 ) -- Set the size of the panel
 				DPanel.Paint = function(s, w, h)
@@ -3087,7 +3003,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			grid:SetPos( 160-35, y )
 			grid:SetCols( 1 )
 			grid:SetColWide( 30 )
-			for i=8, 1, -1 do
+			for i = 8, 1, -1 do
 				local DPanel = vgui.Create( "DPanel" )
 					DPanel:SetSize( 30, 30 ) -- Set the size of the panel
 				DPanel.Paint = function(s, w, h)
@@ -3095,7 +3011,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 					draw.RoundedBox( 6, 2, 2, w-4, h-4, mw_team_colors[i] )
 				end
 				grid:AddItem(DPanel)
-			end		
+			end
 		else
 			local label = vgui.Create("DLabel", pl.panel)
 			label:SetPos(120, 210)
@@ -3112,25 +3028,25 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 		scroll:SetSize(px, py)
 		-------------------------------------------------------- Start
 		--Build sphere alpha
-		y = y+70
+		y = y + 70
 		local label = vgui.Create("DLabel", scroll)
 		label:SetPos(20, y-20)
 		label:SetSize(250,80)
 		label:SetFontInternal( "DermaLarge" )
-		label:SetText("BuildSphere Alpha:\n"..tostring(math.Round(GetConVar("mw_buildalpha_multiplier"):GetFloat(),1)))
+		label:SetText("BuildSphere Alpha:\n" .. tostring(math.Round(GetConVar("mw_buildalpha_multiplier"):GetFloat(),1)))
 
 		local slider = vgui.Create("DPanel", scroll)
-		slider:SetSize(GetConVar("mw_buildalpha_multiplier"):GetFloat()*120,40)
-		slider:SetPos(65,y+20)
-		for i=1, 35 do
+		slider:SetSize(GetConVar("mw_buildalpha_multiplier"):GetFloat() * 120,40)
+		slider:SetPos(65,y + 20)
+		for i = 1, 35 do
 			local button = vgui.Create("DButton", scroll)
 			button:SetSize(15,40)
-			button:SetPos(50+i*12,y+20)
+			button:SetPos(50+i*12,y + 20)
 			button:SetText("")
 			function button:DoClick()
-				LocalPlayer():ConCommand("mw_buildalpha_multiplier "..tostring(math.Round(i/10,1)))
+				LocalPlayer():ConCommand("mw_buildalpha_multiplier " .. tostring(math.Round(i/10,1)))
 				slider:SetSize(i*12, 40)
-				label:SetText("BuildSphere Alpha:\n"..tostring(math.Round(i/10,1)))
+				label:SetText("BuildSphere Alpha:\n" .. tostring(math.Round(i/10,1)))
 			end
 			button.Paint = function(s, w, h)
 				draw.RoundedBox( 0, w-1, 0, 1, h, Color(100,100,100) )
@@ -3138,8 +3054,8 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 		end
 
 		local label = vgui.Create("DLabel", scroll)
-		label:SetPos(20, y+40)
-		label:SetSize(450,80)
+		label:SetPos( 20, y + 40 )
+		label:SetSize( 450, 80 )
 		label:SetFontInternal( "Trebuchet24" )
 		label:SetText("The transparency of HQ build range bubbles")
 
@@ -3149,11 +3065,11 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 
 		local labelstr = "Allows players to start matches if a certain percentage are ready"
 		local textstr = "[Ready Up]"
-		local checkbox = vgui.Create( "DButton", scroll )--  Create the checkbox
-		checkbox:SetPos( 20, y )--  Set the position
+		local checkbox = vgui.Create( "DButton", scroll ) -- Create the checkbox
+		checkbox:SetPos( 20, y ) -- Set the position
 		checkbox:SetSize(60,30)
 		checkbox:SetText("")
-		local checked = (GetConVarNumber("mw_player_ready") ~= 1)
+		local checked = GetConVar( "mw_player_ready" ):GetInt() ~= 1
 		if (inverted) then checked = not checked end
 		checkbox.Paint = function(s, w, h)
 			draw.RoundedBox( 8, 0, 0, w, h, color_white )
@@ -3163,11 +3079,11 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			end
 		end
 		function checkbox:DoClick()
-			local commandstring = "mw_player_ready "..tostring(1-GetConVarNumber("mw_player_ready"))
+			local commandstring = "mw_player_ready " .. tostring( 1 - GetConVar( "mw_player_ready" ):GetInt() )
 
 			LocalPlayer():ConCommand(commandstring)
 
-			local checked = (GetConVarNumber("mw_player_ready") ~= 1)
+			local checked = GetConVar( "mw_player_ready" ):GetInt() ~= 1
 			if (inverted) then checked = not checked end
 			checkbox.Paint = function(s, w, h)
 				draw.RoundedBox( 8, 0, 0, w, h, color_white )
@@ -3178,7 +3094,7 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 			end
 
 			-- I have to add an artificial delay or the serverside code runs before the convar is changed
-			timer.Simple(0.1, function()   
+			timer.Simple(0.1, function()
 				net.Start("MWReadyUp")
 				net.SendToServer()
 			end)
@@ -3200,124 +3116,54 @@ Remember, this is as much a gamemode as it is a toy, so there is no actual "End"
 	end
 end
 
--- Button Functions (Start)
-
-function _MakeHelpButton(name, number, info, text1, text2, text3, text4, text5) -- Make HELP Button
-	local button = vgui.Create("DButton", LocalPlayer().panel)
-	button:SetSize(100,40)
-	button:SetPos(10,10+number*(40+5))
-	button:SetText(name)
-	button:SetFontInternal("CloseCaption_Normal")
+function TOOL:MenuButton( pl, y, h, text, number )
+	local button = vgui.Create( "DButton", pl.mw_frame )
+	button:SetSize( 100, h )
+	button:SetPos( 10, y )
+	button:SetText( text )
+	button:SetFont( "CloseCaption_Normal" )
 	function button:DoClick()
-		info:SetFontInternal("Trebuchet24")
-		info:SetText(text1)
-		if (text2 ~= nil) then info:AppendText(text2) end
-		if (text3 ~= nil) then info:AppendText(text3) end
-		if (text4 ~= nil) then info:AppendText(text4) end
-		if (text5 ~= nil) then info:AppendText(text5) end
-		timer.Simple( 0.001, function() info:GotoTextStart() end )
-
-		if (name == "About") then
-			if (LocalPlayer():GetInfo("mw_code") == "about" or LocalPlayer():GetInfo("mw_code") == "ABOUT") then
-				chat.AddText( "Well done" )
-				LocalPlayer():ConCommand("mw_action 945")
-			end
-		end
+		pl.panel:Remove()
+		pl.mw_menu = number
+		_CreatePanel()
 	end
 end
 
-function _MakeButton(number, posnumber, parent) -- Make Button
+function TOOL:Reload()
+	if cvars.Bool("mw_admin_cutscene") then return end
 	if not CLIENT then return end
 	local pl = LocalPlayer()
-
-	local button = vgui.Create("DButton", parent) -- Unit button
-	button:SetSize(120,40)
-	button:SetPos(10,10+(posnumber-1)*45)
-	button:SetFont("CloseCaption_Normal")
-	button:SetText(mw_units[number].name)
+	if pl.mw_frame ~= nil then return end
+--	CREATE FRAME
+	pl.mw_frame = vgui.Create("DFrame")
+	pl.mw_frame:SetSize(w, h)
+	pl.mw_frame:SetPos(ScrW() / 2 - w / 2 + 150, ScrH() / 2 - h / 3)
+	pl.mw_frame:SetTitle("Melon Wars")
+	pl.mw_frame:MakePopup()
+	pl.mw_frame:ShowCloseButton()
+	local button = vgui.Create("DButton", pl.mw_frame)
+	button:SetSize(90, 18)
+	button:SetPos(w - 93, 3)
+	button:SetText("Press R to close")
 	function button:DoClick()
-		LocalPlayer():ConCommand("mw_chosen_unit "..tostring(number))
-		LocalPlayer():ConCommand("mw_action 1")
 		pl.mw_frame:Remove()
 		pl.mw_frame = nil
 	end
-	local color = mw_units[number].button_color
-	button.Paint = function(s, w, h)
-		draw.RoundedBox( 6, 0, 0, w, h, Color(color.r-40,color.g-40,color.b-40) )
-		draw.RoundedBox( 3, 5, 5, w-10, h-10, color )
-	end
-	function button:OnCursorEntered()
-		pl.mw_hover = number
-		pl.info:SetText(mw_units[number].description)	
-		if (cvars.Number("mw_admin_credit_cost") == 1) then
-			pl.info_cost:SetText("Cost: "..mw_units[number].cost)
-			if (mw_units[number].welded_cost == -1) then
-				pl.info_turret_cost:SetText("")
-			else
-				pl.info_turret_cost:SetText("Turret cost: "..mw_units[number].welded_cost)
-			end
-		else
-			pl.info_cost:SetText("")
-			pl.info_turret_cost:SetText("")
-		end
-		pl.info_power:SetText("Power: "..mw_units[number].population)	
-		if (cvars.Number("mw_admin_spawn_time") == 1) then
-			pl.info_time:SetText("Spawn time: "..mw_units[number].spawn_time.."s")
-		else
-			pl.info_time:SetText("")
-		end
-		pl.info_name:SetText(mw_units[number].name)
-	end
-end
 
--- Button Functions (End)
+	_CreatePanel()
 
-function DefaultInfo()
-	if not CLIENT then return end
-	local pl = LocalPlayer()
-		
-	pl.info = vgui.Create("DLabel", pl.panel)
-	pl.info:SetPos(190, 190)
-	pl.info:SetSize(370,200)
-	pl.info:SetWrap(true)
-	pl.info:SetFontInternal( "Trebuchet24" )
-	pl.info:SetText("Hover over a button to see more info about the units")
-	pl.mw_hover = 0
+	local h = 70
+	self:MenuButton(pl, 30 + h * 0, h, "Units", 0)
+	self:MenuButton(pl, 30 + h * 1, h, "Buildings", 1)
+	self:MenuButton(pl, 30 + h * 2, h, "Base", 2)
+	self:MenuButton(pl, 30 + h * 3, h, "Energy", 3)
+	self:MenuButton(pl, 30 + h * 4, h, "Contrap.", 4)
 
-	pl.info_name = vgui.Create("DLabel", pl.panel)
-	pl.info_name:SetPos(190, 50)
-	pl.info_name:SetSize(370,100)
-	pl.info_name:SetWrap(true)
-	pl.info_name:SetFontInternal( "DermaLarge" )
-	pl.info_name:SetText("-")	
-
-	pl.info_cost = vgui.Create("DLabel", pl.panel)
-	pl.info_cost:SetPos(190, 110)
-	pl.info_cost:SetSize(370,100)
-	pl.info_cost:SetWrap(true)
-	pl.info_cost:SetFontInternal( "DermaLarge" )
-	pl.info_cost:SetText("Cost: ")	
-		
-	pl.info_turret_cost = vgui.Create("DLabel", pl.panel)
-	pl.info_turret_cost:SetPos(190, 140)
-	pl.info_turret_cost:SetSize(370,100)
-	pl.info_turret_cost:SetWrap(true)
-	pl.info_turret_cost:SetFontInternal( "Trebuchet24" )
-	pl.info_turret_cost:SetText("")	
-		
-	pl.info_power = vgui.Create("DLabel", pl.panel)
-	pl.info_power:SetPos(400, 110)
-	pl.info_power:SetSize(370,100)
-	pl.info_power:SetWrap(true)
-	pl.info_power:SetFontInternal( "DermaLarge" )
-	pl.info_power:SetText("Power")	
-
-	pl.info_time = vgui.Create("DLabel", pl.panel)
-	pl.info_time:SetPos(400, 140)
-	pl.info_time:SetSize(370,100)
-	pl.info_time:SetWrap(true)
-	pl.info_time:SetFontInternal( "Trebuchet24" )
-	pl.info_time:SetText("")	
+	self:MenuButton(pl, 390, 25, "Help", 6)
+	self:MenuButton(pl, 415, 25, "Team", 5)
+	self:MenuButton(pl, 440, 25, "Admin", 7)
+	self:MenuButton(pl, 470, 25, "Player", 8)
+--	button:SetEnabled( pl:IsAdmin() )
 end
 
 function TOOL:DrawToolScreen( width, height )
@@ -3325,7 +3171,7 @@ function TOOL:DrawToolScreen( width, height )
 	surface.SetDrawColor( Color( 20, 20, 20 ) )
 	surface.DrawRect( 0, 0, width, height )
 
-	if cvars.Bool( "mw_admin_cutscene" ) then 
+	if cvars.Bool( "mw_admin_cutscene" ) then
 		draw.SimpleText( "Toolgun Disabled", "DermaLarge", width / 2, height / 2, Color( 200, 200, 200 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		return
 	end
@@ -3348,7 +3194,7 @@ function TOOL:DrawToolScreen( width, height )
 
 	-- New Year
 	-- RECORDAR DESCOMENTAR EL CODIGO ANTERIOR
---[[	surface.SetDrawColor( HSVToColor( (CurTime()*50)%360, 1, 0.2 ) );
+--[[	surface.SetDrawColor( HSVToColor( (CurTime() * 50)%360, 1, 0.2 ) );
 	surface.DrawRect( 0, 0, width, height );
 	local txt = "Happy Holidays!"
 	local len = string.len(txt);
@@ -3360,8 +3206,8 @@ function TOOL:DrawToolScreen( width, height )
 	local colorFrequency = 10;
 	local colorSpeed = 180;
 	for i = 1, len do
-		local color = HSVToColor( (CurTime()*colorSpeed+i*colorFrequency)%360, 1, 1 )
-		draw.SimpleText( string.sub(txt, i, i), "DermaLarge", width / 2 + (-len/2 + i)*letterWidth, height / 2+math.sin(i*frequency+CurTime()*speed)*amplitude, color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		local color = HSVToColor( (CurTime() * colorSpeed+i*colorFrequency)%360, 1, 1 )
+		draw.SimpleText( string.sub(txt, i, i), "DermaLarge", width / 2 + (-len / 2 + i) * letterWidth, height / 2+math.sin(i*frequency + CurTime() * speed) * amplitude, color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 	end ]]
 end
 --[[
@@ -3393,7 +3239,7 @@ function MW_OpenPatchNotes()
 	local w = 700
 	local h = 500
 	frame:SetSize(w,h)
-	frame:SetPos(ScrW()/2-w/2,ScrH()/2-h/2)
+	frame:SetPos(ScrW() / 2-w / 2,ScrH() / 2-h / 2)
 	frame:SetTitle("Patch Notes")
 	frame:MakePopup()
 end
@@ -3443,10 +3289,10 @@ function TOOL:RightClick( tr )
 	if LocalPlayer().mw_cooldown >= ( CurTime() - 0.05 ) then return end
 
 	if cvars.Number( "mw_chosen_unit" ) == 0 then
-		-- self.Owner:ConCommand( "mw_order" ) -- To order
+		-- self:GetOwner():ConCommand( "mw_order" ) -- To order
 		if istable( LocalPlayer().foundMelons ) then
 			net.Start( "MW_Order" )
-				net.WriteVector( LocalPlayer():GetEyeTrace().HitPos )
+				-- net.WriteVector( LocalPlayer():GetEyeTrace().HitPos )
 				net.WriteBool( LocalPlayer():KeyDown(IN_SPEED) )
 				net.WriteBool( LocalPlayer():KeyDown(IN_WALK) )
 				for _, v in pairs( LocalPlayer().foundMelons ) do
@@ -3457,11 +3303,33 @@ function TOOL:RightClick( tr )
 			net.SendToServer()
 		end
 	else
-		self.Owner:ConCommand( "mw_chosen_unit 0" ) -- Stop spawning
+		self:GetOwner():ConCommand( "mw_chosen_unit 0" ) -- Stop spawning
 	end
 
 	LocalPlayer():ConCommand("mw_action 0")
 	LocalPlayer().mw_cooldown = CurTime()
+end
+
+local function MW_BeginSelection() -- Previously concommand.Add( "+mw_select", function( ply )
+	if not CLIENT then return end
+
+	local ply = LocalPlayer()
+	ply.mw_selecting = true
+	local trace = util.TraceLine( {
+		start = ply:EyePos(),
+		endpos = ply:EyePos() + ply:EyeAngles():Forward() * 10000,
+		filter = function( ent ) if ( ent:GetClass() ~= "player" ) then return true end end,
+		mask = MASK_SOLID + MASK_WATER
+	} )
+
+	ply.mw_selectionStartingPoint = trace.HitPos
+	ply.mw_selectionEndingPoint = trace.HitPos
+	sound.Play( "buttons/lightswitch2.wav", ply:GetPos(), 75, 100, 1 )
+
+	if ply:KeyDown( IN_SPEED ) then return end
+	if not istable( ply.foundMelons ) then return end
+
+	table.Empty( ply.foundMelons )
 end
 
 function TOOL:LeftClick( tr )
@@ -3495,7 +3363,7 @@ function TOOL:LeftClick( tr )
 
 	local action = pl:GetInfoNum("mw_action", 0)
 	if action == 0 then
-		--[[ if (pl.mw_selectTimer > CurTime()-0.3 and pl.mw_selectTimer < CurTime()-0.05) then
+		--[[ if (pl.mw_selectTimer > CurTime() - 0.3 and pl.mw_selectTimer < CurTime() - 0.05) then
 			if (trace.Entity.Base == "ent_melon_base") then
 				MW_TypeSelection()
 			end
@@ -3509,12 +3377,12 @@ function TOOL:LeftClick( tr )
 	elseif action == 1 then
 		if pl.mw_spawnTimer >= CurTime() - 0.1 then return end
 		if (cvars.Bool("mw_admin_playing")) then
-			attach = pl:GetInfoNum("mw_unit_option_welded", 0)
-			unit_index = pl:GetInfoNum("mw_chosen_unit", 0)
+			local attach = pl:GetInfoNum("mw_unit_option_welded", 0)
+			local unit_index = pl:GetInfoNum("mw_chosen_unit", 0)
 			if (cvars.Bool("mw_admin_allow_free_placing") or MW_noEnemyNear(trace.HitPos, mw_melonTeam)) then
-				if (mw_units[unit_index].population == 0 or pl.mw_units+mw_units[unit_index].population <= cvars.Number("mw_admin_max_units")) then
+				if (mw_units[unit_index].population == 0 or pl.mw_units + mw_units[unit_index].population <= cvars.Number("mw_admin_max_units")) then
 					if (LocalPlayer().canPlace) then
-						local cost = 0
+						local cost, mw_delay = 0
 						local class = ""
 
 						if (unit_index > 0) then
@@ -3522,7 +3390,7 @@ function TOOL:LeftClick( tr )
 							mw_delay = mw_units[unit_index].spawn_time
 							cost = 1337
 
-							if (attach == 1) then 
+							if (attach == 1) then
 								cost = mw_units[unit_index].welded_cost
 							else
 								cost = mw_units[unit_index].cost
@@ -3553,9 +3421,9 @@ function TOOL:LeftClick( tr )
 									if (cvars.Number("mw_admin_spawn_time") == 1) then
 										if (cvars.Bool("mw_admin_allow_free_placing") or mw_units[unit_index].buildAnywere or MW_isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
 											if (pl.mw_spawntime < CurTime()) then
-												pl.mw_spawntime = CurTime() + mw_units[unit_index].spawn_time*pl.spawnTimeMult -- spawntimemult has been added here so I can compensate for matches with uneven numbers of commanders
+												pl.mw_spawntime = CurTime() + mw_units[unit_index].spawn_time * pl.spawnTimeMult -- spawntimemult has been added here so I can compensate for matches with uneven numbers of commanders
 											else
-												pl.mw_spawntime = pl.mw_spawntime + mw_units[unit_index].spawn_time*pl.spawnTimeMult
+												pl.mw_spawntime = pl.mw_spawntime + mw_units[unit_index].spawn_time * pl.spawnTimeMult
 											end
 										end
 									end
@@ -3565,7 +3433,7 @@ function TOOL:LeftClick( tr )
 
 								local spawnAngle
 								if (mw_units[unit_index].normalAngle) then
-									spawnAngle = trace.HitNormal:Angle()+mw_units[unit_index].angle
+									spawnAngle = trace.HitNormal:Angle() + mw_units[unit_index].angle
 								else
 									if (mw_units[unit_index].changeAngles) then
 										spawnAngle = pl.propAngle + mw_units[unit_index].angle
@@ -3574,14 +3442,14 @@ function TOOL:LeftClick( tr )
 									end
 								end
 
-								local spawnPosition = trace.HitPos+Vector(0,0,1)+trace.HitNormal*5+mw_units[unit_index].offset
+								local spawnPosition = trace.HitPos + Vector(0,0,1) + trace.HitNormal*5+mw_units[unit_index].offset
 
 								 net.Start("MW_SpawnUnit")
 									net.WriteString(class)
 									net.WriteInt(unit_index, 16)
 									net.WriteTable(trace)
 									net.WriteInt(cost, 16)
-									net.WriteInt(pl.mw_spawntime*cvars.Number("mw_admin_spawn_time"), 16)
+									net.WriteInt(pl.mw_spawntime * cvars.Number("mw_admin_spawn_time"), 16)
 									net.WriteInt(mw_melonTeam, 8)
 									net.WriteInt(mw_delay, 16)
 									net.WriteBool(attach)
@@ -3634,7 +3502,7 @@ function TOOL:LeftClick( tr )
 		local prop_index = pl:GetInfoNum("mw_chosen_prop", 0)
 		local cost = mw_base_props[prop_index].cost
 		if not cvars.Bool("mw_admin_playing") then return end
-		attach = pl:GetInfoNum("mw_unit_option_welded", 0)
+		-- local attach = pl:GetInfoNum("mw_unit_option_welded", 0)
 		if not (cvars.Bool("mw_admin_allow_free_placing") or MW_isInRange(trace.HitPos, mw_melonTeam)) then return end
 		if not (cvars.Bool("mw_admin_allow_free_placing") or MW_noEnemyNear(trace.HitPos, mw_melonTeam)) then return end
 		if not (pl.mw_credits >= cost or not cvars.Bool("mw_admin_credit_cost")) then return end
@@ -3651,7 +3519,7 @@ function TOOL:LeftClick( tr )
 			net.WriteTable(trace)
 			net.WriteInt(cost, 16)
 			net.WriteInt(mw_melonTeam, 8)
-			net.WriteInt(pl.mw_spawntime*cvars.Number("mw_admin_spawn_time"), 16)
+			net.WriteInt(pl.mw_spawntime * cvars.Number("mw_admin_spawn_time"), 16)
 			net.WriteAngle(pl.propAngle)
 		net.SendToServer()
 		if (cvars.Bool("mw_admin_credit_cost")) then
@@ -3659,7 +3527,7 @@ function TOOL:LeftClick( tr )
 			pl.mw_credits = pl.mw_credits-cost
 		end
 
-		--pl.mw_units = pl.mw_units+unit_population[unit_index]
+		--pl.mw_units = pl.mw_units + unit_population[unit_index]
 		net.Start("MW_UpdateServerInfo")
 			net.WriteInt(mw_melonTeam ,8)
 			net.WriteInt(pl.mw_credits ,32)
@@ -3674,7 +3542,7 @@ function TOOL:LeftClick( tr )
 			net.SendToServer()
 		end
 		self:GetOwner():ConCommand("mw_action 0")
-	elseif (action == 5) then  --Sell Tool
+	-- elseif (action == 5) then  --Sell Tool
 	elseif (action == 6) then  --Contraption Load
 		--[[ net.Start("ContraptionLoad")
 			net.WriteString(file.Read(pl.selectedFile))
@@ -3746,7 +3614,7 @@ function TOOL:LeftClick( tr )
 end
 
 function TOOL.BuildCPanel( CPanel )
- 	if not CLIENT then return end
+	if not CLIENT then return end
 	-- CPanel:AddControl("Label", { Text = "Options" , Description = "These options only affect mw_units" })
 	--[[ CPanel:AddControl("CheckBox", {
 		Label = "Rocketeer",
@@ -3754,6 +3622,175 @@ function TOOL.BuildCPanel( CPanel )
 		Description = "Makes the unit mw_hover a few meters above ground while moving. Multiplies price by 3."
 	}) ]]
 	CPanel:AddControl("Label", { Text = "Reload to open the menu" })
+end
+
+local function MW_UpdateGhostEntity(model, pos, offset, angle, newColor, ghostSphereRange, ghostSpherePos)
+	if not CLIENT then return end
+	local locPly = LocalPlayer()
+
+	if newColor == nil then
+		newColor = Color(100,100,100)
+	end
+	if tostring( locPly.GhostEntity ) == "[NULL Entity]" or not IsValid( locPly.GhostEntity ) then
+		locPly.GhostEntity = ents.CreateClientProp( model )
+		locPly.GhostEntity:SetSolid( SOLID_VPHYSICS )
+		locPly.GhostEntity:SetMoveType( MOVETYPE_NONE )
+		locPly.GhostEntity:SetNotSolid( true )
+		locPly.GhostEntity:SetRenderMode( RENDERMODE_TRANSALPHA )
+		locPly.GhostEntity:SetRenderFX( kRenderFxPulseFast )
+		locPly.GhostEntity:SetMaterial( "models/debug/debugwhite" )
+		locPly.GhostEntity:SetColor( Color( newColor.r * 1.5, newColor.g * 1.5, newColor.b * 1.5, 150 ) )
+		locPly.GhostEntity:SetModel( model )
+		locPly.GhostEntity:SetPos( pos + offset )
+		locPly.GhostEntity:SetAngles( angle )
+		locPly.GhostEntity:Spawn()
+	else
+		locPly.GhostEntity:SetModel( model )
+		locPly.GhostEntity:SetPos( pos + offset )
+		locPly.GhostEntity:SetAngles( angle )
+		local obbmins = locPly.GhostEntity:OBBMins()
+		local obbmaxs = locPly.GhostEntity:OBBMaxs()
+		obbmins:Rotate( angle )
+		obbmaxs:Rotate( angle )
+		local mins = Vector( locPly.GhostEntity:GetPos().x + obbmins.x, locPly.GhostEntity:GetPos().y + obbmins.y, pos.z + 5 )
+		local maxs = Vector( locPly.GhostEntity:GetPos().x + obbmaxs.x, locPly.GhostEntity:GetPos().y + obbmaxs.y, pos.z + 20 )
+		local overlappingEntities = ents.FindInBox( mins, maxs )
+		--[[
+		local vPoint = locPly.GhostEntity:GetPos() + obbmins + Vector(0,0,1)
+		local effectdata = EffectData()
+		effectdata:SetOrigin( vPoint )
+		effectdata:SetScale(0)
+		util.Effect( "MuzzleEffect", effectdata )
+
+		vPoint = locPly.GhostEntity:GetPos() + obbmaxs
+		effectdata = EffectData()
+		effectdata:SetOrigin( vPoint )
+		effectdata:SetScale(0)
+		util.Effect( "MuzzleEffect", effectdata )
+		]]
+		locPly.canPlace = true
+		if locPly.mw_action == 1 and not mw_units[locPly:GetInfoNum( "mw_chosen_unit", 0 )].canOverlap then
+			for _, v in pairs( overlappingEntities ) do
+				if v.Base ~= nil and string.StartWith( v.Base, "ent_melon_" ) then
+					locPly.canPlace = false
+				end
+			end
+		end
+		if locPly.canPlace then
+			locPly.GhostEntity:SetColor( Color(newColor.r, newColor.g, newColor.b, 150 ))
+			locPly.GhostEntity:SetRenderFX( kRenderFxPulseSlow )
+		else
+			locPly.GhostEntity:SetColor( Color(150, 0, 0, 150 ))
+			locPly.GhostEntity:SetRenderFX( kRenderFxDistort )
+		end
+	end
+
+	if tostring( locPly.GhostSphere ) == "[NULL Entity]" or not IsValid( locPly.GhostSphere ) then
+		if locPly.mw_action == 1 and ghostSphereRange > 0 then
+			locPly.GhostSphere = ents.CreateClientProp( "models/hunter/tubes/circle2x2.mdl" )
+			locPly.GhostSphere:SetSolid( SOLID_VPHYSICS )
+			locPly.GhostSphere:SetMoveType( MOVETYPE_NONE )
+			locPly.GhostSphere:SetNotSolid( true )
+			locPly.GhostSphere:SetRenderMode( RENDERMODE_TRANSALPHA )
+			locPly.GhostSphere:SetRenderFX( kRenderFxPulseSlow )
+			locPly.GhostSphere:SetMaterial("models/debug/debugwhite")
+			locPly.GhostSphere:SetColor( Color( newColor.r * 1.5, newColor.g * 1.5, newColor.b * 1.5, 50 ) )
+			locPly.GhostSphere:SetModelScale( 0.021 * ghostSphereRange )
+			locPly.GhostSphere:Spawn()
+		end
+	else
+		if locPly.mw_action == 1 and ghostSphereRange > 0 then
+			local color = locPly.GhostSphere:GetColor()
+			locPly.GhostSphere:SetColor( Color(color.r, color.g, color.b, 50) )
+			locPly.GhostSphere:SetPos( Vector(pos.x, pos.y, ghostSpherePos.z ) )
+			locPly.GhostSphere:SetModelScale( 0.021 * ghostSphereRange )
+		else
+			locPly.GhostSphere:Remove()
+		end
+	end
+end
+
+local function MW_FinishSelection() -- Previously concommand.Add( "-mw_select", function( ply )
+	if not CLIENT then return end
+
+	sound.Play( "buttons/lightswitch2.wav", LocalPlayer():GetPos(), 50, 80, 1 )
+	LocalPlayer().mw_selecting = false
+
+	-- Finds all the entities in the selection sphere
+
+	-- local foundEnts = ents.FindInSphere((ply.mw_selEnd+ply.mw_selStart) / 2, ply.mw_selStart:Distance(ply.mw_selEnd) / 2+0.1 )
+	-- local selectEnts = table.Copy( foundEnts )
+	-- if not ply:KeyDown(IN_SPEED) then ply.foundMelons = {} end
+	--Busca de esas entidades cuales son sandias, y cuales son del equipo correcto
+
+	--[[for k, v in pairs( selectEnts ) do
+		if (v.moveType ~= MOVETYPE_NONE) then
+			local tbl = constraint.GetAllConstrainedEntities( v )
+			if (istable(tbl)) then
+				for kk, vv in pairs (tbl) do
+					if (not table.HasValue(selectEnts, vv)) then
+						table.insert(foundEnts, vv)
+					else
+					end
+				end
+			end
+		end
+	end]]
+	-- print("========== Selection:")
+	-- for k, v in pairs( foundEnts ) do
+	-- 	if (v.Base ~= nil) then
+	-- 		if (v.Base == "ent_melon_base") then
+	-- 			if (cvars.Bool("mw_admin_move_any_team", false) or v:GetNWInt("mw_melonTeam", -1) == ply:GetInfoNum( "mw_team", -1 )) then
+	-- 				-- if (v:GetNWInt("mw_melonTeam", 0) ~= 0) then
+	-- 					table.insert(ply.foundMelons, v)
+	-- 					-- print(k..": " .. tostring(v) .. ", added succesfully")
+	-- 					--"Added " .. tostring(v) .. " succesfully"
+	-- 				-- else
+	-- 					-- print(k..": " .. tostring(v) .. " !!! didnt add to the selection because the unit had no team (" ..v:GetNWInt("mw_melonTeam", -1) .. ")")
+	-- 				--"Didn't add " .. tostring(v) .. " because it had no team"
+	-- 				-- end
+	-- 			else
+	-- 				-- print(k..": " .. tostring(v) .. ", didnt add to the selection because the unit was not in your team (" ..v:GetNWInt("mw_melonTeam", -1) .. ")")
+	-- 				if (v:GetNWInt("mw_melonTeam", -1) == -1) then
+	-- 					error("Selected unit has team -1!")
+	-- 				end
+	-- 			--	"Didn't add " .. tostring(v) .. " because it wasn't my team"
+	-- 			end
+	-- 		else
+	-- 			-- print(k..": " .. tostring(v) .. ", didnt add to the selection because the Base was not ent_melon_base (" ..v.Base..")")
+	-- 		--"Didn't add " .. tostring(v) .. " because it was a base prop"
+	-- 		end
+	-- 	else
+	-- 		-- print(k..": " .. tostring(v) .. ", didnt add to the selection because Base was null")
+	-- 	end
+	-- end
+	--Le envia al client la lista de sandias para que pueda dibujar los halos
+	--[[
+	net.Start("Selection")
+		net.WriteInt(table.Count(ply.foundMelons),16)
+		for k,v in pairs(ply.foundMelons) do
+			net.WriteEntity(v)
+		end
+	net.Send(ply)
+	]]--
+
+	-- print("Sending my selection to the server. Total selected units: " .. table.Count(ply.foundMelons))
+	-- print("Entity im pointing at: " .. tostring(ply:GetEyeTrace().Entity))
+	-- print("Selection table,")
+	-- PrintTable(ply.foundMelons)
+	--[[net.Start("MW_SelectContraption")
+		net.WriteUInt(table.Count(LocalPlayer().foundMelons) + 1, 16)
+		net.WriteEntity(ply:GetEyeTrace().Entity)
+		for k, v in pairs(ply.foundMelons) do
+			net.WriteEntity(v)
+		end
+	net.SendToServer()]]--
+
+	-- sound.Play( "buttons/lightswitch2.wav", ply:GetPos(), 75, 90, 1 )
+	-- ply.mw_selEnd = Vector(0,0,0)
+	-- ply.mw_selStart = Vector(0,0,0)
+	-- ply:SetNWVector("mw_selStart", Vector(0,0,0))
+	-- ply:SetNWBool("LocalPlayer().mw_selecting",  Vector(0,0,0))
 end
 
 function TOOL:Think()
@@ -3767,7 +3804,7 @@ function TOOL:Think()
 		--[[ Weird code to make the trace sorta act like there's a solid platform on the z level the selection started at:
 		 I can't find a way to calculate the length between the player's eye position and the point we're aiming to hit
 		 so I'm going to see if this really ghetto solution works and/or if it's laggy ]]
-		local targetpos = EyePos()
+		-- local targetpos = EyePos()
 
 		local specialTrace = util.TraceLine( {
 			start = ply:EyePos(),
@@ -3781,15 +3818,15 @@ function TOOL:Think()
 		local eyeZ = ply:EyePos()[3]
 		local processedTrace = ply:EyePos()
 
-		if desiredZ < eyeZ and actualZ < desiredZ then 
+		if desiredZ < eyeZ and actualZ < desiredZ then
 			local fraction = ( eyeZ - desiredZ ) / ( eyeZ - actualZ ) -- Distance to desired z as fraction of the whole trace's length
 			processedTrace = processedTrace + ( ply:EyeAngles():Forward() * fraction * specialTrace.StartPos:Distance( specialTrace.HitPos ) )
-		else 
+		else
 			-- Not sure if I want the commented stuff, it might in some situations make doing some things a bit easier, and it hasn't bothered me or anyone else yet that it behaves this way
 			-- if(actualZ>desiredZ) then
 			--	 processedTrace = Vector(specialTrace.HitPos[1], specialTrace.HitPos[2], desiredZ)
 			-- else
-				processedTrace = specialTrace.HitPos 
+				processedTrace = specialTrace.HitPos
 			-- end
 		end
 
@@ -3829,12 +3866,12 @@ function TOOL:Think()
 		ply.propAngle = Vector( vector.x, vector.y, 0 ):Angle()
 		if ply:GetInfoNum( "mw_chosen_unit", 0 ) ~= 0 then
 			if mw_units[ply:GetInfoNum( "mw_chosen_unit", 0 )].angleSnap then
-				ply.propAngle = Angle( ply.propAngle.p, 180+math.Round(ply.propAngle.y/90)*90, ply.propAngle.r )
+				ply.propAngle = Angle( ply.propAngle.p, 180+math.Round(ply.propAngle.y / 90) * 90, ply.propAngle.r )
 			end
 		end
 	elseif cvars.Number("mw_prop_snap") == 1 then
 		ply.propAngle = Vector( vector.x, vector.y, 0 ):Angle()
-		ply.propAngle = Angle( ply.propAngle.p, math.Round(ply.propAngle.y/45)*45, ply.propAngle.r )
+		ply.propAngle = Angle( ply.propAngle.p, math.Round(ply.propAngle.y / 45) * 45, ply.propAngle.r )
 	else
 		ply.propAngle = Vector( vector.x, vector.y, 0 ):Angle()
 	end
@@ -3867,7 +3904,7 @@ function TOOL:Think()
 					self.ePressed = true
 					local tr = LocalPlayer():GetEyeTrace()
 					local correctTeam = (tr.Entity:GetNWInt("mw_melonTeam", 0) == newTeam or tr.Entity:GetNWInt("capTeam", 0) == newTeam or cvars.Bool("mw_admin_move_any_team", false))
-				
+
 					if (string.StartWith( tr.Entity:GetClass(), "ent_melon_barracks" ) or tr.Entity:GetClass() == "ent_melon_overclocker" ) then
 						-- if (correctTeam) then
 							net.Start("ToggleBarracks")
@@ -3882,9 +3919,9 @@ function TOOL:Think()
 							 	net.WriteInt(newTeam,8)
 							net.SendToServer()
 						-- end
-					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_singleplayer" )) then
+					--[[ elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_singleplayer" )) then
 						net.Start("ActivateWaypoints")
-						net.SendToServer()
+						net.SendToServer() ]]
 					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_propeller" ) or string.StartWith( tr.Entity:GetClass(), "ent_melon_hover" )) then
 						-- if (correctTeam) then
 							net.Start("PropellerReady")
@@ -3967,7 +4004,7 @@ function TOOL:Think()
 			end
 		end
 	end
-			
+
 	if (newTeam ~= 0) then
 		newColor = mw_team_colors[newTeam]
 	else
@@ -3998,7 +4035,7 @@ function TOOL:Think()
 		end
 		if not self.ctrlPressed then
 			self.ctrlPressed = true
-			-- self.Owner:ConCommand( "mw_stop" ) -- parar
+			-- self:GetOwner():ConCommand( "mw_stop" ) -- parar
 			if (istable(LocalPlayer().foundMelons)) then
 			local count = table.Count(LocalPlayer().foundMelons)
 			if (count > 0) then
@@ -4013,7 +4050,7 @@ function TOOL:Think()
 	else
 		self.ctrlPressed = false
 	end
-			
+
 	if (LocalPlayer().mw_spawnTimer == nil) then
 		LocalPlayer().mw_spawnTimer = CurTime()
 	end
@@ -4023,7 +4060,7 @@ function TOOL:Think()
 	if (LocalPlayer().mw_cooldown == nil) then
 		LocalPlayer().mw_cooldown = CurTime()
 	end
-			
+
 	if (LocalPlayer().mw_units == nil) then
 		LocalPlayer().mw_units = 0
 	end
@@ -4042,15 +4079,15 @@ function TOOL:Think()
 		local unit_index = ply:GetInfoNum("mw_chosen_unit", 0)
 		if unit_index > 0 and mw_units[unit_index].offset ~= nil then
 			local offset = mw_units[unit_index].offset
-			local xoffset = Vector(offset.x*(math.cos(ply.propAngle.y/180*math.pi)), offset.x*(math.sin(ply.propAngle.y/180*math.pi)),0)
-			local yoffset = Vector(offset.y*(-math.sin(ply.propAngle.y/180*math.pi)), offset.y*(math.cos(ply.propAngle.y/180*math.pi)),0)
+			local xoffset = Vector(offset.x * (math.cos(ply.propAngle.y / 180*math.pi)), offset.x * (math.sin(ply.propAngle.y / 180*math.pi)),0)
+			local yoffset = Vector(offset.y * (-math.sin(ply.propAngle.y / 180*math.pi)), offset.y * (math.cos(ply.propAngle.y / 180*math.pi)),0)
 			offset = xoffset+yoffset+Vector(0,0,offset.z)
 			local ang = ply.propAngle+mw_units[unit_index].angle
 			if (mw_units[unit_index].normalAngle) then
-				ang = trace.HitNormal:Angle()+mw_units[unit_index].angle
+				ang = trace.HitNormal:Angle() + mw_units[unit_index].angle
 			end
 
-			MW_UpdateGhostEntity (mw_units[unit_index].model, trace.HitPos, trace.HitNormal * 5+offset, ang, newColor, mw_units[unit_index].energyRange, trace.HitPos)
+			MW_UpdateGhostEntity(mw_units[unit_index].model, trace.HitPos, trace.HitNormal * 5+offset, ang, newColor, mw_units[unit_index].energyRange, trace.HitPos)
 		end
 	elseif (LocalPlayer().mw_action == 3) then
 		local newColor = mw_team_colors[ply:GetInfoNum("mw_team", 0)]
@@ -4060,13 +4097,13 @@ function TOOL:Think()
 		if (cvars.Bool("mw_prop_offset") == true) then
 			offset = mw_base_props[prop_index].offset
 			--offset:Rotate( ply.propAngle )
-			local xoffset = Vector(offset.x*(math.cos(ply.propAngle.y/180*math.pi)), offset.x*(math.sin(ply.propAngle.y/180*math.pi)),0)
-			local yoffset = Vector(offset.y*(-math.sin(ply.propAngle.y/180*math.pi)), offset.y*(math.cos(ply.propAngle.y/180*math.pi)),0)
+			local xoffset = Vector(offset.x * (math.cos(ply.propAngle.y / 180*math.pi)), offset.x * (math.sin(ply.propAngle.y / 180*math.pi)),0)
+			local yoffset = Vector(offset.y * (-math.sin(ply.propAngle.y / 180*math.pi)), offset.y * (math.cos(ply.propAngle.y / 180*math.pi)),0)
 			offset = xoffset+yoffset+Vector(0,0,offset.z)
 		else
 			offset = Vector(0,0,mw_base_props[prop_index].offset.z)
 		end
-		MW_UpdateGhostEntity (mw_base_props[prop_index].model, LocalPlayer():GetEyeTrace().HitPos, Vector(0,0,1)+offset, ply.propAngle + mw_base_props[prop_index].angle, newColor, 0, trace.HitPos, mw_units[unit_index].defenseRange)
+		MW_UpdateGhostEntity (mw_base_props[prop_index].model, LocalPlayer():GetEyeTrace().HitPos, Vector(0,0,1) + offset, ply.propAngle + mw_base_props[prop_index].angle, newColor, 0, trace.HitPos, mw_units[prop_index].defenseRange)
 	else
 		if IsValid(LocalPlayer().GhostEntity) then
 			LocalPlayer().GhostEntity:Remove()
@@ -4078,8 +4115,8 @@ function TOOL:Think()
 end
 
 function TOOL:DoSelection(startingPos, endingPos)
-	local center = (startingPos+endingPos)/2;
-	local radius = (startingPos-endingPos):Length()/2
+	local center = (startingPos + endingPos) / 2;
+	local radius = (startingPos-endingPos):Length() / 2
 
 	local foundEntities = {}
 	local allFoundEntities = {}
@@ -4101,11 +4138,11 @@ function TOOL:DoSelection(startingPos, endingPos)
 		LocalPlayer().mw_selectionID = 0
 	end
 
-	LocalPlayer().mw_selectionID = (LocalPlayer().mw_selectionID+1)%255
+	LocalPlayer().mw_selectionID = ( LocalPlayer().mw_selectionID + 1 ) % 255
 
 	local clickedUnit = LocalPlayer():GetEyeTrace().Entity
 
-	if LocalPlayer().lastSelectionTime+0.3>CurTime() and (IsValid(clickedUnit)) then
+	if LocalPlayer().lastSelectionTime + 0.3 > CurTime() and IsValid( clickedUnit ) then
 		if string.StartWith(clickedUnit:GetClass(),"ent_melon_") then
 			allFoundEntities = ents.FindInSphere( center, 300 )
 			net.Start("MW_RequestSelection")
@@ -4117,29 +4154,29 @@ function TOOL:DoSelection(startingPos, endingPos)
 			typeSelect = clickedUnit:GetClass()
 		end
 	else
-		if radius > 15 then 
+		if radius > 15 then
 			local heightTrace = util.TraceLine( {
 				start = center,
 				endpos = center + Vector(0,0,2000),
 				filter = function( ent ) if ( ent:GetClass() == "prop_physics" ) then return true end end,
-				mask = MASK_SOLID+MASK_WATER
+				mask = MASK_SOLID + MASK_WATER
 			} )
 
 			local depthTrace = util.TraceLine( {
 				start = center,
 				endpos = center - Vector(0,0,2000),
 				filter = function( ent ) if ( ent:GetClass() == "prop_physics" ) then return true end end,
-				mask = MASK_SOLID+MASK_WATER
+				mask = MASK_SOLID + MASK_WATER
 			} )
-			
+
 			local depth = depthTrace.HitPos:Distance(center)
 			local height = heightTrace.HitPos:Distance(center) -- Using the normal distance function is a bit more computationally expensive but hopefully this shouldn't be bad enough to be an issue
 
-			if(depth < 25) then depth = 25 end
-			if(height < 25) then height = 25 end
-			
+			if depth < 25 then depth = 25 end
+			if height < 25 then height = 25 end
 
-			if(clickedUnit:GetClass()=="ent_melon_jetpack") then
+
+			if clickedUnit:GetClass() == "ent_melon_jetpack" then
 				allFoundEntities = ents.FindInBox(center - Vector(radius,radius,50), center + Vector(radius,radius,50) )
 			else
 				allFoundEntities = ents.FindInBox(center - Vector(radius,radius,depth), center + Vector(radius,radius,height) )
@@ -4151,7 +4188,7 @@ function TOOL:DoSelection(startingPos, endingPos)
 			for k, v in pairs(allFoundEntities) do
 				local xCoord2, yCoord2, zCoord2 = v:GetPos():Unpack()
 				local processedPosition = Vector(xCoord2, yCoord2, 0)
-				if(processedPosition:DistToSqr(processedCenter)>radius*radius) then -- makes sure we select in just a cylinder, not a box.
+				if processedPosition:DistToSqr( processedCenter ) > radius * radius then -- makes sure we select in just a cylinder, not a box.
 					table.remove( allFoundEntities, k )
 				end
 			end
@@ -4166,7 +4203,7 @@ function TOOL:DoSelection(startingPos, endingPos)
 			net.SendToServer()
 		else
 			-- print("The network thing should've run here")
-			if(clickedUnit.Base == "ent_melon_base") then
+			if clickedUnit.Base == "ent_melon_base" then
 				table.Empty(allFoundEntities)
 				table.insert(allFoundEntities, 1, hitEnt)
 			else
@@ -4203,9 +4240,90 @@ end
 
 function TOOL:IndicateIncome(amount)
 	local indicator = incomeIndicators[currentIncomeIndicator]
-	currentIncomeIndicator = (currentIncomeIndicator+1)%(#incomeIndicators)+1
+	currentIncomeIndicator = (currentIncomeIndicator+1)%(#incomeIndicators) + 1
 	indicator.time = CurTime()
 	indicator.value = amount
+end
+
+local function SelectContraption(pl, path, contraptionName, contraptionCost, contraptionPower)
+	local cost = 0
+	local power = 0
+	local spawnTime = 0
+	local fulltable = util.JSONToTable(file.Read( path ))
+	local duptable = fulltable.Entities
+	local sizePenalty = 0
+	for _, ent in pairs( duptable ) do
+		if (ent.realvalue ~= nil) then
+			cost = cost + ent.realvalue
+			if (ent.spawnDelay == nil) then
+				spawnTime = spawnTime + ent.realvalue / 25
+			end
+		end
+		if (ent.population ~= nil) then
+			power = power + ent.population
+		end
+		if (ent.Pos ~= nil) then
+			sizePenalty = sizePenalty + (ent.Pos):LengthSqr() / 1000
+		end
+		if (ent.spawnDelay ~= nil) then
+			spawnTime = spawnTime + ent.spawnDelay * 2
+		end
+	end
+	--[[ local mins = fulltable.Mins
+	local maxs = fulltable.Maxs
+	local size = maxs.x-mins.x + maxs.y-mins.y + maxs.z-mins.z ]]
+	pl.selectedFile = path
+	cost = math.Round( cost + sizePenalty )
+
+	pl.selectedAssembler:SetNWFloat("slowThinkTimer", spawnTime)
+
+	--pl.selectedAssembler.slowThinkTimer = cost/100
+	--pl.selectedAssembler:SetNWFloat("nextSlowThink", CurTime() + cost/100)
+	--pl.selectedAssembler.nextSlowThink = CurTime() + cost/100
+	--pl.selectedAssembler.unitspawned = false
+	--pl.selectedAssembler:SetNWBool("spawned", false)
+	contraptionName:SetText("Contraption: " .. string.sub(path, string.len( "melonwars/contraptions/" ) + 1, string.len( path ) - 4))
+	contraptionCost:SetText("Cost: " .. cost)
+	contraptionPower:SetText("Power: " .. power)
+	return cost, power
+end
+
+local function StartBuildingContraption( assembler, _file, cost, power )
+	if assembler:GetNWBool( "active" ) then return end
+	if LocalPlayer().mw_units >= cvars.Number( "mw_admin_max_units" ) then return end
+	if LocalPlayer().mw_credits < LocalPlayer().contrapCost or cvars.Bool( "mw_admin_credit_cost" ) then return end
+	if LocalPlayer().contrapPower ~= 0 or LocalPlayer().mw_units + LocalPlayer().contrapPower > cvars.Number( "mw_admin_max_units" ) then return end
+
+	assembler.nextSlowThink = CurTime() + assembler:GetNWFloat("slowThinkTimer", 0)
+	assembler:SetNWFloat("nextSlowThink", CurTime() + assembler:GetNWFloat("slowThinkTimer", 0))
+	assembler.unitspawned = false
+	assembler:SetNWBool("active", true)
+	assembler.player = LocalPlayer()
+	assembler.file = _file
+	assembler.contrapCost = cost
+	assembler.contrapPower = power
+
+	net.Start("RequestContraptionLoadToAssembler")
+		net.WriteEntity(assembler)
+		net.WriteUInt(LocalPlayer().contrapPower, 16)
+		net.WriteString(_file)
+		net.WriteFloat(assembler:GetNWFloat("slowThinkTimer", 0))
+	--	net.WriteVector(LocalPlayer().selectedAssembler:GetPos())
+	net.SendToServer()
+
+	if cvars.Bool("mw_admin_credit_cost") then
+		local newCredits = LocalPlayer().mw_credits-LocalPlayer().contrapCost
+		net.Start("MW_UpdateServerInfo")
+			net.WriteInt(cvars.Number("mw_team"), 8)
+			net.WriteInt(newCredits, 32)
+		net.SendToServer()
+		net.Start("MW_UpdateClientInfo")
+			net.WriteInt(cvars.Number("mw_team"), 8)
+		net.SendToServer()
+	end
+
+	LocalPlayer().cmenuframe:Remove()
+	LocalPlayer().cmenuframe = nil
 end
 
 function TOOL:MakeContraptionMenu()
@@ -4215,7 +4333,7 @@ function TOOL:MakeContraptionMenu()
 		-- This means contraption price related stuff has to be updated in two separate places now which is stupid, but I don't want to have to restructure Marum's code just to make updating this less annoying
 
 		local cost = 0
-		local power = 0 
+		local power = 0
 		local spawnTime = 0
 
 		local fulltable = util.JSONToTable(file.Read(LocalPlayer().selectedAssembler.file))
@@ -4223,22 +4341,22 @@ function TOOL:MakeContraptionMenu()
 		local sizePenalty = 0
 		for _, ent in pairs( duptable ) do
 			if (ent.realvalue ~= nil) then
-				cost = cost+ent.realvalue
+				cost = cost + ent.realvalue
 				if (ent.spawnDelay == nil) then
-					spawnTime = spawnTime + ent.realvalue/25
+					spawnTime = spawnTime + ent.realvalue / 25
 				end
 			end
 			if (ent.population ~= nil) then
-				power = power+ent.population
+				power = power + ent.population
 			end
 			if (ent.Pos ~= nil) then
-				sizePenalty = sizePenalty+(ent.Pos):LengthSqr()/1000
+				sizePenalty = sizePenalty + (ent.Pos):LengthSqr() / 1000
 			end
 			if (ent.spawnDelay ~= nil) then
-				spawnTime = spawnTime + ent.spawnDelay*2
+				spawnTime = spawnTime + ent.spawnDelay * 2
 			end
 		end
-		LocalPlayer().contrapCost = cost 
+		LocalPlayer().contrapCost = cost
 		LocalPlayer().contrapPower = power
 		LocalPlayer().selectedAssembler:SetNWFloat("slowThinkTimer", spawnTime)
 
@@ -4252,12 +4370,12 @@ function TOOL:MakeContraptionMenu()
 	LocalPlayer().cmenuframe = vgui.Create("DFrame")
 	local w = 400
 	local h = 400
-	local freeze = net.ReadBool()
-	LocalPlayer().cmenuframe:SetSize(w,h)
-	LocalPlayer().cmenuframe:SetPos(ScrW()/2-w/2,ScrH()/2-h/2)
+	-- local freeze = net.ReadBool()
+	LocalPlayer().cmenuframe:SetSize(w, h)
+	LocalPlayer().cmenuframe:SetPos(ScrW() / 2 - w / 2, ScrH() / 2 - h / 2)
 	LocalPlayer().cmenuframe:SetTitle("Contraption Legalizer")
 	LocalPlayer().cmenuframe:MakePopup()
-			
+
 	LocalPlayer().cmenuframe.OnClose = function()
 		LocalPlayer().cmenuframe = nil
 	end
@@ -4326,106 +4444,18 @@ function TOOL:MakeContraptionMenu()
 	end
 end
 
-function StartBuildingContraption( assembler, _file, cost, power )
-	if assembler:GetNWBool( "active" ) then return end
-	if LocalPlayer().mw_units >= cvars.Number( "mw_admin_max_units" ) then return end
-	if LocalPlayer().mw_credits < LocalPlayer().contrapCost or cvars.Bool( "mw_admin_credit_cost" ) then return end
-	if LocalPlayer().contrapPower ~= 0 or LocalPlayer().mw_units+LocalPlayer().contrapPower > cvars.Number( "mw_admin_max_units" ) then return end
-
-	assembler.nextSlowThink = CurTime()+assembler:GetNWFloat("slowThinkTimer", 0)
-	assembler:SetNWFloat("nextSlowThink", CurTime()+assembler:GetNWFloat("slowThinkTimer", 0))
-	assembler.unitspawned = false
-	assembler:SetNWBool("active", true)
-	assembler.player = LocalPlayer()
-	assembler.file = _file
-	assembler.contrapCost = cost
-	assembler.contrapPower = power
-
-	net.Start("RequestContraptionLoadToAssembler")
-		net.WriteEntity(assembler)
-		net.WriteUInt(LocalPlayer().contrapPower, 16)
-		net.WriteString(_file)
-		net.WriteFloat(assembler:GetNWFloat("slowThinkTimer", 0))
-	--	net.WriteVector(LocalPlayer().selectedAssembler:GetPos())
-	net.SendToServer()
-
-	if cvars.Bool("mw_admin_credit_cost") then
-		local newCredits = LocalPlayer().mw_credits-LocalPlayer().contrapCost 
-		net.Start("MW_UpdateServerInfo")
-			net.WriteInt(cvars.Number("mw_team"), 8)
-			net.WriteInt(newCredits, 32)
-		net.SendToServer()
-		net.Start("MW_UpdateClientInfo")
-			net.WriteInt(cvars.Number("mw_team"), 8)
-		net.SendToServer()
-	end
-
-	LocalPlayer().cmenuframe:Remove()
-	LocalPlayer().cmenuframe = nil
-end
-
-function SelectContraption(pl, path, contraptionName, contraptionCost, contraptionPower)
-	local cost = 0
-	local power = 0
-	local spawnTime = 0
-	local fulltable = util.JSONToTable(file.Read( path ))
-	local duptable = fulltable.Entities
-	local sizePenalty = 0
-	for _, ent in pairs( duptable ) do
-		if (ent.realvalue ~= nil) then
-			cost = cost+ent.realvalue
-			if (ent.spawnDelay == nil) then
-				spawnTime = spawnTime + ent.realvalue/25
-			end
-		end
-		if (ent.population ~= nil) then
-			power = power+ent.population
-		end
-		if (ent.Pos ~= nil) then
-			sizePenalty = sizePenalty+(ent.Pos):LengthSqr()/1000
-		end
-		if (ent.spawnDelay ~= nil) then
-			spawnTime = spawnTime + ent.spawnDelay*2
-		end
-	end
-	--[[ local mins = fulltable.Mins
-	local maxs = fulltable.Maxs
-	local size = maxs.x-mins.x+maxs.y-mins.y+maxs.z-mins.z ]]
-	pl.selectedFile = path
-	cost = math.Round(cost+sizePenalty)
-
-	pl.selectedAssembler:SetNWFloat("slowThinkTimer", spawnTime)
-
-	--pl.selectedAssembler.slowThinkTimer = cost/100
-	--pl.selectedAssembler:SetNWFloat("nextSlowThink", CurTime()+cost/100)
-	--pl.selectedAssembler.nextSlowThink = CurTime()+cost/100
-	--pl.selectedAssembler.unitspawned = false
-	--pl.selectedAssembler:SetNWBool("spawned", false)
-	contraptionName:SetText("Contraption: "..string.sub(path, string.len( "melonwars/contraptions/" )+1, string.len( path )-4))
-	contraptionCost:SetText("Cost: "..cost)
-	contraptionPower:SetText("Power: "..power)
-	return cost, power
-end
-
 function TOOL:DrawHUD()
 	if game.SinglePlayer() then
 		local w = 550
 		local h = 320
-		local x = ScrW()/2-w/2
-		local y = ScrH()/2-h/2
+		local x = ScrW() / 2 - w / 2
+		local y = ScrH() / 2 - h / 2
 
-		draw.RoundedBox( 15, x, y, w, h, Color(255, 80+80*math.sin(CurTime()*3), 0, 255) )
-		draw.RoundedBox( 10, x+10, y+10, w-20, h-20, Color(0,0,0,150) )
-		draw.DrawText(
-[[I'm sorry, but this tool does not work in
-singleplayer. Please start a 2 player game
-if you want to use this addon on your own.
-
-You'll have more fun if you play with
-someone. Join the MelonWars:RTS steam
-group to find MelonWars players!]],
- "DermaLarge", x+w/2, y+30, color_white, TEXT_ALIGN_CENTER )
-		draw.DrawText("https:--steamcommunity.com/groups/melonwarsrts", "Trebuchet24", x+w/2, y+270, color_white, TEXT_ALIGN_CENTER )
+		draw.RoundedBox( 15, x, y, w, h, Color(255, 80 + 80 * math.sin( CurTime() * 3 ), 0, 255) )
+		draw.RoundedBox( 10, x + 10, y + 10, w - 20, h - 20, Color( 0, 0, 0, 150 ) )
+		draw.DrawText( "I'm sorry, but this tool does not work in\nsingleplayer. Please start a 2 player game\nif you want to use this addon on your own.\n\n" ..
+			"You'll have more fun if you play with\nsomeone. Join the MelonWars:RTS Steam\ngroup to find MelonWars players!", "DermaLarge", x + w / 2, y + 30, color_white, TEXT_ALIGN_CENTER )
+		draw.DrawText( "https:--steamcommunity.com/groups/melonwarsrts", "Trebuchet24", x + w / 2, y + 270, color_white, TEXT_ALIGN_CENTER )
 		return
 	end
 
@@ -4433,20 +4463,20 @@ group to find MelonWars players!]],
 
 	local pl = LocalPlayer()
 	local w = 300
-	local h = 280
+	-- local h = 280
 	local x = ScrW() - w
 	local y = ScrH()
 
 	local mx = gui.MouseX()
-	if (mx == 0) then mx = ScrW()/2 end
+	if (mx == 0) then mx = ScrW() / 2 end
 	local my = gui.MouseY()
-	if (my == 0) then my = ScrH()/2 end
+	if (my == 0) then my = ScrH() / 2 end
 
 	local cbx, cby = chat.GetChatBoxPos()
 	local cbw, cbh = chat.GetChatBoxSize()
 
 	if (pl.cutsceneOpacity > 0) then
-		draw.RoundedBox( 5, cbx, cby+30, cbw-30, cbh-80, Color(0,0,0,pl.cutsceneOpacity) )
+		draw.RoundedBox( 5, cbx, cby + 30, cbw-30, cbh-80, Color(0,0,0,pl.cutsceneOpacity) )
 	end
 
 	if (GetConVar( "mw_admin_cutscene" ):GetBool()) then
@@ -4459,15 +4489,15 @@ group to find MelonWars players!]],
 		surface.SetTextColor( 255, 255, 255, 255 )
 		surface.SetTextPos( mx-50, my-17 )
 		surface.DrawText( "PAUSED" )
-		draw.DrawText( "R: Open menu", "DermaLarge", x+w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
+		draw.DrawText( "R: Open menu", "DermaLarge", x + w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
 	else
 		local pos = 1
 		local teamColor = cvars.Number("mw_team")
 		local size = 50
-		for i=1, 8 do
+		for i = 1, 8 do
 			if (teamgrid[i][teamColor] == true) then
 				draw.RoundedBox( 0, x-pos*size, y-size, size, size, Color(20,20,20,255) )
-				draw.RoundedBox( 5, x+4-pos*size, y+4-size, size-8, size-8, mw_team_colors[i] )
+				draw.RoundedBox( 5, x + 4-pos*size, y + 4-size, size-8, size-8, mw_team_colors[i] )
 				pos = pos + 1
 			end
 		end
@@ -4480,8 +4510,8 @@ group to find MelonWars players!]],
 
 		local unit_id = cvars.Number("mw_chosen_unit")
 
-		if (math.floor(LocalPlayer().mw_spawntime-CurTime()) > 0) then
-			draw.DrawText( "Spawning Queue: "..math.floor(LocalPlayer().mw_spawntime-CurTime()), "DermaLarge", ScrW()/2, ScrH()-80, color_white, TEXT_ALIGN_CENTER )
+		if (math.floor(LocalPlayer().mw_spawntime - CurTime()) > 0) then
+			draw.DrawText( "Spawning Queue: " .. math.floor(LocalPlayer().mw_spawntime-CurTime()), "DermaLarge", ScrW() / 2, ScrH() - 80, color_white, TEXT_ALIGN_CENTER )
 		end
 
 		local cheats = false
@@ -4489,58 +4519,54 @@ group to find MelonWars players!]],
 		local freeunits = not cvars.Bool("mw_admin_credit_cost")
 		if (freeunits) then
 			cheats = true
-			draw.DrawText( "> Infinite Water", "DermaLarge", 10, ScrH()-cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
+			draw.DrawText( "> Infinite Water", "DermaLarge", 10, ScrH() - cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
 			cheatsOffset = cheatsOffset + 40
 		end
 
 		local freeplacing = cvars.Bool("mw_admin_allow_free_placing")
 		if (freeplacing) then
 			cheats = true
-			draw.DrawText( "> Build anywhere", "DermaLarge", 10, ScrH()-cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
+			draw.DrawText( "> Build anywhere", "DermaLarge", 10, ScrH() - cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
 			cheatsOffset = cheatsOffset + 40
 		end
 
 		local controlany = cvars.Bool("mw_admin_move_any_team")
 		if (controlany) then
 			cheats = true
-			draw.DrawText( "> Control any team", "DermaLarge", 10, ScrH()-cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
+			draw.DrawText( "> Control any team", "DermaLarge", 10, ScrH() - cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
 			cheatsOffset = cheatsOffset + 40
 		end
 
 		local instantspawn = not cvars.Bool("mw_admin_spawn_time")
 		if (instantspawn) then
 			cheats = true
-			draw.DrawText( "> Instant spawn", "DermaLarge", 10, ScrH()-cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
+			draw.DrawText( "> Instant spawn", "DermaLarge", 10, ScrH() - cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
 			cheatsOffset = cheatsOffset + 40
 		end
 
 		local immortality = cvars.Bool("mw_admin_immortality")
 		if (immortality) then
 			cheats = true
-			draw.DrawText( "> Immortal units", "DermaLarge", 10, ScrH()-cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
+			draw.DrawText( "> Immortal units", "DermaLarge", 10, ScrH() - cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
 			cheatsOffset = cheatsOffset + 40
 		end
 
 		if (cheats) then
 			cheatsOffset = cheatsOffset + 20
-			draw.DrawText(
-[[Go to the admin menu to set these
-options, or press the start game button
-to start a game and turn off cheats]]
-				, "Trebuchet18", 10, ScrH()-cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
+			draw.DrawText( "Go to the admin menu to set these\noptions, or press the start game button\nto start a game and turn off cheats", "Trebuchet18", 10, ScrH() - cheatsOffset, Color( 255, 255, 255, 100 ), TEXT_ALIGN_LEFT )
 			cheatsOffset = cheatsOffset + 30
-			draw.DrawText( "Current Cheats:", "DermaLarge", 10, ScrH()-cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
+			draw.DrawText( "Current Cheats:", "DermaLarge", 10, ScrH() - cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
 		end
 
 		if (pl.mw_action == 2) then --spawning main building
 			local w = 300
-			local h = 280
-			local x = ScrW()-w
+			-- local h = 280
+			local x = ScrW() - w
 			local y = ScrH()
-			
-			draw.DrawText( "R: Open menu", "DermaLarge", x+w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "LMB: Spawn Main Building", "DermaLarge", x+w-10, y-100, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "RMB: Cancel", "DermaLarge", x+w-10, y-60, color_white, TEXT_ALIGN_RIGHT )
+
+			draw.DrawText( "R: Open menu", "DermaLarge", x + w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "LMB: Spawn Main Building", "DermaLarge", x + w-10, y-100, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "RMB: Cancel", "DermaLarge", x + w-10, y-60, color_white, TEXT_ALIGN_RIGHT )
 		elseif (pl.mw_action == 1) then --spawning
 			local teamColor = Color(100,100,100,255)
 			if (cvars.Number("mw_team") ~= 0) then
@@ -4549,135 +4575,135 @@ to start a game and turn off cheats]]
 			if (unit_id > 0) then
 				local w = 300
 				local h = 280
-				local x = ScrW()-w
-				local y = ScrH()-h
+				local x = ScrW() - w
+				local y = ScrH() - h
 
 				draw.RoundedBox( 15, x, y, w, h, teamColor )
-				draw.RoundedBox( 10, x+10, y+10, w-20, h-20, Color(0,0,0,230) )
-				draw.DrawText( mw_units[unit_id].name, "DermaLarge", x+w/2, y+30, color_white, TEXT_ALIGN_CENTER )
-				for i=1, mw_units[unit_id].population do
-					draw.RoundedBox( 1, x+w/2-(mw_units[unit_id].population+1)/2*15+i*15-7, y+65, 10, 10, color_white )
+				draw.RoundedBox( 10, x + 10, y + 10, w-20, h-20, Color(0,0,0,230) )
+				draw.DrawText( mw_units[unit_id].name, "DermaLarge", x + w / 2, y + 30, color_white, TEXT_ALIGN_CENTER )
+				for i = 1, mw_units[unit_id].population do
+					draw.RoundedBox( 1, x + w / 2-(mw_units[unit_id].population+1) / 2*15+i*15-7, y + 65, 10, 10, color_white )
 				end
 				if (freeunits) then
-					draw.DrawText( "- Infinite Water -", "Trebuchet18", x+w/2, y+120, color_white, TEXT_ALIGN_CENTER )
-					draw.DrawText( "To enable water cost go to the admin menu", "Trebuchet18", x+w/2, y+140, color_white, TEXT_ALIGN_CENTER )
+					draw.DrawText( "- Infinite Water -", "Trebuchet18", x + w / 2, y + 120, color_white, TEXT_ALIGN_CENTER )
+					draw.DrawText( "To enable water cost go to the admin menu", "Trebuchet18", x + w / 2, y + 140, color_white, TEXT_ALIGN_CENTER )
 				else
-					draw.DrawText( "Cost: "..mw_units[unit_id].cost, "DermaLarge", x+30, y+90, color_white, TEXT_ALIGN_LEFT )
+					draw.DrawText( "Cost: " .. mw_units[unit_id].cost, "DermaLarge", x + 30, y + 90, color_white, TEXT_ALIGN_LEFT )
 					if (mw_units[unit_id].welded_cost ~= -1) then
-						draw.DrawText( "Welded Cost (RMB): "..mw_units[unit_id].welded_cost, "Trebuchet18", x+30, y+130, color_white, TEXT_ALIGN_LEFT )
+						draw.DrawText( "Welded Cost (RMB): " .. mw_units[unit_id].welded_cost, "Trebuchet18", x + 30, y + 130, color_white, TEXT_ALIGN_LEFT )
 					end
-					draw.DrawText( "Water: "..tostring(self:GetOwner().mw_credits), "DermaLarge", x+30, y+160, color_white, TEXT_ALIGN_LEFT )
+					draw.DrawText( "Water: " .. tostring(self:GetOwner().mw_credits), "DermaLarge", x + 30, y + 160, color_white, TEXT_ALIGN_LEFT )
 				end
-				draw.DrawText( "Power: "..tostring(self:GetOwner().mw_units).." / "..tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x+30, y+200, color_white, TEXT_ALIGN_LEFT )
+				draw.DrawText( "Power: " .. tostring(self:GetOwner().mw_units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 200, color_white, TEXT_ALIGN_LEFT )
 
-				draw.DrawText( "R: Open menu", "DermaLarge", x+w-10, y-120, color_white, TEXT_ALIGN_RIGHT )
-				draw.DrawText( "LMB: Spawn", "DermaLarge", x+w-10, y-80, color_white, TEXT_ALIGN_RIGHT )
-				draw.DrawText( "RMB: Cancel", "DermaLarge", x+w-10, y-40, color_white, TEXT_ALIGN_RIGHT )
+				draw.DrawText( "R: Open menu", "DermaLarge", x + w-10, y-120, color_white, TEXT_ALIGN_RIGHT )
+				draw.DrawText( "LMB: Spawn", "DermaLarge", x + w-10, y-80, color_white, TEXT_ALIGN_RIGHT )
+				draw.DrawText( "RMB: Cancel", "DermaLarge", x + w-10, y-40, color_white, TEXT_ALIGN_RIGHT )
 
 				--if (math.floor(LocalPlayer().mw_spawntime-CurTime()) > 0) then
-				--	draw.DrawText( "Spawning Queue: "..math.floor(LocalPlayer().mw_spawntime-CurTime()), "DermaLarge", ScrW()/2, ScrH()-80, color_white, TEXT_ALIGN_CENTER )
+				--	draw.DrawText( "Spawning Queue: " .. math.floor(LocalPlayer().mw_spawntime-CurTime()), "DermaLarge", ScrW() / 2, ScrH() - 80, color_white, TEXT_ALIGN_CENTER )
 				--end
 
 				if (cvars.Bool("mw_unit_option_welded") and mw_units[unit_id].welded_cost ~= -1) then
-					draw.RoundedBox( 10, mx-100, my+40, 200, 45, Color(0,0,0,100) )
-					draw.DrawText( "Spawning "..mw_units[unit_id].name, "Trebuchet24", mx, my+40, Color(255,255,0,255), TEXT_ALIGN_CENTER )
-					draw.DrawText( "as turret", "Trebuchet24", mx, my+60, Color(255,255,0,255), TEXT_ALIGN_CENTER )
-						
+					draw.RoundedBox( 10, mx-100, my + 40, 200, 45, Color(0,0,0,100) )
+					draw.DrawText( "Spawning " .. mw_units[unit_id].name, "Trebuchet24", mx, my + 40, Color(255,255,0,255), TEXT_ALIGN_CENTER )
+					draw.DrawText( "as turret", "Trebuchet24", mx, my + 60, Color(255,255,0,255), TEXT_ALIGN_CENTER )
+
 					draw.RoundedBox( 2, mx-21, my-3, 17, 5, Color(50,50,50))
-					draw.RoundedBox( 2, mx+4, my-3, 17, 5, Color(50,50,50))
-					draw.RoundedBox( 2, mx-4, my-31-math.sin(CurTime()*3)*10, 7, 12, Color(50,50,50))
+					draw.RoundedBox( 2, mx + 4, my-3, 17, 5, Color(50,50,50))
+					draw.RoundedBox( 2, mx-4, my-31-math.sin(CurTime() * 3) * 10, 7, 12, Color(50,50,50))
 					draw.RoundedBox( 1, mx-20, my-2, 15, 3, teamColor)
-					draw.RoundedBox( 1, mx+5, my-2, 15, 3, teamColor)
-					draw.RoundedBox( 1, mx-3, my-30-math.sin(CurTime()*3)*10, 5, 10, teamColor)
+					draw.RoundedBox( 1, mx + 5, my-2, 15, 3, teamColor)
+					draw.RoundedBox( 1, mx-3, my-30-math.sin(CurTime() * 3) * 10, 5, 10, teamColor)
 				else
-					draw.RoundedBox( 10, mx-160, my+40, 320, 25, Color(0,0,0,100) )
-					draw.DrawText( "Spawning "..mw_units[unit_id].name, "Trebuchet24", mx, my+40, Color(255,255,255,200), TEXT_ALIGN_CENTER )
-					local a = math.sin(CurTime()*3)*5
-						
+					draw.RoundedBox( 10, mx-160, my + 40, 320, 25, Color(0,0,0,100) )
+					draw.DrawText( "Spawning " .. mw_units[unit_id].name, "Trebuchet24", mx, my + 40, Color(255,255,255,200), TEXT_ALIGN_CENTER )
+					local a = math.sin(CurTime() * 3) * 5
+
 					draw.RoundedBox( 2, mx-4, my-23-a, 7, 12, Color(50,50,50))
-					draw.RoundedBox( 2, mx-4, my+12+a, 7, 12, Color(50,50,50))
+					draw.RoundedBox( 2, mx-4, my + 12+a, 7, 12, Color(50,50,50))
 					draw.RoundedBox( 2, mx-24-a, my-3, 12, 7, Color(50,50,50))
-					draw.RoundedBox( 2, mx+11+a, my-3, 12, 7, Color(50,50,50))
-						
+					draw.RoundedBox( 2, mx + 11+a, my-3, 12, 7, Color(50,50,50))
+
 					draw.RoundedBox( 1, mx-3, my-22-a, 5, 10, teamColor)
-					draw.RoundedBox( 1, mx-3, my+13+a, 5, 10, teamColor)
+					draw.RoundedBox( 1, mx-3, my + 13+a, 5, 10, teamColor)
 					draw.RoundedBox( 1, mx-23-a, my-2, 10, 5, teamColor)
-					draw.RoundedBox( 1, mx+12+a, my-2, 10, 5, teamColor)
+					draw.RoundedBox( 1, mx + 12+a, my-2, 10, 5, teamColor)
 				end
 			else
 				local name = ""
-				draw.RoundedBox( 10, mx-115, my+40, 230, 45, Color(0,0,0,100) )
-				draw.DrawText( "Spawning "..name, "Trebuchet24", mx, my+40, Color(255,255,0,255), TEXT_ALIGN_CENTER )
-					
+				draw.RoundedBox( 10, mx-115, my + 40, 230, 45, Color(0,0,0,100) )
+				draw.DrawText( "Spawning " ..name, "Trebuchet24", mx, my + 40, Color(255,255,0,255), TEXT_ALIGN_CENTER )
+
 				draw.RoundedBox( 2, mx-21, my-3, 17, 5, Color(50,50,50))
-				draw.RoundedBox( 2, mx+4, my-3, 17, 5, Color(50,50,50))
-				draw.RoundedBox( 2, mx-4, my-31-math.sin(CurTime()*3)*10, 7, 12, Color(50,50,50))
+				draw.RoundedBox( 2, mx + 4, my-3, 17, 5, Color(50,50,50))
+				draw.RoundedBox( 2, mx-4, my-31-math.sin(CurTime() * 3) * 10, 7, 12, Color(50,50,50))
 				draw.RoundedBox( 1, mx-20, my-2, 15, 3, teamColor)
-				draw.RoundedBox( 1, mx+5, my-2, 15, 3, teamColor)
-				draw.RoundedBox( 1, mx-3, my-30-math.sin(CurTime()*3)*10, 5, 10, teamColor)
+				draw.RoundedBox( 1, mx + 5, my-2, 15, 3, teamColor)
+				draw.RoundedBox( 1, mx-3, my-30-math.sin(CurTime() * 3) * 10, 5, 10, teamColor)
 			end
-		elseif(pl.mw_action == 0) then -- LocalPlayer().mw_selecting
+		elseif pl.mw_action == 0 then -- LocalPlayer().mw_selecting
 			local teamColor = LocalPlayer().mw_hudColor -- self:GetOwner().mw_hudColor
 
 			local w = 300
 			local h = 150
-			local x = ScrW()-w
-			local y = ScrH()-h
+			local x = ScrW() - w
+			local y = ScrH() - h
 
-			draw.DrawText( "R: Open menu", "DermaLarge", x+w-10, y-235, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "LMB (Hold and drag): Select", "DermaLarge", x+w-10, y-195, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "LMB double click: Select unit type", "CloseCaption_Normal", x+w-10, y-165, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "Hold Shift to add to selection", "CloseCaption_Normal", x+w-10, y-145, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "RMB: Move selected", "DermaLarge", x+w-10, y-115, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "Alt + RMB: force target or follow ally", "CloseCaption_Normal", x+w-10, y-85, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "Shift + RMB: Add waypoint", "CloseCaption_Normal", x+w-10, y-65, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "Left Ctrl: Stop selected units", "CloseCaption_Normal", x+w-10, y-45, color_white, TEXT_ALIGN_RIGHT )
-			-- draw.DrawText( "Left Ctrl + RMB: Disperse", "CloseCaption_Normal", x+w-10, y-25, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "R: Open menu", "DermaLarge", x + w-10, y-235, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "LMB (Hold and drag): Select", "DermaLarge", x + w-10, y-195, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "LMB double click: Select unit type", "CloseCaption_Normal", x + w-10, y-165, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "Hold Shift to add to selection", "CloseCaption_Normal", x + w-10, y-145, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "RMB: Move selected", "DermaLarge", x + w-10, y-115, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "Alt + RMB: force target or follow ally", "CloseCaption_Normal", x + w-10, y-85, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "Shift + RMB: Add waypoint", "CloseCaption_Normal", x + w-10, y-65, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "Left Ctrl: Stop selected units", "CloseCaption_Normal", x + w-10, y-45, color_white, TEXT_ALIGN_RIGHT )
+			-- draw.DrawText( "Left Ctrl + RMB: Disperse", "CloseCaption_Normal", x + w-10, y-25, color_white, TEXT_ALIGN_RIGHT )
 
 			draw.RoundedBox( 15, x, y, w, h, teamColor )
-			draw.RoundedBox( 10, x+10, y+10, w-20, h-20, Color(0,0,0,230) )
+			draw.RoundedBox( 10, x + 10, y + 10, w-20, h-20, Color(0,0,0,230) )
 			if (freeunits) then
-				draw.DrawText( "- Infinite Water -", "Trebuchet18", x+w/2, y+20, color_white, TEXT_ALIGN_CENTER )
-				draw.DrawText( "To enable water cost go to the admin menu", "Trebuchet18", x+w/2, y+40, color_white, TEXT_ALIGN_CENTER )
+				draw.DrawText( "- Infinite Water -", "Trebuchet18", x + w / 2, y + 20, color_white, TEXT_ALIGN_CENTER )
+				draw.DrawText( "To enable water cost go to the admin menu", "Trebuchet18", x + w / 2, y + 40, color_white, TEXT_ALIGN_CENTER )
 			else
-				draw.DrawText( "Water: "..tostring(self:GetOwner().mw_credits), "DermaLarge", x+30, y+30, color_white, TEXT_ALIGN_LEFT )
+				draw.DrawText( "Water: " .. tostring(self:GetOwner().mw_credits), "DermaLarge", x + 30, y + 30, color_white, TEXT_ALIGN_LEFT )
 			end
-			draw.DrawText( "Power: "..tostring(self:GetOwner().mw_units).." / "..tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x+30, y+70, color_white, TEXT_ALIGN_LEFT )
-		elseif(pl.mw_action == 3) then
+			draw.DrawText( "Power: " .. tostring(self:GetOwner().mw_units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 70, color_white, TEXT_ALIGN_LEFT )
+		elseif pl.mw_action == 3 then
 			local prop_id = LocalPlayer():GetInfoNum("mw_chosen_prop", 1) -- changed
 
 			local teamColor = LocalPlayer().mw_hudColor -- changed
 			local w = 300
 			local h = 250
-			local x = ScrW()-w
-			local y = ScrH()-h
+			local x = ScrW() - w
+			local y = ScrH() - h
 
 			draw.RoundedBox( 15, x, y, w, h, teamColor )
-			draw.RoundedBox( 10, x+10, y+10, w-20, h-20, Color(0,0,0,230) )
-			draw.DrawText( "Base Builder", "DermaLarge", x+w/2, y+30, color_white, TEXT_ALIGN_CENTER )
-			draw.DrawText( mw_base_props[prop_id].name, "DermaLarge", x+w-20, y+70, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "HP: "..mw_base_props[prop_id].hp, "DermaLarge", x+30, y+100, color_white, TEXT_ALIGN_LEFT )
-			draw.DrawText( "Cost: "..mw_base_props[prop_id].cost, "DermaLarge", x+30, y+130, color_white, TEXT_ALIGN_LEFT )
-			draw.DrawText( "Water: "..tostring(LocalPlayer().mw_credits), "DermaLarge", x+30, y+180, color_white, TEXT_ALIGN_LEFT ) -- changed
-		elseif(pl.mw_action == 4) then
+			draw.RoundedBox( 10, x + 10, y + 10, w-20, h-20, Color(0,0,0,230) )
+			draw.DrawText( "Base Builder", "DermaLarge", x + w / 2, y + 30, color_white, TEXT_ALIGN_CENTER )
+			draw.DrawText( mw_base_props[prop_id].name, "DermaLarge", x + w-20, y + 70, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "HP: " .. mw_base_props[prop_id].hp, "DermaLarge", x + 30, y + 100, color_white, TEXT_ALIGN_LEFT )
+			draw.DrawText( "Cost: " .. mw_base_props[prop_id].cost, "DermaLarge", x + 30, y + 130, color_white, TEXT_ALIGN_LEFT )
+			draw.DrawText( "Water: " .. tostring(LocalPlayer().mw_credits), "DermaLarge", x + 30, y + 180, color_white, TEXT_ALIGN_LEFT ) -- changed
+		elseif pl.mw_action == 4 then
 			local teamColor = mw_team_colors[cvars.Number("mw_team")] -- self:GetOwner().mw_hudColor
 			local w = 300
 			local h = 150
-			local x = ScrW()-w
-			local y = ScrH()-h
+			local x = ScrW() - w
+			local y = ScrH() - h
 
-			draw.RoundedBox( 10, mx-125, my+40, 250, 25, Color(0,0,0,100) )
-			draw.DrawText( "Click on your contraption", "Trebuchet24", mx, my+40, Color(255,255,255,200), TEXT_ALIGN_CENTER )
+			draw.RoundedBox( 10, mx-125, my + 40, 250, 25, Color(0,0,0,100) )
+			draw.DrawText( "Click on your contraption", "Trebuchet24", mx, my + 40, Color(255,255,255,200), TEXT_ALIGN_CENTER )
 
-			draw.DrawText( "R: Open menu", "DermaLarge", x+w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "LMB: Save Contraption", "DermaLarge", x+w-10, y-100, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "RMB: Cancel", "DermaLarge", x+w-10, y-60, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "R: Open menu", "DermaLarge", x + w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "LMB: Save Contraption", "DermaLarge", x + w-10, y-100, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "RMB: Cancel", "DermaLarge", x + w-10, y-60, color_white, TEXT_ALIGN_RIGHT )
 
 			draw.RoundedBox( 15, x, y, w, h, teamColor )
-			draw.RoundedBox( 10, x+10, y+10, w-20, h-20, Color(0,0,0,230) )
-			draw.DrawText( "Water: "..tostring(LocalPlayer().mw_credits), "DermaLarge", x+30, y+30, color_white, TEXT_ALIGN_LEFT ) -- changed
-			draw.DrawText( "Power: "..tostring(LocalPlayer().mw_units).." / "..tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x+30, y+70, color_white, TEXT_ALIGN_LEFT ) -- changed
-		elseif(pl.mw_action == 5) then
+			draw.RoundedBox( 10, x + 10, y + 10, w-20, h-20, Color(0,0,0,230) )
+			draw.DrawText( "Water: " .. tostring(LocalPlayer().mw_credits), "DermaLarge", x + 30, y + 30, color_white, TEXT_ALIGN_LEFT ) -- changed
+			draw.DrawText( "Power: " .. tostring(LocalPlayer().mw_units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 70, color_white, TEXT_ALIGN_LEFT ) -- changed
+		elseif pl.mw_action == 5 then
 			local teamColor = mw_team_colors[cvars.Number("mw_team")] -- LocalPlayer().mw_hudColor -- changed
 			local w = 160
 			local h = 30
@@ -4688,50 +4714,50 @@ to start a game and turn off cheats]]
 			draw.DrawText( "Hold LMB: Sell target", "DermaLarge", x-10, y-240, color_white, TEXT_ALIGN_RIGHT )
 			draw.DrawText( "RMB: Cancel", "DermaLarge", x-10, y-200, color_white, TEXT_ALIGN_RIGHT )
 
-			draw.RoundedBox( 3, ScrW()/2-w/2, ScrH()/2+20, w, h, Color(0,0,0, 200) )
-			draw.RoundedBox( 0, ScrW()/2-w/2+3, ScrH()/2+20+3, pl.mw_sell*(w-6), h-6, Color(0,230,0, 200) )
-			draw.DrawText( "Hold click to sell", "Trebuchet18", ScrW()/2, ScrH()/2+25, color_white, TEXT_ALIGN_CENTER )
+			draw.RoundedBox( 3, ScrW() / 2-w / 2, ScrH() / 2 + 20, w, h, Color(0,0,0, 200) )
+			draw.RoundedBox( 0, ScrW() / 2-w / 2+3, ScrH() / 2+20+3, pl.mw_sell*(w-6), h-6, Color(0,230,0, 200) )
+			draw.DrawText( "Hold click to sell", "Trebuchet18", ScrW() / 2, ScrH() / 2+25, color_white, TEXT_ALIGN_CENTER )
 
 			draw.RoundedBox( 15, x-300, y-150, 300, 150, teamColor )
 			draw.RoundedBox( 10, x-300+10, y-140, 300-20, 130, Color(0,0,0,230) )
-			draw.DrawText( "Water: "..tostring(LocalPlayer().mw_credits), "DermaLarge", x-270, y-100, color_white, TEXT_ALIGN_LEFT )
-		elseif(pl.mw_action == 6) then
+			draw.DrawText( "Water: " .. tostring(LocalPlayer().mw_credits), "DermaLarge", x-270, y-100, color_white, TEXT_ALIGN_LEFT )
+		elseif pl.mw_action == 6 then
 			local teamColor = mw_team_colors[cvars.Number("mw_team")]--LocalPlayer().mw_hudColor -- changed
 			local w = 300
 			local h = 150
-			local x = ScrW()-w
-			local y = ScrH()-h
+			local x = ScrW() - w
+			local y = ScrH() - h
 
-			draw.RoundedBox( 10, mx-130, my+40, 260, 25, Color(0,0,0,100) )
-			draw.DrawText( "Click to spawn contraption", "Trebuchet24", mx, my+40, Color(255,255,255,200), TEXT_ALIGN_CENTER )
+			draw.RoundedBox( 10, mx-130, my + 40, 260, 25, Color(0,0,0,100) )
+			draw.DrawText( "Click to spawn contraption", "Trebuchet24", mx, my + 40, Color(255,255,255,200), TEXT_ALIGN_CENTER )
 
-			draw.DrawText( "R: Open menu", "DermaLarge", x+w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "LMB: Load Contraption", "DermaLarge", x+w-10, y-100, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "RMB: Cancel", "DermaLarge", x+w-10, y-60, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "R: Open menu", "DermaLarge", x + w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "LMB: Load Contraption", "DermaLarge", x + w-10, y-100, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "RMB: Cancel", "DermaLarge", x + w-10, y-60, color_white, TEXT_ALIGN_RIGHT )
 
 			draw.RoundedBox( 15, x, y, w, h, teamColor )
-			draw.RoundedBox( 10, x+10, y+10, w-20, h-20, Color(0,0,0,230) )
-			draw.DrawText( "Water: "..tostring(LocalPlayer().mw_credits), "DermaLarge", x+30, y+30, color_white, TEXT_ALIGN_LEFT )
-			draw.DrawText( "Power: "..tostring(LocalPlayer().mw_units).." / "..tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x+30, y+70, color_white, TEXT_ALIGN_LEFT )
+			draw.RoundedBox( 10, x + 10, y + 10, w-20, h-20, Color(0,0,0,230) )
+			draw.DrawText( "Water: " .. tostring(LocalPlayer().mw_credits), "DermaLarge", x + 30, y + 30, color_white, TEXT_ALIGN_LEFT )
+			draw.DrawText( "Power: " .. tostring(LocalPlayer().mw_units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 70, color_white, TEXT_ALIGN_LEFT )
 		end
 
 		if (cvars.Bool("mw_income_indicator")) then
 			for k, v in pairs(incomeIndicators) do
-				local time = CurTime()-v.time
+				local time = CurTime() - v.time
 				local text = tostring(v.value)
-				local indColor = Color(255,0,0,200-time*100)
+				local indColor = Color(255,0,0,200-time * 100)
 				if (v.value > 0) then
-					text = "+"..text
-					indColor = Color(0,255,0,200-time*100)
+					text = "+" .. text
+					indColor = Color(0,255,0,200-time * 100)
 				end
-				draw.DrawText( text, "DermaLarge", ScrW()-w-time*40, ScrH()-150+k*10, indColor, TEXT_ALIGN_RIGHT )
+				draw.DrawText( text, "DermaLarge", ScrW() - w-time * 40, ScrH() - 150+k*10, indColor, TEXT_ALIGN_RIGHT )
 			end
 		end
 
 		surface.SetDrawColor(LocalPlayer().mw_hudColor)
 
 		if (pl.mw_action ~= 16) then
-			for i=0, 3 do
+			for i = 0, 3 do
 				surface.DrawOutlinedRect( mx-5-i, my-4-i, 9+i*2, 9+i*2 )
 			end
 			surface.SetDrawColor(color_black)
@@ -4748,32 +4774,30 @@ to start a game and turn off cheats]]
 		if weapon:GetClass() ~= "gmod_tool" then return end-- TODO: Here I should deactivate the spawnmenu once the game started
 		--if not IsValid(v:GetTool()) then return end
 		--if v:GetTool().Mode ~= "melon_universal_tool" then return end
-		local pos = v:GetPos()+Vector(0,0,85)
+		local pos = v:GetPos() + Vector(0,0,85)
 		local distance = EyePos():Distance(pos)
 		local screenPos = pos:ToScreen()
 		local size = 10000/distance
 		local teamColor = mw_team_colors[v:GetInfoNum( "mw_team", -1 )]
 		size = math.max(size, 15)
-		draw.RoundedBox( size/2, screenPos.x-size/2, screenPos.y-size/2, size, size, color_black )
+		draw.RoundedBox( size / 2, screenPos.x-size / 2, screenPos.y-size / 2, size, size, color_black )
 		size = size-4
-		draw.RoundedBox( size/2, screenPos.x-size/2, screenPos.y-size/2, size, size, color_white )
+		draw.RoundedBox( size / 2, screenPos.x-size / 2, screenPos.y-size / 2, size, size, color_white )
 		size = size-2
-		draw.RoundedBox( size/2, screenPos.x-size/2, screenPos.y-size/2, size, size, teamColor )
+		draw.RoundedBox( size / 2, screenPos.x-size / 2, screenPos.y-size / 2, size, size, teamColor )
 	end
 	]]
 end
 
 local function isInRangeLoop( vector, teamIndex, entClass, buildDist )
 	for _, v in ipairs( ents.FindByClass( entClass ) ) do
-		if vector:Distance( v:GetPos() ) < buildDist then
-			if v:GetNWInt( "mw_melonTeam", 0 ) == teamIndex then
-				return true
-			end
+		if vector:Distance( v:GetPos() ) < buildDist and v:GetNWInt( "mw_melonTeam", 0 ) == teamIndex then
+			return true
 		end
 	end
 end
 
-function MW_isInRange( vector, teamIndex ) -- Why does this not just use findinsphere? 
+function MW_isInRange( vector, teamIndex ) -- Why does this not just use findinsphere?
 	local canBuild = false
 
 	if isInRangeLoop( vector, teamIndex, "ent_melon_main_building", 800 ) then return true end
@@ -4787,7 +4811,7 @@ function MW_isInRange( vector, teamIndex ) -- Why does this not just use findins
 		if not canBuild then
 			if vector:Distance(v:GetPos()) < 600 then
 				if teamgrid == nil or teamgrid[v:GetNWInt( "capTeam", 0 )] == nil or teamgrid[v:GetNWInt( "capTeam", 0 )][teamIndex] == nil then
-					canBuild = v:GetNWInt( "capTeam", 0 ) == teamIndex
+					canBuild = (v:GetNWInt( "capTeam", 0 ) == teamIndex)
 				elseif v:GetNWInt( "capTeam", 0 ) == teamIndex or teamgrid[v:GetNWInt( "capTeam", 0 )][teamIndex] then
 					canBuild = true
 				end
@@ -4817,7 +4841,7 @@ function MW_noEnemyNear( vector, teamIndex )
 	return canBuild
 end
 
-net.Receive( "UpdateClientTeams", function( len, pl )
+net.Receive( "UpdateClientTeams", function()
 	teamgrid = net.ReadTable()
 end )
 

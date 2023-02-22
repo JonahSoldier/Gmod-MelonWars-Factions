@@ -4,5 +4,5 @@ include('shared.lua')
 function ENT:Draw()
     -- self.BaseClass.Draw(self) -- Overrides Draw
     self:DrawModel() -- Draws Model Client Side
-    BarrackDraw(self, 5)
+    self:BarrackDraw(self, 5)
 end

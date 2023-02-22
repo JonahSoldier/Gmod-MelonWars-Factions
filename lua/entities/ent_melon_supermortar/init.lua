@@ -1,6 +1,6 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
+
 include('shared.lua')
 
 function ENT:Initialize()
@@ -17,14 +17,14 @@ function ENT:Initialize()
 	self.shotSound = "NPC_CombineBall.Impact"
 	self.energyCost = 500
 	self.shotOffset = Vector(0,0,300)
-	
+
 	self.careForWalls = true
 	self.nextShot = CurTime()+2
 	self.fireDelay = 5
 	self.canMove = false
 	self.canBeSelected = true
 	self.moveType = MOVETYPE_NONE
-	
+
 	self.slowThinkTimer = 0.2
 	self.capacity = 0
 	self:SetNWVector("energyPos", Vector(0,0,20))
@@ -61,9 +61,9 @@ function ENT:SlowThink ( ent )
 				end
 			end
 
-			
+
 			if (ent.nextShot < CurTime()) then
-			
+
 				if (IsValid(ent.targetEntity)and ent.targetEntity ~= ent) then
 					if ((ent.targetEntity:GetPos()-ent:GetPos()):LengthSqr() < ent.range*ent.range) then
 						local tr = util.TraceLine( {
@@ -72,12 +72,12 @@ function ENT:SlowThink ( ent )
 							filter = function( foundEntity ) if (foundEntity.Base ~= "ent_melon_base" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1) or foundEntity:GetClass() == "prop_physics" and foundEntity ~= ent.targetEntity) then return true end end
 							})
 
-						
+
 						if  (tr ~= nil and tostring(tr.Entity) == '[NULL Entity]') then
 							ent:Shoot( ent, forcedTargetPos)
 							self:DrainPower(500)
 						end
-					end			
+					end
 				end
 			end
 		end
@@ -104,7 +104,7 @@ function ENT:Shoot(ent, forcedTargetPos)
 	bullet:Spawn()
 	bullet:SetSolid( SOLID_VPHYSICS )         -- Toolbox
 	bullet:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
-	bulletphys = bullet:GetPhysicsObject()
+	local bulletphys = bullet:GetPhysicsObject()
 	bulletphys:ApplyForceCenter( shootVector )
 	bulletphys:SetDamping(0.3,3)
 	bullet.owner = ent

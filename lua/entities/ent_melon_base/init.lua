@@ -29,7 +29,7 @@ function MW_Defaults( ent )
 
 	ent.captureSpeed = 4
 
-	--ent.dootChance = 0 
+	--ent.dootChance = 0
 
 	local z = Vector(0,0,0)
 	ent.rallyPoints = {z,z,z,z,z,z,z,z,z,z,z,z,z,z,z,z,z,z,z,z,z,z,z,z,z,z,z,z,z,z}
@@ -37,42 +37,42 @@ function MW_Defaults( ent )
 	ent.targetable = true
 
 	ent.minRange = 0
-	
+
 	ent.population = 1
 
 	ent.ai_chases = true
 	ent.chasing = false
-	
+
 	ent.value = 0
-	
+
 	ent.damage = 0
-	
+
 	ent.fired = false
 	ent.gotHit = false
-	
+
 	ent.changeAngles = true
 	ent.changeModel = true
 
 	ent.nextJump = 0
 
 	ent.spawned = false
-	
+
 	if (ent.shotOffset == nil) then ent.shotOffset = Vector(0,0,0) end
 	ent.modelString = "models/props_junk/watermelon01.mdl"
 	ent.materialString = "models/debug/debugwhite"
-	
+
 	ent.deathSound = "phx/eggcrack.wav"
 	ent.shotSound = "weapons/alyx_gun/alyx_gun_fire6.wav"
-	
+
 	ent.tracer = "AR2Tracer"
 	ent.onFire = false
-	
+
 	ent.deathEffect = "cball_explode"
-	
+
 	--ent:SetNWInt("mw_melonTeam", 0)
 	--ent.mw_melonTeam = 0
 	ent.canShoot = true
-	
+
 	ent.slowThinkTimer = 2
 
 	ent.lastPosition = Vector(0,0,0)
@@ -80,7 +80,7 @@ function MW_Defaults( ent )
 
 	if (ent.Angles == nil) then ent.Angles = Angle(0,0,0) end
 	ent:SetMaterial( "Models/effects/comball_sphere" )
-	
+
 	--ent:SetColor( mw_melonTeam ) --Doing this breaks the game now apparently????
 	ent:SetColor( unit_colors[mw_melonTeam] )
 
@@ -105,21 +105,21 @@ function MW_Defaults( ent )
 end
 
 function ENT:Ini( teamnumber, affectPopulation )
-	self:SetNWInt("mw_melonTeam", teamnumber)
-	self:SetNWInt("mw_sick", 0)
+	self:SetNWInt( "mw_melonTeam", teamnumber )
+	self:SetNWInt( "mw_sick", 0 )
 	self:MelonSetColor( teamnumber )
-	self.nextSlowThink = CurTime()+1
-	if (affectPopulation ~= false) then
-		MW_UpdatePopulation(self.population, teamnumber)
+	self.nextSlowThink = CurTime() + 1
+	if affectPopulation ~= false then
+		MW_UpdatePopulation( self.population, teamnumber )
 	end
-	if (teamnumber == 0) then
+	if teamnumber == 0 then
 		self.chaseStance = true
 	end
 
 	self.mw_melonTeam = teamnumber
 
-	if (teamnumber == -1) then
-		error( "Unit "..tostring(self).." spawned with team -1!" )
+	if teamnumber == -1 then
+		error( "Unit " .. tostring( self ) .. " spawned with team -1!" )
 	end
 end
 
@@ -132,18 +132,45 @@ end
 
 function ENT:MelonSetColor( teamnumber )
 	local newColor
-	if (teamnumber == 0) then
-		newColor = Color(50,50,50,255)
+	if teamnumber == 0 then
+		newColor = Color( 50, 50, 50, 255 )
 	else
 		newColor = unit_colors[teamnumber]
 	end
-	self:SetColor(newColor)
+	self:SetColor( newColor )
+	self:ModifyColor()
 end
+
+function ENT:ModifyColor() -- Meant to be overridden by certain units if necessary
+end
+
 --[[
 function ENT:OnDuplicated( entTable )
 	self:SetPos(self:GetPos()-self.posOffset)
 end
 ]]
+local function MW_Spawn( ent )
+	if not SERVER then return end
+	ent:SetMoveType( ent.moveType )   -- after all, gmod is a physics
+	ent:SetMaterial(ent.materialString)
+	ent.spawned = true
+
+	ent.HP = ent.maxHP
+	ent:SetNWFloat( "maxhealth", ent.maxHP )
+	ent:SetNWFloat( "health", ent.HP )
+
+	local baseSize
+	if (ent.sphereRadius ~= 0) then
+		baseSize = ent.sphereRadius
+	else
+		local mins = ent.phys:GetAABB()
+		baseSize = (-mins.x-mins.y) * 0.6
+	end
+	ent:SetNWFloat( "baseSize", baseSize + 5 )
+
+	hook.Run("MelonWarsEntitySpawned", ent)
+end
+
 function MW_Setup( ent )
 	ent.targetEntity = nil
 	ent.followEntity = nil
@@ -152,7 +179,7 @@ function MW_Setup( ent )
 	ent:SetNWEntity( "followEntity", ent.followEntity )
 	ent:SetNWBool("moving", false)
 	ent:SetNWFloat("range", ent.range)
-	
+
 	ent.moving = false
 	ent.damage = 0
 
@@ -163,7 +190,7 @@ function MW_Setup( ent )
 	if (ent.changeModel) then
 		ent:SetModel( ent.modelString )
 	end
-	
+
 	if (ent.sphereRadius == 0) then
 		ent:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
 		ent:SetSolid( SOLID_VPHYSICS )
@@ -190,40 +217,18 @@ function MW_Setup( ent )
 	if (ent.changeAngles) then
 		ent:SetAngles( ent:GetAngles()+ent.Angles )
 	end
-	
+
 	ent:SetNWEntity( "targetEntity", ent.targetEntity )
 
 	if (cvars.Number("mw_admin_spawn_time") == 1 and ent.mw_spawntime ~= nil) then
 		timer.Simple( ent.mw_spawntime-CurTime(), function()
-			if (IsValid(ent)) then	
+			if (IsValid(ent)) then
 				MW_Spawn(ent)
 			end
 		end)
 	else
 		MW_Spawn(ent)
 	end
-end
-
-function MW_Spawn(ent)
-	if not SERVER then return end
-	ent:SetMoveType( ent.moveType )   -- after all, gmod is a physics
-	ent:SetMaterial(ent.materialString)
-	ent.spawned = true
-
-	ent.HP = ent.maxHP
-	ent:SetNWFloat( "maxhealth", ent.maxHP )
-	ent:SetNWFloat( "health", ent.HP )
-
-	local baseSize
-	if (ent.sphereRadius ~= 0) then
-		baseSize = ent.sphereRadius
-	else
-		local mins = ent.phys:GetAABB()
-		baseSize = (-mins.x-mins.y)*0.6
-	end
-	ent:SetNWFloat( "baseSize", baseSize+5 )
-
-	hook.Run("MelonWarsEntitySpawned", ent)
 end
 
 function ENT:Welded( ent, parent )
@@ -357,7 +362,7 @@ function ENT:Update( ent )
 		if (ent.moving) then
 			--if (ent.chaseStance == false or ent.targetEntity == nil) then
 			local moveVector = (ent.targetPos-entPos):GetNormalized()*ent.speed-ent:GetVelocity()*0.5
-			force = Vector(moveVector.x, moveVector.y, 0)
+			local force = Vector(moveVector.x, moveVector.y, 0)
 			-- OLD MOVEMENT, MOVE IN THINK. NEW MOVEMENT IN PHYSICS UPDATE
 			--phys:ApplyForceCenter (force*phys:GetMass())
 			-- new:
@@ -533,7 +538,7 @@ function MW_UnitDefaultThink( ent )
 				end
 			end
 		end
-	end 
+	end
 
 	if (ent.targetEntity ~= nil) then
 		----------------------------------------------------------------------Perder target
@@ -666,10 +671,10 @@ function MW_DefaultShoot( ent, forceTargetPos )
 		end
 
 		MW_Bullet(ent, pos, dir, ent.range, ent, nil, 0)
-		
+
 		local effectdata = EffectData()
 		effectdata:SetScale(1)
-		effectdata:SetAngles( dir:Angle()) 
+		effectdata:SetAngles( dir:Angle())
 		effectdata:SetOrigin( pos + dir:GetNormalized()*10 )
 		util.Effect( "MuzzleEffect", effectdata )
 		sound.Play( ent.shotSound, pos )
@@ -714,14 +719,14 @@ function MW_Bullet(ent, startingPos, direction, distance, ignore, callback, dept
 		hitpos = tr.HitPos
 
 		local angle = (tr.HitPos-startingPos):Angle()
-		
+
 		local effectdata = EffectData()
 		if ((tr.HitPos-startingPos):LengthSqr() < 130*130) then
 			effectdata:SetOrigin(startingPos+direction*130)
 		else
 			effectdata:SetOrigin(tr.HitPos)
 		end
-		
+
 		if (IsValid(tr.Entity)) then
 			tr.Entity:TakeDamage( damage, ent, ent )
 			if (callback ~= nil) then
@@ -811,9 +816,9 @@ function ENT:DefaultPhysicsUpdate()
 end
 
 function ENT:OnTakeDamage( damage )
-	if (damage:GetAttacker():GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not damage:GetAttacker():GetVar('careForFriendlyFire')) and not damage:GetAttacker():IsPlayer() then 
+	if (damage:GetAttacker():GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not damage:GetAttacker():GetVar('careForFriendlyFire')) and not damage:GetAttacker():IsPlayer() then
 		local damageDone = 0
-		
+
 		if (self.canMove == true) then
 			damageDone = damage:GetDamage()
 		else
@@ -893,16 +898,16 @@ end
 
 function ENT:BarrackInitialize ()
 	self.moveType = MOVETYPE_NONE
-	
+
 	self.canMove = false
 	self.canShoot = false
-	
+
 	self:SetNWBool("active", true)
 	self.unitspawned = true
 	self:SetNWInt("count", 0)
 
 	self:SetNWFloat("overdrive", 0)
-	
+
 	self:SetNWBool("spawned", self.unitspawned)
 	self.slowThinkTimer = 3
 
@@ -910,7 +915,7 @@ function ENT:BarrackInitialize ()
 	rotatedSpawnOffset:Rotate(self:GetAngles())
 	self:SetVar('targetPos', self:GetPos()+rotatedSpawnOffset)
 	self:SetNWVector('targetPos', self:GetPos()+rotatedSpawnOffset)
-	
+
 	self.deathSound = "ambient/explosions/explode_9.wav"
 	self.deathEffect = "Explosion"
 
@@ -922,7 +927,7 @@ function ENT:BarrackInitialize ()
 		self.slowThinkTimer = mw_units[self.unit].spawn_time*3
 		self.unit_class = mw_units[self.unit].class
 		self.unit_cost = mw_units[self.unit].cost/2
-	end	
+	end
 
 	self:SetNWFloat("slowThinkTimer", self.slowThinkTimer)
 	self:SetNWFloat("nextSlowThink", CurTime())
