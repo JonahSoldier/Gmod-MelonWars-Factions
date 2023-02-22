@@ -531,9 +531,9 @@ local function MW_Server_IsInBuildRange( vector, teamIndex ) -- This is copied f
 
 	for _, v in ipairs( foundPoints ) do
 		if vector:Distance( v:GetPos() ) < 600 then
-			if (teamgrid == nil or teamgrid[v:GetNWInt("capTeam", 0)] == nil or teamgrid[v:GetNWInt("capTeam", 0)][teamIndex] == nil) then
+			if teamgrid == nil or teamgrid[v:GetNWInt("capTeam", 0)] == nil or teamgrid[v:GetNWInt("capTeam", 0)][teamIndex] == nil then
 				canBuild = v:GetNWInt("capTeam", 0) == teamIndex
-			elseif (v:GetNWInt("capTeam", 0) == teamIndex or teamgrid[v:GetNWInt("capTeam", 0)][teamIndex]) then
+			elseif v:GetNWInt("capTeam", 0) == teamIndex or teamgrid[v:GetNWInt("capTeam", 0)][teamIndex] then
 				canBuild = true
 			end
 		end

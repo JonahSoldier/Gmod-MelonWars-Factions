@@ -143,7 +143,6 @@ end
 
 function ENT:ModifyColor() -- Meant to be overridden by certain units if necessary
 end
-
 --[[
 function ENT:OnDuplicated( entTable )
 	self:SetPos(self:GetPos()-self.posOffset)
