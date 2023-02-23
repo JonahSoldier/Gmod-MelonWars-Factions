@@ -202,7 +202,7 @@ u.cost 			= 500
 u.welded_cost 	= 150
 u.population 	= 2
 u.spawn_time 	= 6
-u.description 	= [[Equiped with a minigun, this tougher and slower unit will shoot faster the longer it holds down the trigger. It has some spread, so try getting up close.]]
+u.description 	= [[Equipped with a minigun, this tougher and slower unit will shoot faster the longer it holds down the trigger. It has some spread, so try getting up close.]]
 u.model 		= "models/Roller.mdl"
 
 i = i + 1
@@ -1632,7 +1632,7 @@ u.hp = 40
 i = i + 1
 u = mw_base_props[i]
 u.name = "Slim Full Ramp"
-u.model = "models/hunter/triangles / 2x1x1.mdl"
+u.model = "models/hunter/triangles/2x1x1.mdl"
 u.offset = Vector(48.3,0,23.1)
 u.angle = Angle(0,90,0)
 u.cost = 75
@@ -2429,7 +2429,7 @@ local function _CreatePanel()
 			"The original addon was discontinued and broke when Gmod 13 came out, and I never heard of the developer again. " ..
 			"I missed the addon so much that I looked for it everywhere. After more than a year without success, I decided to learn Lua and make my own version.\n\n" ..
 			"This addon isn't quite the same as the original, but I hope it will fill the void that WarMelons left.\n- Marum\n\n" ..
-			"Credits:\n\nFaction Mod creator:\nJonahSoldier\n\nFaction Mod contributors:\nthecraftianman\n" ..
+			"Credits:\n\nFaction Mod creator:\nJonahSoldier\n\nFaction Mod contributors:\nthecraftianman\n\n" ..
 			"The creator of this addon:\nMarum\n\nThe creators of the original:\nLap and MegaJohnny\n\n" ..
 			"Testers and supporters:\nX marks it\n(Xen)SunnY\nBOOM! The_Rusty_Geek\nDagren\nFush\nBroh\nJwanito\nMr. Thompson\nArheisel\nHipnox\n\n" ..
 			"Suggestions:\nSquid-Inked (Tesla Tower)\nDurendal5150 (Radar)\n\n",
