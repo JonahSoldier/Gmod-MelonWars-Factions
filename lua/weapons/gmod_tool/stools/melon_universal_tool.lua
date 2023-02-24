@@ -1840,8 +1840,8 @@ local function _MakeButton(number, posnumber, parent) -- Make Button
 	button:SetFont("CloseCaption_Normal")
 	button:SetText(mw_units[number].name)
 	function button:DoClick()
-		LocalPlayer():ConCommand( "mw_chosen_unit " .. tostring( number ) )
-		LocalPlayer():ConCommand( "mw_action 1" )
+		pl:ConCommand( "mw_chosen_unit " .. tostring( number ) )
+		pl:ConCommand( "mw_action 1" )
 		pl.mw_frame:Remove()
 		pl.mw_frame = nil
 	end
@@ -1875,7 +1875,8 @@ local function _MakeButton(number, posnumber, parent) -- Make Button
 end
 
 local function _MakeHelpButton(name, number, info, text1, text2, text3, text4, text5) -- Make HELP Button
-	local button = vgui.Create("DButton", LocalPlayer().panel)
+	local locPly = LocalPlayer()
+	local button = vgui.Create("DButton", locPly.panel)
 	button:SetSize(100,40)
 	button:SetPos( 10, 10 + number * 45 )
 	button:SetText(name)
@@ -1890,10 +1891,10 @@ local function _MakeHelpButton(name, number, info, text1, text2, text3, text4, t
 		timer.Simple( 0.001, function() info:GotoTextStart() end )
 
 		if name ~= "About" then return end
-		if not ( LocalPlayer():GetInfo("mw_code") == "about" or LocalPlayer():GetInfo("mw_code") == "ABOUT" ) then return end
+		if not ( locPly:GetInfo("mw_code") == "about" or locPly:GetInfo("mw_code") == "ABOUT" ) then return end
 
 		chat.AddText( "Well done" )
-		LocalPlayer():ConCommand("mw_action 945")
+		locPly:ConCommand("mw_action 945")
 	end
 end
 
@@ -1925,7 +1926,7 @@ local function _CreatePanel()
 		local ipos = 1
 		for i = 1, firstBuilding-1 do
 			if (cvars.Bool("mw_admin_allow_manual_placing") or mw_units[i].welded_cost ~= -1) then
-				if ((mw_units[i].code == nil or LocalPlayer():GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVar( "mw_admin_bonusunits" ):GetInt() == 1)) then
+				if ((mw_units[i].code == nil or pl:GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVar( "mw_admin_bonusunits" ):GetInt() == 1)) then
 					_MakeButton(i, ipos, scroll)
 					ipos = ipos + 1
 				end
@@ -1933,7 +1934,7 @@ local function _CreatePanel()
 		end
 
 		if not cvars.Bool("mw_admin_allow_manual_placing") then
-			LocalPlayer():ConCommand("mw_unit_option_welded 1")
+			pl:ConCommand("mw_unit_option_welded 1")
 			local label = vgui.Create("DLabel", pl.panel)
 			label:SetPos(170, 15)
 			label:SetSize(400,30)
@@ -2011,7 +2012,7 @@ local function _CreatePanel()
 		end]]
 		local ipos = 1
 		for i = firstBuilding, firstEnergy - 1 do
-			if (mw_units[i].code == nil or LocalPlayer():GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVar( "mw_admin_bonusunits" ):GetInt() == 1) then
+			if (mw_units[i].code == nil or pl:GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVar( "mw_admin_bonusunits" ):GetInt() == 1) then
 				if mw_units[i].name ~= "Contraption Assembler" or cvars.Number("mw_admin_ban_contraptions") == 0 then
 					_MakeButton(i, ipos, scroll)
 					ipos = ipos + 1
@@ -2294,7 +2295,7 @@ local function _CreatePanel()
 			button:SetPos( 140 + i * 45, 200 )
 			button:SetText( "" )
 			function button:DoClick()
-				LocalPlayer():ConCommand( "mw_team " .. tostring( i ) )
+				pl:ConCommand( "mw_team " .. tostring( i ) )
 				selection:SetPos( 135 + i * 45, 195 )
 
 				net.Start( "MW_UpdateClientInfo" )
@@ -2328,7 +2329,7 @@ local function _CreatePanel()
 		button:SetPos(185,325)
 		button:SetText("-")
 		function button:DoClick()
-			LocalPlayer():ConCommand("mw_code none")
+			pl:ConCommand("mw_code none")
 			factionSelection:SetPos(180, 320)
 		end
 		button.Paint = function(s, w, h)
@@ -2344,7 +2345,7 @@ local function _CreatePanel()
 		button:SetPos(185+45,325)
 		button:SetText("F")
 		function button:DoClick()
-			LocalPlayer():ConCommand("mw_code full")
+			pl:ConCommand("mw_code full")
 			factionSelection:SetPos(180+45, 320)
 		end
 		button.Paint = function(s, w, h)
@@ -2360,7 +2361,7 @@ local function _CreatePanel()
 		button:SetPos( 275, 325 )
 		button:SetText("V")
 		function button:DoClick()
-			LocalPlayer():ConCommand( "mw_code void" )
+			pl:ConCommand( "mw_code void" )
 			factionSelection:SetPos( 270, 320 )
 		end
 		button.Paint = function(s, w, h)
@@ -2376,7 +2377,7 @@ local function _CreatePanel()
 		button:SetPos(185 + 135,325)
 		button:SetText("P")
 		function button:DoClick()
-			LocalPlayer():ConCommand("mw_code prot")
+			pl:ConCommand("mw_code prot")
 			factionSelection:SetPos(180 + 135, 320)
 		end
 		button.Paint = function(s, w, h)
@@ -2397,7 +2398,7 @@ local function _CreatePanel()
 		button:SetPos( 185, 265 )
 		button:SetText("")
 		function button:DoClick()
-			LocalPlayer():ConCommand( "mw_team " .. tostring( 0 ) )
+			pl:ConCommand( "mw_team " .. tostring( 0 ) )
 			selection:SetPos( 180, 260 )
 
 			net.Start("MW_UpdateClientInfo")
@@ -2509,7 +2510,7 @@ local function _CreatePanel()
 			"You can play until the last base is destroyed, until only one player has units, or any other condition you can imagine. Just be sure to be clear about it with all players before starting." )
 
 	--[[
-	local button = vgui.Create("DButton", LocalPlayer().panel)
+	local button = vgui.Create("DButton", pl.panel)
 	button:SetSize(100,40)
 	button:SetPos(10,420)
 	button:SetText("News")
@@ -2533,14 +2534,14 @@ local function _CreatePanel()
 			button:SetFont("CloseCaption_Normal")
 			button:SetText("Start Match")
 			function button:DoClick()
-				--[[ LocalPlayer():ConCommand("mw_admin_playing 1")
-				LocalPlayer():ConCommand("mw_admin_locked_teams 1")
-				LocalPlayer():ConCommand("mw_admin_move_any_team 0")
-				LocalPlayer():ConCommand("mw_admin_credit_cost 1")
-				LocalPlayer():ConCommand("mw_admin_allow_free_placing 0")
-				LocalPlayer():ConCommand("mw_admin_spawn_time 1")
-				LocalPlayer():ConCommand("mw_admin_immortality 0")
-				LocalPlayer():ConCommand("mw_reset_credits") ]]
+				--[[ pl:ConCommand("mw_admin_playing 1")
+				pl:ConCommand("mw_admin_locked_teams 1")
+				pl:ConCommand("mw_admin_move_any_team 0")
+				pl:ConCommand("mw_admin_credit_cost 1")
+				pl:ConCommand("mw_admin_allow_free_placing 0")
+				pl:ConCommand("mw_admin_spawn_time 1")
+				pl:ConCommand("mw_admin_immortality 0")
+				pl:ConCommand("mw_reset_credits") ]]
 				net.Start("StartGame")
 				net.SendToServer()
 				pl.mw_frame:Remove()
@@ -2562,13 +2563,13 @@ local function _CreatePanel()
 			button:SetFont("CloseCaption_Normal")
 			button:SetText("Sandbox mode")
 			function button:DoClick()
-				LocalPlayer():ConCommand("mw_admin_playing 1")
-				LocalPlayer():ConCommand("mw_admin_locked_teams 0")
-				LocalPlayer():ConCommand("mw_admin_move_any_team 1")
-				LocalPlayer():ConCommand("mw_admin_credit_cost 0")
-				LocalPlayer():ConCommand("mw_admin_allow_free_placing 1")
-				LocalPlayer():ConCommand("mw_admin_spawn_time 0")
-				LocalPlayer():ConCommand("mw_admin_allow_manual_placing 1")
+				pl:ConCommand("mw_admin_playing 1")
+				pl:ConCommand("mw_admin_locked_teams 0")
+				pl:ConCommand("mw_admin_move_any_team 1")
+				pl:ConCommand("mw_admin_credit_cost 0")
+				pl:ConCommand("mw_admin_allow_free_placing 1")
+				pl:ConCommand("mw_admin_spawn_time 0")
+				pl:ConCommand("mw_admin_allow_manual_placing 1")
 				net.Start("SandboxMode")
 				net.SendToServer()
 				pl.mw_frame:Remove()
@@ -2610,16 +2611,15 @@ local function _CreatePanel()
 			label:SetPos(15, y)
 			label:SetSize(200,60)
 			label:SetFontInternal( "DermaLarge" )
-			label:SetText([[Spawn normal
-				base]])
+			label:SetText( "Spawn Normal\nBase" )
 			for i = 1, 8 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(40,40)
 				button:SetPos( 145 + i * 45, y )
 				button:SetText("")
 				function button:DoClick()
-					LocalPlayer():ConCommand("mw_team " .. tostring(i))
-					LocalPlayer():ConCommand("mw_action 2")
+					pl:ConCommand("mw_team " .. tostring(i))
+					pl:ConCommand("mw_action 2")
 					pl.mw_frame:Remove()
 					pl.mw_frame = nil
 
@@ -2639,16 +2639,15 @@ local function _CreatePanel()
 			label:SetPos(15, y)
 			label:SetSize(200,60)
 			label:SetFontInternal( "DermaLarge" )
-			label:SetText([[Spawn grand
-				war base]])
+			label:SetText( "Spawn Grand\nWar Base" )
 			for i = 1, 8 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(40,40)
 				button:SetPos( 145 + i * 45, y )
 				button:SetText("")
 				function button:DoClick()
-					LocalPlayer():ConCommand("mw_team " .. tostring(i))
-					LocalPlayer():ConCommand("mw_action 7")
+					pl:ConCommand("mw_team " .. tostring(i))
+					pl:ConCommand("mw_action 7")
 					pl.mw_frame:Remove()
 					pl.mw_frame = nil
 
@@ -2668,16 +2667,15 @@ local function _CreatePanel()
 			label:SetPos(15, y)
 			label:SetSize(200,60)
 			label:SetFontInternal( "DermaLarge" )
-			label:SetText([[Spawn
-				Ornament]])
+			label:SetText( "Spawn\nOrnament" )
 			for i = 1, 8 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(40,40)
 				button:SetPos( 145 + i * 45, y )
 				button:SetText("")
 				function button:DoClick()
-					LocalPlayer():ConCommand( "mw_team " .. tostring( i ) )
-					LocalPlayer():ConCommand( "mw_action 25" )
+					pl:ConCommand( "mw_team " .. tostring( i ) )
+					pl:ConCommand( "mw_action 25" )
 					pl.mw_frame:Remove()
 					pl.mw_frame = nil
 
@@ -2697,13 +2695,13 @@ local function _CreatePanel()
 			label:SetPos(15, y)
 			label:SetSize(300,60)
 			label:SetFontInternal( "Trebuchet24" )
-			label:SetText([[Spawn Cap Point]])
+			label:SetText( "Spawn Cap Point" )
 			local button = vgui.Create("DButton", scroll)
 			button:SetSize(40,40)
 			button:SetPos(190,y)
 			button:SetText("")
 			function button:DoClick()
-				LocalPlayer():ConCommand("mw_action 8")
+				pl:ConCommand("mw_action 8")
 				pl.mw_frame:Remove()
 				pl.mw_frame = nil
 			end
@@ -2718,13 +2716,13 @@ local function _CreatePanel()
 			label:SetPos(15, y)
 			label:SetSize(300,60)
 			label:SetFontInternal( "Trebuchet24" )
-			label:SetText([[Spawn Outpost]])
+			label:SetText( "Spawn Outpost" )
 			local button = vgui.Create("DButton", scroll)
 			button:SetSize(40,40)
 			button:SetPos(190,y)
 			button:SetText("")
 			function button:DoClick()
-				LocalPlayer():ConCommand("mw_action 9")
+				pl:ConCommand("mw_action 9")
 				pl.mw_frame:Remove()
 				pl.mw_frame = nil
 			end
@@ -2739,13 +2737,13 @@ local function _CreatePanel()
 			label:SetPos(15, y)
 			label:SetSize(300,60)
 			label:SetFontInternal( "Trebuchet24" )
-			label:SetText([[Spawn Water tank]])
+			label:SetText( "Spawn Water Tank" )
 			local button = vgui.Create("DButton", scroll)
 			button:SetSize(40,40)
 			button:SetPos(190,y)
 			button:SetText("")
 			function button:DoClick()
-				LocalPlayer():ConCommand("mw_action 10")
+				pl:ConCommand("mw_action 10")
 				pl.mw_frame:Remove()
 				pl.mw_frame = nil
 			end
@@ -2796,7 +2794,7 @@ local function _CreatePanel()
 			button:SetFont("CloseCaption_Normal")
 			button:SetText("Reset Credits")
 			function button:DoClick()
-				LocalPlayer():ConCommand("mw_reset_credits")
+				pl:ConCommand("mw_reset_credits")
 				--pl.mw_frame:Remove()
 				--pl.mw_frame = nil
 			end
@@ -2816,7 +2814,7 @@ local function _CreatePanel()
 			button:SetFont("CloseCaption_Normal")
 			button:SetText("Reset Power")
 			function button:DoClick()
-				LocalPlayer():ConCommand("mw_reset_power")
+				pl:ConCommand("mw_reset_power")
 				--pl.mw_frame:Remove()
 				--pl.mw_frame = nil
 			end
@@ -2853,7 +2851,7 @@ local function _CreatePanel()
 				button:SetPos( 185 + i * 12, y )
 				button:SetText( "" )
 				function button:DoClick()
-					LocalPlayer():ConCommand( "mw_admin_max_units " .. tostring( i * 10 ) )
+					pl:ConCommand( "mw_admin_max_units " .. tostring( i * 10 ) )
 					slider:SetSize( i * 12, 40 )
 					label:SetText( "Power: " .. tostring( i * 10 ) )
 					--pl.mw_frame:Remove()
@@ -2887,7 +2885,7 @@ local function _CreatePanel()
 				button:SetPos(185 + i * 12, y)
 				button:SetText("")
 				function button:DoClick()
-					LocalPlayer():ConCommand("mw_admin_starting_credits " .. tostring(i * 200))
+					pl:ConCommand("mw_admin_starting_credits " .. tostring(i * 200))
 					slider:SetSize(i * 12, 40)
 					label:SetText("Starting Water:\n" .. tostring(i * 200))
 					--pl.mw_frame:Remove()
@@ -2921,7 +2919,7 @@ local function _CreatePanel()
 				button:SetPos( 185 + i * 12, y )
 				button:SetText("")
 				function button:DoClick()
-					LocalPlayer():ConCommand( "mw_admin_base_income " .. tostring( i * 5 ) )
+					pl:ConCommand( "mw_admin_base_income " .. tostring( i * 5 ) )
 					slider:SetSize( i * 12, 40 )
 					label:SetText( "Water Income:\n" .. tostring( i * 5 ) )
 					--pl.mw_frame:Remove()
@@ -3044,7 +3042,7 @@ local function _CreatePanel()
 			button:SetPos(50+i*12,y + 20)
 			button:SetText("")
 			function button:DoClick()
-				LocalPlayer():ConCommand("mw_buildalpha_multiplier " .. tostring(math.Round(i/10,1)))
+				pl:ConCommand("mw_buildalpha_multiplier " .. tostring(math.Round(i/10,1)))
 				slider:SetSize(i*12, 40)
 				label:SetText("BuildSphere Alpha:\n" .. tostring(math.Round(i/10,1)))
 			end
@@ -3081,7 +3079,7 @@ local function _CreatePanel()
 		function checkbox:DoClick()
 			local commandstring = "mw_player_ready " .. tostring( 1 - GetConVar( "mw_player_ready" ):GetInt() )
 
-			LocalPlayer():ConCommand(commandstring)
+			pl:ConCommand(commandstring)
 
 			local checked = GetConVar( "mw_player_ready" ):GetInt() ~= 1
 			if (inverted) then checked = not checked end
@@ -3245,25 +3243,27 @@ function MW_OpenPatchNotes()
 end
 ]]
 function TOOL:Deploy()
+	local owner = self:GetOwner()
+
 	self.pressed = false
 	self.rPressed = false
 	self.disableKeyboard = false
 	self.ctrlPressed = false
 	self.canPlace = true
-	self:GetOwner().cutsceneOpacity = 0
-	self:GetOwner().chatTimer = 0
-	local _team = self:GetOwner():GetInfoNum( "mw_team", 0 )
+	owner.cutsceneOpacity = 0
+	owner.chatTimer = 0
+	local _team = owner:GetInfoNum( "mw_team", 0 )
 	if not SERVER then return end
 	if _team ~= 0 then
 		net.Start( "MW_TeamCredits" )
 			net.WriteInt( mw_teamCredits[_team], 32 )
-		net.Send( self:GetOwner() )
+		net.Send( owner )
 
 		net.Start( "MW_TeamUnits" )
 			net.WriteInt( mw_teamUnits[_team], 16 )
-		net.Send( self:GetOwner() )
+		net.Send( owner )
 	end
-	self:GetOwner():PrintMessage( HUD_PRINTCENTER, "Press R to open the menu" )
+	owner:PrintMessage( HUD_PRINTCENTER, "Press R to open the menu" )
 end
 
 function TOOL:Holster()
@@ -3281,21 +3281,24 @@ function TOOL:Holster()
 end
 
 function TOOL:RightClick( tr )
-	if IsValid( self:GetOwner().controllingUnit ) then
-		self:GetOwner().controllingUnit = nil
+	local owner = self:GetOwner()
+	if IsValid( owner.controllingUnit ) then
+		owner.controllingUnit = nil
 	end
 
 	if not CLIENT then return end
-	if LocalPlayer().mw_cooldown >= ( CurTime() - 0.05 ) then return end
+
+	local locPly = LocalPlayer()
+	if locPly.mw_cooldown >= ( CurTime() - 0.05 ) then return end
 
 	if cvars.Number( "mw_chosen_unit" ) == 0 then
-		-- self:GetOwner():ConCommand( "mw_order" ) -- To order
-		if istable( LocalPlayer().foundMelons ) then
+		-- owner:ConCommand( "mw_order" ) -- To order
+		if istable( locPly.foundMelons ) then
 			net.Start( "MW_Order" )
-				-- net.WriteVector( LocalPlayer():GetEyeTrace().HitPos )
-				net.WriteBool( LocalPlayer():KeyDown(IN_SPEED) )
-				net.WriteBool( LocalPlayer():KeyDown(IN_WALK) )
-				for _, v in pairs( LocalPlayer().foundMelons ) do
+				-- net.WriteVector( locPly:GetEyeTrace().HitPos )
+				net.WriteBool( locPly:KeyDown(IN_SPEED) )
+				net.WriteBool( locPly:KeyDown(IN_WALK) )
+				for _, v in pairs( locPly.foundMelons ) do
 					if not v:IsWorld() and v:IsValid() and v ~= nil then
 						net.WriteEntity( v )
 					end
@@ -3303,11 +3306,11 @@ function TOOL:RightClick( tr )
 			net.SendToServer()
 		end
 	else
-		self:GetOwner():ConCommand( "mw_chosen_unit 0" ) -- Stop spawning
+		owner:ConCommand( "mw_chosen_unit 0" ) -- Stop spawning
 	end
 
-	LocalPlayer():ConCommand("mw_action 0")
-	LocalPlayer().mw_cooldown = CurTime()
+	locPly:ConCommand("mw_action 0")
+	locPly.mw_cooldown = CurTime()
 end
 
 local function MW_BeginSelection() -- Previously concommand.Add( "+mw_select", function( ply )
@@ -3352,10 +3355,10 @@ function TOOL:LeftClick( tr )
 	local trace = self:GetOwner():GetEyeTrace( {
 	mask = MASK_SOLID + MASK_WATER
 	} )
-	--[[ if not LocalPlayer().mw_selecting then
-		LocalPlayer().mw_selectionStartingPoint = LocalPlayer():GetEyeTrace().HitPos
-		LocalPlayer().mw_selectionEndingPoint = LocalPlayer().mw_selectionStartingPoint
-		LocalPlayer().mw_selecting = true
+	--[[ if not pl.mw_selecting then
+		pl.mw_selectionStartingPoint = pl:GetEyeTrace().HitPos
+		pl.mw_selectionEndingPoint = pl.mw_selectionStartingPoint
+		pl.mw_selecting = true
 	end ]]
 
 	pl.mw_cooldown = CurTime()
@@ -3370,7 +3373,7 @@ function TOOL:LeftClick( tr )
 		else ]]
 			MW_BeginSelection()
 			--[[ self.pressed = true
-			pl.LocalPlayer().mw_selecting = true ]]
+			pl.mw_selecting = true ]]
 			pl.mw_selectTimer = CurTime()
 		-- end
 		pl.mw_spawnTimer = CurTime()
@@ -3381,7 +3384,7 @@ function TOOL:LeftClick( tr )
 			local unit_index = pl:GetInfoNum("mw_chosen_unit", 0)
 			if (cvars.Bool("mw_admin_allow_free_placing") or MW_noEnemyNear(trace.HitPos, mw_melonTeam)) then
 				if (mw_units[unit_index].population == 0 or pl.mw_units + mw_units[unit_index].population <= cvars.Number("mw_admin_max_units")) then
-					if (LocalPlayer().canPlace) then
+					if (pl.canPlace) then
 						local cost, mw_delay = 0
 						local class = ""
 
@@ -3599,7 +3602,7 @@ function TOOL:LeftClick( tr )
 		net.SendToServer()
 		self:GetOwner():ConCommand("mw_action 0")
 	elseif action == 945 then
-		if LocalPlayer():GetInfo( "mw_code" ) == ( "about" or "ABOUT" ) then
+		if pl:GetInfo( "mw_code" ) == ( "about" or "ABOUT" ) then
 			local targetUnit = self:GetOwner():GetEyeTrace().Entity
 			if targetUnit == nil then return end
 			if targetUnit.Base ~= "ent_melon_base" then return end
@@ -3902,7 +3905,7 @@ function TOOL:Think()
 				end
 				if not self.ePressed then
 					self.ePressed = true
-					local tr = LocalPlayer():GetEyeTrace()
+					local tr = ply:GetEyeTrace()
 					local correctTeam = (tr.Entity:GetNWInt("mw_melonTeam", 0) == newTeam or tr.Entity:GetNWInt("capTeam", 0) == newTeam or cvars.Bool("mw_admin_move_any_team", false))
 
 					if (string.StartWith( tr.Entity:GetClass(), "ent_melon_barracks" ) or tr.Entity:GetClass() == "ent_melon_overclocker" ) then
@@ -4012,19 +4015,19 @@ function TOOL:Think()
 	end
 	ply.mw_hudColor = newColor
 
-	if (LocalPlayer().mw_action == 5) then
+	if (ply.mw_action == 5) then
 		if not input.IsMouseDown( MOUSE_LEFT ) then
-			LocalPlayer().mw_sell = 0
+			ply.mw_sell = 0
 		else
-			LocalPlayer().mw_sell = LocalPlayer().mw_sell+1/100
-			if (LocalPlayer().mw_sell > 1) then
+			ply.mw_sell = ply.mw_sell+1/100
+			if (ply.mw_sell > 1) then
 				if (trace.Entity:GetNWInt("mw_melonTeam") == newTeam) then
 					net.Start("SellEntity")
 						net.WriteEntity(trace.Entity)
 						net.WriteInt(cvars.Number("mw_team"), 8)
 					net.SendToServer()
 				end
-				LocalPlayer().mw_sell = 0
+				ply.mw_sell = 0
 			end
 		end
 	end
@@ -4036,11 +4039,11 @@ function TOOL:Think()
 		if not self.ctrlPressed then
 			self.ctrlPressed = true
 			-- self:GetOwner():ConCommand( "mw_stop" ) -- parar
-			if (istable(LocalPlayer().foundMelons)) then
-			local count = table.Count(LocalPlayer().foundMelons)
+			if (istable(ply.foundMelons)) then
+			local count = table.Count(ply.foundMelons)
 			if (count > 0) then
 				net.Start("MW_Stop")
-					for k, v in pairs(LocalPlayer().foundMelons) do
+					for k, v in pairs(ply.foundMelons) do
 						net.WriteEntity(v)
 					end
 				net.SendToServer()
@@ -4051,30 +4054,30 @@ function TOOL:Think()
 		self.ctrlPressed = false
 	end
 
-	if (LocalPlayer().mw_spawnTimer == nil) then
-		LocalPlayer().mw_spawnTimer = CurTime()
+	if (ply.mw_spawnTimer == nil) then
+		ply.mw_spawnTimer = CurTime()
 	end
-	if (LocalPlayer().mw_selectTimer == nil) then
-		LocalPlayer().mw_selectTimer = CurTime()
+	if (ply.mw_selectTimer == nil) then
+		ply.mw_selectTimer = CurTime()
 	end
-	if (LocalPlayer().mw_cooldown == nil) then
-		LocalPlayer().mw_cooldown = CurTime()
-	end
-
-	if (LocalPlayer().mw_units == nil) then
-		LocalPlayer().mw_units = 0
-	end
-	if (LocalPlayer().mw_credits == nil) then
-		LocalPlayer().mw_credits = 0
-	end
-	if (LocalPlayer().mw_sell == nil) then
-		LocalPlayer().mw_sell = 0
-	end
-	if (LocalPlayer().mw_spawntime == nil) then
-		LocalPlayer().mw_spawntime = CurTime()
+	if (ply.mw_cooldown == nil) then
+		ply.mw_cooldown = CurTime()
 	end
 
-	if (LocalPlayer().mw_action == 1) then
+	if (ply.mw_units == nil) then
+		ply.mw_units = 0
+	end
+	if (ply.mw_credits == nil) then
+		ply.mw_credits = 0
+	end
+	if (ply.mw_sell == nil) then
+		ply.mw_sell = 0
+	end
+	if (ply.mw_spawntime == nil) then
+		ply.mw_spawntime = CurTime()
+	end
+
+	if (ply.mw_action == 1) then
 		local newColor = mw_team_colors[ply:GetInfoNum("mw_team", 0)]
 		local unit_index = ply:GetInfoNum("mw_chosen_unit", 0)
 		if unit_index > 0 and mw_units[unit_index].offset ~= nil then
@@ -4089,7 +4092,7 @@ function TOOL:Think()
 
 			MW_UpdateGhostEntity(mw_units[unit_index].model, trace.HitPos, trace.HitNormal * 5+offset, ang, newColor, mw_units[unit_index].energyRange, trace.HitPos)
 		end
-	elseif (LocalPlayer().mw_action == 3) then
+	elseif (ply.mw_action == 3) then
 		local newColor = mw_team_colors[ply:GetInfoNum("mw_team", 0)]
 		-- local modeltable = list.Get( "WallModels" )
 		local prop_index = ply:GetInfoNum("mw_chosen_prop", 0)
@@ -4103,13 +4106,13 @@ function TOOL:Think()
 		else
 			offset = Vector(0,0,mw_base_props[prop_index].offset.z)
 		end
-		MW_UpdateGhostEntity (mw_base_props[prop_index].model, LocalPlayer():GetEyeTrace().HitPos, Vector(0,0,1) + offset, ply.propAngle + mw_base_props[prop_index].angle, newColor, 0, trace.HitPos, mw_units[prop_index].defenseRange)
+		MW_UpdateGhostEntity (mw_base_props[prop_index].model, ply:GetEyeTrace().HitPos, Vector(0,0,1) + offset, ply.propAngle + mw_base_props[prop_index].angle, newColor, 0, trace.HitPos, mw_units[prop_index].defenseRange)
 	else
-		if IsValid(LocalPlayer().GhostEntity) then
-			LocalPlayer().GhostEntity:Remove()
+		if IsValid(ply.GhostEntity) then
+			ply.GhostEntity:Remove()
 		end
-		if IsValid(LocalPlayer().GhostSphere) then
-			LocalPlayer().GhostSphere:Remove()
+		if IsValid(ply.GhostSphere) then
+			ply.GhostSphere:Remove()
 		end
 	end
 end
@@ -4121,32 +4124,33 @@ function TOOL:DoSelection(startingPos, endingPos)
 	local foundEntities = {}
 	local allFoundEntities = {}
 	local typeSelect = nil
+	local locPly = LocalPlayer()
 
-	if (LocalPlayer().foundMelons ~= nil) then
-		if (not LocalPlayer():KeyDown(IN_SPEED)) then
-			table.Empty(LocalPlayer().foundMelons)
+	if (locPly.foundMelons ~= nil) then
+		if (not locPly:KeyDown(IN_SPEED)) then
+			table.Empty(locPly.foundMelons)
 		end
 	end
 
-	if (LocalPlayer().lastSelectionTime == nil) then
-		LocalPlayer().lastSelectionTime = CurTime()
+	if (locPly.lastSelectionTime == nil) then
+		locPly.lastSelectionTime = CurTime()
 	end
 
-	local _team = LocalPlayer():GetInfoNum("mw_team", -2)
+	local _team = locPly:GetInfoNum("mw_team", -2)
 
-	if (LocalPlayer().mw_selectionID == nil) then
-		LocalPlayer().mw_selectionID = 0
+	if (locPly.mw_selectionID == nil) then
+		locPly.mw_selectionID = 0
 	end
 
-	LocalPlayer().mw_selectionID = ( LocalPlayer().mw_selectionID + 1 ) % 255
+	locPly.mw_selectionID = ( locPly.mw_selectionID + 1 ) % 255
 
-	local clickedUnit = LocalPlayer():GetEyeTrace().Entity
+	local clickedUnit = locPly:GetEyeTrace().Entity
 
-	if LocalPlayer().lastSelectionTime + 0.3 > CurTime() and IsValid( clickedUnit ) then
+	if locPly.lastSelectionTime + 0.3 > CurTime() and IsValid( clickedUnit ) then
 		if string.StartWith(clickedUnit:GetClass(),"ent_melon_") then
 			allFoundEntities = ents.FindInSphere( center, 300 )
 			net.Start("MW_RequestSelection")
-				net.WriteInt(LocalPlayer().mw_selectionID, 20)
+				net.WriteInt(locPly.mw_selectionID, 20)
 				net.WriteString(clickedUnit:GetClass())
 				net.WriteVector(center)
 				net.WriteFloat(300)
@@ -4195,7 +4199,7 @@ function TOOL:DoSelection(startingPos, endingPos)
 
 			-- allFoundEntities = ents.FindInSphere( center, radius )
 			net.Start("MW_RequestSelection")
-				net.WriteInt(LocalPlayer().mw_selectionID, 20)
+				net.WriteInt(locPly.mw_selectionID, 20)
 				net.WriteString("nil")
 				net.WriteVector(center)
 				net.WriteFloat(radius)
@@ -4212,7 +4216,7 @@ function TOOL:DoSelection(startingPos, endingPos)
 			end
 
 			net.Start("MW_RequestSelection")
-				net.WriteInt(LocalPlayer().mw_selectionID, 20)
+				net.WriteInt(locPly.mw_selectionID, 20)
 				net.WriteString("nil")
 				net.WriteVector(center)
 				net.WriteFloat(radius)
@@ -4221,10 +4225,10 @@ function TOOL:DoSelection(startingPos, endingPos)
 		end
 	end
 
-	LocalPlayer().lastSelectionTime = CurTime()
+	locPly.lastSelectionTime = CurTime()
 
 	for _, v in ipairs(allFoundEntities) do
-		if (cvars.Bool("mw_admin_move_any_team", false) or v:GetNWInt("mw_melonTeam", -1) == LocalPlayer():GetInfoNum("mw_team", -2)) then
+		if (cvars.Bool("mw_admin_move_any_team", false) or v:GetNWInt("mw_melonTeam", -1) == locPly:GetInfoNum("mw_team", -2)) then
 			if (v:GetClass() ~= "ent_melon_zone") then
 				if (typeSelect == nil or typeSelect == v:GetClass()) then
 					table.insert( foundEntities, v )
@@ -4234,7 +4238,7 @@ function TOOL:DoSelection(startingPos, endingPos)
 	end
 
 	if (istable(foundEntities)) then
-		LocalPlayer().foundMelons = table.Copy(foundEntities)
+		locPly.foundMelons = table.Copy(foundEntities)
 	end
 end
 
@@ -4290,29 +4294,30 @@ end
 
 local function StartBuildingContraption( assembler, _file, cost, power )
 	if assembler:GetNWBool( "active" ) then return end
-	if LocalPlayer().mw_units >= cvars.Number( "mw_admin_max_units" ) then return end
-	if LocalPlayer().mw_credits < LocalPlayer().contrapCost or cvars.Bool( "mw_admin_credit_cost" ) then return end
-	if LocalPlayer().contrapPower ~= 0 or LocalPlayer().mw_units + LocalPlayer().contrapPower > cvars.Number( "mw_admin_max_units" ) then return end
+	local locPly = LocalPlayer()
+	if locPly.mw_units >= cvars.Number( "mw_admin_max_units" ) then return end
+	if locPly.mw_credits < locPly.contrapCost or cvars.Bool( "mw_admin_credit_cost" ) then return end
+	if locPly.contrapPower ~= 0 or locPly.mw_units + locPly.contrapPower > cvars.Number( "mw_admin_max_units" ) then return end
 
 	assembler.nextSlowThink = CurTime() + assembler:GetNWFloat("slowThinkTimer", 0)
 	assembler:SetNWFloat("nextSlowThink", CurTime() + assembler:GetNWFloat("slowThinkTimer", 0))
 	assembler.unitspawned = false
 	assembler:SetNWBool("active", true)
-	assembler.player = LocalPlayer()
+	assembler.player = locPly
 	assembler.file = _file
 	assembler.contrapCost = cost
 	assembler.contrapPower = power
 
 	net.Start("RequestContraptionLoadToAssembler")
 		net.WriteEntity(assembler)
-		net.WriteUInt(LocalPlayer().contrapPower, 16)
+		net.WriteUInt(locPly.contrapPower, 16)
 		net.WriteString(_file)
 		net.WriteFloat(assembler:GetNWFloat("slowThinkTimer", 0))
-	--	net.WriteVector(LocalPlayer().selectedAssembler:GetPos())
+	--	net.WriteVector(locPly.selectedAssembler:GetPos())
 	net.SendToServer()
 
 	if cvars.Bool("mw_admin_credit_cost") then
-		local newCredits = LocalPlayer().mw_credits-LocalPlayer().contrapCost
+		local newCredits = locPly.mw_credits-locPly.contrapCost
 		net.Start("MW_UpdateServerInfo")
 			net.WriteInt(cvars.Number("mw_team"), 8)
 			net.WriteInt(newCredits, 32)
@@ -4322,13 +4327,15 @@ local function StartBuildingContraption( assembler, _file, cost, power )
 		net.SendToServer()
 	end
 
-	LocalPlayer().cmenuframe:Remove()
-	LocalPlayer().cmenuframe = nil
+	locPly.cmenuframe:Remove()
+	locPly.cmenuframe = nil
 end
 
 function TOOL:MakeContraptionMenu()
-	if LocalPlayer().cmenuframe ~= nil then
-		if LocalPlayer().selectedAssembler.file == nil then return end
+	local locPly = LocalPlayer()
+
+	if locPly.cmenuframe ~= nil then
+		if locPly.selectedAssembler.file == nil then return end
 		-- Fix an exploit resulting from this shit not updating with this
 		-- This means contraption price related stuff has to be updated in two separate places now which is stupid, but I don't want to have to restructure Marum's code just to make updating this less annoying
 
@@ -4336,7 +4343,7 @@ function TOOL:MakeContraptionMenu()
 		local power = 0
 		local spawnTime = 0
 
-		local fulltable = util.JSONToTable(file.Read(LocalPlayer().selectedAssembler.file))
+		local fulltable = util.JSONToTable(file.Read(locPly.selectedAssembler.file))
 		local duptable = fulltable.Entities
 		local sizePenalty = 0
 		for _, ent in pairs( duptable ) do
@@ -4356,69 +4363,69 @@ function TOOL:MakeContraptionMenu()
 				spawnTime = spawnTime + ent.spawnDelay * 2
 			end
 		end
-		LocalPlayer().contrapCost = cost
-		LocalPlayer().contrapPower = power
-		LocalPlayer().selectedAssembler:SetNWFloat("slowThinkTimer", spawnTime)
+		locPly.contrapCost = cost
+		locPly.contrapPower = power
+		locPly.selectedAssembler:SetNWFloat("slowThinkTimer", spawnTime)
 
 		-- Make the contrap
-		StartBuildingContraption(LocalPlayer().selectedAssembler, LocalPlayer().selectedAssembler.file, LocalPlayer().contrapCost, LocalPlayer().contrapPower)
+		StartBuildingContraption(locPly.selectedAssembler, locPly.selectedAssembler.file, locPly.contrapCost, locPly.contrapPower)
 	end
 
-	if LocalPlayer().cmenuframe ~= nil then return end
-	if LocalPlayer().selectedAssembler:GetNWBool( "active", true ) then return end
+	if locPly.cmenuframe ~= nil then return end
+	if locPly.selectedAssembler:GetNWBool( "active", true ) then return end
 
-	LocalPlayer().cmenuframe = vgui.Create("DFrame")
+	locPly.cmenuframe = vgui.Create("DFrame")
 	local w = 400
 	local h = 400
 	-- local freeze = net.ReadBool()
-	LocalPlayer().cmenuframe:SetSize(w, h)
-	LocalPlayer().cmenuframe:SetPos(ScrW() / 2 - w / 2, ScrH() / 2 - h / 2)
-	LocalPlayer().cmenuframe:SetTitle("Contraption Legalizer")
-	LocalPlayer().cmenuframe:MakePopup()
+	locPly.cmenuframe:SetSize(w, h)
+	locPly.cmenuframe:SetPos(ScrW() / 2 - w / 2, ScrH() / 2 - h / 2)
+	locPly.cmenuframe:SetTitle("Contraption Legalizer")
+	locPly.cmenuframe:MakePopup()
 
-	LocalPlayer().cmenuframe.OnClose = function()
-		LocalPlayer().cmenuframe = nil
+	locPly.cmenuframe.OnClose = function()
+		locPly.cmenuframe = nil
 	end
 
-	local contraptionName = vgui.Create("DLabel", LocalPlayer().cmenuframe)
+	local contraptionName = vgui.Create("DLabel", locPly.cmenuframe)
 	contraptionName:SetPos( 30, 90)
 	contraptionName:SetSize(300,30)
 	contraptionName:SetFontInternal( "Trebuchet18" )
 	contraptionName:SetText("Press E again to spawn last spawned contraption")
 
-	local contraptionName = vgui.Create("DLabel", LocalPlayer().cmenuframe)
+	local contraptionName = vgui.Create("DLabel", locPly.cmenuframe)
 	contraptionName:SetPos( 30, 110)
 	contraptionName:SetSize(300,30)
 	contraptionName:SetFontInternal( "Trebuchet24" )
 	contraptionName:SetText("Contraption: ")
 
-	local contraptionCost = vgui.Create("DLabel", LocalPlayer().cmenuframe)
+	local contraptionCost = vgui.Create("DLabel", locPly.cmenuframe)
 	contraptionCost:SetPos( 30, 150)
 	contraptionCost:SetSize(300,30)
 	contraptionCost:SetFontInternal( "Trebuchet24" )
 	contraptionCost:SetText("Cost:")
 
-	local contraptionPower = vgui.Create("DLabel", LocalPlayer().cmenuframe)
+	local contraptionPower = vgui.Create("DLabel", locPly.cmenuframe)
 	contraptionPower:SetPos( 200, 150)
 	contraptionPower:SetSize(300,30)
 	contraptionPower:SetFontInternal( "Trebuchet24" )
 	contraptionPower:SetText("Power:")
 
-	if (LocalPlayer().selectedAssembler ~= nil and LocalPlayer().selectedAssembler.file ~= nil) then
-		LocalPlayer().contrapCost, LocalPlayer().contrapPower = SelectContraption(LocalPlayer(), LocalPlayer().selectedAssembler.file, contraptionName, contraptionCost, contraptionPower)
+	if (locPly.selectedAssembler ~= nil and locPly.selectedAssembler.file ~= nil) then
+		locPly.contrapCost, locPly.contrapPower = SelectContraption(locPly, locPly.selectedAssembler.file, contraptionName, contraptionCost, contraptionPower)
 	end
 
-	local button = vgui.Create("DButton", LocalPlayer().cmenuframe)
+	local button = vgui.Create("DButton", locPly.cmenuframe)
 	button:SetSize(180,40)
 	button:SetPos(110, 50)
 	button:SetFont("CloseCaption_Normal")
 	button:SetText("Produce")
 	function button:DoClick()
-		if (IsEntity(LocalPlayer().selectedAssembler)) then
-			StartBuildingContraption(LocalPlayer().selectedAssembler, LocalPlayer().selectedFile, LocalPlayer().contrapCost, LocalPlayer().contrapPower)
+		if (IsEntity(locPly.selectedAssembler)) then
+			StartBuildingContraption(locPly.selectedAssembler, locPly.selectedFile, locPly.contrapCost, locPly.contrapPower)
 		else
 			print("Somehow, the contraption assembler you have selected doesn't seem to be an Entity")
-			print(LocalPlayer().selectedAssembler)
+			print(locPly.selectedAssembler)
 			debug.Trace()
 		end
 	end
@@ -4427,7 +4434,7 @@ function TOOL:MakeContraptionMenu()
 		draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
 	end
 
-	local browser = vgui.Create( "DFileBrowser", LocalPlayer().cmenuframe )
+	local browser = vgui.Create( "DFileBrowser", locPly.cmenuframe )
 	browser:SetPos( 25, 200 )
 	browser:SetSize(350, 175)
 
@@ -4440,7 +4447,7 @@ function TOOL:MakeContraptionMenu()
 	browser:SetCurrentFolder( "melonwars/contraptions" ) -- Set the folder to use
 
 	function browser:OnSelect( path, pnl )
-		LocalPlayer().contrapCost, LocalPlayer().contrapPower = SelectContraption(LocalPlayer(), path, contraptionName, contraptionCost, contraptionPower)
+		locPly.contrapCost, locPly.contrapPower = SelectContraption(locPly, path, contraptionName, contraptionCost, contraptionPower)
 	end
 end
 
@@ -4510,8 +4517,8 @@ function TOOL:DrawHUD()
 
 		local unit_id = cvars.Number("mw_chosen_unit")
 
-		if (math.floor(LocalPlayer().mw_spawntime - CurTime()) > 0) then
-			draw.DrawText( "Spawning Queue: " .. math.floor(LocalPlayer().mw_spawntime-CurTime()), "DermaLarge", ScrW() / 2, ScrH() - 80, color_white, TEXT_ALIGN_CENTER )
+		if (math.floor(pl.mw_spawntime - CurTime()) > 0) then
+			draw.DrawText( "Spawning Queue: " .. math.floor(pl.mw_spawntime-CurTime()), "DermaLarge", ScrW() / 2, ScrH() - 80, color_white, TEXT_ALIGN_CENTER )
 		end
 
 		local cheats = false
@@ -4600,8 +4607,8 @@ function TOOL:DrawHUD()
 				draw.DrawText( "LMB: Spawn", "DermaLarge", x + w-10, y-80, color_white, TEXT_ALIGN_RIGHT )
 				draw.DrawText( "RMB: Cancel", "DermaLarge", x + w-10, y-40, color_white, TEXT_ALIGN_RIGHT )
 
-				--if (math.floor(LocalPlayer().mw_spawntime-CurTime()) > 0) then
-				--	draw.DrawText( "Spawning Queue: " .. math.floor(LocalPlayer().mw_spawntime-CurTime()), "DermaLarge", ScrW() / 2, ScrH() - 80, color_white, TEXT_ALIGN_CENTER )
+				--if (math.floor(pl.mw_spawntime-CurTime()) > 0) then
+				--	draw.DrawText( "Spawning Queue: " .. math.floor(pl.mw_spawntime-CurTime()), "DermaLarge", ScrW() / 2, ScrH() - 80, color_white, TEXT_ALIGN_CENTER )
 				--end
 
 				if (cvars.Bool("mw_unit_option_welded") and mw_units[unit_id].welded_cost ~= -1) then
@@ -4633,7 +4640,7 @@ function TOOL:DrawHUD()
 			else
 				local name = ""
 				draw.RoundedBox( 10, mx-115, my + 40, 230, 45, Color(0,0,0,100) )
-				draw.DrawText( "Spawning " ..name, "Trebuchet24", mx, my + 40, Color(255,255,0,255), TEXT_ALIGN_CENTER )
+				draw.DrawText( "Spawning " .. name, "Trebuchet24", mx, my + 40, Color(255,255,0,255), TEXT_ALIGN_CENTER )
 
 				draw.RoundedBox( 2, mx-21, my-3, 17, 5, Color(50,50,50))
 				draw.RoundedBox( 2, mx + 4, my-3, 17, 5, Color(50,50,50))
@@ -4642,8 +4649,8 @@ function TOOL:DrawHUD()
 				draw.RoundedBox( 1, mx + 5, my-2, 15, 3, teamColor)
 				draw.RoundedBox( 1, mx-3, my-30-math.sin(CurTime() * 3) * 10, 5, 10, teamColor)
 			end
-		elseif pl.mw_action == 0 then -- LocalPlayer().mw_selecting
-			local teamColor = LocalPlayer().mw_hudColor -- self:GetOwner().mw_hudColor
+		elseif pl.mw_action == 0 then -- pl.mw_selecting
+			local teamColor = pl.mw_hudColor -- self:GetOwner().mw_hudColor
 
 			local w = 300
 			local h = 150
@@ -4670,9 +4677,9 @@ function TOOL:DrawHUD()
 			end
 			draw.DrawText( "Power: " .. tostring(self:GetOwner().mw_units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 70, color_white, TEXT_ALIGN_LEFT )
 		elseif pl.mw_action == 3 then
-			local prop_id = LocalPlayer():GetInfoNum("mw_chosen_prop", 1) -- changed
+			local prop_id = pl:GetInfoNum("mw_chosen_prop", 1) -- changed
 
-			local teamColor = LocalPlayer().mw_hudColor -- changed
+			local teamColor = pl.mw_hudColor -- changed
 			local w = 300
 			local h = 250
 			local x = ScrW() - w
@@ -4684,7 +4691,7 @@ function TOOL:DrawHUD()
 			draw.DrawText( mw_base_props[prop_id].name, "DermaLarge", x + w-20, y + 70, color_white, TEXT_ALIGN_RIGHT )
 			draw.DrawText( "HP: " .. mw_base_props[prop_id].hp, "DermaLarge", x + 30, y + 100, color_white, TEXT_ALIGN_LEFT )
 			draw.DrawText( "Cost: " .. mw_base_props[prop_id].cost, "DermaLarge", x + 30, y + 130, color_white, TEXT_ALIGN_LEFT )
-			draw.DrawText( "Water: " .. tostring(LocalPlayer().mw_credits), "DermaLarge", x + 30, y + 180, color_white, TEXT_ALIGN_LEFT ) -- changed
+			draw.DrawText( "Water: " .. tostring(pl.mw_credits), "DermaLarge", x + 30, y + 180, color_white, TEXT_ALIGN_LEFT ) -- changed
 		elseif pl.mw_action == 4 then
 			local teamColor = mw_team_colors[cvars.Number("mw_team")] -- self:GetOwner().mw_hudColor
 			local w = 300
@@ -4701,10 +4708,10 @@ function TOOL:DrawHUD()
 
 			draw.RoundedBox( 15, x, y, w, h, teamColor )
 			draw.RoundedBox( 10, x + 10, y + 10, w-20, h-20, Color(0,0,0,230) )
-			draw.DrawText( "Water: " .. tostring(LocalPlayer().mw_credits), "DermaLarge", x + 30, y + 30, color_white, TEXT_ALIGN_LEFT ) -- changed
-			draw.DrawText( "Power: " .. tostring(LocalPlayer().mw_units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 70, color_white, TEXT_ALIGN_LEFT ) -- changed
+			draw.DrawText( "Water: " .. tostring(pl.mw_credits), "DermaLarge", x + 30, y + 30, color_white, TEXT_ALIGN_LEFT ) -- changed
+			draw.DrawText( "Power: " .. tostring(pl.mw_units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 70, color_white, TEXT_ALIGN_LEFT ) -- changed
 		elseif pl.mw_action == 5 then
-			local teamColor = mw_team_colors[cvars.Number("mw_team")] -- LocalPlayer().mw_hudColor -- changed
+			local teamColor = mw_team_colors[cvars.Number("mw_team")] -- pl.mw_hudColor -- changed
 			local w = 160
 			local h = 30
 			local x = ScrW()
@@ -4720,9 +4727,9 @@ function TOOL:DrawHUD()
 
 			draw.RoundedBox( 15, x-300, y-150, 300, 150, teamColor )
 			draw.RoundedBox( 10, x-300+10, y-140, 300-20, 130, Color(0,0,0,230) )
-			draw.DrawText( "Water: " .. tostring(LocalPlayer().mw_credits), "DermaLarge", x-270, y-100, color_white, TEXT_ALIGN_LEFT )
+			draw.DrawText( "Water: " .. tostring(pl.mw_credits), "DermaLarge", x-270, y-100, color_white, TEXT_ALIGN_LEFT )
 		elseif pl.mw_action == 6 then
-			local teamColor = mw_team_colors[cvars.Number("mw_team")]--LocalPlayer().mw_hudColor -- changed
+			local teamColor = mw_team_colors[cvars.Number("mw_team")]--pl.mw_hudColor -- changed
 			local w = 300
 			local h = 150
 			local x = ScrW() - w
@@ -4737,8 +4744,8 @@ function TOOL:DrawHUD()
 
 			draw.RoundedBox( 15, x, y, w, h, teamColor )
 			draw.RoundedBox( 10, x + 10, y + 10, w-20, h-20, Color(0,0,0,230) )
-			draw.DrawText( "Water: " .. tostring(LocalPlayer().mw_credits), "DermaLarge", x + 30, y + 30, color_white, TEXT_ALIGN_LEFT )
-			draw.DrawText( "Power: " .. tostring(LocalPlayer().mw_units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 70, color_white, TEXT_ALIGN_LEFT )
+			draw.DrawText( "Water: " .. tostring(pl.mw_credits), "DermaLarge", x + 30, y + 30, color_white, TEXT_ALIGN_LEFT )
+			draw.DrawText( "Power: " .. tostring(pl.mw_units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 70, color_white, TEXT_ALIGN_LEFT )
 		end
 
 		if (cvars.Bool("mw_income_indicator")) then
@@ -4754,7 +4761,7 @@ function TOOL:DrawHUD()
 			end
 		end
 
-		surface.SetDrawColor(LocalPlayer().mw_hudColor)
+		surface.SetDrawColor(pl.mw_hudColor)
 
 		if (pl.mw_action ~= 16) then
 			for i = 0, 3 do
@@ -4769,7 +4776,7 @@ function TOOL:DrawHUD()
 	if not cvars.Bool("mw_admin_player_colors") then return end
 	for k, v in pairs(player:GetAll()) do
 		--if v == self:GetOwner() then return end
-		local weapon = LocalPlayer():GetActiveWeapon()
+		local weapon = pl:GetActiveWeapon()
 		if not IsValid(weapon) then return end
 		if weapon:GetClass() ~= "gmod_tool" then return end-- TODO: Here I should deactivate the spawnmenu once the game started
 		--if not IsValid(v:GetTool()) then return end
