@@ -80,11 +80,11 @@ hook.Add( "PostDrawTranslucentRenderables", "MelonWars_AddHalos", function()
 
 	for i = table.Count(zoneTable), 1, -1 do
 		-- local remove = false
-		if (teamgrid == nil or teamgrid[zoneTable[i]:GetNWInt("zoneTeam", 0)] == nil or teamgrid[zoneTable[i]:GetNWInt("zoneTeam", 0)][a] == nil) then
+		if teamgrid == nil or teamgrid[zoneTable[i]:GetNWInt("zoneTeam", 0)] == nil or teamgrid[zoneTable[i]:GetNWInt("zoneTeam", 0)][a] == nil then
 			if (zoneTable[i]:GetNWInt("zoneTeam", 0) ~= a) then
 				table.remove(zoneTable, i)
 			end
-		elseif ((zoneTable[i]:GetNWInt("zoneTeam", 0) ~= a and not teamgrid[zoneTable[i]:GetNWInt("zoneTeam", 0)][a]) or (zoneTable[i]:GetPos() - LocalPlayer():GetPos()):LengthSqr() > 7500000) then
+		elseif (zoneTable[i]:GetNWInt("zoneTeam", 0) ~= a and not teamgrid[zoneTable[i]:GetNWInt("zoneTeam", 0)][a]) or (zoneTable[i]:GetPos() - LocalPlayer():GetPos()):LengthSqr() > 7500000 then
 			table.remove(zoneTable, i)
 		end
 	end
@@ -103,18 +103,16 @@ hook.Add( "PostDrawTranslucentRenderables", "MelonWars_AddHalos", function()
 end )
 
 hook.Add( "PostDrawTranslucentRenderables", "MelonWars_UnitSelectionCircles", function()
-	-- local angle = LocalPlayer():EyeAngles() + Angle( -90, 0, 0 )
 	local foundMelons = LocalPlayer().foundMelons
 
 	if not istable( foundMelons ) then return end
-	surface.SetDrawColor(Color( 0, 255, 0, 255 ))
+	surface.SetDrawColor( 0, 255, 0, 255 )
 	draw.NoTexture()
 	for _, v in ipairs( foundMelons ) do
 		if IsValid( v ) then
 			local floorTrace = v.floorTrace
 			if floorTrace ~= nil and floorTrace.Hit then
 				local hp = v:GetNWFloat("health", 0)
-				-- if (hp > 0) then
 				local maxhp = v:GetNWFloat("maxhealth", 1)
 				local pos = v:GetPos() + v:OBBCenter()
 				if v.circleSize ~= nil then
@@ -129,15 +127,14 @@ hook.Add( "PostDrawTranslucentRenderables", "MelonWars_UnitSelectionCircles", fu
 						{ x = 0, y = -polySize },
 						{ x = polySize * 0.72, y = -polySize * 0.72 }
 					}
-					surface.SetDrawColor( Color( 255 * math.min( ( 1 - hp / maxhp ) * 2, 1 ), 255 * math.min( hp / maxhp * 2, 1 ), 0, 255 ) )
-					if (hp <= 0) then
-						surface.SetDrawColor(Color(255,255,255))
+					surface.SetDrawColor( 255 * math.min( ( 1 - hp / maxhp ) * 2, 1 ), 255 * math.min( hp / maxhp * 2, 1 ), 0, 255 )
+					if hp <= 0 then
+						surface.SetDrawColor( 255, 255, 255 )
 					end
 					cam.Start3D2D( Vector( pos.x, pos.y, floorTrace.HitPos.z + 1 ), floorTrace.HitNormal:Angle() + Angle( 90, 0, 0 ), 1 )
 						surface.DrawPoly( poly )
 					cam.End3D2D()
 				end
-				-- end
 			end
 		else
 			table.RemoveByValue( foundMelons, v )
@@ -191,7 +188,7 @@ local function MWDrawSelectionCircle(startingPos, endingPos)
 end
 
 local function DrawMelonCross( pos, drawColor )
-	surface.SetDrawColor( color_black )
+	surface.SetDrawColor( 0, 0, 0, 255 )
 	surface.DrawRect( pos.x - 2, pos.y - 10, 9, 25 )
 	surface.DrawRect( pos.x - 10, pos.y - 2, 25, 9 )
 	surface.SetDrawColor( drawColor )
@@ -223,14 +220,14 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 			if (pos - center):LengthSqr() > border * border then
 				pos = center + (pos - center):GetNormalized() * border
 			end
-			surface.SetDrawColor(Color(255,0,0,255))
-		  	surface.DrawRect( pos.x - 16, pos.y - 20, 32, 40 )
-			surface.SetDrawColor(Color(150,0,0,255))
-		  	surface.DrawRect( pos.x - 12, pos.y - 16, 24, 32 )
-		  	surface.SetDrawColor(Color(255,0,0,255))
-		  	surface.DrawRect( pos.x - 3, pos.y - 12, 6, 14 )
-		  	surface.DrawRect( pos.x - 3, pos.y + 6, 6, 6 )
-		  end
+			surface.SetDrawColor( 255, 0, 0, 255 )
+			surface.DrawRect( pos.x - 16, pos.y - 20, 32, 40 )
+			surface.SetDrawColor( 150, 0, 0, 255 )
+			surface.DrawRect( pos.x - 12, pos.y - 16, 24, 32 )
+			surface.SetDrawColor( 255, 0, 0, 255 )
+			surface.DrawRect( pos.x - 3, pos.y - 12, 6, 14 )
+			surface.DrawRect( pos.x - 3, pos.y + 6, 6, 6 )
+		end
 	end
 
 	local MainBases = ents.FindByClass( "ent_melon_main_building*" )
@@ -239,11 +236,11 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 		local drw = false
 	    if (ply:GetPos() - v:GetPos()):LengthSqr() < 800000 then
 	    	drw = true
-	    elseif (CurTime() < v:GetNWFloat("lastHit", 0) + 5) then
+	    elseif CurTime() < v:GetNWFloat("lastHit", 0) + 5 then
 	    	drw = true
 	    end
 
-	    if (drw) then
+	    if drw then
 		    local pos = (v:GetPos() + Vector(0,0,v:OBBMaxs().z)):ToScreen()
 			pos = Vector(pos.x, pos.y-100)
 			--local border = ScrH()/2
@@ -252,9 +249,9 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 			--	pos = center+(pos-center):GetNormalized()*border
 			--end
 			local percent = v:GetNWInt("health", 3) / v:GetNWInt("maxhealth", 10)
-			surface.SetDrawColor(color_black)
+			surface.SetDrawColor( 0, 0, 0, 255 )
 		  	surface.DrawRect( pos.x - 15, pos.y - 55, 30, 160 )
-			surface.SetDrawColor(Color(255,0,0,255))
+			surface.SetDrawColor( 255, 0, 0, 255 )
 		  	surface.DrawRect( pos.x - 10, pos.y + 100 - 150 * percent, 20, 150 * percent )
 		end
 	end
@@ -310,9 +307,9 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 					if v:GetNWInt( "captured" .. tostring( i ), 0 ) > 0 then
 						local vpos = v:WorldSpaceCenter() + Vector( 0, 0, 100 )
 						local pos = vpos:ToScreen()
-						surface.SetDrawColor( color_black )
+						surface.SetDrawColor( 0, 0, 0, 255 )
 						surface.DrawRect( pos.x - 8, pos.y - 123, 16, 106 )
-						surface.SetDrawColor( color_white )
+						surface.SetDrawColor( 255, 255, 255, 255 )
 						surface.DrawRect( pos.x - 5 , pos.y - 120, 10, 100 )
 						surface.SetDrawColor( mw_team_colors[i] )
 						local capture = v:GetNWInt( "captured" .. tostring( i ), 0 )
