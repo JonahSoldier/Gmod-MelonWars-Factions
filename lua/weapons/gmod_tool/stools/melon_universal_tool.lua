@@ -7,10 +7,6 @@ TOOL.ConfigName = "" -- Setting this means that you do not have to create extern
 
 CreateClientConVar( "mw_chosen_unit", "1", 0, false )
 TOOL.ClientConVar[ "mw_chosen_unit" ] = 1
---[[ CreateClientConVar( "mw_context_menu", "0", 0, false )
-TOOL.ClientConVar[ "mw_context_menu" ] = 0
-CreateClientConVar( "mw_unit_option_rocketeer", "0", 0, true )
-TOOL.ClientConVar[ "mw_unit_option_rocketeer" ] = 0 ]]
 CreateClientConVar( "mw_unit_option_welded", "0", 0, true )
 TOOL.ClientConVar[ "mw_unit_option_welded" ] = 0
 CreateClientConVar( "mw_team", "1", 1, true )
@@ -66,8 +62,6 @@ CreateClientConVar( "mw_prop_snap", "1", 0, false )
 TOOL.ClientConVar[ "mw_prop_snap" ] = 1
 CreateClientConVar( "mw_code", "0", 0, false )
 TOOL.ClientConVar[ "mw_code" ] = 1
---[[ CreateClientConVar( "mw_custom_chat", "1", 1, false )
-TOOL.ClientConVar[ "mw_custom_chat" ] = 1 ]]
 CreateClientConVar( "mw_income_indicator", "1", 1, false )
 TOOL.ClientConVar[ "mw_income_indicator" ] = 1
 
@@ -1655,25 +1649,7 @@ u.offset = Vector(-70,24,0)
 u.angle = Angle(0,0,0)
 u.cost = 20
 u.hp = 20
---[[
-i = i + 1
-u = mw_base_props[i]
-u.name = "Square Frame"
-u.model = "models/props_phx/construct/metal_wire2x2b.mdl"
-u.offset = Vector(-46,0,0)
-u.angle = Angle(0,0,0)
-u.cost = 10
-u.hp = 10
 
-i = i + 1
-u = mw_base_props[i]
-u.name = "Rectangular Frame"
-u.model = "models/props_phx/construct/metal_wire1x2b.mdl"
-u.offset = Vector(-22,24,0)
-u.angle = Angle(0,180,0)
-u.cost = 8
-u.hp = 8
-]]
 i = i + 1
 u = mw_base_props[i]
 u.name = "Railing"
@@ -1948,19 +1924,6 @@ local function _CreatePanel()
 			label:SetText("These units will be spawned as turrets.")
 			label:SetColor(orangeColor)
 		else
-			--[[
-			local checkbox = vgui.Create( "DCheckBox", pl.panel ) - -  Create the checkbox
-			checkbox:SetPos( 180, 15 ) - -  Set the position
-			checkbox:SetValue( cvars.Bool("mw_unit_option_welded"))
-			checkbox:SetSize(60,30)
-			checkbox:SetConVar( "mw_unit_option_welded" )
-			checkbox.Paint = function(s, w, h)
-				draw.RoundedBox( 8, 0, 0, w, h, color_white )
-				draw.RoundedBox( 6, 2, 2, w-4, h-4, Color(0,0,0) )
-				if (checkbox:GetChecked()) then
-					draw.RoundedBox( 4, 4, 4, w-8, h-8, color_white )
-				end
-			end]]
 			local checkbox = _MakeCheckbox( 180, 15, pl.panel, "Spawn as turret", "mw_unit_option_welded")
 			function checkbox:OnCursorEntered()
 				pl.mw_hover = 0
@@ -1971,11 +1934,6 @@ local function _CreatePanel()
 				pl.info_time:SetText("")
 				pl.info:SetText("If this is checked, you will be able to spawn units welded to where you point at, with a reduced cost. Not all units can be spawned as turret.")
 			end
-			--local label = vgui.Create("DLabel", pl.panel)
-			--label:SetPos(250, 15)
-			--label:SetSize(370,30)
-			--label:SetFontInternal( "Trebuchet24" )
-			--label:SetText("Spawn as turret")
 		end
 
 		DefaultInfo()
@@ -1993,23 +1951,7 @@ local function _CreatePanel()
 			surface.SetDrawColor(color_white)
 			surface.DrawRect( 135, a-5, 20, 20 )
 		end
-		--[[local lines = vgui.Create("DPanel", scroll)
-		lines:SetSize(w-120, h-30)
-		lines:SetPos(0,0)
-		lines.Paint = function(s, w, h)
-			draw.RoundedBox( 4, 0, 0, w, h, Color(30,30,30) )
-			surface.SetDrawColor(color_white)
-			if (pl.mw_hover ~= 0) then
-				surface.DrawRect( 160, 120, w-250, 5 )
-				local a = (pl.mw_hover-firstBuilding+1) * 45-18
-				if (a < 120) then
-					surface.DrawRect( 160, a, 5, 120-(a))
-				else
-					surface.DrawRect( 160, 120, 5, a-115)
-				end
-				surface.DrawRect( 130, a, 30, 5)
-			end
-		end]]
+
 		local ipos = 1
 		for i = firstBuilding, firstEnergy - 1 do
 			if (mw_units[i].code == nil or pl:GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVar( "mw_admin_bonusunits" ):GetInt() == 1) then
@@ -2100,23 +2042,7 @@ local function _CreatePanel()
 			surface.SetDrawColor(color_white)
 			surface.DrawRect( 135, a - 5, 20, 20 )
 		end
-		--[[local lines = vgui.Create("DPanel", scroll)
-		lines:SetSize(w-120, h-30)
-		lines:SetPos(0,0)
-		lines.Paint = function(s, w, h)
-			draw.RoundedBox( 4, 0, 0, w, h, Color(30,30,30) )
-			surface.SetDrawColor(color_white)
-			if (pl.mw_hover ~= 0) then
-				surface.DrawRect( 160, 120, w-250, 5 )
-				local a = (pl.mw_hover-firstBuilding+1) * 45-18
-				if (a < 120) then
-					surface.DrawRect( 160, a, 5, 120-(a))
-				else
-					surface.DrawRect( 160, 120, 5, a-115)
-				end
-				surface.DrawRect( 130, a, 30, 5)
-			end
-		end]]
+
 		for i = firstEnergy, firstContraption - 1 do
 			_MakeButton( i, i - firstEnergy + 1, scroll )
 		end
@@ -2411,11 +2337,6 @@ local function _CreatePanel()
 		end
 	elseif (pl.mw_menu == 6) then																--Help menu
 		-- { HELP MENU
-		-- local h = 40
-
-		--local scroll = vgui.Create( "DScrollPanel", pl.panel )
-		--scroll:SetSize( 440, 450 )
-		--scroll:SetPos( 120, 10 )
 
 		local info = vgui.Create( "RichText", pl.panel )
 		info:SetPos( 120, 20 )
@@ -2509,15 +2430,6 @@ local function _CreatePanel()
 			"Remember, this is as much a gamemode as it is a toy, so there is no actual 'end' to the match other than whatever you make it. " ..
 			"You can play until the last base is destroyed, until only one player has units, or any other condition you can imagine. Just be sure to be clear about it with all players before starting." )
 
-	--[[
-	local button = vgui.Create("DButton", pl.panel)
-	button:SetSize(100,40)
-	button:SetPos(10,420)
-	button:SetText("News")
-	button:SetFontInternal("CloseCaption_Normal")
-	function button:DoClick()
-		MW_OpenPatchNotes()
-	end]]
 		-- }
 	elseif (pl.mw_menu == 7) then																--Admin menu
 		-- { ADMIN MENU
@@ -2534,14 +2446,6 @@ local function _CreatePanel()
 			button:SetFont("CloseCaption_Normal")
 			button:SetText("Start Match")
 			function button:DoClick()
-				--[[ pl:ConCommand("mw_admin_playing 1")
-				pl:ConCommand("mw_admin_locked_teams 1")
-				pl:ConCommand("mw_admin_move_any_team 0")
-				pl:ConCommand("mw_admin_credit_cost 1")
-				pl:ConCommand("mw_admin_allow_free_placing 0")
-				pl:ConCommand("mw_admin_spawn_time 1")
-				pl:ConCommand("mw_admin_immortality 0")
-				pl:ConCommand("mw_reset_credits") ]]
 				net.Start("StartGame")
 				net.SendToServer()
 				pl.mw_frame:Remove()
@@ -2601,10 +2505,7 @@ local function _CreatePanel()
 
 			y = y + 40
 			_MakeCheckbox( 20, y, scroll, "Extra unit options", "mw_admin_bonusunits", "[Balance not guaranteed]", false )
-			--[[
-			y = y + 40
-			_MakeCheckbox( 20, y, scroll, "Player Colors", "mw_admin_player_colors", "[Show a colored circle over players]" )
-			]]
+
 			y = y + 80
 
 			local label = vgui.Create("DLabel", scroll)
@@ -2795,8 +2696,6 @@ local function _CreatePanel()
 			button:SetText("Reset Credits")
 			function button:DoClick()
 				pl:ConCommand("mw_reset_credits")
-				--pl.mw_frame:Remove()
-				--pl.mw_frame = nil
 			end
 			button.Paint = function(s, w, h)
 				draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
@@ -2815,8 +2714,6 @@ local function _CreatePanel()
 			button:SetText("Reset Power")
 			function button:DoClick()
 				pl:ConCommand("mw_reset_power")
-				--pl.mw_frame:Remove()
-				--pl.mw_frame = nil
 			end
 			button.Paint = function(s, w, h)
 				draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
@@ -2854,8 +2751,6 @@ local function _CreatePanel()
 					pl:ConCommand( "mw_admin_max_units " .. tostring( i * 10 ) )
 					slider:SetSize( i * 12, 40 )
 					label:SetText( "Power: " .. tostring( i * 10 ) )
-					--pl.mw_frame:Remove()
-					--pl.mw_frame = nil
 				end
 				button.Paint = function(s, w, h)
 					draw.RoundedBox( 0, w-1, 0, 1, h, Color(100,100,100) )
@@ -2888,8 +2783,6 @@ local function _CreatePanel()
 					pl:ConCommand("mw_admin_starting_credits " .. tostring(i * 200))
 					slider:SetSize(i * 12, 40)
 					label:SetText("Starting Water:\n" .. tostring(i * 200))
-					--pl.mw_frame:Remove()
-					--pl.mw_frame = nil
 				end
 				button.Paint = function()
 					draw.RoundedBox( 0, w - 1, 0, 1, h, Color(100,100,100) )
@@ -2922,8 +2815,6 @@ local function _CreatePanel()
 					pl:ConCommand( "mw_admin_base_income " .. tostring( i * 5 ) )
 					slider:SetSize( i * 12, 40 )
 					label:SetText( "Water Income:\n" .. tostring( i * 5 ) )
-					--pl.mw_frame:Remove()
-					--pl.mw_frame = nil
 				end
 				button.Paint = function(s, w, h)
 					draw.RoundedBox( 0, w - 1, 0, 1, h, Color(100,100,100) )
@@ -3161,7 +3052,6 @@ function TOOL:Reload()
 	self:MenuButton(pl, 415, 25, "Team", 5)
 	self:MenuButton(pl, 440, 25, "Admin", 7)
 	self:MenuButton(pl, 470, 25, "Player", 8)
---	button:SetEnabled( pl:IsAdmin() )
 end
 
 function TOOL:DrawToolScreen( width, height )
@@ -3189,59 +3079,8 @@ function TOOL:DrawToolScreen( width, height )
 	elseif action == 945 then
 		draw.SimpleText( "Click on a unit", "DermaLarge", width / 2, height / 2, Color( 200, 200, 200 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 	end
-
-	-- New Year
-	-- RECORDAR DESCOMENTAR EL CODIGO ANTERIOR
---[[	surface.SetDrawColor( HSVToColor( (CurTime() * 50)%360, 1, 0.2 ) );
-	surface.DrawRect( 0, 0, width, height );
-	local txt = "Happy Holidays!"
-	local len = string.len(txt);
-	local letterWidth = 15;
-	local amplitude = 20;
-	local frequency = 0.4;
-	local speed = 5;
-
-	local colorFrequency = 10;
-	local colorSpeed = 180;
-	for i = 1, len do
-		local color = HSVToColor( (CurTime() * colorSpeed+i*colorFrequency)%360, 1, 1 )
-		draw.SimpleText( string.sub(txt, i, i), "DermaLarge", width / 2 + (-len / 2 + i) * letterWidth, height / 2+math.sin(i*frequency + CurTime() * speed) * amplitude, color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-	end ]]
-end
---[[
-function TOOL:Initialize()
-	self:GetOwner().cutsceneOpacity = 0
-	self:GetOwner().chatTimer = 0
-	MW_OpenPatchNotes()
 end
 
-function MW_OpenPatchNotes()
-	local lastExistingPatchNote = 0
-	local files, directories = file.Find( "patchnotes/*", "LUA" )
-	PrintTable(directories)
-	--for k, v in SortedPairsByValue( files, true ) do
-	--	--local str = file.Read( GetConVarString( "melonwars_last_read_patch_note.lua", "LUA"))
-	--end
-
-	local lastReadPatchNote = 0
-	if (file.Exists("melonwars_last_read_patch_note.lua", "DATA")) then
-		local str = file.Read( "melonwars_last_read_patch_note.lua", "DATA")
-		lastReadPatchNote = util.StringToType(str, "int")
-	end
-
-	if (lastReadPatchNote == 0) then
-		file.Write( "melonwars_last_read_patch_note.lua", tostring(lastReadPatchNote) )
-	end
-
-	local frame = vgui.Create("DFrame")
-	local w = 700
-	local h = 500
-	frame:SetSize(w,h)
-	frame:SetPos(ScrW() / 2-w / 2,ScrH() / 2-h / 2)
-	frame:SetTitle("Patch Notes")
-	frame:MakePopup()
-end
-]]
 function TOOL:Deploy()
 	local owner = self:GetOwner()
 
@@ -3267,11 +3106,6 @@ function TOOL:Deploy()
 end
 
 function TOOL:Holster()
---	if CLIENT then
---		if ( tostring( pl.mw_frame ) ~= "[NULL Panel]" ) then
---			pl.mw_frame:Remove()
---		end
---	end
 	if IsValid( self.GhostEntity ) then
 		self.GhostEntity:Remove()
 	end
@@ -3292,10 +3126,8 @@ function TOOL:RightClick( tr )
 	if locPly.mw_cooldown >= ( CurTime() - 0.05 ) then return end
 
 	if cvars.Number( "mw_chosen_unit" ) == 0 then
-		-- owner:ConCommand( "mw_order" ) -- To order
 		if istable( locPly.foundMelons ) then
 			net.Start( "MW_Order" )
-				-- net.WriteVector( locPly:GetEyeTrace().HitPos )
 				net.WriteBool( locPly:KeyDown(IN_SPEED) )
 				net.WriteBool( locPly:KeyDown(IN_WALK) )
 				for _, v in pairs( locPly.foundMelons ) do
@@ -3355,27 +3187,14 @@ function TOOL:LeftClick( tr )
 	local trace = self:GetOwner():GetEyeTrace( {
 	mask = MASK_SOLID + MASK_WATER
 	} )
-	--[[ if not pl.mw_selecting then
-		pl.mw_selectionStartingPoint = pl:GetEyeTrace().HitPos
-		pl.mw_selectionEndingPoint = pl.mw_selectionStartingPoint
-		pl.mw_selecting = true
-	end ]]
 
 	pl.mw_cooldown = CurTime()
 	mw_melonTeam = pl:GetInfoNum("mw_team", 0)
 
 	local action = pl:GetInfoNum("mw_action", 0)
 	if action == 0 then
-		--[[ if (pl.mw_selectTimer > CurTime() - 0.3 and pl.mw_selectTimer < CurTime() - 0.05) then
-			if (trace.Entity.Base == "ent_melon_base") then
-				MW_TypeSelection()
-			end
-		else ]]
-			MW_BeginSelection()
-			--[[ self.pressed = true
-			pl.mw_selecting = true ]]
-			pl.mw_selectTimer = CurTime()
-		-- end
+		MW_BeginSelection()
+		pl.mw_selectTimer = CurTime()
 		pl.mw_spawnTimer = CurTime()
 	elseif action == 1 then
 		if pl.mw_spawnTimer >= CurTime() - 0.1 then return end
@@ -3470,11 +3289,6 @@ function TOOL:LeftClick( tr )
 										pl.mw_credits = pl.mw_credits-cost
 									end
 								end
-
-								--[[ net.Start("MW_UpdateServerInfo")
-									net.WriteInt(mw_melonTeam ,8)
-									net.WriteInt(pl.mw_credits ,32)
-								net.SendToServer() ]]
 							else
 								pl:PrintMessage( HUD_PRINTTALK, "== Can't attach units onto non legalized props! ==" )
 							end
@@ -3505,7 +3319,6 @@ function TOOL:LeftClick( tr )
 		local prop_index = pl:GetInfoNum("mw_chosen_prop", 0)
 		local cost = mw_base_props[prop_index].cost
 		if not cvars.Bool("mw_admin_playing") then return end
-		-- local attach = pl:GetInfoNum("mw_unit_option_welded", 0)
 		if not (cvars.Bool("mw_admin_allow_free_placing") or MW_isInRange(trace.HitPos, mw_melonTeam)) then return end
 		if not (cvars.Bool("mw_admin_allow_free_placing") or MW_noEnemyNear(trace.HitPos, mw_melonTeam)) then return end
 		if not (pl.mw_credits >= cost or not cvars.Bool("mw_admin_credit_cost")) then return end
@@ -3530,15 +3343,12 @@ function TOOL:LeftClick( tr )
 			pl.mw_credits = pl.mw_credits-cost
 		end
 
-		--pl.mw_units = pl.mw_units + unit_population[unit_index]
 		net.Start("MW_UpdateServerInfo")
 			net.WriteInt(mw_melonTeam ,8)
 			net.WriteInt(pl.mw_credits ,32)
-			--net.WriteInt(pl.mw_units ,16)
 		net.SendToServer()
 	elseif (action == 4) then  --Contraption Save
 		if (CLIENT) then
-			--ContraptionSave(pl.contraption_name, pl:GetEyeTrace().Entity)
 			net.Start("ContraptionSave")
 				net.WriteString(pl.contraption_name)
 				net.WriteEntity(pl:GetEyeTrace().Entity)
@@ -3547,11 +3357,6 @@ function TOOL:LeftClick( tr )
 		self:GetOwner():ConCommand("mw_action 0")
 	-- elseif (action == 5) then  --Sell Tool
 	elseif (action == 6) then  --Contraption Load
-		--[[ net.Start("ContraptionLoad")
-			net.WriteString(file.Read(pl.selectedFile))
-			net.WriteEntity(pl)
-		net.SendToServer() ]]
-
 		local text = file.Read(pl.selectedFile)
 		local compressed_text = util.Compress( text )
 		if not compressed_text then compressed_text = text end
@@ -3618,12 +3423,6 @@ end
 
 function TOOL.BuildCPanel( CPanel )
 	if not CLIENT then return end
-	-- CPanel:AddControl("Label", { Text = "Options" , Description = "These options only affect mw_units" })
-	--[[ CPanel:AddControl("CheckBox", {
-		Label = "Rocketeer",
-		Command = "mw_unit_option_rocketeer",
-		Description = "Makes the unit mw_hover a few meters above ground while moving. Multiplies price by 3."
-	}) ]]
 	CPanel:AddControl("Label", { Text = "Reload to open the menu" })
 end
 
@@ -3658,19 +3457,7 @@ local function MW_UpdateGhostEntity(model, pos, offset, angle, newColor, ghostSp
 		local mins = Vector( locPly.GhostEntity:GetPos().x + obbmins.x, locPly.GhostEntity:GetPos().y + obbmins.y, pos.z + 5 )
 		local maxs = Vector( locPly.GhostEntity:GetPos().x + obbmaxs.x, locPly.GhostEntity:GetPos().y + obbmaxs.y, pos.z + 20 )
 		local overlappingEntities = ents.FindInBox( mins, maxs )
-		--[[
-		local vPoint = locPly.GhostEntity:GetPos() + obbmins + Vector(0,0,1)
-		local effectdata = EffectData()
-		effectdata:SetOrigin( vPoint )
-		effectdata:SetScale(0)
-		util.Effect( "MuzzleEffect", effectdata )
 
-		vPoint = locPly.GhostEntity:GetPos() + obbmaxs
-		effectdata = EffectData()
-		effectdata:SetOrigin( vPoint )
-		effectdata:SetScale(0)
-		util.Effect( "MuzzleEffect", effectdata )
-		]]
 		locPly.canPlace = true
 		if locPly.mw_action == 1 and not mw_units[locPly:GetInfoNum( "mw_chosen_unit", 0 )].canOverlap then
 			for _, v in pairs( overlappingEntities ) do
@@ -3718,82 +3505,6 @@ local function MW_FinishSelection() -- Previously concommand.Add( "-mw_select", 
 
 	sound.Play( "buttons/lightswitch2.wav", LocalPlayer():GetPos(), 50, 80, 1 )
 	LocalPlayer().mw_selecting = false
-
-	-- Finds all the entities in the selection sphere
-
-	-- local foundEnts = ents.FindInSphere((ply.mw_selEnd+ply.mw_selStart) / 2, ply.mw_selStart:Distance(ply.mw_selEnd) / 2+0.1 )
-	-- local selectEnts = table.Copy( foundEnts )
-	-- if not ply:KeyDown(IN_SPEED) then ply.foundMelons = {} end
-	--Busca de esas entidades cuales son sandias, y cuales son del equipo correcto
-
-	--[[for k, v in pairs( selectEnts ) do
-		if (v.moveType ~= MOVETYPE_NONE) then
-			local tbl = constraint.GetAllConstrainedEntities( v )
-			if (istable(tbl)) then
-				for kk, vv in pairs (tbl) do
-					if (not table.HasValue(selectEnts, vv)) then
-						table.insert(foundEnts, vv)
-					else
-					end
-				end
-			end
-		end
-	end]]
-	-- print("========== Selection:")
-	-- for k, v in pairs( foundEnts ) do
-	-- 	if (v.Base ~= nil) then
-	-- 		if (v.Base == "ent_melon_base") then
-	-- 			if (cvars.Bool("mw_admin_move_any_team", false) or v:GetNWInt("mw_melonTeam", -1) == ply:GetInfoNum( "mw_team", -1 )) then
-	-- 				-- if (v:GetNWInt("mw_melonTeam", 0) ~= 0) then
-	-- 					table.insert(ply.foundMelons, v)
-	-- 					-- print(k..": " .. tostring(v) .. ", added succesfully")
-	-- 					--"Added " .. tostring(v) .. " succesfully"
-	-- 				-- else
-	-- 					-- print(k..": " .. tostring(v) .. " !!! didnt add to the selection because the unit had no team (" ..v:GetNWInt("mw_melonTeam", -1) .. ")")
-	-- 				--"Didn't add " .. tostring(v) .. " because it had no team"
-	-- 				-- end
-	-- 			else
-	-- 				-- print(k..": " .. tostring(v) .. ", didnt add to the selection because the unit was not in your team (" ..v:GetNWInt("mw_melonTeam", -1) .. ")")
-	-- 				if (v:GetNWInt("mw_melonTeam", -1) == -1) then
-	-- 					error("Selected unit has team -1!")
-	-- 				end
-	-- 			--	"Didn't add " .. tostring(v) .. " because it wasn't my team"
-	-- 			end
-	-- 		else
-	-- 			-- print(k..": " .. tostring(v) .. ", didnt add to the selection because the Base was not ent_melon_base (" ..v.Base..")")
-	-- 		--"Didn't add " .. tostring(v) .. " because it was a base prop"
-	-- 		end
-	-- 	else
-	-- 		-- print(k..": " .. tostring(v) .. ", didnt add to the selection because Base was null")
-	-- 	end
-	-- end
-	--Le envia al client la lista de sandias para que pueda dibujar los halos
-	--[[
-	net.Start("Selection")
-		net.WriteInt(table.Count(ply.foundMelons),16)
-		for k,v in pairs(ply.foundMelons) do
-			net.WriteEntity(v)
-		end
-	net.Send(ply)
-	]]--
-
-	-- print("Sending my selection to the server. Total selected units: " .. table.Count(ply.foundMelons))
-	-- print("Entity im pointing at: " .. tostring(ply:GetEyeTrace().Entity))
-	-- print("Selection table,")
-	-- PrintTable(ply.foundMelons)
-	--[[net.Start("MW_SelectContraption")
-		net.WriteUInt(table.Count(LocalPlayer().foundMelons) + 1, 16)
-		net.WriteEntity(ply:GetEyeTrace().Entity)
-		for k, v in pairs(ply.foundMelons) do
-			net.WriteEntity(v)
-		end
-	net.SendToServer()]]--
-
-	-- sound.Play( "buttons/lightswitch2.wav", ply:GetPos(), 75, 90, 1 )
-	-- ply.mw_selEnd = Vector(0,0,0)
-	-- ply.mw_selStart = Vector(0,0,0)
-	-- ply:SetNWVector("mw_selStart", Vector(0,0,0))
-	-- ply:SetNWBool("LocalPlayer().mw_selecting",  Vector(0,0,0))
 end
 
 function TOOL:Think()
@@ -3836,9 +3547,9 @@ function TOOL:Think()
 		ply.mw_selectionEndingPoint = ( ply.mw_selectionEndingPoint * 9 + processedTrace ) / 10
 
 		if input.IsMouseDown( MOUSE_LEFT ) then return end
-		-- surface.PlaySound( "garrysmod/ui_hover.wav")
+
 		self:DoSelection( ply.mw_selectionStartingPoint, processedTrace )
-		MW_FinishSelection() -- This function is almost entirely made up of commented-out code lol
+		MW_FinishSelection()
 		ply.mw_selecting = false
 	end
 
@@ -3922,9 +3633,6 @@ function TOOL:Think()
 							 	net.WriteInt(newTeam,8)
 							net.SendToServer()
 						-- end
-					--[[ elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_singleplayer" )) then
-						net.Start("ActivateWaypoints")
-						net.SendToServer() ]]
 					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_propeller" ) or string.StartWith( tr.Entity:GetClass(), "ent_melon_hover" )) then
 						-- if (correctTeam) then
 							net.Start("PropellerReady")
@@ -4019,7 +3727,7 @@ function TOOL:Think()
 		if not input.IsMouseDown( MOUSE_LEFT ) then
 			ply.mw_sell = 0
 		else
-			ply.mw_sell = ply.mw_sell+1/100
+			ply.mw_sell = ply.mw_sell + 1 / 100
 			if (ply.mw_sell > 1) then
 				if (trace.Entity:GetNWInt("mw_melonTeam") == newTeam) then
 					net.Start("SellEntity")
@@ -4038,7 +3746,7 @@ function TOOL:Think()
 		end
 		if not self.ctrlPressed then
 			self.ctrlPressed = true
-			-- self:GetOwner():ConCommand( "mw_stop" ) -- parar
+
 			if (istable(ply.foundMelons)) then
 			local count = table.Count(ply.foundMelons)
 			if (count > 0) then
@@ -4082,10 +3790,10 @@ function TOOL:Think()
 		local unit_index = ply:GetInfoNum("mw_chosen_unit", 0)
 		if unit_index > 0 and mw_units[unit_index].offset ~= nil then
 			local offset = mw_units[unit_index].offset
-			local xoffset = Vector(offset.x * (math.cos(ply.propAngle.y / 180*math.pi)), offset.x * (math.sin(ply.propAngle.y / 180*math.pi)),0)
-			local yoffset = Vector(offset.y * (-math.sin(ply.propAngle.y / 180*math.pi)), offset.y * (math.cos(ply.propAngle.y / 180*math.pi)),0)
-			offset = xoffset+yoffset+Vector(0,0,offset.z)
-			local ang = ply.propAngle+mw_units[unit_index].angle
+			local xoffset = Vector(offset.x * (math.cos(ply.propAngle.y / 180 * math.pi)), offset.x * (math.sin(ply.propAngle.y / 180 * math.pi)),0)
+			local yoffset = Vector(offset.y * (-math.sin(ply.propAngle.y / 180 * math.pi)), offset.y * (math.cos(ply.propAngle.y / 180 * math.pi)),0)
+			offset = xoffset + yoffset + Vector(0,0,offset.z)
+			local ang = ply.propAngle + mw_units[unit_index].angle
 			if (mw_units[unit_index].normalAngle) then
 				ang = trace.HitNormal:Angle() + mw_units[unit_index].angle
 			end
@@ -4100,9 +3808,9 @@ function TOOL:Think()
 		if (cvars.Bool("mw_prop_offset") == true) then
 			offset = mw_base_props[prop_index].offset
 			--offset:Rotate( ply.propAngle )
-			local xoffset = Vector(offset.x * (math.cos(ply.propAngle.y / 180*math.pi)), offset.x * (math.sin(ply.propAngle.y / 180*math.pi)),0)
-			local yoffset = Vector(offset.y * (-math.sin(ply.propAngle.y / 180*math.pi)), offset.y * (math.cos(ply.propAngle.y / 180*math.pi)),0)
-			offset = xoffset+yoffset+Vector(0,0,offset.z)
+			local xoffset = Vector(offset.x * (math.cos(ply.propAngle.y / 180 * math.pi)), offset.x * (math.sin(ply.propAngle.y / 180 * math.pi)),0)
+			local yoffset = Vector(offset.y * (-math.sin(ply.propAngle.y / 180 * math.pi)), offset.y * (math.cos(ply.propAngle.y / 180 * math.pi)),0)
+			offset = xoffset + yoffset + Vector(0,0,offset.z)
 		else
 			offset = Vector(0,0,mw_base_props[prop_index].offset.z)
 		end
@@ -4273,19 +3981,12 @@ local function SelectContraption(pl, path, contraptionName, contraptionCost, con
 			spawnTime = spawnTime + ent.spawnDelay * 2
 		end
 	end
-	--[[ local mins = fulltable.Mins
-	local maxs = fulltable.Maxs
-	local size = maxs.x-mins.x + maxs.y-mins.y + maxs.z-mins.z ]]
+
 	pl.selectedFile = path
 	cost = math.Round( cost + sizePenalty )
 
 	pl.selectedAssembler:SetNWFloat("slowThinkTimer", spawnTime)
 
-	--pl.selectedAssembler.slowThinkTimer = cost/100
-	--pl.selectedAssembler:SetNWFloat("nextSlowThink", CurTime() + cost/100)
-	--pl.selectedAssembler.nextSlowThink = CurTime() + cost/100
-	--pl.selectedAssembler.unitspawned = false
-	--pl.selectedAssembler:SetNWBool("spawned", false)
 	contraptionName:SetText("Contraption: " .. string.sub(path, string.len( "melonwars/contraptions/" ) + 1, string.len( path ) - 4))
 	contraptionCost:SetText("Cost: " .. cost)
 	contraptionPower:SetText("Power: " .. power)
@@ -4313,7 +4014,6 @@ local function StartBuildingContraption( assembler, _file, cost, power )
 		net.WriteUInt(locPly.contrapPower, 16)
 		net.WriteString(_file)
 		net.WriteFloat(assembler:GetNWFloat("slowThinkTimer", 0))
-	--	net.WriteVector(locPly.selectedAssembler:GetPos())
 	net.SendToServer()
 
 	if cvars.Bool("mw_admin_credit_cost") then
@@ -4772,28 +4472,6 @@ function TOOL:DrawHUD()
 			surface.DrawOutlinedRect( mx-5-4, my-4-4, 9+4*2, 9+4*2 )
 		end
 	end
-	--[[
-	if not cvars.Bool("mw_admin_player_colors") then return end
-	for k, v in pairs(player:GetAll()) do
-		--if v == self:GetOwner() then return end
-		local weapon = pl:GetActiveWeapon()
-		if not IsValid(weapon) then return end
-		if weapon:GetClass() ~= "gmod_tool" then return end-- TODO: Here I should deactivate the spawnmenu once the game started
-		--if not IsValid(v:GetTool()) then return end
-		--if v:GetTool().Mode ~= "melon_universal_tool" then return end
-		local pos = v:GetPos() + Vector(0,0,85)
-		local distance = EyePos():Distance(pos)
-		local screenPos = pos:ToScreen()
-		local size = 10000/distance
-		local teamColor = mw_team_colors[v:GetInfoNum( "mw_team", -1 )]
-		size = math.max(size, 15)
-		draw.RoundedBox( size / 2, screenPos.x-size / 2, screenPos.y-size / 2, size, size, color_black )
-		size = size-4
-		draw.RoundedBox( size / 2, screenPos.x-size / 2, screenPos.y-size / 2, size, size, color_white )
-		size = size-2
-		draw.RoundedBox( size / 2, screenPos.x-size / 2, screenPos.y-size / 2, size, size, teamColor )
-	end
-	]]
 end
 
 local function isInRangeLoop( vector, teamIndex, entClass, buildDist )

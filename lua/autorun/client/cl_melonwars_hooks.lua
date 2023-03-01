@@ -31,9 +31,6 @@ hook.Add( "InitPostEntity", "MelonWars_InitPlyVariables", function()
 end )
 
 hook.Add( "Think", "MelonWars_SelectingUpdate", function()
-	--[[if (LocalPlayer().mw_selecting) then
-		LocalPlayer().mw_selEnd = LocalPlayer():GetEyeTrace().HitPos
-	end]]
 	local tr = LocalPlayer():GetEyeTrace()
 	local ent = tr.Entity
 	if ent:GetNWString( "message", "nope" ) ~= "nope" then
@@ -50,9 +47,6 @@ hook.Add("OnTextEntryLoseFocus", "MelonWars_EnableKeyboard", function (panel)
 end)
 
 hook.Add( "PostDrawTranslucentRenderables", "MelonWars_AddHalos", function()
-	--[[if (istable(foundMelons)) then
-		-- halo.Add( foundMelons, Color( 255, 255, 100 ), 2, 2, 1, true, true )
-	end]]
 	local activeWeapon = LocalPlayer():GetActiveWeapon()
 	if not IsValid(activeWeapon) then return end
 	if activeWeapon:GetClass() ~= "gmod_tool" then return end
@@ -68,9 +62,6 @@ hook.Add( "PostDrawTranslucentRenderables", "MelonWars_AddHalos", function()
 			local eyeEntity = tr.Entity
 			if (tostring( eyeEntity ~= "Entity [0][worldspawn]")) then
 				table.insert(entityTable, eyeEntity)
-				--[[ if (istable(entityTable)) then
-					-- halo.Add( entityTable, Color( 255, 100, 100 ), 2, 2, 1, true, true )
-				end ]]
 			end
 		end
 	end
@@ -79,7 +70,6 @@ hook.Add( "PostDrawTranslucentRenderables", "MelonWars_AddHalos", function()
 	local a = LocalPlayer():GetInfoNum("mw_team", 0)
 
 	for i = table.Count(zoneTable), 1, -1 do
-		-- local remove = false
 		if teamgrid == nil or teamgrid[zoneTable[i]:GetNWInt("zoneTeam", 0)] == nil or teamgrid[zoneTable[i]:GetNWInt("zoneTeam", 0)][a] == nil then
 			if (zoneTable[i]:GetNWInt("zoneTeam", 0) ~= a) then
 				table.remove(zoneTable, i)
@@ -99,7 +89,6 @@ hook.Add( "PostDrawTranslucentRenderables", "MelonWars_AddHalos", function()
 	end
 
 	render.SetStencilEnable(false)
-	-- halo.Add( zoneTable, Color(200,200,200,255), 0, 3, 1, true, true )
 end )
 
 hook.Add( "PostDrawTranslucentRenderables", "MelonWars_UnitSelectionCircles", function()
@@ -165,7 +154,6 @@ local function MWDrawSelectionCircle(startingPos, endingPos)
 	local increment = oneTurn / lineCount
 	for i = 0, oneTurn, increment do
 		local nextPos = center + Vector(radius * math.cos(i + increment), radius * math.sin(i + increment), 0)
-		-- local size = baseSize/(ply:EyePos()-worldPos):Length()
 		local startPoint = pointPos:ToScreen()
 		local endPoint = nextPos:ToScreen()
 		pointPos = nextPos
@@ -179,8 +167,6 @@ local function MWDrawSelectionCircle(startingPos, endingPos)
 	local endSize = baseSize / (ply:EyePos() - endingPos):Length()
 	local endScreenPos = endingPos:ToScreen()
 	surface.DrawRect( endScreenPos.x - endSize, endScreenPos.y - endSize, endSize * 2, endSize * 2 )
-
-	-- surface.DrawLine( startScreenPos.x, startScreenPos.y, endScreenPos.x, endScreenPos.y)
 
 	local centerSize = (startSize + endSize) / 2
 	local centerScreenPos = center:ToScreen()
@@ -243,11 +229,7 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 	    if drw then
 		    local pos = (v:GetPos() + Vector(0,0,v:OBBMaxs().z)):ToScreen()
 			pos = Vector(pos.x, pos.y-100)
-			--local border = ScrH()/2
-			--local center = Vector(ScrW()/2, ScrH()/2)
-			--if ((pos-center):LengthSqr() > border*border) then
-			--	pos = center+(pos-center):GetNormalized()*border
-			--end
+
 			local percent = v:GetNWInt("health", 3) / v:GetNWInt("maxhealth", 10)
 			surface.SetDrawColor( 0, 0, 0, 255 )
 		  	surface.DrawRect( pos.x - 15, pos.y - 55, 30, 160 )
@@ -260,35 +242,20 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 		local pos, fe, te
 		for _, v in ipairs( ply.foundMelons ) do
 			if v:IsValid() then
-				--[[local hp = v:GetNWFloat("health", 0)
-				local maxhp = v:GetNWFloat("maxhealth", 1)
-				if (hp > 0) then
-					local pos = v:GetPos():ToScreen()
-					local clampedBar = math.max(15, math.min(100, hp))
-					surface.SetDrawColor(Color( 0, 0, 0, 100 ))
-					surface.DrawOutlinedRect( pos.x - clampedBar/2 -1, pos.y - 61, clampedBar +2, 13 )
-					surface.SetDrawColor(Color( 255*math.min((1-hp/maxhp)*2,1), 255*math.min(hp/maxhp*2,1), 0, 100 ))
-					surface.DrawRect( pos.x - clampedBar/2, pos.y - 60, clampedBar, 11 )
-					surface.SetFont( "Trebuchet18" )
-					surface.SetTextColor( 0, 0, 0, 255 )
-					surface.SetTextPos( pos.x - 6, pos.y - 63 )
-					surface.DrawText( math.Round(hp))]]
+				fe = v:GetNWEntity("followEntity", nil)
+				if (fe:IsValid() and fe ~= v) then
+					pos = fe:WorldSpaceCenter():ToScreen()
+					DrawMelonCross(pos, Color( 0, 150, 255, 255 ))
+				elseif (v:GetNWBool("moving", false)) then
+					pos = v:GetNWVector("targetPos"):ToScreen()
+					DrawMelonCross(pos, Color( 0, 255, 0, 255 ))
+				end
 
-					fe = v:GetNWEntity("followEntity", nil)
-					if (fe:IsValid() and fe ~= v) then
-						pos = fe:WorldSpaceCenter():ToScreen()
-						DrawMelonCross(pos, Color( 0, 150, 255, 255 ))
-					elseif (v:GetNWBool("moving", false)) then
-						pos = v:GetNWVector("targetPos"):ToScreen()
-						DrawMelonCross(pos, Color( 0, 255, 0, 255 ))
-					end
-
-					te = v:GetNWEntity("targetEntity", nil)
-					if (te:IsValid() and te ~= v) then
-						pos = te:WorldSpaceCenter():ToScreen()
-						DrawMelonCross(pos, Color( 255, 0, 0, 255 ))
-					end
-				--end
+				te = v:GetNWEntity("targetEntity", nil)
+				if (te:IsValid() and te ~= v) then
+					pos = te:WorldSpaceCenter():ToScreen()
+					DrawMelonCross(pos, Color( 255, 0, 0, 255 ))
+				end
 			end
 		end
 	end
@@ -301,8 +268,6 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 	if istable(points) then
 		for _, v in RandomPairs( points ) do
 			if IsValid(v) and (ply:GetPos() - v:GetPos()):LengthSqr() < 800000 then
-				-- local captured = {0,0,0,0,0,0,0,0}
-				-- local capturing = 0
 				for i = 1, 8 do
 					if v:GetNWInt( "captured" .. tostring( i ), 0 ) > 0 then
 						local vpos = v:WorldSpaceCenter() + Vector( 0, 0, 100 )
@@ -356,22 +321,3 @@ hook.Add( "RenderScreenspaceEffects", "MelonWars_ColourMod", function()
 	if not LocalPlayer().MWhasColourModifier then return end
 	DrawColorModify( LocalPlayer().MWColourModifierTable )
 end )
-
---[[
-local function OnPlayerChat( ply, text, teamChat, isDead )
-	if cvars.Bool( "mw_custom_chat" ) then
-		local _team = cvars.Number( "mw_team" )
-		chat.AddText( mw_team_colors[_team], ply:Nick(), Color(255,255,255), ": ", text )
-		return true
-	end
-end
-hook.Add( "OnPlayerChat", "MelonWars_OnPlyChat", OnPlayerChat )
-
-hook.Add( "OnContextMenuOpen", "MelonWars_AddHalos", function()
-	LocalPlayer():ConCommand("mw_context_menu 1")
-end )
-
-hook.Add( "OnContextMenuClose", "MelonWars_AddHalos", function()
-	LocalPlayer():ConCommand("mw_context_menu 0")
-end )
-]]

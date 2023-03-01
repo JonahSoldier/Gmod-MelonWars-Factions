@@ -1,6 +1,6 @@
 if engine.ActiveGamemode() ~= "sandbox" then return end
 
-mw_team_colors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
+mw_team_colors = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
 mw_team_colors[0] = Color(100,100,100,255)
 
 net.Receive( "MW_ReturnSelection", function( len, pl )
@@ -8,32 +8,15 @@ net.Receive( "MW_ReturnSelection", function( len, pl )
 
 	if returnedSelectionID ~= LocalPlayer().mw_selectionID then return end
 	local count = net.ReadUInt(16)
-	-- local newTable = {}
 
 	for i = 0, count do
 		local foundEntity = net.ReadEntity()
-		if (not table.HasValue(LocalPlayer().foundMelons, foundEntity)) then
+		if not table.HasValue(LocalPlayer().foundMelons, foundEntity) then
 			table.insert(LocalPlayer().foundMelons, foundEntity)
-			-- table.insert(newTable, foundEntity)
 		end
 	end
-	-- LocalPlayer().foundMelons = newTable
 end )
---[[
-function DrawBuildRanges(zoneEntity, zoneRadius)
-	if not (tostring(LocalPlayer().BuildZone) == "[NULL Entity]" or not IsValid(LocalPlayer().BuildZone)) then return end
-	LocalPlayer().BuildZone = ents.CreateClientProp( "models/hunter/tubes/circle2x2.mdl" )
-	LocalPlayer().BuildZone:SetMoveType( MOVETYPE_NONE )
-	LocalPlayer().BuildZone:SetNotSolid( true );
-	LocalPlayer().BuildZone:SetRenderMode( RENDERMODE_TRANSALPHA )
-	LocalPlayer().BuildZone:SetMaterial("models/debug/debugwhite")
-	LocalPlayer().BuildZone:SetColor( Color( 255, 255, 255, 255 ) )
-	LocalPlayer().BuildZone:SetModelScale(0.021*zoneRadius)
-	LocalPlayer().BuildZone:SetPos(zoneEntity:GetPos())
-	LocalPlayer().BuildZone:Spawn()
-	-- LocalPlayer().BuildZone:DeleteOnRemove( zoneEntity )
-end
-]]
+
 net.Receive( "MW_SelectContraption", function( len, pl )
 	local count = net.ReadUInt( 16 )
 	-- print("Receiving extra selections from the server ("..count..")")
@@ -48,21 +31,7 @@ net.Receive( "MW_SelectContraption", function( len, pl )
 		end
 	end
 end )
---[[
-net.Receive( "Selection", function( len, pl ) -- Also tried function MW_DoSelection(foundMelons) without the net-related stuff too
-	if (LocalPlayer().foundMelons == nil) then
-		LocalPlayer().foundMelons = {}
-	end
-	if (LocalPlayer():KeyDown(IN_SPEED)) then
-		else table.Empty(foundMelons) end
-	local ammount = net.ReadInt(16)
-	for i = 1,ammount do
-        table.insert(foundMelons, net.ReadEntity())
-    end
-	LocalPlayer():SetNWVector("mw_selEnd", LocalPlayer():GetNWVector("mw_selStart", Vector(0,0,0)))
-	LocalPlayer().mw_selEnd = Vector(0,0,0)
-end )
-]]
+
 net.Receive( "RestartQueue", function( len, pl )
 	LocalPlayer().mw_spawntime = CurTime()
 end )
@@ -148,11 +117,7 @@ end )
 net.Receive( "MW_TeamUnits", function()
 	LocalPlayer().mw_units = net.ReadInt(16)
 end )
---[[
-net.Receive( "ChatTimer", function( len, pl ) -- Nothing currently sends ChatTimer!
-	LocalPlayer().chatTimer = 1000
-end )
-]]
+
 net.Receive( "RequestContraptionLoadToClient", function()
 	local _file = net.ReadString()
 	local ent = net.ReadEntity()
@@ -178,10 +143,6 @@ net.Receive( "RequestContraptionLoadToClient", function()
 		net.SendToServer()
 		start = endbyte
 	end
-	--[[net.Start("ContraptionLoad")
-		net.WriteString(file.Read( _file ))
-		net.WriteEntity(ent)
-	net.SendToServer()]]
 end )
 
 net.Receive( "EditorSetTeam", function( len, pl )
@@ -223,100 +184,7 @@ net.Receive( "EditorSetTeam", function( len, pl )
 		end
 	end
 end )
---[[
-net.Receive( "EditorSetStage", function( len, pl ) -- Nothing currently sends EditorSetStage!
-	local ent = net.ReadEntity()
-	local frame = vgui.Create("DFrame")
-	local w = 250
-	local h = 100
-	frame:SetSize(w,h)
-	frame:SetPos( ScrW() / 2 - w / 2 + 150, ScrH() / 2 - h / 3 )
-	frame:SetTitle("Set Stage")
-	frame:MakePopup()
-	frame:ShowCloseButton()
-	local button = vgui.Create("DButton", frame)
-	button:SetSize(50,18)
-	button:SetPos(w-53,3)
-	button:SetText("x")
-	function button:DoClick()
-		frame:Remove()
-		frame = nil
-	end
-	local wang = vgui.Create("DNumberWang", frame)
-	wang:SetPos(20,50)
-	button = vgui.Create("DButton", frame)
-	button:SetSize(100,50)
-	button:SetPos(120,35)
-	button:SetText("Done")
-	function button:DoClick()
-		net.Start("ServerSetStage")
-			net.WriteEntity(ent)
-			net.WriteInt(wang:GetValue(), 8)
-		net.SendToServer()
-		ent.stage = wang:GetValue()
-		frame:Remove()
-		frame = nil
-	end
-end )
 
-net.Receive( "DrawWireframeBox", function( len, pl ) -- Nothing currently sends DrawWireframeBox!
-	local pos = net.ReadVector()
-	local min = net.ReadVector()
-	local max = net.ReadVector()
-	render.DrawWireframeBox( pos, Angle(0,0,0), min, max, Color(255,255,255,255), false )
-end )
-
-net.Receive( "EditorSetWaypoint", function( len, pl ) -- Nothing currently sends EditorSetWaypoint!
-	local ent = net.ReadEntity()
-	local waypoint = net.ReadInt(4)
-	local path = net.ReadInt(4)
-	local frame = vgui.Create("DFrame")
-	local w = 250
-	local h = 110
-	frame:SetSize(w,h)
-	frame:SetPos( ScrW() / 2 - w / 2 + 150, ScrH() / 2 - h / 3 )
-	frame:SetTitle("Set Waypoint")
-	frame:MakePopup()
-	frame:ShowCloseButton()
-	local button = vgui.Create("DButton", frame)
-	button:SetSize(50,18)
-	button:SetPos(w-53,3)
-	button:SetText("x")
-	function button:DoClick()
-		frame:Remove()
-		frame = nil
-	end
-	local label = vgui.Create("DLabel", frame)
-	label:SetPos(20,20)
-	label:SetText("Waypoint")
-	local waypointwang = vgui.Create("DNumberWang", frame)
-	waypointwang:SetPos(20,35)
-	if (ent.waypoint == nil) then ent.waypoint = 1 end
-	waypointwang:SetValue(ent.waypoint)
-	label = vgui.Create("DLabel", frame)
-	label:SetPos(20,55)
-	label:SetText("Path")
-	local pathwang = vgui.Create("DNumberWang", frame)
-	pathwang:SetPos(20,70)
-	if (ent.path == nil) then ent.path = 1 end
-	pathwang:SetValue(ent.path)
-	button = vgui.Create("DButton", frame)
-	button:SetSize(100,50)
-	button:SetPos(120,35)
-	button:SetText("Done")
-	function button:DoClick()
-		net.Start("ServerSetWaypoint")
-			net.WriteEntity(ent)
-			net.WriteInt(waypointwang:GetValue(), 8)
-			net.WriteInt(pathwang:GetValue(), 8)
-		net.SendToServer()
-		ent.waypoint = waypointwang:GetValue()
-		ent.path = pathwang:GetValue()
-		frame:Remove()
-		frame = nil
-	end
-end )
-]]
 function MW_SickEffect(ent, amount)
 	local emitter = ParticleEmitter( ent:GetPos() ) -- Particle emitter in this position
 	for i = 1, amount do -- SMOKE
@@ -357,41 +225,7 @@ function MW_SiloSmoke(ent, amount)
 	end
 	emitter:Finish()
 end
---[[
--- New Year
-function MW_Firework(ent, amount, sizeMul)
-	if (CurTime()-ent:GetCreationTime() < 5) then return end
 
-	local grounded = false
-	local tr = util.QuickTrace( ent:GetPos(), Vector(0,0,-20), ent )
-	if (tr.Hit) then
-		grounded = true
-	end
-	local particleSize = math.random(12, 18)
-	local fireworkSize = math.random(300, 400)*sizeMul
-	local teamColor = ent:GetColor();
-	local emitter = ParticleEmitter( ent:GetPos() ) -- Particle emitter in this position
-	for i = 0, amount do -- SMOKE
-		local part = emitter:Add( "effects/yellowflare", ent:GetPos() ) -- Create a new particle at pos
-		if ( part ) then
-			part:SetDieTime( math.Rand(1.0, 4.0)*sizeMul ) -- How long the particle should "live"
-			local c = math.Rand(0.0, 1.0)
-			local _c = 1-c
-			part:SetColor(teamColor.r*c+255*_c,teamColor.g*c+255*_c,teamColor.b*c+255*_c)
-			part:SetStartAlpha( 255 ) -- Starting alpha of the particle
-			part:SetEndAlpha( 0 ) -- Particle size at the end if its lifetime
-			part:SetStartSize( particleSize ) -- Starting size
-			part:SetEndSize( 0 ) -- Size when removed
-			part:SetAirResistance(300)
-			part:SetGravity( Vector( 0, 0, -20 ) ) -- Gravity of the particle
-			local vec = AngleRand():Forward()*fireworkSize
-			if (grounded and vec.z < 0) then vec.z = -vec.z end
-			part:SetVelocity( vec ) -- Initial velocity of the particle
-		end
-	end
-	emitter:Finish()
-end
-]]
 net.Receive( "MWControlUnit" , function(len, pl)
 	local u = net.ReadEntity()
 	LocalPlayer().controllingUnit = u
@@ -411,14 +245,13 @@ net.Receive( "MW_UnitDecoration", function(len, pl)
 	util.Effect("propspawn", cdata)
 end)
 
-net.Receive( "MWColourMod", function(len, pl)
+net.Receive( "MWColourMod", function( _, pl )
 	LocalPlayer().MWhasColourModifier = net.ReadBool()
 	LocalPlayer().MWColourModifierTable = net.ReadTable()
 	DrawColorModify(LocalPlayer().MWColourModifierTable)
 end)
 
-net.Receive( "MelonWars_ClientModifySpawnTime", function( len, pl )
+net.Receive( "MelonWars_ClientModifySpawnTime", function( _, pl )
 	local spawnTimeChange = net.ReadFloat()
-	-- LocalPlayer().mw_spawntime = LocalPlayer().mw_spawntime + spawnTimeChange
-	LocalPlayer().spawnTimeMult = ( 1 + spawnTimeChange )
+	LocalPlayer().spawnTimeMult = 1 + spawnTimeChange
 end )

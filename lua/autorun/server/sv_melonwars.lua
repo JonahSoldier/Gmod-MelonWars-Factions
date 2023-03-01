@@ -4,7 +4,6 @@ if engine.ActiveGamemode() ~= "sandbox" then return end
 -- function GM:Initialize()
 -- Net vars for sending the team and credits to the client
 util.AddNetworkString( "MW_TeamCredits" )
--- util.AddNetworkString( "MW_TeamUpdate" )
 util.AddNetworkString( "MW_TeamUnits" )
 util.AddNetworkString( "MW_UpdateClientInfo" )
 util.AddNetworkString( "MW_UpdateServerInfo" )
@@ -22,26 +21,20 @@ util.AddNetworkString( "SpawnBaseUnit" )
 util.AddNetworkString( "SpawnCapturePoint" )
 util.AddNetworkString( "SpawnOutpost" )
 util.AddNetworkString( "SpawnWaterTank" )
--- util.AddNetworkString( "SpawnTransport" )
 util.AddNetworkString( "MW_SpawnProp" )
 util.AddNetworkString( "StartGame" )
 util.AddNetworkString( "SandboxMode" )
 
 util.AddNetworkString( "ToggleBarracks" )
 util.AddNetworkString( "MW_Activate" )
---[[ util.AddNetworkString( "ActivateGate" )
-util.AddNetworkString( "ActivateWaypoints" ) ]]
 util.AddNetworkString( "PropellerReady" )
 util.AddNetworkString( "UseWaterTank" )
 util.AddNetworkString( "UseLargeWaterTank" )
 
 util.AddNetworkString( "RestartQueue" )
 
--- util.AddNetworkString( "CalcContraption" )
-
 util.AddNetworkString( "UpdateClientTeams" )
 util.AddNetworkString( "UpdateServerTeams" )
--- util.AddNetworkString( "RequestServerTeams" )
 
 -- Contraptions
 util.AddNetworkString( "ContraptionSave" )
@@ -56,33 +49,21 @@ util.AddNetworkString( "ContraptionValidateClient" )
 
 util.AddNetworkString( "EditorSetTeam" ) -- Unit marker
 util.AddNetworkString( "ServerSetTeam" )
---[[ util.AddNetworkString( "EditorSetStage" ) -- Main base marker
-util.AddNetworkString( "ServerSetStage" )
-util.AddNetworkString( "EditorSetWaypoint" ) -- Waypoint
-util.AddNetworkString( "ServerSetWaypoint" )
-util.AddNetworkString( "DrawWireframeBox" )
-util.AddNetworkString( "EditorSetSpawnpoint" ) -- Waypoint
-util.AddNetworkString( "ServerSetSpawnpoint" ) ]]
-
--- util.AddNetworkString( "ChatTimer" )
 
 util.AddNetworkString( "MWControlUnit" )
 util.AddNetworkString( "MWControlShoot" )
 
 util.AddNetworkString( "MWBrute" )
--- util.AddNetworkString( "MWMessage" )
 
 -- (Most of) JonahSoldier's network stuff
 util.AddNetworkString( "MWColourMod" )
 util.AddNetworkString( "SetMWConvar" )
 util.AddNetworkString( "MWReadyUp" )
--- util.AddNetworkString( "MWClient_modifySpawnTime" )
-
 
 net.Receive( "SetMWConvar", function( len, pl )
 	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
 
-	if not ( pl:IsAdmin() or openPerms ) then return end
+	if not pl:IsAdmin() or openPerms then return end
 	local convar = net.ReadString()
 	local newValue = net.ReadBool()
 
@@ -137,7 +118,6 @@ mw_team_colors = {
 	Color(255,120,0,255),
 	Color(255,100,150,255)
 }
--- mw_team_names = {"Red", "Blue", "Yellow", "Green", "Purple", "Cyan", "Orange", "Pink"}
 --[[
 mw_special_steam_decoration = {}
 --  Doorsday
@@ -200,7 +180,6 @@ mw_special_steam_skins["STEAM_0:1:93155236"] = {
 
 local function MW_Initialize()
 	mw_team_colors[0] = Color( 100, 100, 100, 255 )
-	-- mw_team_names[0] = { "Gray" }
 end
 hook.Add( "Initialize", "MelonWars_InitializeTeams", MW_Initialize )
 
@@ -211,7 +190,6 @@ hook.Add( "AddToolMenuTabs", "MelonWars_AddTabs", MW_AddTabs ) -- Hook the Tab t
 
 mw_teamCredits = {2000,2000,2000,2000,2000,2000,2000,2000}
 mw_teamUnits = {0,0,0,0,0,0,0,0}
--- teamUnlocks = {0,0,0,0,0,0,0,0}
 
 teamgrid = teamgrid or {}
 
@@ -230,23 +208,7 @@ local function spawn( ply )
 	util.PrecacheModel( "models/hunter/tubes/circle2x2.mdl" )
 end
 hook.Add( "PlayerInitialSpawn", "MelonWars_InitSpawnData", spawn )
---[[
-local function playerSpawn( ply )
-	if (cvars.Bool("mw_admin_player_colors")) then
-		local _team = ply:GetInfoNum( "mw_team", 1 )
-		ply:SetColor(mw_team_colors[_team])
-	end
-end
-hook.Add( "PlayerSpawn", "MelonWars_Spawn", playerSpawn )
 
-local function MWSendMessage( pl, message, notificationType, length ) -- This function is called later in the file, but MWMessage is never received!
-	net.Start("MWMessage")
-		net.WriteString(message)
-		net.WriteInt(notificationType,4)
-		net.WriteFloat(length)
-	net.Send(pl)
-end
-]]
 local function takedmg( target, dmginfo )
 	if not IsValid( target and dmginfo ) then return end
 	if dmginfo:GetAttacker():GetClass() == "player" then return end
@@ -395,17 +357,11 @@ net.Receive( "MW_Activate", function( len, pl )
 		ent:Actuate();
 	end
 end)
---[[
-net.Receive( "ActivateGate", function( len, pl ) -- Nothing currently sends ActivateGate!
-	local ent = net.ReadEntity()
-	ent:Actuate();
-end)
-]]
+
 net.Receive( "MW_UpdateClientInfo", function( len, pl )
 	local a = net.ReadInt(8)
-	-- pl:SetColor(mw_team_colors[a])
+
 	if a ~= 0 then
-		-- WaterResetTest(mw_teamCredits[a])
 		net.Start("MW_TeamCredits")
 			net.WriteInt(mw_teamCredits[a] ,32)
 		net.Send(pl)
@@ -421,20 +377,10 @@ net.Receive( "MW_UpdateClientInfo", function( len, pl )
 		net.Send(pl)
 	end
 end )
---[[
-function WaterResetTest(number)
-	if (number == 0) then
-		"This looks like a water reset. Please send this chunk of console code to Marum!"
-	end
-	"Sending credits to server. Setting amount to: "..number
-	debug.Trace()
-	"------------------------------------"
-end
-]]
+
 net.Receive( "MW_UpdateServerInfo", function( len, pl )
 	local a = net.ReadInt(8)
 	mw_teamCredits[a] = net.ReadInt(32)
-	--mw_teamUnits[a] = net.ReadInt(16)
 end )
 
 net.Receive( "ToggleBarracks", function( len, pl )
@@ -517,10 +463,6 @@ local function isInRangeLoop( vector, teamIndex, entClass, buildDist )
 end
 
 local function MW_Server_IsInBuildRange( vector, teamIndex ) -- This is copied from the clientside function, it's coded pretty weirdly so don't blame me for that. - Jonah
-	--[[if (cvars.Bool("mw_admin_allow_free_placing") or MW_isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then		-- mw_units[unit_index].buildAnywere or
-		if (cvars.Bool("mw_admin_allow_free_placing") or MW_noEnemyNear(trace.HitPos, mw_melonTeam)) then
-		end
-	end]]
 	local canBuild = false
 	if isInRangeLoop( vector, teamIndex, "ent_melon_main_building", 800 ) then return true end
 	if isInRangeLoop( vector, teamIndex, "ent_melon_station", 250 ) then return true end
@@ -690,7 +632,7 @@ local function MW_CalculateContraptionValues( betadupetable, pl )
 			if (not ent1isMelon and not ent2isMelon) then
 				constraint.Weld( entities[v.Ent1], entities[v.Ent2], v.Bone1, v.Bone2, v.forcelimit, v.nocollide, true )
 			elseif (ent1isMelon and ent2isMelon) then
-				--  Units cant be welded to other units
+				--  Units can't be welded to other units
 				return "Units cant be welded to other units", 0, 0
 			end
 
@@ -702,7 +644,7 @@ local function MW_CalculateContraptionValues( betadupetable, pl )
 
 			if (not ent1isMelon or not ent2isMelon) then
 			else
-				--  Units cant be welded to other units
+				--  Units can't be welded to other units
 				return "Units cant have Axis with other units", 0, 0
 			end
 
@@ -714,7 +656,7 @@ local function MW_CalculateContraptionValues( betadupetable, pl )
 
 			if (not ent1isMelon and not ent2isMelon) then
 			else
-				--  Units cant be welded to other units
+				--  Units can't be welded to other units
 				return "Units cant have Ballsockets", 0, 0
 			end
 
@@ -726,7 +668,7 @@ local function MW_CalculateContraptionValues( betadupetable, pl )
 
 			if (not ent1isMelon and not ent2isMelon) then
 			else
-				--  Units cant be welded to other units
+				--  Units can't be welded to other units
 				return "Units cant have Sliders", 0, 0
 			end
 
@@ -738,7 +680,7 @@ local function MW_CalculateContraptionValues( betadupetable, pl )
 
 			if (not ent1isMelon or not ent2isMelon) then
 			else
-				--  Units cant be welded to other units
+				--  Units can't be welded to other units
 				return "Units cant have No Collide with other units", 0, 0
 			end
 		end
@@ -824,125 +766,17 @@ local function MW_GetBetaContraptionTable( dupetable, pl )
 	betadupetable.Mins = dupetable.Mins
 
 	local result, cost, power = MW_CalculateContraptionValues(betadupetable,pl)
-	--[[
-	if (result ~= "success") then
-		print(result)
-		MWSendMessage(pl, result, 1, 4)
-	else
-		MWSendMessage(pl, "Contraption saved succesfully", 0, 4)
-	end
-	]]
+
 	betadupetable.Cost = cost
 	betadupetable.Power = power
 
 	return betadupetable
 end
---[[
-function MW_CreateContraptionFromTable(localPos, dupetable, pl)
-	local entities = {}
-	local constraints = {}
 
-	--  Spawn entities
-	for k, v in pairs(dupetable.Entities) do
-		local ent = ents.Create(v.Class)
-		if (v.Class == "prop_physics") then
-			ent:SetPos( localPos + v.Pos )
-			ent:SetAngles(v.Angles)
-			ent:SetModel(v.Model)
-		elseif (string.StartWith(v.Class, "ent_melon_")) then
-			ent:SetPos( localPos + v.Pos )
-			ent:SetAngles(v.Angles)
-
-		end
-		ent:Spawn()
-		entities[v.EntIndex] = ent
-	end
-
-	--  Spawn constraints
-	for k, v in pairs(dupetable.Constraints) do
-		if (v.Type == "Weld") then
-			local ent1isMelon = false
-			if (string.StartWith(entities[v.Ent1]:GetClass(), "ent_melon_")) then ent1isMelon = true end
-			local ent2isMelon = false
-			if (string.StartWith(entities[v.Ent2]:GetClass(), "ent_melon_")) then ent2isMelon = true end
-
-			if (not ent1isMelon and not ent2isMelon) then
-				constraint.Weld( entities[v.Ent1], entities[v.Ent2], v.Bone1, v.Bone2, v.forcelimit, v.nocollide, true )
-			elseif (ent1isMelon and ent2isMelon) then
-				--  Units cant be welded to other units
-				MWSendMessage(pl, "Units cant be welded to other units", NOTIFY_ERROR, 4)
-				return {}, {}
-			elseif (ent1isMelon) then
-				entities[v.Ent1]:Welded(entities[v.Ent1], entities[v.Ent2])
-			elseif (ent2isMelon) then
-				entities[v.Ent2]:Welded(entities[v.Ent2], entities[v.Ent1])
-			end
-
-		elseif (v.Type == "Axis") then
-			local ent1isMelon = false
-			if (string.StartWith(entities[v.Ent1]:GetClass(), "ent_melon_")) then ent1isMelon = true end
-			local ent2isMelon = false
-			if (string.StartWith(entities[v.Ent2]:GetClass(), "ent_melon_")) then ent2isMelon = true end
-
-			if (not ent1isMelon or not ent2isMelon) then
-				constraint.Axis( entities[v.Ent1], entities[v.Ent2], v.Bone1, v.Bone2, v.LPos1, v.LPos2, v.forcelimit, v.torquelimit, v.friction, v.nocollide, v.LocalAxis, true )
-			else
-				--  Units cant be welded to other units
-				MWSendMessage(pl, "Units cant have Axis with other units", NOTIFY_ERROR, 4)
-				return {}, {}
-			end
-
-		elseif (v.Type == "Ballsocket") then
-			local ent1isMelon = false
-			if (string.StartWith(entities[v.Ent1]:GetClass(), "ent_melon_")) then ent1isMelon = true end
-			local ent2isMelon = false
-			if (string.StartWith(entities[v.Ent2]:GetClass(), "ent_melon_")) then ent2isMelon = true end
-
-			if (not ent1isMelon and not ent2isMelon) then
-				constraint.Ballsocket( entities[v.Ent1], entities[v.Ent2], v.Bone1, v.Bone2, v.LPos, v.forcelimit, v.torquelimit, v.nocollide )
-			else
-				--  Units cant be welded to other units
-				MWSendMessage(pl, "Units cant have Ballsockets", NOTIFY_ERROR, 4)
-				return {}, {}
-			end
-
-		elseif (v.Type == "Slider") then
-			local ent1isMelon = false
-			if (string.StartWith(entities[v.Ent1]:GetClass(), "ent_melon_")) then ent1isMelon = true end
-			local ent2isMelon = false
-			if (string.StartWith(entities[v.Ent2]:GetClass(), "ent_melon_")) then ent2isMelon = true end
-
-			if (not ent1isMelon and not ent2isMelon) then
-				constraint.Slider( entities[v.Ent1], entities[v.Ent2], v.Bone1, v.Bone2, v.LPos1, v.LPos2, v.width, v.material )
-			else
-				--  Units cant be welded to other units
-				MWSendMessage(pl, "Units cant have Sliders", NOTIFY_ERROR, 4)
-				return {}, {}
-			end
-
-		elseif (v.Type == "NoCollide") then
-			local ent1isMelon = false
-			if (string.StartWith(entities[v.Ent1]:GetClass(), "ent_melon_")) then ent1isMelon = true end
-			local ent2isMelon = false
-			if (string.StartWith(entities[v.Ent2]:GetClass(), "ent_melon_")) then ent2isMelon = true end
-
-			if (not ent1isMelon or not ent2isMelon) then
-				constraint.NoCollide( entities[v.Ent1], entities[v.Ent2], v.Bone1, v.Bone2 )
-			else
-				--  Units cant be welded to other units
-				MWSendMessage(pl, "Units cant have No Collide with other units", NOTIFY_ERROR, 4)
-				return {}, {}
-			end
-		end
-	end
-
-	return entities, constraints
-end
-]]
 net.Receive( "ContraptionSave", function( _, pl )
 	local name = net.ReadString()
 	local entity = net.ReadEntity()
-	--file.CreateDir( "melonwars/contraptions" )
+
 	if entity:IsWorld() then return end
 	local entities = constraint.GetAllConstrainedEntities( entity )
 	for k, v in pairs(entities) do
@@ -1206,10 +1040,6 @@ net.Receive( "RequestContraptionLoadToAssembler", function( len, pl )
 	ent:SetNWBool( "active", true )
 	ent:SetNWFloat( "nextSlowThink", CurTime() + time )
 	ent:SetNWFloat( "slowThinkTimer", time )
-	--net.Start("ContraptionLoad")
-	--	net.WriteString(_file)
-	--	net.WriteVector(ent:GetPos())
-	--net.SendToServer()
 end )
 
 local function MW_SpawnProp(model, pos, ang, _team, parent, health, cost, pl, spawntime, offset)
@@ -1410,7 +1240,6 @@ net.Receive( "LegalizeContraption", function( len, pl )
 	local mw_melonTeam = net.ReadInt( 8 )
 
 	local mass = 0 --precio por masa
-	-- local cons = 0 --precio por construction tools
 
 	local entities = constraint.GetAllConstrainedEntities( traceEntity )
 	if not IsValid( traceEntity ) then return end
@@ -1432,7 +1261,6 @@ net.Receive( "LegalizeContraption", function( len, pl )
 			ent:SetColor( mw_team_colors[mw_melonTeam] )
 			ent:SetNWInt( "mw_melonTeam", mw_melonTeam )
 			ent:SetNWInt( "propHP", math.min( 1000, ent:GetPhysicsObject():GetMass() * massHealthMultiplier ) ) --max 1000 de vida
-			-- ent:GetPhysicsObject():SetMaterial( "ice" )
 			ent.realvalue = ent:GetPhysicsObject():GetMass() * massCostMultiplier
 		end
 	end
@@ -1481,13 +1309,6 @@ end )
 
 concommand.Add( "mw_reset_power", function()
 	mw_teamUnits = {0,0,0,0,0,0,0,0}
---[[ local allMelons = ents.GetAll()
-	for k, v in pairs(allMelons) do
-		if (v.Base == "ent_melon_base") then
-			prnt(v:GetVar("mw_melonTeam"))
-			--mw_teamUnits[v:GetVar("mw_melonTeam")] = mw_teamUnits[v:GetVar("mw_melonTeam")]
-		end
-	end ]]
 
 	for _, v in ipairs( player.GetAll() ) do
 		local mw_melonTeam = v:GetInfoNum( "mw_team", 0 )
@@ -1496,30 +1317,12 @@ concommand.Add( "mw_reset_power", function()
 		net.Send( v )
 	end
 end )
---[[
-concommand.Add( "+mw_select", function( ply )
-	ply.mw_selecting = true
-	local trace = util.TraceLine( {
-		start = ply:EyePos(),
-		endpos = ply:EyePos() + ply:EyeAngles():Forward() * 10000,
-		filter = function( ent ) if ( ent:GetClass() ~= "player" ) then return true end end,
-		mask = MASK_WATER+MASK_SOLID
-	} )
-	ply.mw_selStart = trace.HitPos
-	ply:SetNWVector("mw_selStart", ply.mw_selStart)
-	ply:SetNWBool("mw_selecting", ply.mw_selecting)
-	sound.Play( "buttons/lightswitch2.wav", ply:GetPos(), 75, 100, 1 )
-end)
-]]
+
 net.Receive( "StartGame", function( len, pl )
 	for i = 0, 4 do
 		timer.Simple(i, function()
 			for _, v in ipairs( player.GetAll() ) do
 				v:PrintMessage( HUD_PRINTCENTER, "Match starts in " .. ( 5 - i ) )
-				--[[if (cvars.Bool("mw_admin_player_colors")) then
-					local _team = v:GetInfoNum( "mw_team", 1 )
-					v:SetColor(mw_team_colors[_team])
-				end]]--
 			end
 		end)
 	end
@@ -1547,99 +1350,7 @@ net.Receive( "SandboxMode", function( len, pl )
 		v:PrintMessage( HUD_PRINTTALK, "== MelonWars options set to Sandbox ==" )
 	end
 end )
---[[
-util.AddNetworkString( "Selection" )
-concommand.Add( "-mw_select", function( ply )
-	ply.mw_selecting = false
-	ply:SetNWBool("mw_selecting", ply.mw_selecting)
 
-	--Encuentra todas las entidades en la esfera de selección
-
-	local foundEnts = ents.FindInSphere((ply.mw_selEnd+ply.mw_selStart)/2, ply.mw_selStart:Distance(ply.mw_selEnd)/2+0.1 )
-	local selectEnts = table.Copy( foundEnts )
-	if (not ply:KeyDown(IN_SPEED)) then ply.foundMelons = {} end
-	--Busca de esas entidades cuales son sandias, y cuales son del equipo correcto
-
-	for k, v in pairs( selectEnts ) do
-		if (v.moveType ~= MOVETYPE_NONE) then
-			local tbl = constraint.GetAllConstrainedEntities( v )
-			if (istable(tbl)) then
-				for kk, vv in pairs (tbl) do
-					if (not table.HasValue(selectEnts, vv)) then
-						table.insert(foundEnts, vv)
-					end
-				end
-			end
-		end
-	end
-
-	for k, v in pairs( foundEnts ) do
-		if v.Base == "ent_melon_base" then
-			if (cvars.Bool("mw_admin_move_any_team", false) or v:GetNWInt("mw_melonTeam", -1) == ply:GetInfoNum( "mw_team", -1 )) then
-				--if (v:GetNWInt("mw_melonTeam", 0) ~= 0) then
-					table.insert(ply.foundMelons, v)
-					--"Added "..tostring(v).." succesfully"
-				--else
-				--"Didn't add "..tostring(v).." because it had no team"
-				--end
-			--else
-			--"Didn't add "..tostring(v).." because it wasn't my team"
-			end
-		--else
-		--"Didn't add "..tostring(v).." because it was a base prop"
-		end
-	end
-
-	--Le envia al client la lista de sandias para que pueda dibujar los halos
-	net.Start("Selection")
-		net.WriteInt(table.Count(ply.foundMelons),16)
-		for k,v in pairs(ply.foundMelons) do
-			net.WriteEntity(v)
-		end
-	net.Send(ply)
-	sound.Play( "buttons/lightswitch2.wav", ply:GetPos(), 75, 90, 1 )
-	ply.mw_selEnd = Vector(0,0,0)
-	ply.mw_selStart = Vector(0,0,0)
-	ply:SetNWVector("mw_selStart", Vector(0,0,0))
-	ply:SetNWBool("mw_selecting",  Vector(0,0,0))
-end)
-]]
---[[
-concommand.Add( "mw_typeselect", function( ply, cmd, args )
-	if (args[1]) then
-		ply.mw_selecting = false
-		ply:SetNWBool("mw_selecting", false)
-		--Encuentra todas las entidades en la esfera de selección
-
-		local foundEnts = ents.FindInSphere(ply:GetEyeTrace().HitPos, 300)
-		if (not ply:KeyDown(IN_SPEED)) then ply.foundMelons = {} end
-		--Busca de esas entidades cuales son sandias, y cuales son del equipo correcto
-		for k, v in pairs( foundEnts ) do
-			if (v.Base == "ent_melon_base") then
-				if (v:GetClass() == args[1]) then
-					if (cvars.Bool("mw_admin_move_any_team", false) or v:GetNWInt("mw_melonTeam", 0) == ply:GetInfoNum( "mw_team", 0 )) then
-						if (v:GetVar("canBeSelected") == true) then
-							table.insert(ply.foundMelons, v)
-						end
-					end
-				end
-			end
-		end
-		--Le envia al client la lista de sandias para que pueda dibujar los halos
-		net.Start("Selection")
-			net.WriteInt(table.Count(ply.foundMelons),16)
-			for k,v in pairs(ply.foundMelons) do
-				net.WriteEntity(v)
-			end
-		net.Send(ply)
-		sound.Play( "buttons/lightswitch2.wav", ply:GetPos(), 75, 90, 1 )
-		ply.mw_selEnd = Vector(0,0,0)
-		ply.mw_selStart = Vector(0,0,0)
-		ply:SetNWVector("mw_selStart", Vector(0,0,0))
-		ply:SetNWBool("mw_selecting",  Vector(0,0,0))
-	end
-end)
-]]
 net.Receive("MW_Stop", function( len, ply ) -- Previously concommand.Add( "mw_stop", function( ply )
 	local stopedMelons = false
 
@@ -1690,9 +1401,7 @@ net.Receive( "MW_Order", function( len, ply ) -- Previously concommand.Add( "mw_
 		mask = MASK_WATER + MASK_SOLID
 	} )
 
-	-- local foundMelons = ply.foundMelons
 	foundMelons = {}
-	-- local position = net.ReadVector();
 	local rally = net.ReadBool()
 	local alt = net.ReadBool()
 	local entity = net.ReadEntity();
@@ -1767,33 +1476,6 @@ net.Receive( "MW_Order", function( len, ply ) -- Previously concommand.Add( "mw_
 				movedMelons = true
 			end
 		end
-		--[[elseif (ply:KeyDown(IN_DUCK)) then
-			local center = Vector(0,0,0)
-			local i = 0
-			for k, v in pairs( foundMelons ) do
-				if (IsValid(v) and string.StartWith(v:GetClass(), "ent_melon_")) then
-					center = center+v:GetPos()
-					i = i+1
-				end
-			end
-			center = center/i
-			local distance = 50
-			for k, v in pairs( foundMelons ) do
-				if (IsValid(v) and string.StartWith(v:GetClass(), "ent_melon_")) then
-					--local clampedMagnitude = math.max(100,math.min(500,(v:GetPos()-center):Length()))
-					distance = distance + 25/(1+distance*0.1)
-					local newTarget = v:GetPos()+(v:GetPos()-center):GetNormalized()*distance
-					v:RemoveRallyPoints()
-					v:SetVar("targetPos", newTarget)
-					v:SetNWVector("targetPos", newTarget)
-					v:SetVar("moving", true)
-					v:SetNWBool("moving", true)
-					v:SetVar("chasing", false)
-					v:SetVar("followEntity", v)
-					v:SetNWEntity("followEntity", v)
-					movedMelons = true
-				end
-			end]]
 	else
 		for _, v in ipairs( foundMelons ) do
 			--si no, mueve
@@ -1860,7 +1542,6 @@ concommand.Add( "mw_save", function( ply ) -- Note: this concommand assumes that
 end )
 
 concommand.Add( "mw_load", function()
-	-- gmsave.LoadMap(  , "DATA") , ply )
 	local tab -- "data/melonwars_save_"
 	if (file.Exists(--[[GetConVarString( "mw_save_path" ).."melonwars_save_"..]] GetConVar( "mw_save_name" ):GetString() .. ".lua", "LUA")) then
 		tab = util.JSONToTable( file.Read( --[[GetConVarString( "mw_save_path" ).."melonwars_save_"..]] GetConVar( "mw_save_name" ):GetString() .. ".lua", "LUA"))
@@ -1872,7 +1553,6 @@ concommand.Add( "mw_load", function()
 		return false
 	end
 	game.CleanUpMap()
-	-- DisablePropCreateEffect = true
 	duplicator.RemoveMapCreatedEntities()
 	duplicator.Paste( ply, tab.Entities, tab.Constraints )
 	mw_teamUnits = {0,0,0,0,0,0,0,0}
@@ -1949,7 +1629,6 @@ concommand.Add( "mw_admin_reset_teams", function()
 end )
 
 hook.Add( "InitPostEntity", "MelonWars_StartLoad", function()
-	-- mw_save_name_custom = "melonwars_default_save"
 	teamgrid = {}          -- create the matrix
 	for i = 1, 8 do
 		teamgrid[i] = {}     -- create a new row
@@ -1958,24 +1637,8 @@ hook.Add( "InitPostEntity", "MelonWars_StartLoad", function()
 		end
 	end
 end )
---[[
-hook.Add( "Think", "MelonWars_SelectingUpdate", function()
-	local tbl = player.GetAll()
-	for _, v in ipairs( tbl ) do
-		if v.mw_selecting == false then return end
-		local trace = util.TraceLine( {
-			start = v:EyePos(),
-			endpos = v:EyePos() + v:EyeAngles():Forward() * 10000,
-			filter = function( ent ) if ( ent:GetClass() ~= "player" ) then return true end end,
-			mask = MASK_WATER+MASK_SOLID
-		} )
-		v.mw_selEnd = trace.HitPos
-		v:SetNWVector("mw_selEnd", v.mw_selEnd)
-	end
-end )
-]]
+
 net.Receive( "UpdateServerTeams", function( len, pl )
-	-- if not ply:IsAdmin() then return end
 	teamgrid = net.ReadTable()
 	for _, v in ipairs( player.GetAll() ) do
 		net.Start( "UpdateClientTeams" )
@@ -1983,26 +1646,12 @@ net.Receive( "UpdateServerTeams", function( len, pl )
 		net.Send( v )
 	end
 end )
---[[
-net.Receive( "RequestServerTeams", function( len, pl ) -- Nothing currently sends RequestServerTeams!
-	net.Start( "UpdateClientTeams" )
-		net.WriteTable( teamgrid )
-	net.Send( pl )
-end )
-]]
+
 net.Receive( "ServerSetTeam", function( len, pl )
 	local ent = net.ReadEntity()
 	ent.mw_melonTeam = net.ReadInt( 4 )
 end )
---[[
-net.Receive( "ServerSetWaypoint", function( len, pl )
-	local ent = net.ReadEntity()
-	ent.waypoint = net.ReadInt( 8 )
-	ent.path = net.ReadInt( 8 )
-	ent:SetNWInt( "waypoint", ent.waypoint )
-	ent:SetNWInt( "path", ent.path )
-end )
-]]
+
 local function MWSign( x )
 	if x > 0 then return 1 end
 	if x < 0 then return -1 end
