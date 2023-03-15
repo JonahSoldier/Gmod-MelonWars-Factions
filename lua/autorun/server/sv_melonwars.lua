@@ -64,8 +64,11 @@ net.Receive( "SetMWConvar", function( len, pl )
 	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
 
 	if not pl:IsAdmin() or openPerms then return end
+
 	local convar = net.ReadString()
 	local newValue = net.ReadBool()
+
+	if not string.StartsWith( convar, "mw_" ) then return end
 
 	GetConVar( convar ):SetBool( newValue )
 end )
