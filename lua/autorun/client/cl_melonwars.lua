@@ -145,46 +145,6 @@ net.Receive( "RequestContraptionLoadToClient", function()
 	end
 end )
 
-net.Receive( "EditorSetTeam", function( len, pl )
-	local ent = net.ReadEntity()
-	local frame = vgui.Create("DFrame")
-	local w = 250
-	local h = 160
-	frame:SetSize(w,h)
-	frame:SetPos( ScrW() / 2 - w / 2 + 150, ScrH() / 2 - h / 3 )
-	frame:SetTitle("Set team")
-	frame:MakePopup()
-	frame:ShowCloseButton()
-	local button = vgui.Create("DButton", frame)
-	button:SetSize(50,18)
-	button:SetPos(w-53,3)
-	button:SetText("x")
-	function button:DoClick()
-		frame:Remove()
-		frame = nil
-	end
-	for i = 1, 8 do
-		button = vgui.Create("DButton", frame)
-		button:SetSize(29,100)
-		button:SetPos( 5 + 30 * ( i - 1 ), 50 )
-		button:SetText("")
-		function button:DoClick()
-			net.Start("ServerSetTeam")
-				net.WriteEntity(ent)
-				net.WriteInt(i, 4)
-			net.SendToServer()
-			ent:SetColor(mw_team_colors[i])
-			ent.mw_melonTeam = i
-			frame:Remove()
-			frame = nil
-		end
-		button.Paint = function()
-			draw.RoundedBox( 6, 0, 0, w, h, Color(30,30,30,255) )
-			draw.RoundedBox( 4, 2, 2, w-4, h-4, mw_team_colors[i] )
-		end
-	end
-end )
-
 function MW_SickEffect(ent, amount)
 	local emitter = ParticleEmitter( ent:GetPos() ) -- Particle emitter in this position
 	for i = 1, amount do -- SMOKE

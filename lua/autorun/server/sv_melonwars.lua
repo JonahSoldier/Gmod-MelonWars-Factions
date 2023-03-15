@@ -32,6 +32,7 @@ util.AddNetworkString( "UseWaterTank" )
 util.AddNetworkString( "UseLargeWaterTank" )
 
 util.AddNetworkString( "RestartQueue" )
+util.AddNetworkString( "SellEntity" )
 
 util.AddNetworkString( "UpdateClientTeams" )
 util.AddNetworkString( "UpdateServerTeams" )
@@ -46,9 +47,7 @@ util.AddNetworkString( "RequestContraptionLoadToAssembler" )
 util.AddNetworkString( "RequestContraptionLoadToClient" )
 util.AddNetworkString( "ContraptionAutoValidate" )
 util.AddNetworkString( "ContraptionValidateClient" )
-
-util.AddNetworkString( "EditorSetTeam" ) -- Unit marker
-util.AddNetworkString( "ServerSetTeam" )
+util.AddNetworkString( "LegalizeContraption" )
 
 util.AddNetworkString( "MWControlUnit" )
 util.AddNetworkString( "MWControlShoot" )
@@ -107,9 +106,6 @@ net.Receive( "MWReadyUp", function( len, pl )
 		end
 	end )
 end )
-
-CreateConVar ( "mw_save_name", "default", 8192, "Set the name of the file to save with 'mw_save'" ) -- May also be called "mw_save_name_custom" in certain unused code
-CreateConVar ( "mw_save_path", "default", 8192, "Set the path of the file to save with 'mw_save'" )
 
 mw_team_colors = {
 	Color(255,50,50,255),
@@ -1176,7 +1172,6 @@ net.Receive( "SellEntity", function( len, pl )
 	end
 	entity:Remove()
 end )
-util.AddNetworkString( "SellEntity" )
 
 net.Receive( "LegalizeContraption", function( len, pl )
 	local traceEntity = pl:GetEyeTrace().Entity
@@ -1213,7 +1208,6 @@ net.Receive( "LegalizeContraption", function( len, pl )
 		net.WriteInt( mw_teamCredits[mw_melonTeam], 32 )
 	net.Send( pl )
 end )
-util.AddNetworkString( "LegalizeContraption" )
 
 concommand.Add( "mw_reset_credits", function()
 	local c = cvars.Number( "mw_admin_starting_credits" )
@@ -1222,31 +1216,6 @@ concommand.Add( "mw_reset_credits", function()
 		net.Start( "MW_TeamCredits" )
 			net.WriteInt( c, 32 )
 		net.Send( v )
-	end
-end )
-
-concommand.Add( "mw_singleplayer_waypoints_reposition", function()
-	local nodes = ents.FindByClass( "ent_melon_singleplayer_waypoint" )
-	for k, v in pairs( nodes ) do
-		v:SetPos(v.pos-Vector(0,0,10))
-		v.time = 0
-		v.pos = v:GetPos()
-	end
-end)
-
-concommand.Add( "mw_singleplayer_waypoints_increment", function()
-	local nodes = ents.FindByClass( "ent_melon_singleplayer_waypoint" )
-	for _, v in ipairs( nodes ) do
-		v.waypoint = v.waypoint + 1
-		v:SetNWInt( "waypoint", v.waypoint )
-	end
-end )
-
-concommand.Add( "mw_singleplayer_waypoints_decrement", function()
-	local nodes = ents.FindByClass( "ent_melon_singleplayer_waypoint" )
-	for _, v in ipairs( nodes ) do
-		v.waypoint = v.waypoint - 1
-		v:SetNWInt( "waypoint", v.waypoint )
 	end
 end )
 
@@ -1445,123 +1414,6 @@ net.Receive( "MW_Order", function( len, ply ) -- Previously concommand.Add( "mw_
 	end
 end )
 
-concommand.Add( "mw_save", function( ply ) -- Note: this concommand assumes that the server is P2P and will error on dedicated servers.
-	if not IsValid( ply ) then return end -- I'm trying to prevent ^this^ here, but maybe consider rewriting the command to be usable only by actual players?
-	local allents = ents.GetAll()
-	for _, v in ipairs( allents ) do
-		if (v:GetClass() == "ent_melon_main_building") then
-			-- Si es una cierra, spawnear base
-			local newMarker = ents.Create("ent_melonmarker_base")
-			newMarker:SetPos(v:GetPos())
-			newMarker:Spawn()
-			newMarker:SetMelonTeam(v:GetNWInt("mw_melonTeam", 0))
-			v:Remove()
-		elseif (v:GetClass() == "ent_melon_wall") then
-			local newMarker = ents.Create("ent_melonmarker_base_prop")
-			newMarker:SetPos(v:GetPos())
-			newMarker:SetAngles(v:GetAngles())
-			newMarker:Spawn()
-			newMarker:SetMelonTeam(v:GetNWInt("mw_melonTeam", 0), v:GetModel(), v.melonParent)
-			v:Remove()
-		elseif (v.Base == "ent_melon_base") then
-			local newMarker = ents.Create("ent_melonmarker_unit")
-			newMarker:SetPos(v:GetPos())
-			newMarker:SetAngles(v:GetAngles())
-			newMarker:Spawn()
-			newMarker:SetMelonTeam(v:GetNWInt("mw_melonTeam", 0), v:GetClass(), v:GetCollisionGroup() == COLLISION_GROUP_DISSOLVING)
-			v:Remove()
-		elseif (v.Base == "ent_melon_energy_base") then
-			local newMarker = ents.Create("ent_melonmarker_energy_unit")
-			newMarker:SetPos(v:GetPos())
-			newMarker:Spawn()
-			newMarker:SetMelonTeam(v:GetNWInt("mw_melonTeam", 0), v:GetClass(), v:GetCollisionGroup() == COLLISION_GROUP_DISSOLVING)
-			v:Remove()
-		end
-	end
-
-	file.CreateDir( "melonwars" )
-	file.Write( GetConVar( "mw_save_name" ):GetString() .. ".txt", gmsave.SaveMap( ply ) )
-	print( "Stage saved to '" .. GetConVar( "mw_save_name" ):GetString() .. ".txt'. Remember to move it into your Campaign's folder." )
-end )
-
-concommand.Add( "mw_load", function()
-	local tab -- "data/melonwars_save_"
-	if (file.Exists(--[[GetConVarString( "mw_save_path" ).."melonwars_save_"..]] GetConVar( "mw_save_name" ):GetString() .. ".lua", "LUA")) then
-		tab = util.JSONToTable( file.Read( --[[GetConVarString( "mw_save_path" ).."melonwars_save_"..]] GetConVar( "mw_save_name" ):GetString() .. ".lua", "LUA"))
-	elseif (file.Exists(--[[GetConVarString( "mw_save_path" ).."melonwars_save_"..]] GetConVar( "mw_save_name" ):GetString(), "DATA")) then
-		--"melonwars/<campaign>"
-		tab = util.JSONToTable( file.Read( --[[GetConVarString( "mw_save_path" ).."melonwars_save_"..]] GetConVar( "mw_save_name" ):GetString(), "DATA"))
-	else
-		print( "File " .. GetConVar( "mw_save_name" ):GetString() .. " not found in addon folder!" )
-		return false
-	end
-	game.CleanUpMap()
-	duplicator.RemoveMapCreatedEntities()
-	duplicator.Paste( ply, tab.Entities, tab.Constraints )
-	mw_teamUnits = {0,0,0,0,0,0,0,0}
-	mw_electric_network = {}
-	for _, v in ipairs( player.GetAll() ) do
-		local mw_melonTeam = v:GetInfoNum("mw_team", 0)
-		if (mw_melonTeam ~= 0) then
-			net.Start("MW_TeamUnits")
-				net.WriteInt(mw_teamUnits[mw_melonTeam] ,16)
-			net.Send(v)
-		end
-	end
-	if ( IsValid( ply ) ) then
-		gmsave.PlayerLoad( ply, tab.Player )
-	end
-
-	local allents = ents.GetAll()
-	for _, v in ipairs( allents ) do
-		if (v.Base == "ent_melon_base" or v.Base == "ent_melon_energy_base" or v:GetClass() == "ent_melon_wall") then
-			v:Remove() -- Si quedó alguna entidad melon guardada la borra
-		elseif (v:GetClass() == "ent_melonmarker_base") then
-			MW_SpawnBaseAtPos(v.mw_melonTeam, v:GetPos())
-			v:Remove()
-		elseif (v:GetClass() == "ent_melonmarker_base_prop") then
-			MW_SpawnProp(v.melonModel, v:GetPos(), v:GetAngles(), v.mw_melonTeam, nil, 0)
-			v:Remove()
-		elseif (v:GetClass() == "ent_melonmarker_unit") then
-			if not v.attach then
-				SpawnUnitAtPos(v.melonClass, 0, v:GetPos(), v:GetAngles(), 0, 0, v.mw_melonTeam, v.attach)
-			else
-				SpawnUnitAtPos(v.melonClass, 0, v:GetPos(), v:GetAngles(), 0, 0, v.mw_melonTeam, v.attach, v:GetParent())
-			end
-			v:Remove()
-		elseif (v:GetClass() == "ent_melonmarker_energy_unit") then
-			SpawnUnitAtPos(v.melonClass, 0, v:GetPos(), v:GetAngles(), 0, 0, v.mw_melonTeam, v.attach)
-			v:Remove()
-		elseif (v:GetClass() == "ent_melon_cap_point") then
-			v:SetPos( v:GetPos() - Vector( 0, 0, 70 ) )
-			v:Initialize()
-		elseif (v:GetClass() == "ent_melon_outpost_point") then
-			v:SetPos( v:GetPos() - Vector( 0, 0, 162.5 ) )
-			v:Initialize()
-		elseif (v:GetClass() == "ent_melon_mcguffin") then
-			v:SetPos( v:GetPos() - Vector( 0, 0, 100 ) )
-			v:Initialize()
-		elseif (v:GetClass() == "ent_melon_water_tank") then
-			v:SetPos( v:GetPos() - Vector( 0, 0, 50 ) )
-			v:Initialize()
-		elseif (v:GetClass() == "ent_melon_singleplayer_waypoint") then
-			v:FindNext()
-		end
-	end
-end)
-
-concommand.Add( "mw_waypoints", function()
-	for _, v in ipairs( ents.FindByClass( "ent_melon_singleplayer_waypoint" ) ) do
-		v:FindNext()
-	end
-end )
-
-concommand.Add( "mw_singleplayer_waypoints_visible", function()
-	for _, v in ipairs( ents.FindByClass( "ent_melon_singleplayer_waypoint" ) ) do
-		v:MakeWaypointVisible()
-	end
-end )
-
 concommand.Add( "mw_admin_reset_teams", function()
 	for i = 1, 8 do
 		teamgrid[i] = {}     -- create a new row
@@ -1578,11 +1430,6 @@ net.Receive( "UpdateServerTeams", function( len, pl )
 			net.WriteTable( teamgrid )
 		net.Send( v )
 	end
-end )
-
-net.Receive( "ServerSetTeam", function( len, pl )
-	local ent = net.ReadEntity()
-	ent.mw_melonTeam = net.ReadInt( 4 )
 end )
 
 net.Receive( "MWControlUnit", function( len, pl )
