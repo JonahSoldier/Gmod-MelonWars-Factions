@@ -49,7 +49,8 @@ util.AddNetworkString( "ContraptionAutoValidate" )
 util.AddNetworkString( "ContraptionValidateClient" )
 util.AddNetworkString( "LegalizeContraption" )
 
-util.AddNetworkString( "MWControlUnit" )
+util.AddNetworkString( "MW_ServerControlUnit" )
+util.AddNetworkString( "MW_ClientControlUnit" )
 util.AddNetworkString( "MWControlShoot" )
 
 util.AddNetworkString( "MWBrute" )
@@ -1433,11 +1434,11 @@ net.Receive( "UpdateServerTeams", function( len, pl )
 	end
 end )
 
-net.Receive( "MWControlUnit", function( len, pl )
+net.Receive( "MW_ServerControlUnit", function( _, pl )
 	local u = net.ReadEntity()
 	pl.controllingUnit = u
 	u.ai = false
-	net.Start( "MWControlUnit" )
+	net.Start( "MW_ClientControlUnit" )
 		net.WriteEntity( u )
 	net.Send( pl )
 end )

@@ -186,7 +186,7 @@ function MW_SiloSmoke(ent, amount)
 	emitter:Finish()
 end
 
-net.Receive( "MWControlUnit" , function(len, pl)
+net.Receive( "MW_ClientControlUnit" , function()
 	local u = net.ReadEntity()
 	LocalPlayer().controllingUnit = u
 end)

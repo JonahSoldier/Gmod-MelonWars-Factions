@@ -3425,8 +3425,8 @@ function TOOL:LeftClick( tr )
 			local targetUnit = self:GetOwner():GetEyeTrace().Entity
 			if targetUnit == nil then return end
 			if targetUnit.Base ~= "ent_melon_base" then return end
-			net.Start("MWControlUnit")
-				net.WriteEntity(targetUnit)
+			net.Start( "MW_ServerControlUnit" )
+				net.WriteEntity( targetUnit )
 			net.SendToServer()
 		else
 			net.Start("MWBrute")
