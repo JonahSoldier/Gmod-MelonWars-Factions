@@ -3,7 +3,7 @@ ENT.Base = "base_gmodentity"
 
 ENT.Category = "MelonWars"
 
-ENT.PrintName = "Unit range booster"
+ENT.PrintName = "Unit Range Booster"
 ENT.Contact = "don`t"
 ENT.Purpose = "Annoy"
 ENT.Instructions = "Spawn a whole bunch"

@@ -3,7 +3,7 @@ ENT.Base = "base_gmodentity"
 
 ENT.Category = "MelonWars"
 
-ENT.PrintName = "Build speed modifier x1.33"
+ENT.PrintName = "Buildspeed Modifier x1.33"
 ENT.Author = "JonahSoldier"
 ENT.Contact = "don't"
 ENT.Purpose = "Annoy"
