@@ -2242,7 +2242,7 @@ local function _CreatePanel()
 					net.WriteInt( i, 8 )
 				net.SendToServer()
 			end
-			button.Paint = function()
+			button.Paint = function( s, w, h )
 				draw.RoundedBox( 6, 0, 0, w, h, Color( 100, 100, 100, 255 ) )
 				draw.RoundedBox( 4, 2, 2, w - 4, h - 4, mw_team_colors[i] )
 			end
