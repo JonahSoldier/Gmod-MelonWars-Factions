@@ -61,7 +61,7 @@ util.AddNetworkString( "SetMWConvar" )
 util.AddNetworkString( "MWReadyUp" )
 util.AddNetworkString( "MW_ClientModifySpawnTime" )
 
-net.Receive( "SetMWConvar", function( len, pl )
+net.Receive( "SetMWConvar", function( _, pl )
 	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
 
 	if not pl:IsAdmin() or openPerms then return end
@@ -69,12 +69,12 @@ net.Receive( "SetMWConvar", function( len, pl )
 	local convar = net.ReadString()
 	local newValue = net.ReadBool()
 
-	if not string.StartsWith( convar, "mw_" ) then return end
+	if not string.StartWith( convar, "mw_" ) then return end -- NOTE: Switch to StartsWith when/if all Gmod branches are updated to the January 2023 patch
 
 	GetConVar( convar ):SetBool( newValue )
 end )
 
-net.Receive( "MWReadyUp", function( len, pl )
+net.Receive( "MWReadyUp", function()
 	local ReadyCount = 0
 	for _, v in ipairs( player.GetAll() ) do
 		ReadyCount = ReadyCount + v:GetInfoNum( "mw_player_ready", 0 ) -- Adds all values of mw_player_ready to the readycount
@@ -92,14 +92,15 @@ net.Receive( "MWReadyUp", function( len, pl )
 		end )
 	end
 	timer.Simple( 5, function ()
+		RunConsoleCommand( "mw_admin_playing", 1 )
+		RunConsoleCommand( "mw_admin_move_any_team", 0 )
+		RunConsoleCommand( "mw_admin_credit_cost", 1 )
+		RunConsoleCommand( "mw_admin_allow_free_placing", 0 )
+		RunConsoleCommand( "mw_admin_spawn_time", 1 )
+		RunConsoleCommand( "mw_admin_immortality", 0 )
+		RunConsoleCommand( "mw_reset_credits" )
+
 		for _, v in ipairs( player.GetAll() ) do
-			RunConsoleCommand( "mw_admin_playing", 1 )
-			RunConsoleCommand( "mw_admin_move_any_team", 0 )
-			RunConsoleCommand( "mw_admin_credit_cost", 1 )
-			RunConsoleCommand( "mw_admin_allow_free_placing", 0 )
-			RunConsoleCommand( "mw_admin_spawn_time", 1 )
-			RunConsoleCommand( "mw_admin_immortality", 0 )
-			RunConsoleCommand( "mw_reset_credits" )
 			net.Start( "RestartQueue" )
 			net.Send( v )
 			sound.Play( "garrysmod/content_downloaded.wav", v:GetPos() + Vector( 0, 0, 45 ), 100, 40, 1 )
