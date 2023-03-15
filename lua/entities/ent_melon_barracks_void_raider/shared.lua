@@ -3,7 +3,7 @@ ENT.Base = "ent_melon_base"
 
 ENT.Category = "Marums pack"
 
-ENT.PrintName = "Melon Mamoth Spawner"
+ENT.PrintName = "Melon Raider Spawner"
 ENT.Author = "Marum"
 ENT.Contact = "don`t"
 ENT.Purpose = "Annoy"

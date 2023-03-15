@@ -2,7 +2,22 @@ TOOL.Category = "MelonWars: RTS"
 TOOL.Name = "Player Tool"
 TOOL.Command = nil
 TOOL.ConfigName = "" -- Setting this means that you do not have to create external configuration files to define the layout of the tool config-hud
+--[[
+TOOL.Information = {
+	{ name = "reload" },
 
+	{ name = "left_op0", op = 0 },
+	{ name = "left_double_op0", icon2 = "gui/lmb.png", op = 0 },
+	{ name = "left_shift_op0", icon2 = "gui/info.png", op = 0 },
+	{ name = "right_op0", op = 0 },
+	{ name = "right_alt_op0", icon2 = "gui/info.png", op = 0 },
+	{ name = "right_shift_op0", icon2 = "gui/info.png", op = 0 },
+	{ name = "right_ctrl_op0", icon2 = "gui/info.png", op = 0 },
+
+	{ name = "left_op2", op = 2 },
+	{ name = "right_op2", op = 2 }
+}
+]]
 -- Convars (Start)
 
 CreateClientConVar( "mw_chosen_unit", "1", 0, false )
@@ -448,7 +463,7 @@ i = i + 1
 u = mw_units[i]
 u.code 			= "void"
 u.name 			= "Mammoth"
-u.class 		= "ent_melon_void_mamoth"
+u.class 		= "ent_melon_void_mammoth"
 u.cost 			= 1000
 u.welded_cost 	= -1
 u.population 	= 3
@@ -1069,12 +1084,11 @@ u.angle 		= Angle(-90,0,0)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
-
 i = i + 1
 u = mw_units[i]
 u.code 			= "void"
 u.name 			= "Mammoth Spawning Vat"
-u.class 		= "ent_melon_barracks_void_mamoth"
+u.class 		= "ent_melon_barracks_void_mammoth"
 u.cost 			= 5000
 u.welded_cost 	= -1
 u.population 	= 1
@@ -4531,8 +4545,21 @@ net.Receive( "UpdateClientTeams", function()
 end )
 
 if CLIENT then
-	language.Add( "tool.melon_universal_tool.name", "" )
-	language.Add( "tool.melon_universal_tool.desc", "" )
+	language.Add( "tool.melon_universal_tool.name", "MelonWars: RTS" )
+	language.Add( "tool.melon_universal_tool.desc", "Sandbox strategy game" )
 	language.Add( "tool.melon_universal_tool.0", "" )
+	language.Add( "tool.melon_universal_tool.reload", "Open menu" )
+
+	language.Add( "tool.melon_universal_tool.left_op0", "Hold and drag to select units" )
+	language.Add( "tool.melon_universal_tool.left_double_op0", "Select unit type" )
+	language.Add( "tool.melon_universal_tool.left_shift_op0", "Hold Shift to add to selection" )
+	language.Add( "tool.melon_universal_tool.right_op0", "Move selected units" )
+	language.Add( "tool.melon_universal_tool.right_alt_op0", "Press Alt to force target or follow ally" )
+	language.Add( "tool.melon_universal_tool.right_shift_op0", "Add waypoint" )
+	language.Add( "tool.melon_universal_tool.right_ctrl_op0", "Stop selected units" )
+
+	language.Add( "tool.melon_universal_tool.left_op2", "Spawn main building" )
+	language.Add( "tool.melon_universal_tool.right_op2", "Cancel" )
+
 	language.Add( "undone.melon_universal_tool", "Marine has been undone." )
 end
