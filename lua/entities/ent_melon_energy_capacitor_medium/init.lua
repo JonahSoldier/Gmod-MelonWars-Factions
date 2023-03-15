@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 	MW_Energy_Defaults ( self )
@@ -46,12 +46,12 @@ function ENT:DeathEffect ( ent )
 			local effectdata = EffectData()
 			effectdata:SetOrigin( ent:GetPos() )
 			util.Effect( "Explosion", effectdata )
-			
+
 			local pos1 = ent:GetPos()-- Set worldpos 1. Add to the hitpos the world normal.
 			local pos2 = ent:GetPos()+Vector(0,0,-20) -- Set worldpos 2. Subtract from the hitpos the world normal.
 			ent.fired = true
 			ent:Remove()
-			
+
 			util.Decal("Scorch",pos1,pos2)
 		end
 	end)

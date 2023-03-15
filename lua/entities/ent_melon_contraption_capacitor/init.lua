@@ -1,10 +1,10 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-	
+
 	MW_Defaults ( self )
 
 	self.birth = CurTime()
@@ -13,16 +13,16 @@ function ENT:Initialize()
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
 	self.slowThinkTimer = 1
-	
+
 	self.population = 0
 
 	self.captureSpeed = 0
-	
+
 	self.maxHP = 50
 	self.shotOffset = Vector(0,0,15)
-	
+
 	MW_Setup ( self )
-	
+
 	self:SetNWInt("mw_charge", 0)
 	self:SetNWInt("maxCharge", 1000)
 
@@ -37,7 +37,7 @@ function ENT:Shoot ( ent )
 end
 
 function ENT:Update (ent)
-	
+
 end
 
 function ENT:Think ()
@@ -49,14 +49,14 @@ function ENT:Think ()
 			MW_Die( self )
 		end
 	end
-		
+
 	local const = constraint.FindConstraints( self, "Weld" )
 	if (table.Count(const) == 0) then
 		self.damage = 5
 	end
-	
+
 	local allConstraints = constraint.GetTable(self)
-	local suppliedEntities = {}	
+	local suppliedEntities = {}
 
 	for k, v in pairs(allConstraints) do
 		if(v.Type == "Weld") then
@@ -66,7 +66,7 @@ function ENT:Think ()
 				if(v.Ent1:GetNWInt("mw_charge", -1)>=0 and v.Ent1:GetClass() ~= "ent_melon_contraption_capacitor") then
 					table.insert(suppliedEntities, v.Ent1)
 				else
-					if(v.Ent1:GetClass() == "ent_melon_contraption_capacitor") then	
+					if(v.Ent1:GetClass() == "ent_melon_contraption_capacitor") then
 						if(istable(v.Ent1.batteryConnections)) then
 							table.Merge(suppliedEntities, v.Ent1.batteryConnections)
 						end
@@ -93,7 +93,7 @@ function ENT:Think ()
 	for k, v in pairs(suppliedEntities) do
 		if(self:GetNWInt("mw_charge", -1)>v:GetNWInt("maxCharge", -1)-v:GetNWInt("mw_charge", -1)) then
 			--this is really messy, but it takes away the difference between how much energy the target part
-			--has and its maximum value 
+			--has and its maximum value
 			self:SetNWInt("mw_charge", self:GetNWInt("mw_charge", -1)-(v:GetNWInt("maxCharge", -1)-v:GetNWInt("mw_charge", -1)))
 			v:SetNWInt("mw_charge", v:GetNWInt("maxCharge", -1))
 		else
@@ -103,7 +103,7 @@ function ENT:Think ()
 			end
 		end
 	end
-	
+
 	self:NextThink(CurTime()+5)
 	return true
 end

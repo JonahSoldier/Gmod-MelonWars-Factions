@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
@@ -9,17 +9,17 @@ function ENT:Initialize()
 
 	self.modelString = "models/hunter/misc/sphere1x1.mdl"
 	self.materialString = "phoenix_storms/dome"
-	
+
 	self.deathSound = "ambient/explosions/explode_9.wav"
-	
+
 	self.careForFriendlyFire = false
-	
+
 	self.slowThinkTimer = 1
-	
+
 	self.population = 4
 
 	self.sphereRadius = 20
-	
+
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
 	self.range = 80
@@ -30,11 +30,11 @@ function ENT:Initialize()
 	MW_Setup ( self )
 
 	--self:SetColor(Color(self:GetColor().r/2, self:GetColor().g/2, self:GetColor().b/2, 255))
-	
+
 	self.effect = ents.Create( "prop_physics" )
 		self.effect:SetModel("models/hunter/misc/sphere1x1.mdl")
 		self.effect:SetCollisionGroup( COLLISION_GROUP_IN_VEHICLE )
-		
+
 		self.effect:SetPos(self:GetPos())
 		self.effect:Spawn()
 		self.effect:SetModelScale( 1.2, 0 )
@@ -44,12 +44,12 @@ function ENT:Initialize()
 		--self.effect:SetColor(self:GetColor())
 		self.effect:GetPhysicsObject():SetMass(0.01)
 		--self.effect:SetColor(Color(255,255,255,255))
-		
+
 		self:DeleteOnRemove( self.effect )
-		
+
 		self.effect:SetParent( self, -1 )
 	--local weld = constraint.Weld( self, self.effect, 0, 0, 0, true , false )
-	
+
 	for _, v in ipairs( player.GetAll() ) do
 		sound.Play( "ambient/alarms/train_horn_distant1.wav", v:GetPos(), 60, 75, 1)
 		v:PrintMessage( HUD_PRINTCENTER, "NUKE detected!" )
@@ -87,7 +87,7 @@ function ENT:SlowThink ( ent )
 				end
 			end
 		end
-		
+
 		if (IsValid(ent.targetEntity)) then
 			local distance = ent.targetEntity:GetPos():Distance(ent:GetPos())
 			if (distance < ent.range and distance > ent.minRange) then
@@ -97,7 +97,7 @@ function ENT:SlowThink ( ent )
 			end
 		end
 	end
-	
+
 	if (ent:GetVelocity():Length() < 30 and ent.moving == false) then
 		--ent.phys:SetAngles( ent.Angles )
 		ent.phys:Sleep()
@@ -118,7 +118,7 @@ function ENT:Shoot ( ent, forcedTargetPos )
 				effectdata:SetOrigin( ent:GetPos() )
 				util.Effect( "Explosion", effectdata )
 				sound.Play( "ambient/explosions/explode_5.wav", ent:GetPos(), 110, 75, 1)
-				
+
 				local effectdata = EffectData()
 				effectdata:SetOrigin( ent:GetPos() + Vector(0,0,150))
 				util.Effect( "Explosion", effectdata )

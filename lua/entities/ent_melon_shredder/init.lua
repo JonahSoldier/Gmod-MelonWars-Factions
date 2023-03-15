@@ -4,7 +4,6 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include('shared.lua')
 
 function ENT:Initialize()
-
 	MW_Defaults ( self )
 
 	self.modelString = "models/props_c17/TrapPropeller_Blade.mdl"
@@ -14,21 +13,21 @@ function ENT:Initialize()
 	self.canShoot = false
 	self.maxHP = 20
 	self.moveType = MOVETYPE_VPHYSICS
-	
+
 	self.damageDeal = 10
 	self.slowThinkTimer = 0.1
-	
+
 	self.deathSound = "ambient/explosions/explode_9.wav"
 	self.deathEffect = "Explosion"
 
 	self.careForFriendlyFire = false
 
-	self.population = 0	
+	self.population = 0
 	--self:SetPos(self:GetPos()+Vector(0,0,0))
-	
+
 	self.melons = {}
 	MW_Setup ( self )
-	
+
 	local LPos1 = Vector(0,0,0)
 	local LVector = Vector(0,0,1)
 
@@ -69,7 +68,7 @@ function ENT:SlowThink(ent)
 					end
 
 				end
-			
+
 				v.damage = v.damage+self.damageDeal
 				--v:SetNWFloat("health", v:GetNWFloat("health", 1)-self.damageDeal)
 				v.gotHit = true
@@ -98,7 +97,7 @@ function ENT:StartTouch( entity )
 				end
 			end
 		end
-	
+
 		entity:TakeDamage( self.damageDeal, self, self )
 	end
 end

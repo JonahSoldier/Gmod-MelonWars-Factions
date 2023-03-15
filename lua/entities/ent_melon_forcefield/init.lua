@@ -1,10 +1,9 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-
 	MW_Defaults ( self )
 
 	self.modelString = "models/hunter/tubes/tube4x4x2.mdl"
@@ -12,7 +11,7 @@ function ENT:Initialize()
 	self.canMove = false
 
 	self.shotSound = "weapons/stunstick/stunstick_impact2.wav"
-	
+
 	self.maxHP = 1000
 	self.speed = 0
 	self.energyCost=10
@@ -29,19 +28,14 @@ function ENT:Initialize()
 	--print("My Initialization")
 
 	MW_Setup ( self )
-	
+
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 	self.canBeSelected = false
 	self:SetMaterial("models/effects/comball_tape")
 	--self:SetModelScale( 2.0, 0.000001 )
-
-
-
-
 end
 
 function ENT:SkinMaterial()
-
 end
 
 function ENT:SlowThink ( ent )
@@ -50,10 +44,10 @@ function ENT:SlowThink ( ent )
 		if ent:GetNWInt("mw_charge",0)>0 then
 			self.HP=self.HP+self.energyCost
 			ent:SetNWInt("mw_charge",ent:GetNWInt("mw_charge",0)-self.energyCost*2)
-		else 
+		else
 
 			self:SetCollisionGroup(COLLISION_GROUP_IN_VEHICLE) -- Makes the thing unshootable when it has no charge, I need to somehow make units stop targeting it too.
-			
+
 		end
 	end
 end

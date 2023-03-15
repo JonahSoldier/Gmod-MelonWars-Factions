@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
@@ -17,14 +17,14 @@ function ENT:Initialize()
 	self.shotSound = "ep02_outro.RocketTakeOffBlast"
 	self.energyCost = 1000
 	self.shotOffset = Vector(0,0,30)
-	
+
 	self.careForWalls = true
 	self.nextShot = CurTime()+2
 	self.fireDelay = 600
 	self.canMove = false
 	self.canBeSelected = true
 	self.moveType = MOVETYPE_NONE
-	
+
 	self.slowThinkTimer = 0.2
 	self.capacity = 0
 	self:SetNWVector("energyPos", Vector(0,0,20))
@@ -53,7 +53,7 @@ function ENT:Initialize()
 end
 
 function ENT:SlowThink ( ent )
-	local pos = (ent:GetPos()+Vector(0,0,180))	
+	local pos = (ent:GetPos()+Vector(0,0,180))
 	local energyCost = 500
 	if (mw_electric_network[self.network].energy >= energyCost) then
 		if (ent.ai or CurTime() > ent.nextControlShoot) then
@@ -89,13 +89,13 @@ function ENT:SlowThink ( ent )
 									foundBuilding = true
 								end
 							end
-							
+
 							ent:Shoot( ent, ent.targetPos)
 							self:DrainPower(500)
 							ent.targetPos = Vector(0,0,0)
 							self.fireprint = false
 						end
-					end			
+					end
 				end
 			end
 		end
@@ -105,11 +105,11 @@ end
 
 function ENT:Shoot(ent, forcedTargetPos)
 
-	
+
 	for k, v in pairs( player.GetAll() ) do
 		sound.Play( ent.shotSound, v:GetPos() )
 	end
-		
+
 	--ent.targetEntity:GetPos()
 
 
@@ -122,7 +122,7 @@ function ENT:Shoot(ent, forcedTargetPos)
 	bullet.owner = ent
 	bullet:SetColor(self:GetColor())
 
-	
+
 	bullet:SetNWInt("count", self:GetNWInt("count", 0))
 	bullet.idsInside = self.idsInside
 
@@ -153,7 +153,7 @@ end
 							ent:Shoot( ent, ent.targetPos)
 							self:DrainPower(1000)
 						end
-					end			
+					end
 				end
 
 

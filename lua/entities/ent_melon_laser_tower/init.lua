@@ -1,10 +1,9 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-
 	MW_Energy_Defaults ( self )
 
 	self.modelString = "models/props_wasteland/lighthouse_fresnel_light_base.mdl"
@@ -17,14 +16,14 @@ function ENT:Initialize()
 	self.shotSound = "NPC_CombineBall.Impact"
 	self.energyCost = 1000
 	self.shotOffset = Vector(0,0,30)
-	
+
 	self.careForWalls = true
 	self.nextShot = CurTime()+2
 	self.fireDelay = 30
 	self.canMove = false
 	self.canBeSelected = true
 	self.moveType = MOVETYPE_NONE
-	
+
 	self.slowThinkTimer = 0.2
 	--self.capacity = 0
 	self:SetNWVector("energyPos", Vector(0,0,20))
@@ -34,13 +33,12 @@ function ENT:Initialize()
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 	self:GetPhysicsObject():EnableMotion(false)
 
-	self:SetNWBool("Fired", false) 
+	self:SetNWBool("Fired", false)
 end
-
 
 function ENT:SlowThink ( ent )
 
-	local pos = (ent:GetPos()+Vector(0,0,200))	
+	local pos = (ent:GetPos()+Vector(0,0,200))
 	local energyCost = 5000
 	if (mw_electric_network[self.network].energy >= energyCost) then
 		if (ent.ai or CurTime() > ent.nextControlShoot) then
@@ -56,9 +54,9 @@ function ENT:SlowThink ( ent )
 				end
 			end
 
-			
+
 			if (ent.nextShot < CurTime()) then
-			
+
 				if (IsValid(ent.targetEntity)and ent.targetEntity ~= ent) then
 					if ((ent.targetEntity:GetPos()-ent:GetPos()):LengthSqr() < ent.range*ent.range) then
 						local tr = util.TraceLine( {
@@ -70,7 +68,7 @@ function ENT:SlowThink ( ent )
 							ent:Shoot( ent, forcedTargetPos)
 							self:DrainPower(energyCost)
 						end
-					end			
+					end
 				end
 			end
 		end
@@ -98,7 +96,7 @@ function ENT:Shoot(ent, forcedTargetPos)
 	ent.fired = true
 	ent.nextShot = CurTime()+ent.fireDelay
 
-	self:SetNWBool("Fired", true) 
+	self:SetNWBool("Fired", true)
 	timer.Simple(13, function() self:SetNWBool("Fired", false) end)
 
 	local beamSound = CreateSound( self, "d3_citadel.weapon_zapper_beam_loop1" )

@@ -1,14 +1,14 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
 	MW_Defaults ( self )
 
 	self.modelString = "models/props_citizen_tech/firetrap_propanecanister01a.mdl"
-	
+
 	--"models/props_citizen_tech/firetrap_propanecanister01a.mdl"
 
 	self.moveType = MOVETYPE_VPHYSICS
@@ -22,21 +22,21 @@ function ENT:Initialize()
 
 	self.ai_chases = false
 
-	
+
 	self.careForWalls = true
-	
+
 	self.nextShot = CurTime()+0.05
 	self.fireDelay = 0.05
 
 	self.shotOffset = Vector(0,0,10)
-	
+
 	self.population = 3
-	
+
 	self.shotSound = "coast.gaspump_ignite"
 	self.tracer = "AR2Tracer"
-	
+
 	self.slowThinkTimer = 0.05
-	
+
 	MW_Setup ( self )
 
 	self.phys:SetMass( 50 )
@@ -55,7 +55,7 @@ end
 function ENT:PhysicsUpdate()
 
 	local inclination = self:Align(self:GetAngles():Up(), Vector(0,0,1), 1000)
-	self.phys:Wake() 	
+	self.phys:Wake()
 
 	--self.phys:ApplyForceCenter(Vector(0,0,inclination*100*self.phys:GetMass()))
 	self.phys:SetAngleVelocity( self:GetAngles():Up()*500*inclination)
@@ -78,16 +78,16 @@ function ENT:Shoot ( ent, forcedTargetPos )
 		end
 
 		if (ent.nextShot < CurTime()) then
-			
+
 			if (IsValid(ent.targetEntity)) then
 
 				sound.Play( ent.shotSound, ent:GetPos() )
-			
+
 				local targetPos = ent.targetEntity:GetPos()
 				if (ent.targetEntity:GetVar("shotOffset") ~= nil) then
 					targetPos = targetPos+ent.targetEntity:GetVar("shotOffset")
 				end
-				
+
 				local bullet = ents.Create( "ent_melonbullet_flamerfuel" )
 				if not IsValid( bullet ) then return end -- Check whether we successfully made an entity, if not - bail
 				bullet:SetPos( ent:GetPos() + Vector(0,0, 75) )

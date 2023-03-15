@@ -1,10 +1,9 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-
 	MW_Energy_Defaults ( self )
 
 	self.modelString = "models/props_combine/combine_light001a.mdl"
@@ -59,7 +58,7 @@ function ENT:ConnectToBarrack()
 			closestDistance = self:GetPos():DistToSqr( v:GetPos() )
 		end
 	end
-	
+
 	if (closestEntity ~= nil) then
 		self.connection = closestEntity
 		self.slowThinkTimer= closestEntity.slowThinkTimer/10

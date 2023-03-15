@@ -1,11 +1,11 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 	--self:SetPos(self:GetPos()+Vector(0,0,-5))
-	
+
 	MW_Defaults ( self )
 
 	self.modelString = "models/props_lab/teleplatform.mdl"
@@ -18,11 +18,11 @@ function ENT:Initialize()
 	self.shotOffset = Vector(0,0,10)
 
 	self.active = true
-	
+
 	self.slowThinkTimer = 0.5
-	
+
 	self.population = 1
-	
+
 	self.deathSound = "ambient/explosions/explode_9.wav"
 	self.deathEffect = "Explosion"
 
@@ -50,7 +50,7 @@ function ENT:SlowThink(ent)
 		end
 	end
 	self:SetNWBool("hasTransport", found)
-	
+
 	if (found) then
 		self:SetNWEntity("transport", closest)
 		local foundEnts = ents.FindInSphere( ent:GetPos()+Vector(0,0,0), 50 )
@@ -62,13 +62,13 @@ function ENT:SlowThink(ent)
 						local effectdata = EffectData()
 						effectdata:SetScale(1)
 						effectdata:SetMagnitude(1)
-						effectdata:SetStart( v:GetPos()) 
+						effectdata:SetStart( v:GetPos())
 						effectdata:SetOrigin( closest:GetPos() )
 						util.Effect( "ToolTracer", effectdata )
 						sound.Play( "EnergyBall.Launch", self:GetPos() )
 
-						v:SetPos(closest:GetPos() + Vector(0,0,25))	
-						v:PhysicsUpdate() --Makes them actually move when they're teleported, 
+						v:SetPos(closest:GetPos() + Vector(0,0,25))
+						v:PhysicsUpdate() --Makes them actually move when they're teleported,
 								  --so they don't just stack up on the teleport point until they're ordered
 
 						--Also: It'd be nice to have the teleporter's move orders put onto the units it teleports,

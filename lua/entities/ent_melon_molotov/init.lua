@@ -1,24 +1,24 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 	MW_Defaults ( self )
 
 	self.modelString = "models/props_junk/propanecanister001a.mdl"
 	self.materialString = ""
-	
+
 	self.deathSound = "physics/glass/glass_impact_bullet3.wav"
-	
+
 	self.careForFriendlyFire = false
-	
+
 	self.slowThinkTimer = 1
 
 	self.population = 2
 
 	self.sphereRadius = 9
-	
+
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
 	self.range = 80
@@ -48,12 +48,12 @@ function ENT:DeathEffect( ent )
 			local effectdata = EffectData()
 			effectdata:SetOrigin( ent:GetPos() )
 			util.Effect( "HelicopterMegaBomb", effectdata )
-			
+
 			local pos1 = ent:GetPos()-- Set worldpos 1. Add to the hitpos the world normal.
 			local pos2 = ent:GetPos()+Vector(0,0,-20) -- Set worldpos 2. Subtract from the hitpos the world normal.
 			ent.fired = true
 			ent:Remove()
-			
+
 			util.Decal("Scorch",pos1,pos2)
 
 			local fire = ents.Create("ent_melon_fire")
@@ -67,7 +67,7 @@ function ENT:SlowThink ( ent )
 	MW_UnitDefaultThink ( ent )
 	--[[if (ent.canMove) then
 		MW_UnitDefaultThink ( ent )
-	else 
+	else
 		local pos = ent:GetPos()
 		if (ent.targetEntity == nil) then
 			----------------------------------------------------------------------Buscar target
@@ -80,7 +80,7 @@ function ENT:SlowThink ( ent )
 					end
 				end
 			end
-		end 
+		end
 	end]]
 end
 
@@ -123,7 +123,7 @@ end
 
 function ENT:OnTakeDamage( damage )
 	if (self.canMove) then
-		if ((damage:GetAttacker():GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not damage:GetAttacker():GetVar('careForFriendlyFire')) and not damage:GetAttacker():IsPlayer()) then 
+		if ((damage:GetAttacker():GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not damage:GetAttacker():GetVar('careForFriendlyFire')) and not damage:GetAttacker():IsPlayer()) then
 			if (damage:GetAttacker():GetNWInt("mw_melonTeam", 0) == self:GetNWInt("mw_melonTeam", 0)) then
 				self.HP = self.HP - damage:GetDamage()/10
 			else

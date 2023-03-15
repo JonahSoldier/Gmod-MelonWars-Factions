@@ -4,7 +4,6 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include('shared.lua')
 
 function ENT:Initialize()
-
 	self:SetModel("models/props_phx/rocket1.mdl")
 	self:SetSolid( SOLID_VPHYSICS )         -- Toolbox
 	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
@@ -23,7 +22,6 @@ function ENT:Initialize()
 	self:SetNWInt("count", 0)
 
 	self.idsInside = {}
-
 
 	self.targetPos = Vector(0,0,0)
 	self.distance = 0

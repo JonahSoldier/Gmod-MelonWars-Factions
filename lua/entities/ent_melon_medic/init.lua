@@ -1,27 +1,26 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-
 	MW_Defaults ( self )
 
 	self.modelString = "models/props_junk/watermelon01.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
-	
+
 	self.damageDeal = 4
 	self.maxHP = 30
 
 	self.speed = 90
 
 	self.sphereRadius = 7
-	
+
 	self.population = 1
 
 	self.captureSpeed = 1
-	
+
 	self.shotSound = "items/medshot4.wav"
 
 	MW_Setup ( self )
@@ -129,11 +128,11 @@ function ENT:Shoot ( ent, forcedTargetPos )
 		end
 
 		if (ent.targetEntity == ent) then ent.targetEntity = nil end
-		
+
 		if (IsValid(ent.targetEntity)) then
 			if (ent.targetEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 0) or ent:SameTeam(ent.targetEntity)) then
 				local heal = math.min(ent.damageDeal, ent.targetEntity:GetVar("maxHP")-ent.targetEntity:GetVar("HP"))
-				
+
 				if (heal < ent.HP) then
 					local newHealth = ent.targetEntity:GetVar("HP")+heal
 					local pos = ent:GetPos()+ent.shotOffset

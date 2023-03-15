@@ -1,11 +1,11 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 	--self:SetPos(self:GetPos()+Vector(0,0,-5))
-	
+
 	MW_Defaults ( self )
 
 	self.modelString = "models/props_phx/construct/metal_plate2x2.mdl"
@@ -16,13 +16,13 @@ function ENT:Initialize()
 	self.canMove = false
 	self.canShoot = false
 	self.maxHP = 100
-	
+
 	self.active = true
-	
+
 	self.slowThinkTimer = 0.5
-	
+
 	self.population = 0
-	
+
 	self.deathSound = "ambient/explosions/explode_9.wav"
 	self.deathEffect = "Explosion"
 
@@ -52,7 +52,7 @@ function ENT:SlowThink(ent)
 		end
 	end
 	self:SetNWBool("hasTransport", found)
-	
+
 	if (found) then
 		self:SetNWEntity("transport", closest)
 		local foundEnts = ents.FindInSphere( ent:GetPos()+Vector(0,0,0), 50 )
@@ -65,11 +65,11 @@ function ENT:SlowThink(ent)
 							local effectdata = EffectData()
 							effectdata:SetScale(1)
 							effectdata:SetMagnitude(1)
-							effectdata:SetStart( v:GetPos()) 
+							effectdata:SetStart( v:GetPos())
 							effectdata:SetOrigin( closest:GetPos() )
 							util.Effect( "ToolTracer", effectdata )
 							sound.Play( "buttons/blip1.wav", self:GetPos() )
-							closest:AbsorbUnit(v)			
+							closest:AbsorbUnit(v)
 						end
 					end
 				end

@@ -14,14 +14,13 @@ function ENT:Draw()
 	cam.End3D2D()
 end
 
-
 function ENT:AttackParticle()
 	local emitter = ParticleEmitter( self:GetPos() + Vector(0,0,200) )
 
 	local part = emitter:Add( "effects/ar2_altfire1", self:GetPos() + Vector(0,0,200)  )
 
 	if ( part ) then
-		part:SetDieTime( 13 ) 
+		part:SetDieTime( 13 )
 
 		part:SetStartAlpha( 255 ) -- Starting alpha of the particle
 		part:SetEndAlpha( 255 ) -- Particle size at the end if its lifetime
@@ -34,11 +33,11 @@ function ENT:AttackParticle()
 	end
 end
 
-function ENT:Think() 
+function ENT:Think()
 
 	if(self:GetNWBool("Fired", false)) then
 
-		self:SetNWBool("Fired", false) 
+		self:SetNWBool("Fired", false)
 		self:AttackParticle()
 	end
 

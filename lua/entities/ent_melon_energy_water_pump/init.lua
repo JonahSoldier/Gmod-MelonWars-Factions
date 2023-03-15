@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 	MW_Energy_Defaults ( self )
@@ -74,7 +74,7 @@ function ENT:Think(ent)
 			else
 				self:SetNWString("message", "Water depleted. Disassembling...")
 				self:SetColor(Color(150,150,150,255))
-	
+
 				self.HP = self.HP-10
 				self:SetNWFloat( "health", self.HP )
 				if (self.HP <= 0) then

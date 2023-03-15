@@ -1,17 +1,16 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-
 	self:SetModel("models/props_combine/headcrabcannister01a.mdl")
 	self:SetSolid( SOLID_VPHYSICS )         -- Toolbox
 	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
 	self:SetMoveType(MOVETYPE_VPHYSICS)
-	
+
 	self.deathSound = "ambient/explosions/explode_9.wav"
-	
+
 	self.careForFriendlyFire = false
 
 	self.speed = 75
@@ -23,10 +22,10 @@ function ENT:Initialize()
 
 	self.idsInside = {}
 
-	
+
 	self.targetPos = Vector(0,0,0)
 	self.distance = 0
-	
+
 	self:SetColor(Color(100,100,100, 255))
 	local trail = util.SpriteTrail(self, 0, Color(255,255,255), false, 10, 1, 2, 1/(15+1)*0.5, "effects/beam_generic01.vmt")
 
@@ -77,19 +76,19 @@ function ENT:Think()
 			self.targetPos = target:GetPos()
 		end
 		self.targetPos = self:GetNWVector("targetPos", nil)
-	
+
 		self.distance = self:GetPos():Distance(self.targetPos)
 		if (self.targetPos == Vector(0,0,0)) then self:Remove() end
 		local targetVec = self.targetPos+self.random+targetOffset*self.distance
 		self:SetPos(self:GetPos()+(targetVec-self:GetPos()):GetNormalized()*self.speed )
 		self:SetAngles( (targetVec-self:GetPos()):Angle() )
 		self:NextThink(CurTime()+0.05)
-	
+
 		if(self.distance < self.speed*35 and not self.incomingSoundPlayed) then
 			for k, v in pairs( player.GetAll() ) do
 				sound.Play( "HeadcrabCanister.IncomingSound", v:GetPos() )
 			end
-		
+
 			self.incomingSoundPlayed = true
 		end
 
@@ -101,17 +100,17 @@ function ENT:Think()
 				self:Explode()
 			end
 		end
-	
+
 		self.counter = self:GetNWInt("count", 0)
 		return true
 	else
 		if (self:GetNWInt("count", 0)>0) then
-			
+
 			self.counter = self.counter-1
 			self:FreeUnits(self.counter)
 			sound.Play( "doors/door_metal_medium_open1.wav", self:GetPos() )
 			self:NextThink(CurTime()+0.5)
-			return true 
+			return true
 		end
 	end
 end
@@ -142,14 +141,14 @@ function ENT:FreeUnits(i)
 			mw_melonTeam = _team
 
 			newMarine:Spawn()
-				
+
 			newMarine:Ini(_team, false)
 			newMarine.fired = true
-				
+
 			local pl = self:GetOwner()
 
 			pl.mw_melonTeam = _team
-				
+
 			newMarine:SetOwner(pl)
 
 			newMarine.value = value
@@ -158,7 +157,7 @@ function ENT:FreeUnits(i)
 			if (energy > 0) then
 				newMarine:SetNWInt("mw_charge", energy)
 			end
-				
+
 			undo.Create("Melon Marine")
 			undo.AddEntity( newMarine )
 			undo.SetPlayer( pl)

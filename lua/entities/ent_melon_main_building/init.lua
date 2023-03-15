@@ -1,12 +1,12 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
 	MW_Defaults ( self )
-		
+
 	self.slowThinkTimer = 1
 	self.nextSlowThink = 0
 	self.modelString = "models/props_combine/CombineThumper002.mdl"
@@ -15,34 +15,34 @@ function ENT:Initialize()
 	--self:SetPos(self:GetPos()+Vector(0,0,1))
 	self.materialString = "models/shiny"
 	self.shotSound = "weapons/stunstick/stunstick_impact1.wav"
-	
+
 	self.canMove = false
 	self.canBeSelected = false
-	
+
 	self.maxHP = 500
 	self.income = 1
 	self.dead = false
 	self.range = 500
 	self.damageDeal = 7
-	
+
 	self.population = 0
-	
+
 	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
 	self:SetSolid( SOLID_VPHYSICS )         -- Toolbox
-	self.moveType = MOVETYPE_NONE 
+	self.moveType = MOVETYPE_NONE
 	--local weld = constraint.Weld( self, game.GetWorld(), 0, 0, 0, true , false )
 
 	self:SetNWInt("energy", 0)
 	self:SetNWFloat("state", 0) --0 = neutral, 1 = dar, -1 = necesitar
 	self:SetNWInt("maxenergy", 100)
 	self:SetNWVector("energyPos", Vector(0,0,100))
-	
+
 	MW_Setup ( self )
-	
+
 	self.zone = ents.Create( "ent_melon_zone" )
 		self.zone:SetModel("models/hunter/tubes/tube4x4x025.mdl")
 		self.zone:SetCollisionGroup( COLLISION_GROUP_IN_VEHICLE )
-		
+
 		self.zone:SetPos(self:GetPos())
 		self.zone:Spawn()
 		self.zone:SetPos(self:GetPos()+Vector(0,0,-12))
@@ -75,9 +75,9 @@ function ENT:DeathEffect ( ent )
 				effectdata:SetScale( 100 )
 				util.Effect( "Explosion", effectdata )
 			end
-			
+
 			local count = table.Count(debri_props)
-			
+
 			for i = 1, count do
 				local debris = ents.Create( "prop_physics" )
 				debris:SetModel(debri_props[i])
@@ -87,7 +87,7 @@ function ENT:DeathEffect ( ent )
 				local debrisPhys = debris:GetPhysicsObject()
 				debrisPhys:ApplyForceCenter(Vector(math.random(-10000,10000), math.random(-10000,10000), math.random(10000,70000)))
 			end
-			
+
 			ent:Remove()
 		end)
 		------------------------
@@ -130,7 +130,7 @@ function ENT:Shoot ( ent )
 		local effectdata = EffectData()
 		effectdata:SetScale(1)
 		effectdata:SetMagnitude(1)
-		effectdata:SetStart( ent:GetPos() + Vector(0,0,200)) 
+		effectdata:SetStart( ent:GetPos() + Vector(0,0,200))
 		effectdata:SetOrigin( ent.targetEntity:GetPos() )
 		effectdata:SetEntity( ent )
 		util.Effect( "ToolTracer", effectdata )

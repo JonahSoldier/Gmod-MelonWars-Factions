@@ -1,10 +1,9 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-
 	MW_Energy_Defaults ( self )
 
 	self.modelString = "models/props_c17/substation_transformer01d.mdl"
@@ -32,8 +31,6 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-
-
 	if not self.unitspawned then
 		local newMarine = ents.Create( "ent_melon_forcefield" )
 		if not IsValid( newMarine ) then return end -- Check whether we successfully made an entity, if not - bail
@@ -42,10 +39,10 @@ function ENT:SlowThink ( ent )
 		newMarine:SetPos( ent:GetPos() +  rotatedShotOffset)
 
 		sound.Play( "d3_citadel.zapper_warmup", ent:GetPos(), 75, 150, 1 )
-					
+
 		mw_melonTeam = ent:GetNWInt("mw_melonTeam", 0)
 
-		newMarine:SetParent(self)	
+		newMarine:SetParent(self)
 
 		newMarine:Spawn()
 		newMarine:SetNWInt("mw_melonTeam", ent:GetNWInt("mw_melonTeam", 0))
@@ -131,7 +128,7 @@ function ENT:Shoot ( ent )
 			local effectdata = EffectData()
 			effectdata:SetScale(3000)
 			effectdata:SetMagnitude(3000)
-			effectdata:SetStart( self:GetPos() + Vector(0,0,45)) 
+			effectdata:SetStart( self:GetPos() + Vector(0,0,45))
 			effectdata:SetOrigin( targetPos )
 			util.Effect( "AirboatGunTracer", effectdata )
 			sound.Play( ent.shotSound, ent:GetPos() )

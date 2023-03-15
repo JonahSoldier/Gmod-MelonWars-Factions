@@ -5,7 +5,7 @@ include('shared.lua')
 
 function ENT:Initialize()
 	self:SetModel("models/hunter/tubes/circle2x2.mdl")
-	self:PhysicsInit( SOLID_VPHYSICS ) 
+	self:PhysicsInit( SOLID_VPHYSICS )
 	self.canMove = false
 	self.canShoot = false
 
@@ -16,13 +16,13 @@ end
 
 function ENT:Think()
 	local foundEnts = ents.FindInSphere( self:GetPos()+Vector(0,0,0), 45 )
-	local newFoundEnts = ents.FindInSphere( self:GetPos()+Vector(0,0,60), 45 ) 
+	local newFoundEnts = ents.FindInSphere( self:GetPos()+Vector(0,0,60), 45 )
 	table.Add(foundEnts, newFoundEnts)
-	newFoundEnts = ents.FindInSphere( self:GetPos()+Vector(0,0,120), 45 ) 
+	newFoundEnts = ents.FindInSphere( self:GetPos()+Vector(0,0,120), 45 )
 	table.Add(foundEnts, newFoundEnts)
-	newFoundEnts = ents.FindInSphere( self:GetPos()+Vector(0,0,180), 45 ) 
+	newFoundEnts = ents.FindInSphere( self:GetPos()+Vector(0,0,180), 45 )
 	table.Add(foundEnts, newFoundEnts)
-	newFoundEnts = ents.FindInSphere( self:GetPos()+Vector(0,0,240), 45 ) 
+	newFoundEnts = ents.FindInSphere( self:GetPos()+Vector(0,0,240), 45 )
 	table.Add(foundEnts, newFoundEnts)
 	for _, v in ipairs( foundEnts ) do
 		if v.Base == "ent_melon_base" then

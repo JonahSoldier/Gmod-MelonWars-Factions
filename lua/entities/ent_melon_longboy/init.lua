@@ -1,10 +1,9 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-
 	MW_Defaults ( self )
 
 	self.modelString = "models/props_trainstation/trainstation_ornament001.mdl"
@@ -22,17 +21,17 @@ function ENT:Initialize()
 	self.ai_chases = false
 
 	self.careForWalls = true
-	
+
 	self.nextShot = CurTime()+2
 	self.fireDelay = 15
 
 	self.shotOffset = Vector(0,0,10)
-	
+
 	self.population = 5
-	
+
 	self.shotSound = "weapons/ar2/ar2_altfire.wav"
 	self.tracer = "AR2Tracer"
-	
+
 	self.slowThinkTimer = 1
 
 	self:SetNWInt("mw_charge", 0)
@@ -66,7 +65,7 @@ function ENT:SlowThink ( ent )
 	else
 		self:SetNWFloat("mw_ready", 0)
 	end
-	
+
 	if (self:GetNWInt("mw_charge",0) >= self.energyCost and self:GetNWFloat("mw_ready", 0) >= 1 and self:GetNWBool("mw_active", false) == true) then
 		MW_UnitDefaultThink ( ent )
 	end
@@ -87,18 +86,18 @@ function ENT:Shoot ( ent, forcedTargetPos )
 		end
 
 		if (ent.nextShot < CurTime()) then
-			
+
 			if (IsValid(ent.targetEntity)) then
 
 				sound.Play( ent.shotSound, ent:GetPos() )
-			
+
 				local targetPos = ent.targetEntity:GetPos()
 				if (ent.targetEntity:GetVar("shotOffset") ~= nil) then
 					targetPos = targetPos+ent.targetEntity:GetVar("shotOffset")
 				end
 
 				ent:SetNWInt("mw_charge",ent:GetNWInt("mw_charge",0)-self.energyCost)
-				
+
 				local bullet = ents.Create( "ent_melonbullet_longboy" )
 				if not IsValid( bullet ) then return end -- Check whether we successfully made an entity, if not - bail
 				bullet:SetPos( ent:GetPos() + Vector(0,0,80) )

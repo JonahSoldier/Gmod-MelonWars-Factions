@@ -12,7 +12,7 @@ function ENT:Draw()
 		surface.SetDrawColor( Color( 0, state*255, state*255, 255 ) )
 		surface.DrawRect( -s+2, -s+2, s*2-4, s*2-4 )
 	cam.End3D2D()
-	
+
     self:TransportDraw(self, 190)
 end
 

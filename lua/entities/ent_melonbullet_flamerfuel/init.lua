@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
@@ -10,9 +10,9 @@ function ENT:Initialize()
 	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
 	self:SetMaterial("Models/effects/vol_light001")
 	self:SetMoveType(MOVETYPE_VPHYSICS)
-	
+
 	self.deathSound = "ambient/explosions/explode_9.wav"
-	
+
 	self.careForFriendlyFire = false
 
 
@@ -21,10 +21,10 @@ function ENT:Initialize()
 	self.damageDeal = 2
 	self.maxHP = 20
 	self.random = Vector(math.random()/2-1/4, math.random()/2-1/4, math.random()/6+0.1)
-	
+
 	self.targetPos = Vector(0,0,0)
 	self.distance = 0
-	
+
 	self:SetColor(Color(100,100,100, 0))
 	timer.Simple(0.05, function() self:Ignite(10, 25) end)
 
@@ -64,7 +64,7 @@ function ENT:Think()
 			self:Explode()
 		end
 	end
-	
+
 	return true
 end
 

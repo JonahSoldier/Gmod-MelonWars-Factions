@@ -1,10 +1,9 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-
 	MW_Defaults ( self )
 
 	self.modelString = "models/XQM/airplanewheel1.mdl"--"models/props_c17/TrapPropeller_Engine.mdl"
@@ -38,9 +37,6 @@ function ENT:Initialize()
 	self.moving = false;
 
 	--self.weld = nil
-
-
-
 end
 
 function ENT:SlowThink ( ent )
@@ -88,12 +84,9 @@ function ENT:Welded( ent, parent )
 end
 
 function ENT:OnFinishMovement(parent)
-
 	self.axisConstraint = constraint.FindConstraint( self, "Axis" )
-	
-	--PrintTable(self.axisConstraint)
 
-	 
+	--PrintTable(self.axisConstraint)
 
 	if (self:GetNWBool("wheel_set_parent_once", true)) then --Prevents this from running constantly to hopefully help lag, uses a NWInt because as a normal variable it saves to the contrap file
 		for k, v in pairs(self.axisConstraint) do

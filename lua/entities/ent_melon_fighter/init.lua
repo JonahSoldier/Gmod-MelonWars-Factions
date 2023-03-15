@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:SetStats()
 	self.speed = 300
@@ -10,7 +10,7 @@ function ENT:SetStats()
 	self.modelString = "models/props_phx/construct/metal_plate1_tri.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
-	
+
 	self.population = 2
 	self.damageDeal = 6
 	self.maxHP = 20
@@ -78,7 +78,7 @@ function ENT:FinishMovement ()
 	if (self.rallyPoints[1] == Vector(0,0,0)) then
 		if self.exhaustedUntil <= CurTime() then
 			if(self.moving == true) then
-				self.alternate = not self.alternate 
+				self.alternate = not self.alternate
 				if(self.alternate) then
 					self.rallyPoints[1] = self.targetPos + Vector(50, 50,0)
 				else
@@ -129,7 +129,7 @@ function ENT:SpecificThink()
 end
 
 function ENT:PhysicsUpdate()
-	
+
 	if (cvars.Bool("mw_admin_playing") ) then
 	--if (self.moving == true) then
 
@@ -170,7 +170,7 @@ function ENT:PhysicsUpdate()
 		else
 			force = -5
 		end
-		
+
 		--if (force > self.delayedForce) then
 			self.delayedForce = (self.delayedForce*2+force)/3
 		--else

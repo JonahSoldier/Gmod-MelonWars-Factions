@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
@@ -26,14 +26,13 @@ function ENT:Initialize()
 
 	self.visualmodel:SetLocalAngles(Angle(0,0,0))
 	self.visualmodel:SetLocalPos(Vector(0,0,0))
-	self.visualmodel:SetColor( self.color ) 
-	
+	self.visualmodel:SetColor( self.color )
+
 	self.visualmodel:Spawn()
 
 	self.visualmodel:SetCollisionGroup( COLLISION_GROUP_IN_VEHICLE )
-	
- 	--self:SetNoDraw( 1 ) -- Makes the actual *real* model invisible, so it just shows the gear thingy
 
+	--self:SetNoDraw( 1 ) -- Makes the actual *real* model invisible, so it just shows the gear thingy
 
 	self.weight = 25
 	self.shotOffset = Vector(0,0,5)
@@ -43,7 +42,7 @@ function ENT:Initialize()
 
 	self.shotSound = "weapons/smg1/smg1_fire1.wav"
 	self.tracer = "AR2Tracer"
-	
+
 	self.slowThinkTimer = 1
 
 	self:SetNWInt("mw_charge", 0)
@@ -62,10 +61,10 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-	
+
 	if self:GetNWInt("mw_charge", 0)==0 then
 		self.slowThinkTimer = 1
-	else 
+	else
 		--self.shotDelay = math.sqrt(((self:GetNWInt("mw_charge", 0)*-1)+200)/35)
 		self.slowThinkTimer = math.sqrt(((self:GetNWInt("mw_charge", 0)*-1)+200)/35)
 	end
@@ -79,7 +78,7 @@ function ENT:SlowThink ( ent )
 
 		self.nextRecharge = self.nextRecharge + 5
 	end
-	
+
 
 	MW_UnitDefaultThink ( ent )
 end

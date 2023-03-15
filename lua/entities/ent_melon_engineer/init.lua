@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
@@ -10,7 +10,7 @@ function ENT:Initialize()
 	self.modelString = "models/props_wasteland/light_spotlight01_lamp.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
-	
+
 	self.damageDeal = 4
 	self.maxHP = 45
 	self.weight = 25
@@ -18,11 +18,11 @@ function ENT:Initialize()
 	self.speed = 60
 
 	--self.sphereRadius = 0
-	
+
 	self.population = 1
 
 	self.captureSpeed = 1
-	
+
 	self.shotSound = "EpicMetal.ImpactHard"
 
 	MW_Setup ( self )
@@ -81,13 +81,13 @@ function ENT:SlowThink ( ent )
 				end
 			end
 		end
-		
+
 		--if (IsValid(ent.forcedTargetEntity)) then
 		--	ent.targetEntity = ent.forcedTargetEntity
 		--else
 		--	ent.forcedTargetEntity = nil
 		--end
-		
+
 		if (ent.targetEntity ~= nil) then
 			----------------------------------------------------------------------Perder target
 			----------------------------------------por que no existe
@@ -142,11 +142,11 @@ function ENT:Shoot ( ent, forcedTargetPos )
 		end
 
 		if (ent.targetEntity == ent) then ent.targetEntity = nil end
-		
+
 		if (IsValid(ent.targetEntity)) then
 			if (ent.targetEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 0) or ent:SameTeam(ent.targetEntity)) then
 				local heal = math.min(ent.damageDeal, ent.targetEntity:GetVar("maxHP")-ent.targetEntity:GetVar("HP"))
-				
+
 				if (heal < ent.HP) then
 					local newHealth = ent.targetEntity:GetVar("HP")+heal
 					local pos = ent:GetPos()+ent.shotOffset

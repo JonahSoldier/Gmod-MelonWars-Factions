@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 	MW_Energy_Defaults ( self )
@@ -37,7 +37,7 @@ function ENT:Actuate()
 end
 
 function ENT:Think(ent)
-	if(self.spawned) then	
+	if(self.spawned) then
 		if(cvars.Bool("mw_admin_playing")) then
 			local waterCost = 5
 			local energyGain = 20

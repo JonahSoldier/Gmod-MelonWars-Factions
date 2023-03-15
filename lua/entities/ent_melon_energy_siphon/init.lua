@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
@@ -9,7 +9,7 @@ function ENT:Initialize()
 
 	self.modelString = "models/props_c17/substation_stripebox01a.mdl"
 	self.maxHP = 50
-	
+
 	--self.Angles = Angle(0,0,0)
 
 	self.population = 5
@@ -26,13 +26,13 @@ function ENT:Initialize()
 	--timer.Simple(0.1, function () self:Special_CalculateConnections(self, true) end)
 
 	timer.Simple(0.1, function () self:Siphon_Connect(self, true) end)
-	
+
 	self.targetConnections = {}
-	
+
 end
 
 function ENT:Think(ent)
-		
+
 	for k, v in pairs(self.targetConnections) do
 		if(IsValid(v)) then
 			if((mw_electric_network[self.network].capacity - mw_electric_network[self.network].energy >= 5)) then
@@ -45,7 +45,7 @@ function ENT:Think(ent)
 			end
 		end
 	end
-	
+
 	self:Energy_Set_State()
 	self:NextThink( CurTime()+1 )
 	return true
@@ -72,7 +72,7 @@ function ENT:ConnectToBarrack()
 			closestDistance = self:GetPos():DistToSqr( v:GetPos() )
 		end
 	end
-	
+
 	if (closestEntity ~= nil) then
 		self.connection = closestEntity
 	else

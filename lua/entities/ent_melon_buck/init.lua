@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
@@ -20,17 +20,17 @@ function ENT:Initialize()
 	self.shotSound = "weapons/shotgun/shotgun_fire6.wav"
 
 	self.buildingDamageMultiplier = 0.7
-	
+
 	self.shotOffset = Vector(0,0,5)
 
 	self.angularDamping = 10
 
 	--self:SetPos(self:GetPos()+Vector(0,0,12))
-	
+
 	self.nextShot = CurTime()+2
 
 	self.population = 3
-	
+
 	MW_Setup ( self )
 
 	construct.SetPhysProp( self:GetOwner() , self, 0, nil,  { GravityToggle = true, Material = "ice" } )
@@ -87,12 +87,12 @@ function ENT:Shoot ( ent, forceTargetPos )
 				bullet.Src=pos
 				bullet.Dir=dir
 				bullet.Spread=Vector(0,0,0)
-				bullet.Tracer=1	
+				bullet.Tracer=1
 				bullet.TracerName=ent.tracer
 				bullet.Force=2
 
 				bullet.Damage=ent.damageDeal
-				
+
 				bullet.Distance=ent.range*1.1
 
 				ent.fired = true
@@ -100,12 +100,12 @@ function ENT:Shoot ( ent, forceTargetPos )
 				ent.nextShot = CurTime()+2
 
 				ent:FireBullets(bullet)*/
-				
+
 				MW_Bullet(ent, pos, dir, ent.range*1.1, ent, nil, 0)
 			end
 			local effectdata = EffectData()
 					effectdata:SetScale(1)
-					effectdata:SetAngles( (baseDir):Angle()) 
+					effectdata:SetAngles( (baseDir):Angle())
 					effectdata:SetOrigin( pos + (baseDir):GetNormalized()*10 )
 				util.Effect( "MuzzleEffect", effectdata )
 			sound.Play( ent.shotSound, pos )

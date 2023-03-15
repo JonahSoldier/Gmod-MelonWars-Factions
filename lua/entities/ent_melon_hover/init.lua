@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
@@ -13,19 +13,19 @@ function ENT:Initialize()
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
 	--self:SetAngles(self:GetAngles()+Angle(90,0,0))
-	
+
 	self.population = 0
 
 	--self.sphereRadius = 5
-	
+
 	self:SetNWBool("done",false)
-	
+
 	self.delayedForce = 0
 
 	self.captureSpeed = 0
-	
+
 	self.damping = 1
-	
+
 	self.maxHP = 45
 
 	MW_Setup ( self )
@@ -37,7 +37,7 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-	
+
 end
 
 function ENT:Shoot ( ent )
@@ -57,7 +57,7 @@ function ENT:Think ()
 			MW_Die( self )
 		end
 	end
-		
+
 	local const = constraint.FindConstraints( self, "Weld" )
 	if (table.Count(const) == 0) then
 		self.damage = 5
@@ -79,7 +79,7 @@ function ENT:DeathEffect ( ent )
 end
 
 function ENT:PhysicsUpdate()
-	
+
 	--if (self.moving == true) then
 	if (self:GetNWBool("done",false) == true) then
 		local hoverdistance = 40
@@ -92,23 +92,23 @@ function ENT:PhysicsUpdate()
 		filter = function( ent )
 			local ph = ent:GetPhysicsObject()
 			if (IsValid(ph)) then
-				if ( not ent:GetPhysicsObject() or not ent:GetPhysicsObject():IsMoveable() ) then 
+				if ( not ent:GetPhysicsObject() or not ent:GetPhysicsObject():IsMoveable() ) then
 					return true
 				end
 			end
 		end,
 		mask = MASK_WATER+MASK_SOLID
 		} )
-		
+
 		local distance = self:GetPos():Distance(tr.HitPos)
-		
+
 		if (distance < hoverdistance) then
 			force = -(distance-hoverdistance)*hoverforce
 			phys:ApplyForceCenter(Vector(0,0,-phys:GetVelocity().z*8))
 		else
 			force = 0
 		end
-		
+
 		if (force > self.delayedForce) then
 			self.delayedForce = (self.delayedForce*2+force)/3
 		else

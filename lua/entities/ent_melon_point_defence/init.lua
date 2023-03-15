@@ -1,10 +1,9 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-
 	MW_Energy_Defaults ( self )
 
 	self.modelString = "models/props_docks/channelmarker02a.mdl"
@@ -42,7 +41,7 @@ function ENT:SlowThink ( ent )
 			--------------------------------------------------------Disparar
 			local targets = 0
 			local maxtargets = 1
-	
+
 			local foundEntities = {}
 			for k, v in pairs(entities) do
 				local tr = util.TraceLine( {
@@ -59,7 +58,7 @@ function ENT:SlowThink ( ent )
 					end
 				})
 				if (tostring(tr.Entity) == '[NULL Entity]') then
-					if (string.StartWith(v:GetClass(), "ent_melonbullet")) then 
+					if (string.StartWith(v:GetClass(), "ent_melonbullet")) then
 						if((v:GetClass() ~= "ent_melonbullet_unit_shell") and (v:GetClass() ~= "ent_melonbullet_particlebeamtracer") and (v:GetClass() ~= "ent_melonbullet_flamerfuel")) then
 							table.insert(foundEntities, v)
 						end
@@ -111,7 +110,7 @@ function ENT:Shoot ( ent )
 		local effectdata = EffectData()
 		effectdata:SetScale(3000)
 		effectdata:SetMagnitude(3000)
-		effectdata:SetStart( self:GetPos() + Vector(0,0,170)) 
+		effectdata:SetStart( self:GetPos() + Vector(0,0,170))
 		effectdata:SetOrigin( targetPos )
 		util.Effect( "AirboatGunTracer", effectdata )
 		sound.Play( "ambient.electrical_random_zap_1", ent:GetPos() )

@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
@@ -19,21 +19,21 @@ function ENT:Initialize()
 	self.ai_chases = false
 
 	self.sphereRadius = 15
-	
+
 	self.careForWalls = true
-	
+
 	self.nextShot = CurTime()+2
 	self.fireDelay = 3
 
 	self.shotOffset = Vector(0,0,10)
-	
+
 	self.population = 3
-	
+
 	self.shotSound = "weapons/ar2/ar2_altfire.wav"
 	self.tracer = "AR2Tracer"
-	
+
 	self.slowThinkTimer = 1
-	
+
 	MW_Setup ( self )
 end
 
@@ -60,16 +60,16 @@ function ENT:Shoot ( ent, forcedTargetPos )
 		end
 
 		if (ent.nextShot < CurTime()) then
-			
+
 			if (IsValid(ent.targetEntity)) then
 
 				sound.Play( ent.shotSound, ent:GetPos() )
-			
+
 				local targetPos = ent.targetEntity:GetPos()
 				if (ent.targetEntity:GetVar("shotOffset") ~= nil) then
 					targetPos = targetPos+ent.targetEntity:GetVar("shotOffset")
 				end
-				
+
 				local bullet = ents.Create( "ent_melonbullet_missile" )
 				if not IsValid( bullet ) then return end -- Check whether we successfully made an entity, if not - bail
 				bullet:SetPos( ent:GetPos() + Vector(0,0,10) )

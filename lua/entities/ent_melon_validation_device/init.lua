@@ -1,18 +1,15 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-	
-
 	self.slowThinkTimer = 2
 	self:SetModel( "models/props_c17/fountain_01.mdl" )
 	self.nextSlowThink = 0
 
 	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
 	self:SetSolid( SOLID_VPHYSICS )         -- Toolbox
-
 
 	for k, v in pairs( player.GetAll() ) do
 		v:PrintMessage( HUD_PRINTTALK, "== WARNING ==" )
@@ -22,7 +19,6 @@ function ENT:Initialize()
 	end
 
 	self.nextUsage=CurTime()
-
 end
 
 function ENT:Use( pl )
@@ -31,7 +27,7 @@ function ENT:Use( pl )
 			v:PrintMessage( HUD_PRINTTALK, "test", "nameasc" )
 		end
 
-		--Important part starts here 
+		--Important part starts here
 
 		net.Start("ContraptionValidateClient")
 
@@ -44,5 +40,4 @@ function ENT:Use( pl )
 end
 
 function ENT:Think()
-
 end

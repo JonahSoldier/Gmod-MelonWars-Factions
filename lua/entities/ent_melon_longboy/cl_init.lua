@@ -14,7 +14,7 @@ function ENT:Draw()
 	    local charge = self:GetNWInt("mw_charge", 0)
 	    local maxCharge = self:GetNWInt("maxCharge", 1)
 
-	    local shots = 5 
+	    local shots = 5
 
 	    local width = 41
 

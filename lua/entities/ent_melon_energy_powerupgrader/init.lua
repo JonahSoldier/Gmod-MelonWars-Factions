@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 	MW_Energy_Defaults ( self )
@@ -29,7 +29,6 @@ function ENT:Initialize()
 	timer.Simple(0.5, function () self:ConnectToBarrack() end)
 end
 
-
 function ENT:ConnectToBarrack()
 	local entities = ents.FindInSphere( self:GetPos(), 999999 )
 		--------------------------------------------------------Disparar
@@ -51,8 +50,8 @@ end
 function ENT:Think(ent)
 	if(self.spawned) then
 		local energyCost = 35 -- max reduction
-		local powerAffected = 0 
-		
+		local powerAffected = 0
+
 		--if(mw_electric_network[self.network].energy > 0) then
 
 		if (powerAffected < mw_electric_network[self.network].energy) then
@@ -68,7 +67,7 @@ function ENT:Think(ent)
 		end
 
 		if (self:DrainPower(powerAffected)) then
-			if (self.currentPowerEffect ~= powerAffected) then			
+			if (self.currentPowerEffect ~= powerAffected) then
 				MW_UpdatePopulation(self.currentPowerEffect-powerAffected, self:GetNWInt("mw_melonTeam",-1))
 			end
 
@@ -84,7 +83,7 @@ function ENT:Think(ent)
 	end
 
 	self:NextThink( CurTime()+1 )
-	
+
 	return true
 end
 
@@ -104,7 +103,7 @@ function ENT:OnRemove()
 	if (self.currentPowerEffect ~= 0) then
 		MW_UpdatePopulation(self.currentPowerEffect, self:GetNWInt("mw_melonTeam",-1))
 	end
-end 
+end
 
 
 
@@ -112,8 +111,8 @@ end
 
 /*
 
-			if (self:DrainPower(energyCost)) then	
-	
+			if (self:DrainPower(energyCost)) then
+
 				self:SetNWString("message", "Reducing power.")
 
 				if not self.powerReduced then
@@ -131,7 +130,7 @@ end
 					end
 				end
 			end
-		else				
+		else
 
 			if self.powerReduced then
 				--mw_teamUnits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamUnits[self:GetNWInt("mw_melonTeam", 0)]+15

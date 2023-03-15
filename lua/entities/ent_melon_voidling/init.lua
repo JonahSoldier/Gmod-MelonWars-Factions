@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
@@ -19,7 +19,7 @@ function ENT:Initialize()
 	self.maxHP = 2
 	self.damageDeal = 20
 	self.materialString = "phoenix_storms/wire/pcb_blue"
-	self.buildingDamageMultiplier = 0.5 
+	self.buildingDamageMultiplier = 0.5
 
 	self.captureSpeed = 0.1
 
@@ -35,7 +35,6 @@ function ENT:Initialize()
 end
 
 function ENT:SkinMaterial()
-
 end
 
 function ENT:SlowThink ( ent )
@@ -52,7 +51,7 @@ function ENT:SlowThink ( ent )
 		ent:SetNWEntity("followEntity", ent)
 		ent.damage = 0.1
 	end
-	
+
 	if(self.targetEntity ~= nil ) then
 		if(self.targetEntity:GetClass() == "ent_melon_teslarods") then
 			self:LoseTarget()
@@ -94,7 +93,7 @@ function ENT:Explode()
 				if (self.forceExplode or tostring( self.targetEntity ) ~= "[NULL Entity]") then
 					--allows this to damage base props, self.damageDeal is divided by 2 so it does half damage to them.
 					if (self.targetEntity.Base == "ent_melon_prop_base") then
-						self.targetEntity:SetNWFloat( "health", self.targetEntity:GetNWFloat( "health", 1)-self.damageDeal/2) 
+						self.targetEntity:SetNWFloat( "health", self.targetEntity:GetNWFloat( "health", 1)-self.damageDeal/2)
 						if (self.targetEntity:GetNWFloat( "health", 1) <= 0) then
 							PropDie( self.targetEntity )
 						end

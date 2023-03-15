@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
@@ -10,16 +10,16 @@ function ENT:Initialize()
 	self.modelString = "models/props_c17/substation_transformer01d.mdl"
 
 	self.moveType = MOVETYPE_NONE
-	
+
 	self.slowThinkTimer = 2.5
 
 	self.canMove = false
 	self.canShoot = false
 
 	self.range = 250
-	
+
 	self.population = 1
-	
+
 	self.shotSound = "weapons/stunstick/stunstick_impact1.wav"
 
 	self.connection = nil
@@ -114,7 +114,7 @@ function ENT:Shoot ( ent )
 			local effectdata = EffectData()
 			effectdata:SetScale(3000)
 			effectdata:SetMagnitude(3000)
-			effectdata:SetStart( self:GetPos() + Vector(0,0,45)) 
+			effectdata:SetStart( self:GetPos() + Vector(0,0,45))
 			effectdata:SetOrigin( targetPos )
 			util.Effect( "AirboatGunTracer", effectdata )
 			sound.Play( ent.shotSound, ent:GetPos() )

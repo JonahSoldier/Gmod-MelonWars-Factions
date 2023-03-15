@@ -1,10 +1,9 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-
 	MW_Energy_Defaults ( self )
 
 	self.modelString = "models/props_c17/FurnitureBoiler001a.mdl"
@@ -17,17 +16,17 @@ function ENT:Initialize()
 	--self.tracer = "AR2Tracer"
 	--self:SetPos(self:GetPos()+Vector(0,0,40))
 	self.shotOffset = Vector(0,0,30)
-	
+
 	self.canMove = false
 	self.canBeSelected = false
 	self.moveType = MOVETYPE_NONE
-	
+
 	self.slowThinkTimer = 0.5
 	self.capacity = 0
 	self:SetNWVector("energyPos", Vector(0,0,20))
 
 	MW_Energy_Setup ( self )
-	
+
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 	self:GetPhysicsObject():EnableMotion(false)
 end
@@ -90,7 +89,7 @@ function ENT:SlowThink ( ent )
 				local effectdata = EffectData()
 				effectdata:SetScale(3000)
 				effectdata:SetMagnitude(3000)
-				effectdata:SetStart( self:GetPos() + Vector(0,0,45)) 
+				effectdata:SetStart( self:GetPos() + Vector(0,0,45))
 				effectdata:SetOrigin( v:GetPos() )
 				util.Effect( "AirboatGunTracer", effectdata )
 				sound.Play( ent.shotSound, ent:GetPos() )
@@ -102,7 +101,7 @@ function ENT:SlowThink ( ent )
 end
 
 function ENT:Shoot ( ent )
-	
+
 end
 
 function ENT:DeathEffect ( ent )

@@ -9,7 +9,7 @@ function ENT:Initialize()
 	self.modelString = "models/props_junk/watermelon01.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
-	
+
 	self.maxHP = 10
 	self.speed = 90
 

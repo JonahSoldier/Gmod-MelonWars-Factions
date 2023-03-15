@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 local melons = {}
 local melonsCount = 0
@@ -18,13 +18,12 @@ function ENT:Initialize()
 	self:SetNoDraw( true )
 end
 
-
 function ENT:Think ( ent )
 	if (self.sizeMultiplier < 0.5 ) then
 		if ( IsValid( self.moreFlames ) ) then
 			self.moreFlames:Remove()
-		end	
-		
+		end
+
 		self:Remove()
 	end
 
@@ -34,7 +33,7 @@ function ENT:Think ( ent )
 		end
 
 		if (self.sizeMultiplier > 3.5) then
-			if ( IsValid( self.moreFlames ) ) then 
+			if ( IsValid( self.moreFlames ) ) then
 				self.moreFlames:Remove()
 			end
 
@@ -46,7 +45,7 @@ function ENT:Think ( ent )
 			self.moreFlames:SetParent(self)
 
 			self.moreFlames:SetLocalPos(Vector(0,0,0))
-	
+
 			self.moreFlames:Spawn()
 
 			self.moreFlames:SetNoDraw( true )
@@ -54,7 +53,7 @@ function ENT:Think ( ent )
 			self.moreFlames:SetModelScale( self.sizeMultiplier/2, 0.00000001 )
 			self.moreFlames:SetCollisionGroup( COLLISION_GROUP_IN_VEHICLE )
 		else
-			if ( IsValid( self.moreFlames ) ) then 
+			if ( IsValid( self.moreFlames ) ) then
 				self.moreFlames:Remove()
 			end
 		end

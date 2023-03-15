@@ -1,6 +1,6 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
+
 include('shared.lua')
 
 function ENT:Initialize()
@@ -12,7 +12,7 @@ function ENT:Initialize()
 	--self.Angles = Angle(0,0,0)
 	--self:SetPos(self:GetPos()+Vector(0,0,-25))
 	self.shotOffset = Vector(0,0,30)
-	
+
 	self:BarrackInitialize()
 	self.population = 1
 	self:SetNWInt("maxunits", 5)

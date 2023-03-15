@@ -1,25 +1,24 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-
 	MW_Energy_Defaults ( self )
 
 	self.modelString = "models/props_phx/wheels/747wheel.mdl"
 
 	self.moveType = MOVETYPE_NONE
-	
+
 	self.slowThinkTimer = 5
 
 	self.canMove = false
 	self.canShoot = false
 
 	self.range = 750
-	
+
 	self.population = 1
-	
+
 	self.shotSound = "items/medshot4.wav"
 
 	self.connection = nil
@@ -103,7 +102,7 @@ function ENT:SlowThink ( ent )
 				local effectdata = EffectData()
 				effectdata:SetScale(1)
 				effectdata:SetMagnitude(1)
-				effectdata:SetStart( ent:GetPos() + Vector(0,0,45)) 
+				effectdata:SetStart( ent:GetPos() + Vector(0,0,45))
 				effectdata:SetOrigin( v:GetPos() )
 				util.Effect( "ToolTracer", effectdata )
 				sound.Play( ent.shotSound, ent:GetPos() )
@@ -151,13 +150,13 @@ function ENT:SlowThink ( ent )
 			end
 		end
 	end
-	
+
 	--if (IsValid(ent.forcedTargetEntity)) then
 	--	ent.targetEntity = ent.forcedTargetEntity
 	--else
 	--	ent.forcedTargetEntity = nil
 	--end
-	
+
 	if (ent.targetEntity ~= nil) then
 		----------------------------------------------------------------------Perder target
 		----------------------------------------por que no existe

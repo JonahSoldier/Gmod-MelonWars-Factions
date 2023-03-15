@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
@@ -29,9 +29,9 @@ function ENT:Initialize()
 	self.process = CurTime()
 
 	self.damping = 4
-	
+
 	MW_Setup ( self )
-	
+
 	self:GetPhysicsObject():EnableMotion(false)
 end
 

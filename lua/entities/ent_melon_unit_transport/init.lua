@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
@@ -110,20 +110,20 @@ function ENT:FreeUnits()
 				if not IsValid( newMarine ) then return end -- Check whether we successfully made an entity, if not - bail
 
 				newMarine:SetPos(pos)
-				
+
 				--sound.Play( "garrysmod/content_downloaded.wav", trace.HitPos, 60, 90, 1 )
 				--sound.Play( "garrysmod/content_downloaded.wav", pl:GetPos(), 60, 90, 1 )
 				mw_melonTeam = _team
 
 				newMarine:Spawn()
-				
+
 				newMarine:Ini(_team, false)
 				newMarine.fired = true
-				
+
 				local pl = self:GetOwner()
 
 				pl.mw_melonTeam = _team
-				
+
 				newMarine:SetOwner(pl)
 
 				newMarine.value = value
@@ -132,7 +132,7 @@ function ENT:FreeUnits()
 				if (energy > 0) then
 					newMarine:SetNWInt("mw_charge", energy)
 				end
-				
+
 				undo.Create("Melon Marine")
 				 undo.AddEntity( newMarine )
 				 undo.SetPlayer( pl)
@@ -150,7 +150,7 @@ function ENT:FreeUnits()
 		self:SetNWInt("count", 0)
 		self.canEatUnits = false
 		sound.Play( "doors/door_metal_medium_open1.wav", self:GetPos() )
-		
+
 		local originalColor = self:GetColor()
 		self:SetColor(Color(self:GetColor().r/2, self:GetColor().g/2, self:GetColor().b/2, 255))
 		timer.Simple(10, function()

@@ -1,10 +1,10 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-	
+
 	MW_Defaults ( self )
 
 	self.birth = CurTime()
@@ -12,22 +12,22 @@ function ENT:Initialize()
 	self.modelString = "models/maxofs2d/hover_propeller.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
-	
+
 	self.population = 0
-	
+
 	self:SetNWBool("done",false)
-	
+
 	self.delayedForce = 0
-	
+
 	self.damping = 1
 
 	self.captureSpeed = 0
-	
+
 	self.maxHP = 25
 	self.shotOffset = Vector(0,0,15)
-	
+
 	MW_Setup ( self )
-	
+
 end
 
 function ENT:ModifyColor()
@@ -36,7 +36,7 @@ end
 
 function ENT:SlowThink ( ent )
 	--MW_UnitDefaultThink ( ent )
-	
+
 	--if ((ent:GetPos():Distance(ent.targetPos)) < 160) then
 	--	self.moving = false
 	--end
@@ -47,7 +47,7 @@ function ENT:Shoot ( ent )
 end
 
 function ENT:Update (ent)
-	
+
 end
 
 function ENT:Think ()
@@ -59,7 +59,7 @@ function ENT:Think ()
 			MW_Die( self )
 		end
 	end
-		
+
 	local const = constraint.FindConstraints( self, "Weld" )
 	if (table.Count(const) == 0) then
 		self.damage = 5
@@ -81,7 +81,7 @@ function ENT:DeathEffect ( ent )
 end
 
 function ENT:PhysicsUpdate()
-	
+
 	--if (self.moving == true) then
 	if (self:GetNWBool("done",false) == true) then
 		local hoverdistance = 200
@@ -102,16 +102,16 @@ function ENT:PhysicsUpdate()
 		end,
 		mask = MASK_WATER+MASK_SOLID
 		} )
-		
+
 		local distance = self:GetPos():Distance(tr.HitPos)
-		
+
 		if (distance < hoverdistance) then
 			force = -(distance-hoverdistance)*hoverforce
 			phys:ApplyForceCenter(Vector(0,0,-phys:GetVelocity().z*8))
 		else
 			force = 0
 		end
-		
+
 		if (force > self.delayedForce) then
 			self.delayedForce = (self.delayedForce*2+force)/3
 		else
@@ -136,7 +136,7 @@ function ENT:PhysicsUpdate()
 
 		self:DefaultPhysicsUpdate()
 	end
-	
+
 	self:Align(self:GetAngles():Up(), Vector(0,0,1), 10000)
 	self:StopAngularVelocity(0.3)
 end

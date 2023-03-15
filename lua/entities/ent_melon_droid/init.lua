@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
@@ -10,7 +10,7 @@ function ENT:Initialize()
 	self.modelString = "models/props_c17/utilityconnecter006c.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
-	
+
 	self.shotSound = "weapons/stunstick/stunstick_impact2.wav"
 
 	self.maxHP = 40

@@ -14,15 +14,15 @@ function ENT:Initialize()
 	self.damageDeal = 2
 	self.maxHP = 54
 	self.range = 250
-	
+
 	self.population = 2
 	self.buildingDamageMultiplier = 0.8
 
 	self.sphereRadius = 9
-	
+
 	self.shotSound = "weapons/ar1/ar1_dist2.wav"
 	self.tracer = "AR2Tracer"
-	
+
 	self.slowThinkTimer = 1
 	self.spinup = 3
 	self.maxspinup = 4
