@@ -58,6 +58,7 @@ util.AddNetworkString( "MWBrute" )
 util.AddNetworkString( "MWColourMod" )
 util.AddNetworkString( "SetMWConvar" )
 util.AddNetworkString( "MWReadyUp" )
+util.AddNetworkString( "MW_ClientModifySpawnTime" )
 
 net.Receive( "SetMWConvar", function( len, pl )
 	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()

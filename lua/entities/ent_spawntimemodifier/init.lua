@@ -25,27 +25,28 @@ function ENT:Think()
 end
 ]]
 function ENT:Use( pl )
-	if self.nextUsage < CurTime() then
-		for _, v in ipairs( player.GetAll() ) do
-			v:PrintMessage( HUD_PRINTTALK, "== Buildspeed modifier x1.33 activated by " .. tostring(pl) .. " ==" )
-		end
-		--[[
-		net.Start("MWClient_modifySpawnTime") -- There is no receiver for MWClient_modifySpawnTime!
-			net.WriteFloat(1 / 3)
-		net.Send(pl)
-		]]
-		table.insert(self.affectedPlayers, pl)
+	if self.nextUsage >= CurTime() then return end
 
-		self.nextUsage = CurTime() + 3
+	for _, v in ipairs( player.GetAll() ) do
+		v:PrintMessage( HUD_PRINTTALK, "== Buildspeed modifier x1.33 activated by " .. pl:Nick() .. " ==" )
 	end
+
+	net.Start( "MW_ClientModifySpawnTime" )
+		net.WriteFloat( 1 / 3 )
+	net.Send( pl )
+
+	table.insert( self.affectedPlayers, pl )
+
+	self.nextUsage = CurTime() + 3
 end
 
 function ENT:OnRemove()
-	--[[ for _, v in pairs(self.affectedPlayers) do -- There is no receiver for MWClient_modifySpawnTime!
-		net.Start("MWClient_modifySpawnTime")
-			net.WriteFloat(0)
-		net.Send(v)
-	end ]]
+	for _, v in ipairs( self.affectedPlayers ) do
+		net.Start( "MW_ClientModifySpawnTime" )
+			net.WriteFloat( 0 )
+		net.Send( v )
+	end
+
 	for _, v in ipairs( player.GetAll() ) do
 		v:PrintMessage( HUD_PRINTTALK, "== Buildspeed modifier x1.33 removed! ==" )
 	end

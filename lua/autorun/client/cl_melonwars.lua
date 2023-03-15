@@ -211,7 +211,7 @@ net.Receive( "MWColourMod", function( _, pl )
 	DrawColorModify(LocalPlayer().MWColourModifierTable)
 end)
 
-net.Receive( "MelonWars_ClientModifySpawnTime", function( _, pl )
+net.Receive( "MW_ClientModifySpawnTime", function( _, pl )
 	local spawnTimeChange = net.ReadFloat()
 	LocalPlayer().spawnTimeMult = 1 + spawnTimeChange
 end )
