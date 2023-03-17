@@ -91,6 +91,7 @@ net.Receive( "MWReadyUp", function()
 			end
 		end )
 	end
+
 	timer.Simple( 5, function ()
 		RunConsoleCommand( "mw_admin_playing", 1 )
 		RunConsoleCommand( "mw_admin_move_any_team", 0 )
@@ -99,10 +100,10 @@ net.Receive( "MWReadyUp", function()
 		RunConsoleCommand( "mw_admin_spawn_time", 1 )
 		RunConsoleCommand( "mw_admin_immortality", 0 )
 		RunConsoleCommand( "mw_reset_credits" )
+		net.Start( "RestartQueue" )
+		net.Broadcast()
 
 		for _, v in ipairs( player.GetAll() ) do
-			net.Start( "RestartQueue" )
-			net.Send( v )
 			sound.Play( "garrysmod/content_downloaded.wav", v:GetPos() + Vector( 0, 0, 45 ), 100, 40, 1 )
 			v:PrintMessage( HUD_PRINTCENTER, "The MelonWars match has begun!" )
 			v:PrintMessage( HUD_PRINTTALK, "== The MelonWars match has begun! ==" )
