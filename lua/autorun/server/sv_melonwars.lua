@@ -20,7 +20,7 @@ util.AddNetworkString( "SpawnBaseGrandWar" )
 util.AddNetworkString( "SpawnBaseUnit" )
 util.AddNetworkString( "SpawnCapturePoint" )
 util.AddNetworkString( "SpawnOutpost" )
-util.AddNetworkString( "SpawnWaterTank" )
+util.AddNetworkString( "MW_SpawnWaterTank" )
 util.AddNetworkString( "MW_SpawnProp" )
 util.AddNetworkString( "StartGame" )
 util.AddNetworkString( "SandboxMode" )
@@ -28,8 +28,7 @@ util.AddNetworkString( "SandboxMode" )
 util.AddNetworkString( "ToggleBarracks" )
 util.AddNetworkString( "MW_Activate" )
 util.AddNetworkString( "PropellerReady" )
-util.AddNetworkString( "UseWaterTank" )
-util.AddNetworkString( "UseLargeWaterTank" )
+util.AddNetworkString( "MW_UseWaterTank" )
 
 util.AddNetworkString( "RestartQueue" )
 util.AddNetworkString( "SellEntity" )
@@ -347,41 +346,18 @@ net.Receive( "PropellerReady", function( len, pl )
 	end
 end )
 
-net.Receive( "UseWaterTank", function( len, pl )
+net.Receive( "MW_UseWaterTank", function( _, pl )
 	local ent = net.ReadEntity()
 	local _team = ent:GetNWInt("capTeam", -1)
-	mw_teamCredits[_team] = mw_teamCredits[_team] + 1000
-	for k, v in pairs( player.GetAll() ) do
-		if (v:GetInfo("mw_team") == tostring(_team)) then
-			net.Start("MW_TeamCredits")
-				net.WriteInt(mw_teamCredits[_team] ,32)
-			net.Send(v)
-			v:PrintMessage( HUD_PRINTTALK, "Received 1000 water" )
-		end
-	end
+	if _team ~= pl:GetInfoNum( "mw_team", -1 ) then return end
 
-	local effectData1 = EffectData()
-	effectData1:SetOrigin( ent:GetPos() )
-	for i = 0, 10 do
-		util.Effect( "balloon_pop", effectData1 )
-	end
-	local effectData2 = EffectData()
-	effectData2:SetOrigin( ent:GetPos())
-	effectData2:SetScale(10)
-	util.Effect( "watersplash", effectData2 )
-	ent:Remove()
-end )
-
-net.Receive( "UseLargeWaterTank", function( len, pl )
-	local ent = net.ReadEntity()
-	local _team = ent:GetNWInt("capTeam", -1)
-	mw_teamCredits[_team] = mw_teamCredits[_team] + 10000
+	mw_teamCredits[_team] = mw_teamCredits[_team] + ent.waterVal
 	for _, v in ipairs( player.GetAll() ) do
-		if (v:GetInfo("mw_team") == tostring(_team)) then
-			net.Start("MW_TeamCredits")
-				net.WriteInt(mw_teamCredits[_team] ,32)
-			net.Send(v)
-			v:PrintMessage( HUD_PRINTTALK, "Received 10000 water" )
+		if v:GetInfo( "mw_team" ) == tostring( _team ) then
+			net.Start( "MW_TeamCredits" )
+				net.WriteInt( mw_teamCredits[_team], 32 )
+			net.Send( v )
+			v:PrintMessage( HUD_PRINTTALK, "== Received " .. ent.waterVal .. " water! ==" )
 		end
 	end
 
@@ -1125,12 +1101,13 @@ net.Receive( "SpawnOutpost", function( len, pl )
 	e:Spawn()
 end )
 
-net.Receive( "SpawnWaterTank", function( len, pl )
+net.Receive( "MW_SpawnWaterTank", function( _, pl )
 	local trace = net.ReadTable()
-	if ( IsValid( trace.Entity ) and trace.Entity.Base == "ent_melon_base" ) then return end
-	local e = ents.Create("ent_melon_water_tank")
-	e:SetPos(trace.HitPos)
+	if IsValid( trace.Entity ) and trace.Entity.Base == "ent_melon_base" then return end
+	local e = ents.Create( "ent_melon_water_tank" )
+	e:SetPos( trace.HitPos )
 	e:Spawn()
+	e.waterVal = pl:GetInfoNum( "mw_water_tank_value", 1000 )
 end )
 
 net.Receive( "SellEntity", function( len, pl )

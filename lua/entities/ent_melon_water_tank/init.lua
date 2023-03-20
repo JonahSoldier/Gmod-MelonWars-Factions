@@ -1,9 +1,9 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 
-include("shared.lua")
+include( "shared.lua" )
 
-mw_team_colors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(255,50,255,255),Color(100,255,255,255),Color(255,120,0,255),Color(10,30,70,255)}
+mw_team_colors = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(255,50,255,255),Color(100,255,255,255),Color(255,120,0,255),Color(10,30,70,255)}
 
 function ENT:Initialize()
 	self.slowThinkTimer = 2
@@ -12,7 +12,7 @@ function ENT:Initialize()
 	self:SetModel( "models/props_wasteland/laundry_washer001a.mdl" )
 	--self:SetAngles(Angle(90,0,0))
 	--self:SetPos(self:GetPos()+Vector(0,0,25))
-	self:SetMaterial("models/shiny")
+	self:SetMaterial( "models/shiny" )
 	self.captured = {0,0,0,0,0,0,0,0}
 
 	for i = 1, 8 do
@@ -25,15 +25,13 @@ function ENT:Initialize()
 	self:SetMoveType( MOVETYPE_NONE )
 	self:GetPhysicsObject():EnableMotion(false)
 	--local weld = constraint.Weld( self, game.GetWorld(), 0, 0, 0, true , false )
-end
 
-function ENT:OnDuplicated( entTable )
-	--self:SetPos(self:GetPos()-Vector(0,0,25))
+	self.waterVal = 1000
 end
 
 function ENT:Think()
-	if cvars.Bool("mw_admin_cutscene") then return end
-	if not cvars.Bool("mw_admin_playing") then return end
+	if cvars.Bool( "mw_admin_cutscene" ) then return end
+	if not cvars.Bool( "mw_admin_playing" ) then return end
 	if CurTime() <= self.nextSlowThink then return end
 
 	self.nextSlowThink = CurTime() + self.slowThinkTimer
@@ -58,7 +56,7 @@ function ENT:SlowThink()
 
 	local capturing = {0,0,0,0,0,0,0,0}
 
-	local foundEnts = ents.FindInSphere(self:GetPos(), 200 )
+	local foundEnts = ents.FindInSphere( self:GetPos(), 200 )
 	for _, v in ipairs( foundEnts ) do
 		if v.Base == "ent_melon_base" and v:GetNWInt("mw_melonTeam", 0) >= 1 then
 			capturing[v:GetNWInt("mw_melonTeam", 0)] = capturing[v:GetNWInt("mw_melonTeam", 0)] + v.captureSpeed
@@ -74,7 +72,7 @@ function ENT:SlowThink()
 	for i = 1, 8 do
 		local capture = math.Round(math.sqrt(capturing[i])) * 4
 		--Si hay gente capturando
-		if (capturing[i] > 0) then
+		if capturing[i] > 0 then
 			local othersHaveCapture = false
 			for ii = 1, 8 do
 				if ii ~= i and self.captured[ii] > 0 then --Si alguien más estaba capturando
@@ -99,7 +97,7 @@ function ENT:SlowThink()
 		totalCapture = totalCapture + self.captured[i]
 	end
 
-	if (totalCapture == 100) then
+	if totalCapture == 100 then
 		for i = 1, 8 do
 			if (self.captured[i] == totalCapture) then
 				self:GetCaptured(i, self)
@@ -107,11 +105,11 @@ function ENT:SlowThink()
 		end
 	end
 
-	if (totalCapture == 0) then
+	if totalCapture == 0 then
 		self:GetCaptured(0, self)
 	end
 
-	if (self.captured[self.capTeam] == 0) then
+	if self.captured[self.capTeam] == 0 then
 		self:GetCaptured(0, self)
 	end
 
@@ -122,7 +120,7 @@ end
 
 function ENT:GetCaptured(capturingTeam, ent)
 	local newColor = Color(255,255,255,255)
-	if (capturingTeam > 0) then newColor = mw_team_colors[capturingTeam] end
+	if capturingTeam > 0 then newColor = mw_team_colors[capturingTeam] end
 	--[[if (capturingTeam == 1) then
 		newColor = Color(255,50,50,255)
 	end

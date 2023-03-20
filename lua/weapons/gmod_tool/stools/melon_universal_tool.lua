@@ -28,6 +28,8 @@ CreateClientConVar( "mw_team", "1", 1, true )
 TOOL.ClientConVar[ "mw_team" ] = 1
 CreateClientConVar( "mw_contraption_name", "default", 0, false )
 TOOL.ClientConVar[ "mw_contraption_name" ] = "default"
+CreateClientConVar( "mw_water_tank_value", "1000", false, true, "Sets the value of a water tank upon its creation.", 0, 50000 )
+TOOL.ClientConVar[ "mw_water_tank_value" ] = 1000
 
 CreateConVar( "mw_enable_skin", "1", FCVAR_ARCHIVE + FCVAR_USERINFO, "Enable or disable your custom skin." )
 TOOL.ClientConVar[ "mw_enable_skin" ] = "1"
@@ -2208,21 +2210,21 @@ local function _CreatePanel()
 			label:SetPos(200, 220)
 			label:SetSize(600,40)
 			label:SetFontInternal( "Trebuchet24" )
-			label:SetText("Teams are locked")
+			label:SetText("Teams are currently locked!")
 			return
 		end
 
 		local label = vgui.Create("DLabel", pl.panel)
-		label:SetPos(20, 200)
+		label:SetPos(20, 150)
 		label:SetSize(200,40)
 		label:SetFontInternal( "DermaLarge" )
-		label:SetText("Select team:")
+		label:SetText("Select Team:")
 
 		local selection = vgui.Create("DPanel", pl.panel)
 		if (cvars.Number("mw_team") ~= 0) then
-			selection:SetPos( 135 + cvars.Number( "mw_team" ) * 45, 195 )
+			selection:SetPos( 135 + cvars.Number( "mw_team" ) * 45, 145 )
 		else
-			selection:SetPos( 180, 260 )
+			selection:SetPos( 180, 210 )
 		end
 		selection:SetSize(50,50)
 		selection.Paint = function(s, w, h)
@@ -2232,11 +2234,11 @@ local function _CreatePanel()
 		for i = 1, 8 do
 			local button = vgui.Create( "DButton", pl.panel )
 			button:SetSize( 40, 40 )
-			button:SetPos( 140 + i * 45, 200 )
+			button:SetPos( 140 + i * 45, 150 )
 			button:SetText( "" )
 			function button:DoClick()
 				pl:ConCommand( "mw_team " .. tostring( i ) )
-				selection:SetPos( 135 + i * 45, 195 )
+				selection:SetPos( 135 + i * 45, 145 )
 
 				net.Start( "MW_UpdateClientInfo" )
 					net.WriteInt( i, 8 )
@@ -2250,7 +2252,7 @@ local function _CreatePanel()
 
 		------------------- Factions
 		local label = vgui.Create("DLabel", pl.panel)
-		label:SetPos(20, 325)
+		label:SetPos(20, 275)
 		label:SetSize(200,40)
 		label:SetFontInternal( "DermaLarge" )
 		label:SetText("Faction:")
@@ -2263,14 +2265,14 @@ local function _CreatePanel()
 
 		local code = cvars.String("mw_code")
 
-		factionSelection:SetPos(180, 320)
+		factionSelection:SetPos(180, 270)
 		local button = vgui.Create("DButton", pl.panel)
 		button:SetSize(40,40)
-		button:SetPos(185,325)
+		button:SetPos(185,275)
 		button:SetText("-")
 		function button:DoClick()
 			pl:ConCommand("mw_code none")
-			factionSelection:SetPos(180, 320)
+			factionSelection:SetPos(180, 270)
 		end
 		button.Paint = function(s, w, h)
 			draw.RoundedBox( 6, 0, 0, w, h, Color(90,90,90) )
@@ -2282,11 +2284,11 @@ local function _CreatePanel()
 		end
 		local button = vgui.Create("DButton", pl.panel)
 		button:SetSize(40,40)
-		button:SetPos(185+45,325)
+		button:SetPos(185+45,275)
 		button:SetText("F")
 		function button:DoClick()
 			pl:ConCommand("mw_code full")
-			factionSelection:SetPos(180+45, 320)
+			factionSelection:SetPos(180+45, 270)
 		end
 		button.Paint = function(s, w, h)
 			draw.RoundedBox( 6, 0, 0, w, h, Color(255,240,60) )
@@ -2294,15 +2296,15 @@ local function _CreatePanel()
 		end
 
 		if code == "void" then
-			factionSelection:SetPos( 270, 320 )
+			factionSelection:SetPos( 270, 270 )
 		end
 		local button = vgui.Create( "DButton", pl.panel )
 		button:SetSize( 40, 40 )
-		button:SetPos( 275, 325 )
+		button:SetPos( 275, 275 )
 		button:SetText("V")
 		function button:DoClick()
 			pl:ConCommand( "mw_code void" )
-			factionSelection:SetPos( 270, 320 )
+			factionSelection:SetPos( 270, 270 )
 		end
 		button.Paint = function(s, w, h)
 			draw.RoundedBox( 6, 0, 0, w, h, Color(210,30,240) )
@@ -2310,15 +2312,15 @@ local function _CreatePanel()
 		end
 
 		if (code == "prot") then
-			factionSelection:SetPos(180+135, 320)
+			factionSelection:SetPos(180+135, 270)
 		end
 		local button = vgui.Create("DButton", pl.panel)
 		button:SetSize(40,40)
-		button:SetPos(185 + 135,325)
+		button:SetPos(185 + 135,275)
 		button:SetText("P")
 		function button:DoClick()
 			pl:ConCommand("mw_code prot")
-			factionSelection:SetPos(180 + 135, 320)
+			factionSelection:SetPos(180 + 135, 270)
 		end
 		button.Paint = function(s, w, h)
 			draw.RoundedBox( 6, 0, 0, w, h, Color(20,170,230) )
@@ -2328,18 +2330,18 @@ local function _CreatePanel()
 
 		if not pl:IsAdmin() then return end
 		local label = vgui.Create("DLabel", pl.panel)
-		label:SetPos(20, 265)
+		label:SetPos(20, 215)
 		label:SetSize(200,40)
 		label:SetFontInternal( "DermaLarge" )
-		label:SetText("Gray team:")
+		label:SetText("Gray Team:")
 
 		local button = vgui.Create("DButton", pl.panel)
 		button:SetSize( 40, 40 )
-		button:SetPos( 185, 265 )
+		button:SetPos( 185, 215 )
 		button:SetText("")
 		function button:DoClick()
 			pl:ConCommand( "mw_team " .. tostring( 0 ) )
-			selection:SetPos( 180, 260 )
+			selection:SetPos( 180, 210 )
 
 			net.Start("MW_UpdateClientInfo")
 				net.WriteInt(0, 8)
@@ -2479,7 +2481,7 @@ local function _CreatePanel()
 			button:SetSize(200,40)
 			button:SetPos(20,y)
 			button:SetFont("CloseCaption_Normal")
-			button:SetText("Sandbox mode")
+			button:SetText("Sandbox Mode")
 			function button:DoClick()
 				pl:ConCommand("mw_admin_playing 1")
 				pl:ConCommand("mw_admin_locked_teams 0")
@@ -2504,21 +2506,20 @@ local function _CreatePanel()
 			label:SetText("[Set preferences for messing around]")
 			y = y + 80
 
-
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(20, y)
 			label:SetSize(300,40)
 			label:SetFontInternal( "DermaLarge" )
-			label:SetText("Game control Options")
+			label:SetText("Game Control Options")
 
 			y = y + 40
-			_MakeCheckbox( 20, y, scroll, "PAUSE", "mw_admin_playing", "[Stops units, income and controls]", true )
+			_MakeCheckbox( 20, y, scroll, "Pause", "mw_admin_playing", "[Stops units, income and controls]", true )
 
 			y = y + 40
 			_MakeCheckbox( 20, y, scroll, "Lock Teams", "mw_admin_locked_teams", "[Prevent players from changing team or faction]", false )
 
 			y = y + 40
-			_MakeCheckbox( 20, y, scroll, "Extra unit options", "mw_admin_bonusunits", "[Balance not guaranteed]", false )
+			_MakeCheckbox( 20, y, scroll, "Extra Unit Options", "mw_admin_bonusunits", "[Balance not guaranteed]", false )
 
 			y = y + 80
 
@@ -2526,7 +2527,7 @@ local function _CreatePanel()
 			label:SetPos(15, y)
 			label:SetSize(200,60)
 			label:SetFontInternal( "DermaLarge" )
-			label:SetText( "Spawn Normal\nBase" )
+			label:SetText( "Spawn\nNormal Base" )
 			for i = 1, 8 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(40,40)
@@ -2607,13 +2608,13 @@ local function _CreatePanel()
 			y = y + 80
 
 			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(15, y)
+			label:SetPos(20, y)
 			label:SetSize(300,60)
 			label:SetFontInternal( "Trebuchet24" )
 			label:SetText( "Spawn Cap Point" )
 			local button = vgui.Create("DButton", scroll)
 			button:SetSize(40,40)
-			button:SetPos(190,y)
+			button:SetPos(200,y)
 			button:SetText("")
 			function button:DoClick()
 				pl:ConCommand("mw_action 8")
@@ -2628,13 +2629,13 @@ local function _CreatePanel()
 			y = y + 60
 
 			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(15, y)
+			label:SetPos(20, y)
 			label:SetSize(300,60)
 			label:SetFontInternal( "Trebuchet24" )
 			label:SetText( "Spawn Outpost" )
 			local button = vgui.Create("DButton", scroll)
 			button:SetSize(40,40)
-			button:SetPos(190,y)
+			button:SetPos(200,y)
 			button:SetText("")
 			function button:DoClick()
 				pl:ConCommand("mw_action 9")
@@ -2649,13 +2650,13 @@ local function _CreatePanel()
 			y = y + 60
 
 			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(15, y)
+			label:SetPos(20, y)
 			label:SetSize(300,60)
 			label:SetFontInternal( "Trebuchet24" )
 			label:SetText( "Spawn Water Tank" )
 			local button = vgui.Create("DButton", scroll)
 			button:SetSize(40,40)
-			button:SetPos(190,y)
+			button:SetPos(200,y)
 			button:SetText("")
 			function button:DoClick()
 				pl:ConCommand("mw_action 10")
@@ -2669,6 +2670,39 @@ local function _CreatePanel()
 
 			y = y + 80
 
+			local labelTankVal = vgui.Create( "DLabel", scroll )
+			labelTankVal:SetPos( 20, y - 20 )
+			labelTankVal:SetSize( 200, 80 )
+			labelTankVal:SetFontInternal( "DermaLarge" )
+			labelTankVal:SetText( "Water Tank\nValue: " .. GetConVar( "mw_water_tank_value" ):GetInt() )
+			local default = vgui.Create( "DPanel", scroll )
+			default:SetSize( 360, 60 )
+			default:SetPos( 200, y - 10 )
+			default.Paint = function( s, w, h )
+				draw.RoundedBox( 0, 108, 0, 12, h, Color( 10, 150, 10 ) )
+				draw.RoundedBox( 0, 0, 0, 72, h, Color( 10, 40, 80 ) )
+				draw.RoundedBox( 0, 180, 0, 180, h, Color( 80, 10, 10 ) )
+			end
+			local sliderTankVal = vgui.Create( "DPanel", scroll )
+			sliderTankVal:SetSize( GetConVar( "mw_water_tank_value" ):GetInt() * 0.12, 40 )
+			sliderTankVal:SetPos( 200, y )
+			for i = 1, 30 do
+				local buttonTankVal = vgui.Create( "DButton", scroll )
+				buttonTankVal:SetSize( 15, 40 )
+				buttonTankVal:SetPos( 185 + i * 12, y )
+				buttonTankVal:SetText( "" )
+				function buttonTankVal:DoClick()
+					pl:ConCommand( "mw_water_tank_value " .. tostring( i * 100 ) )
+					sliderTankVal:SetSize( i * 12, 40 )
+					labelTankVal:SetText( "Water Tank\nValue: " .. tostring( i * 100 ) )
+				end
+				buttonTankVal.Paint = function( s, w, h )
+					draw.RoundedBox( 0, w - 1, 0, 1, h, Color( 100, 100, 100 ) )
+				end
+			end
+
+			y = y + 80
+
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(20, y)
 			label:SetSize(400,40)
@@ -2677,7 +2711,7 @@ local function _CreatePanel()
 
 			y = y + 40
 
-			_MakeCheckbox( 20, y, scroll, "No manual placing", "mw_admin_allow_manual_placing", "[Prevents spawning of mobile units]", true)
+			_MakeCheckbox( 20, y, scroll, "No Manual Placing", "mw_admin_allow_manual_placing", "[Prevents spawning of mobile units]", true)
 
 			y = y + 40
 
@@ -2696,11 +2730,11 @@ local function _CreatePanel()
 			y = y + 40
 			_MakeCheckbox( 20, y, scroll, "Infinite Water", "mw_admin_credit_cost", "[Allows you to spawn units without cost]", true )
 			y = y + 40
-			_MakeCheckbox( 20, y, scroll, "Build anywhere", "mw_admin_allow_free_placing", "[Allows you to spawn units anywhere]" )
+			_MakeCheckbox( 20, y, scroll, "Build Anywhere", "mw_admin_allow_free_placing", "[Allows you to spawn units anywhere]" )
 			y = y + 40
-			_MakeCheckbox( 20, y, scroll, "Control any team", "mw_admin_move_any_team", "[Allows you to control units regardless of team]" )
+			_MakeCheckbox( 20, y, scroll, "Control Any Team", "mw_admin_move_any_team", "[Allows you to control units regardless of team]" )
 			y = y + 40
-			_MakeCheckbox( 20, y, scroll, "Immortal Units", "mw_admin_immortality", "[Units cant die. Useful for photography]" )
+			_MakeCheckbox( 20, y, scroll, "Immortal Units", "mw_admin_immortality", "[Units can't die. Useful for photography]" )
 
 			y = y + 60
 			local button = vgui.Create("DButton", scroll)
@@ -2737,7 +2771,7 @@ local function _CreatePanel()
 			label:SetPos(270, y)
 			label:SetSize(370,40)
 			label:SetFontInternal( "Trebuchet18" )
-			label:SetText("[Set all Power back to the 0]")
+			label:SetText("[Set all Power back to the default]")
 			y = y + 70
 			-----------------------------------------------------------  Power
 			local label = vgui.Create("DLabel", scroll)
@@ -2749,10 +2783,10 @@ local function _CreatePanel()
 			default:SetSize(360,60)
 			default:SetPos( 200, y - 10 )
 			default.Paint = function(s, w, h)
-					draw.RoundedBox( 0, 108, 0, 12, h, Color(10,150,10) )
-					draw.RoundedBox( 0, 0, 0, 12*6, h, Color(10,40,80) )
-					draw.RoundedBox( 0, 12*15, 0, 12*15, h, Color(80,10,10) )
-				end
+				draw.RoundedBox( 0, 108, 0, 12, h, Color(10,150,10) )
+				draw.RoundedBox( 0, 0, 0, 12*6, h, Color(10,40,80) )
+				draw.RoundedBox( 0, 12*15, 0, 12*15, h, Color(80,10,10) )
+			end
 			local slider = vgui.Create("DPanel", scroll)
 			slider:SetSize( cvars.Number( "mw_admin_max_units" ) * 1.2, 40 )
 			slider:SetPos(200,y)
@@ -3410,7 +3444,7 @@ function TOOL:LeftClick( tr )
 		net.SendToServer()
 		self:GetOwner():ConCommand("mw_action 0")
 	elseif (action == 10) then
-		net.Start("SpawnWaterTank")
+		net.Start("MW_SpawnWaterTank")
 			net.WriteTable(trace)
 		net.SendToServer()
 		self:GetOwner():ConCommand("mw_action 0")
@@ -3663,14 +3697,7 @@ function TOOL:Think()
 						-- end
 					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_water_tank" )) then
 						-- if (correctTeam) then
-							net.Start("UseWaterTank")
-							 	net.WriteEntity(tr.Entity)
-							 	net.WriteInt(newTeam,8)
-							net.SendToServer()
-						-- end
-					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_large_water_tank" )) then
-						-- if (correctTeam) then
-							net.Start("UseLargeWaterTank")
+							net.Start("MW_UseWaterTank")
 							 	net.WriteEntity(tr.Entity)
 							 	net.WriteInt(newTeam,8)
 							net.SendToServer()
