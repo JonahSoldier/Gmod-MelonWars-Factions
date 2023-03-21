@@ -3,7 +3,11 @@ if engine.ActiveGamemode() ~= "sandbox" then return end
 mw_team_colors = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
 mw_team_colors[0] = Color(100,100,100,255)
 
-net.Receive( "MW_ReturnSelection", function( len, pl )
+mrtsMessageReceivingEntity = nil
+mrtsMessageReceivingState = "idle"
+mrtsNetworkBuffer = ""
+
+net.Receive( "MW_ReturnSelection", function()
 	local returnedSelectionID = net.ReadInt(20)
 
 	if returnedSelectionID ~= LocalPlayer().mw_selectionID then return end
@@ -17,28 +21,25 @@ net.Receive( "MW_ReturnSelection", function( len, pl )
 	end
 end )
 
-net.Receive( "MW_SelectContraption", function( len, pl )
+net.Receive( "MW_SelectContraption", function()
 	local count = net.ReadUInt( 16 )
+	local ply = LocalPlayer()
 	-- print("Receiving extra selections from the server ("..count..")")
 	local v, hasMelonBase, canMove, isFound
 	for i = 0, count do
 		v = net.ReadEntity()
 		hasMelonBase = v.Base == "ent_melon_base"
-		canMove = cvars.Bool( "mw_admin_move_any_team", false ) or ( pl == nil or v:GetNWInt( "mw_melonTeam", -1 ) == pl:GetInfoNum( "mw_team", -1 ) )
-		isFound = LocalPlayer().foundMelons[v]
+		canMove = cvars.Bool( "mw_admin_move_any_team", false ) or ( ply == nil or v:GetNWInt( "mw_melonTeam", -1 ) == ply:GetInfoNum( "mw_team", -1 ) )
+		isFound = ply.foundMelons[v]
 		if hasMelonBase and canMove and not isFound then
-			table.insert( LocalPlayer().foundMelons, v )
+			table.insert( ply.foundMelons, v )
 		end
 	end
 end )
 
-net.Receive( "RestartQueue", function( len, pl )
+net.Receive( "RestartQueue", function()
 	LocalPlayer().mw_spawntime = CurTime()
 end )
-
-mrtsMessageReceivingEntity = nil
-mrtsMessageReceivingState = "idle"
-mrtsNetworkBuffer = ""
 
 net.Receive( "BeginContraptionSaveClient", function()
 	mrtsMessageReceivingState = net.ReadString()
@@ -145,7 +146,7 @@ net.Receive( "RequestContraptionLoadToClient", function()
 	end
 end )
 
-function MW_SickEffect(ent, amount)
+function MW_SickEffect( ent, amount )
 	local emitter = ParticleEmitter( ent:GetPos() ) -- Particle emitter in this position
 	for i = 1, amount do -- SMOKE
 		local part = emitter:Add( "effects/yellowflare", ent:GetPos() ) -- Create a new particle at pos
@@ -165,7 +166,7 @@ function MW_SickEffect(ent, amount)
 	emitter:Finish()
 end
 
-function MW_SiloSmoke(ent, amount)
+function MW_SiloSmoke( ent, amount )
 	local emitter = ParticleEmitter( ent:GetPos() ) -- Particle emitter in this position
 	for i = 1, amount do -- SMOKE
 		local part = emitter:Add( "effects/yellowflare", ent:GetPos() + Vector(math.random(-30, 30), math.random(-30, 30), 0) ) -- Create a new particle at pos
@@ -186,32 +187,32 @@ function MW_SiloSmoke(ent, amount)
 	emitter:Finish()
 end
 
-net.Receive( "MW_ClientControlUnit" , function()
+net.Receive( "MW_ClientControlUnit", function()
 	local u = net.ReadEntity()
 	LocalPlayer().controllingUnit = u
 end)
 
-net.Receive( "MW_UnitDecoration", function(len, pl)
+net.Receive( "MW_UnitDecoration", function()
 	local entity = net.ReadEntity()
 	local tbl = net.ReadTable()
 
 	local prop = ClientsideModel( tbl.prop )
 	prop:SetPos( entity:GetPos() + VectorRand( -3, 3 ) )
-	prop:SetAngles(AngleRand())
-	prop:SetModelScale(tbl.scale)
-	prop:SetMoveParent(entity)
+	prop:SetAngles( AngleRand() )
+	prop:SetModelScale( tbl.scale )
+	prop:SetMoveParent( entity )
 	local cdata = EffectData()
-	cdata:SetEntity(prop)
-	util.Effect("propspawn", cdata)
+	cdata:SetEntity( prop )
+	util.Effect( "propspawn", cdata )
 end)
 
-net.Receive( "MWColourMod", function( _, pl )
+net.Receive( "MWColourMod", function()
 	LocalPlayer().MWhasColourModifier = net.ReadBool()
 	LocalPlayer().MWColourModifierTable = net.ReadTable()
-	DrawColorModify(LocalPlayer().MWColourModifierTable)
+	DrawColorModify( LocalPlayer().MWColourModifierTable )
 end)
 
-net.Receive( "MW_ClientModifySpawnTime", function( _, pl )
+net.Receive( "MW_ClientModifySpawnTime", function()
 	local spawnTimeChange = net.ReadFloat()
 	LocalPlayer().spawnTimeMult = 1 + spawnTimeChange
 end )
