@@ -28,8 +28,8 @@ CreateClientConVar( "mw_team", "1", 1, true )
 TOOL.ClientConVar[ "mw_team" ] = 1
 CreateClientConVar( "mw_contraption_name", "default", 0, false )
 TOOL.ClientConVar[ "mw_contraption_name" ] = "default"
-CreateClientConVar( "mw_water_tank_value", "1000", false, true, "Sets the value of a water tank upon its creation.", 0, 50000 )
-TOOL.ClientConVar[ "mw_water_tank_value" ] = 1000
+CreateClientConVar( "mw_water_tank_value", "10000", false, true, "Sets the value of a water tank upon its creation.", 0, 50000 )
+TOOL.ClientConVar[ "mw_water_tank_value" ] = 10000
 
 CreateConVar( "mw_enable_skin", "1", FCVAR_ARCHIVE + FCVAR_USERINFO, "Enable or disable your custom skin." )
 TOOL.ClientConVar[ "mw_enable_skin" ] = "1"
@@ -2684,7 +2684,7 @@ local function _CreatePanel()
 				draw.RoundedBox( 0, 180, 0, 180, h, Color( 80, 10, 10 ) )
 			end
 			local sliderTankVal = vgui.Create( "DPanel", scroll )
-			sliderTankVal:SetSize( GetConVar( "mw_water_tank_value" ):GetInt() * 0.12, 40 )
+			sliderTankVal:SetSize( GetConVar( "mw_water_tank_value" ):GetInt() * 0.012, 40 )
 			sliderTankVal:SetPos( 200, y )
 			for i = 1, 30 do
 				local buttonTankVal = vgui.Create( "DButton", scroll )
@@ -2692,9 +2692,9 @@ local function _CreatePanel()
 				buttonTankVal:SetPos( 185 + i * 12, y )
 				buttonTankVal:SetText( "" )
 				function buttonTankVal:DoClick()
-					pl:ConCommand( "mw_water_tank_value " .. tostring( i * 100 ) )
+					pl:ConCommand( "mw_water_tank_value " .. i * 1000 )
 					sliderTankVal:SetSize( i * 12, 40 )
-					labelTankVal:SetText( "Water Tank\nValue: " .. tostring( i * 100 ) )
+					labelTankVal:SetText( "Water Tank\nValue: " .. i * 1000 )
 				end
 				buttonTankVal.Paint = function( s, w, h )
 					draw.RoundedBox( 0, w - 1, 0, 1, h, Color( 100, 100, 100 ) )

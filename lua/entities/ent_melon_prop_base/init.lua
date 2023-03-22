@@ -24,6 +24,14 @@ function ENT:PropDefaults( ent )
 	ent.Angles = Angle(0,0,0)
 end
 
+function ENT:PropDefaultDeathEffect()
+	local effectdata = EffectData()
+	effectdata:SetOrigin( self:GetPos() )
+	util.Effect( self.deathEffect, effectdata )
+	sound.Play( self.deathSound, self:GetPos() )
+	self:Remove()
+end
+
 function ENT:PropDie()
 	if cvars.Bool( "mw_admin_immortality" ) then return end
 	self:PropDefaultDeathEffect()

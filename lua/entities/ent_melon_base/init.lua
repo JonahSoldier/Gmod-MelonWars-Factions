@@ -483,7 +483,7 @@ function MW_UnitDefaultThink( ent )
 	if (ent.targetEntity == nil or ent.targetEntity.Base == "ent_melon_prop_base" or ent.targetEntity:GetNWInt("propHP",-1) ~= -1) then
 		----------------------------------------------------------------------Buscar target
 		local foundEnts = ents.FindInSphere(pos, ent.range )
-		for k, v in RandomPairs( foundEnts ) do
+		for _, v in ipairs( foundEnts ) do
 			if (v.Base == "ent_melon_base") then --si es una sandía
 				if (v:GetNWInt("mw_melonTeam", 0) ~= ent:GetNWInt("mw_melonTeam", 0)) then -- si tienen distinto equipo
 					if (v.targetable) then -- si es targeteable
@@ -517,7 +517,7 @@ function MW_UnitDefaultThink( ent )
 		end
 		-------------------------------------------------Si aun asi no encontró target
 		if (ent.targetEntity == nil) then
-			for k, v in RandomPairs( foundEnts ) do
+			for _, v in ipairs( foundEnts ) do
 				if (v:GetNWInt("mw_melonTeam", ent:GetNWInt("mw_melonTeam", 0)) ~= ent:GetNWInt("mw_melonTeam", 0) and not string.StartWith( v:GetClass(), "ent_melonbullet_" ) and not ent:SameTeam(v)) then --si es de otro equipo
 					if (ent.chaseStance) then
 						if (v:GetClass() == "ent_melon_wall") then
@@ -783,14 +783,6 @@ function MW_Die( ent )
 	if ent.DeathEffect == nil then return end
 	-- ent:SpawnDoot()
 	ent:DeathEffect ( ent )
-end
-
-function ENT:PropDefaultDeathEffect()
-	local effectdata = EffectData()
-	effectdata:SetOrigin( self:GetPos() )
-	util.Effect( self.deathEffect, effectdata )
-	sound.Play( self.deathSound, self:GetPos() )
-	self:Remove()
 end
 
 function ENT:PhysicsUpdate()
