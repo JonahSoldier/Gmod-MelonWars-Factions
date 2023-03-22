@@ -3,9 +3,22 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 
 include("shared.lua")
 
-local function PropSetup( ent )
+local function propSpawn( ent )
+	if SERVER then
+		ent:SetMoveType( ent.moveType )   -- after all, gmod is a physics
 
-	if (SERVER) then
+		ent:SetMaterial(ent.materialString)
+		ent.spawned = true
+		ent.HP = ent.maxHP
+		ent:SetNWFloat( "maxhealth", ent.maxHP )
+		ent:SetNWFloat( "health", ent.HP )
+
+		hook.Run("MelonWarsEntitySpawned", ent)
+	end
+end
+
+local function PropSetup( ent )
+	if SERVER then
 		ent:SetNWEntity( "targetEntity", ent.targetEntity )
 
 		--ent:SetModel( ent.modelString )
@@ -16,7 +29,7 @@ local function PropSetup( ent )
 
 		if (ent.moveType == 0) then
 			local weld = constraint.Weld( ent, game.GetWorld(), 0, 0, 0, true , false )
-			canMove = false
+			ent.canMove = false
 		end
 
 		ent.phys = ent:GetPhysicsObject()
@@ -31,11 +44,11 @@ local function PropSetup( ent )
 		if (cvars.Number("mw_admin_spawn_time") == 1 and ent.mw_spawntime ~= nil) then
 			timer.Simple( ent.mw_spawntime-CurTime(), function()
 				if (IsValid(ent)) then
-					MW_PropSpawn(ent)
+					propSpawn(ent)
 				end
 			end)
 		else
-			MW_PropSpawn(ent)
+			propSpawn(ent)
 		end
 	end
 

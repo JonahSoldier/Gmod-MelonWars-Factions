@@ -30,7 +30,7 @@ function ENT:Initialize()
 
 	self:SetNWEntity("transport", nil)
 
-	MW_Setup ( self )
+	self:Setup()
 end
 
 function ENT:SlowThink(ent)

@@ -26,7 +26,7 @@ function ENT:Initialize()
 	--self:SetPos(self:GetPos()+Vector(0,0,0))
 
 	self.melons = {}
-	MW_Setup ( self )
+	self:Setup()
 
 	local LPos1 = Vector(0,0,0)
 	local LVector = Vector(0,0,1)

@@ -51,7 +51,7 @@ function ENT:Initialize()
 
 	self.nextRecharge = CurTime()
 
-	MW_Setup ( self )
+	self:Setup()
 
 	construct.SetPhysProp( self:GetOwner() , self, 0, nil,  { GravityToggle = true, Material = "ice" } )
 end

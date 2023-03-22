@@ -191,7 +191,7 @@ function ENT:Explode()
 				debris:PhysicsInit(6)
 				local debrisPhys = debris:GetPhysicsObject()
 				debrisPhys:ApplyForceCenter(Vector(math.random(-5000,5000), math.random(-5000,5000), math.random(5000,35000)))
-				--MW_SickEffect(debris, 25)
+				--debris:DrawSickEffect( 25 )
 			end
 
 			local effectdata = EffectData()

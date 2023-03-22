@@ -37,7 +37,7 @@ function ENT:Initialize()
 	self:SetNWInt("maxenergy", 100)
 	self:SetNWVector("energyPos", Vector(0,0,100))
 
-	MW_Setup ( self )
+	self:Setup()
 
 	self.zone = ents.Create( "ent_melon_zone" )
 		self.zone:SetModel("models/hunter/tubes/tube4x4x025.mdl")

@@ -27,12 +27,12 @@ function ENT:Draw()
 end
 
 function ENT:Think()
-	if (self.nextParticle < CurTime()) then
-		MW_SickEffect(self, 1)
+	if self.nextParticle < CurTime() then
+		self:DrawSickEffect( 1 )
 		self.nextParticle = CurTime()+0.2
 	end
 end
 
 function ENT:OnRemove()
-	MW_SickEffect(self, 50)
+	self:DrawSickEffect( 50 )
 end

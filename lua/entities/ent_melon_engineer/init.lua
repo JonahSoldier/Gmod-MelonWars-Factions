@@ -25,7 +25,7 @@ function ENT:Initialize()
 
 	self.shotSound = "EpicMetal.ImpactHard"
 
-	MW_Setup ( self )
+	self:Setup()
 end
 
 function ENT:ModifyColor()

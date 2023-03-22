@@ -28,7 +28,7 @@ function ENT:Initialize()
 
 	self.melons = {}
 
-	MW_Setup ( self )
+	self:Setup()
 end
 
 function ENT:SlowThink(ent)

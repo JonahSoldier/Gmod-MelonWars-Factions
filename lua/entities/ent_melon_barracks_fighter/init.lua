@@ -18,7 +18,7 @@ function ENT:Initialize()
 	self:SetStats()
 	self:BarrackInitialize()
 
-	MW_Setup ( self )
+	self:Setup()
 end
 
 function ENT:Think(ent)

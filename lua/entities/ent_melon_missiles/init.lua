@@ -34,7 +34,7 @@ function ENT:Initialize()
 
 	self.slowThinkTimer = 1
 
-	MW_Setup ( self )
+	self:Setup()
 end
 
 function ENT:ModifyColor()

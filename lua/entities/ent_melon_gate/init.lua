@@ -30,7 +30,7 @@ function ENT:Initialize()
 
 	self.damping = 4
 
-	MW_Setup ( self )
+	self:Setup()
 
 	self:GetPhysicsObject():EnableMotion(false)
 end

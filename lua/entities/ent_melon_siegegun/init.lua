@@ -39,7 +39,7 @@ function ENT:Initialize()
 	self:SetNWBool("mw_active", true)
 	self:SetNWFloat("mw_ready", 0)
 
-	MW_Setup ( self )
+	self:Setup()
 
 	self.phys:SetDamping(10,100000)
 	self.phys:SetMaterial("gmod_ice")

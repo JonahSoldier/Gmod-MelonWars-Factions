@@ -27,7 +27,7 @@ function ENT:Initialize()
 
 	--print("My Initialization")
 
-	MW_Setup ( self )
+	self:Setup()
 
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 	self.canBeSelected = false

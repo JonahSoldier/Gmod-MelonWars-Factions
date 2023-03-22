@@ -23,7 +23,7 @@ function ENT:Initialize()
 
 	self.shotSound = "items/medshot4.wav"
 
-	MW_Setup ( self )
+	self:Setup()
 end
 
 function ENT:ModifyColor()

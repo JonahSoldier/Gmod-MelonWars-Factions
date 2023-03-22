@@ -31,7 +31,7 @@ function ENT:Initialize()
 
 	self.population = 2
 
-	MW_Setup ( self )
+	self:Setup()
 
 	self.slowThinkTimer = 1
 

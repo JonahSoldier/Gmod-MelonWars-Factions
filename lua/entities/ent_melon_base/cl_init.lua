@@ -34,6 +34,47 @@ function ENT:Initialize()
 	self.nextParticle = 0
 end
 
+function ENT:DrawSickEffect( amount )
+	local emitter = ParticleEmitter( self:GetPos() ) -- Particle emitter in this position
+	for i = 1, amount do -- SMOKE
+		local part = emitter:Add( "effects/yellowflare", self:GetPos() ) -- Create a new particle at pos
+		if ( part ) then
+			part:SetDieTime( math.Rand(1.0, 2.0) ) -- How long the particle should "live"
+			part:SetColor(100, 255, 0)
+			part:SetStartAlpha( 255 )
+			part:SetEndAlpha( 255 ) -- Particle size at the end of its lifetime
+			part:SetStartSize( math.random(12, 18) )
+			part:SetEndSize( 0 ) -- Size when removed
+			part:SetAirResistance(50)
+			local vec = AngleRand():Forward() * math.random(10, 50)
+			part:SetGravity( Vector(0,0,50) ) -- Gravity of the particle
+			part:SetVelocity( vec * 0.8 ) -- Initial velocity of the particle
+		end
+	end
+	emitter:Finish()
+end
+
+function ENT:DrawSiloSmoke( amount )
+	local emitter = ParticleEmitter( self:GetPos() ) -- Particle emitter in this position
+	for i = 1, amount do -- SMOKE
+		local part = emitter:Add( "effects/yellowflare", self:GetPos() + Vector(math.random(-30, 30), math.random(-30, 30), 0) ) -- Create a new particle at pos
+		if ( part ) then
+			part:SetDieTime( math.Rand(1.0, 2.0) ) -- How long the particle should "live"
+			part:SetColor(100, 255, 0)
+			part:SetStartAlpha( 255 )
+			part:SetEndAlpha( 255 ) -- Particle size at the end of its lifetime
+			part:SetStartSize( math.random(10, 20) )
+			part:SetEndSize( 0 ) -- Size when removed
+			part:SetAirResistance(50)
+			local vec = Vector(0,0,math.random(100, 500))
+			vec.z = math.abs(vec.z)
+			part:SetGravity( Vector(0,0,50) ) -- Gravity of the particle
+			part:SetVelocity( vec ) -- Initial velocity of the particle
+		end
+	end
+	emitter:Finish()
+end
+
 function ENT:Think()
 	local pos = self:GetPos()
 	local tr = util.TraceLine( {
@@ -55,7 +96,7 @@ function ENT:Think()
 		if (self.nextParticle < CurTime()) then
 			local sick = self:GetNWFloat("mw_sick", 0)
 			if (sick > 0) then
-				MW_SickEffect(self, 1)
+				self:DrawSickEffect( 1 )
 				self.nextParticle = CurTime()+math.min(1/sick, 1)
 			end
 		end

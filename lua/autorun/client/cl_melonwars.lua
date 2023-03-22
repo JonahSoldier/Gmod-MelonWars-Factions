@@ -146,47 +146,6 @@ net.Receive( "RequestContraptionLoadToClient", function()
 	end
 end )
 
-function MW_SickEffect( ent, amount )
-	local emitter = ParticleEmitter( ent:GetPos() ) -- Particle emitter in this position
-	for i = 1, amount do -- SMOKE
-		local part = emitter:Add( "effects/yellowflare", ent:GetPos() ) -- Create a new particle at pos
-		if ( part ) then
-			part:SetDieTime( math.Rand(1.0, 2.0) ) -- How long the particle should "live"
-			part:SetColor(100, 255, 0)
-			part:SetStartAlpha( 255 )
-			part:SetEndAlpha( 255 ) -- Particle size at the end of its lifetime
-			part:SetStartSize( math.random(12, 18) )
-			part:SetEndSize( 0 ) -- Size when removed
-			part:SetAirResistance(50)
-			local vec = AngleRand():Forward() * math.random(10, 50)
-			part:SetGravity( Vector(0,0,50) ) -- Gravity of the particle
-			part:SetVelocity( vec * 0.8 ) -- Initial velocity of the particle
-		end
-	end
-	emitter:Finish()
-end
-
-function MW_SiloSmoke( ent, amount )
-	local emitter = ParticleEmitter( ent:GetPos() ) -- Particle emitter in this position
-	for i = 1, amount do -- SMOKE
-		local part = emitter:Add( "effects/yellowflare", ent:GetPos() + Vector(math.random(-30, 30), math.random(-30, 30), 0) ) -- Create a new particle at pos
-		if ( part ) then
-			part:SetDieTime( math.Rand(1.0, 2.0) ) -- How long the particle should "live"
-			part:SetColor(100, 255, 0)
-			part:SetStartAlpha( 255 )
-			part:SetEndAlpha( 255 ) -- Particle size at the end of its lifetime
-			part:SetStartSize( math.random(10, 20) )
-			part:SetEndSize( 0 ) -- Size when removed
-			part:SetAirResistance(50)
-			local vec = Vector(0,0,math.random(100, 500))
-			vec.z = math.abs(vec.z)
-			part:SetGravity( Vector(0,0,50) ) -- Gravity of the particle
-			part:SetVelocity( vec ) -- Initial velocity of the particle
-		end
-	end
-	emitter:Finish()
-end
-
 net.Receive( "MW_ClientControlUnit", function()
 	local u = net.ReadEntity()
 	LocalPlayer().controllingUnit = u

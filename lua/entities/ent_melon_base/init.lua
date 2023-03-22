@@ -170,63 +170,63 @@ local function MW_Spawn( ent )
 	hook.Run("MelonWarsEntitySpawned", ent)
 end
 
-function MW_Setup( ent )
-	ent.targetEntity = nil
-	ent.followEntity = nil
-	ent.forcedTargetEntity = nil
-	ent:SetNWEntity( "targetEntity", ent.targetEntity )
-	ent:SetNWEntity( "followEntity", ent.followEntity )
-	ent:SetNWBool("moving", false)
-	ent:SetNWFloat("range", ent.range)
+function ENT:Setup()
+	self.targetEntity = nil
+	self.followEntity = nil
+	self.forcedTargetEntity = nil
+	self:SetNWEntity( "targetEntity", self.targetEntity )
+	self:SetNWEntity( "followEntity", self.followEntity )
+	self:SetNWBool( "moving", false )
+	self:SetNWFloat( "range", self.range )
 
-	ent.moving = false
-	ent.damage = 0
+	self.moving = false
+	self.damage = 0
 
-	ent.moveForce = Vector(0,0,0)
+	self.moveForce = Vector( 0, 0, 0 )
 
-	--ent:SetPos(ent:GetPos()+ent.posOffset)
+	--self:SetPos(self:GetPos()+self.posOffset)
 
-	if (ent.changeModel) then
-		ent:SetModel( ent.modelString )
+	if self.changeModel then
+		self:SetModel( self.modelString )
 	end
 
-	if (ent.sphereRadius == 0) then
-		ent:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
-		ent:SetSolid( SOLID_VPHYSICS )
+	if self.sphereRadius == 0 then
+		self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics
+		self:SetSolid( SOLID_VPHYSICS )
 	else
-		ent:PhysicsInitSphere( ent.sphereRadius, "slime" )
+		self:PhysicsInitSphere( self.sphereRadius, "slime" )
 	end
 
-	ent.phys = ent:GetPhysicsObject()
+	self.phys = self:GetPhysicsObject()
 
-	if (ent.moveType == 0) then
-		local weld = constraint.Weld( ent, game.GetWorld(), 0, 0, 0, true , false )
-		canMove = false
-		ent.phys:EnableMotion(false)
+	if self.moveType == 0 then
+		local weld = constraint.Weld( self, game.GetWorld(), 0, 0, 0, true , false )
+		self.canMove = false
+		self.phys:EnableMotion( false )
 	end
 
-	if (IsValid(ent.phys)) then
-		ent.phys:Wake()
-		if (ent.angularDamping == -1) then
-			ent.angularDamping = ent.damping
+	if IsValid( self.phys ) then
+		self.phys:Wake()
+		if self.angularDamping == -1 then
+			self.angularDamping = self.damping
 		end
-		ent.phys:SetDamping(ent.damping,ent.angularDamping)
+		self.phys:SetDamping( self.damping, self.angularDamping )
 	end
 
-	if (ent.changeAngles) then
-		ent:SetAngles( ent:GetAngles()+ent.Angles )
+	if self.changeAngles then
+		self:SetAngles( self:GetAngles() + self.Angles )
 	end
 
-	ent:SetNWEntity( "targetEntity", ent.targetEntity )
+	self:SetNWEntity( "targetEntity", self.targetEntity )
 
-	if (cvars.Number("mw_admin_spawn_time") == 1 and ent.mw_spawntime ~= nil) then
-		timer.Simple( ent.mw_spawntime-CurTime(), function()
-			if (IsValid(ent)) then
-				MW_Spawn(ent)
+	if cvars.Number( "mw_admin_spawn_time" ) == 1 and self.mw_spawntime ~= nil then
+		timer.Simple( self.mw_spawntime - CurTime(), function()
+			if IsValid( self ) then
+				MW_Spawn( self )
 			end
-		end)
+		end )
 	else
-		MW_Spawn(ent)
+		MW_Spawn( self )
 	end
 end
 
@@ -876,22 +876,21 @@ function ENT:DefaultOnRemove()
 	end
 end
 
-function MW_UpdatePopulation (ammount, teamID)
+function MW_UpdatePopulation( amount, teamID )
 	-- if not SERVER then return end
-	if ammount ~= 0 and teamID ~= 0 and teamID ~= nil then
-		mw_teamUnits[teamID] = mw_teamUnits[teamID]+ammount
-		local ownerPlayers = {}
-		ownerPlayers = player.GetAll()
+	if amount ~= 0 and teamID ~= 0 and teamID ~= nil then
+		mw_teamUnits[teamID] = mw_teamUnits[teamID] + amount
+		local ownerPlayers = player.GetAll()
 		local i = 0 --Parche horrible: cada vez que elimina a alguien de la lista, al remover a alguien mas busca un lugar antes, ya que la lista se acomodó para rellenar el espacio vacio
-		for k, v in pairs( player.GetAll() ) do
-			if (v:GetInfoNum("mw_team", 0) ~= teamID) then
-				table.remove(ownerPlayers, k-i)
-				i = i+1
+		for k, v in ipairs( player.GetAll() ) do
+			if v:GetInfoNum( "mw_team", 0 ) ~= teamID then
+				table.remove( ownerPlayers, k - i )
+				i = i + 1
 			end
 		end
-		net.Start("mw_teamUnits")
-			net.WriteInt(mw_teamUnits[teamID] ,16)
-		net.Send(ownerPlayers)
+		net.Start( "mw_teamUnits" )
+			net.WriteInt( mw_teamUnits[teamID], 16 )
+		net.Send( ownerPlayers )
 	end
 end
 

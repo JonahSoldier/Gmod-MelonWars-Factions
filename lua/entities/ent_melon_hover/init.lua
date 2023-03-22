@@ -28,7 +28,7 @@ function ENT:Initialize()
 
 	self.maxHP = 45
 
-	MW_Setup ( self )
+	self:Setup()
 
 end
 

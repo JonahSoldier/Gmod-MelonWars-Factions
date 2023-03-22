@@ -30,7 +30,7 @@ function ENT:Initialize()
 	self.damping = 0.05
 	self.angularDamping = 10000
 
-	MW_Setup ( self )
+	self:Setup()
 
 	self:GetPhysicsObject():SetMass(30)
 

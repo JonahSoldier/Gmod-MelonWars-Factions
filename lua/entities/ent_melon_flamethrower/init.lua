@@ -37,7 +37,7 @@ function ENT:Initialize()
 
 	self.slowThinkTimer = 0.05
 
-	MW_Setup ( self )
+	self:Setup()
 
 	self.phys:SetMass( 50 )
 

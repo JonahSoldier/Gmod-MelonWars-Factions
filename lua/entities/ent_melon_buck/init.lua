@@ -31,7 +31,7 @@ function ENT:Initialize()
 
 	self.population = 3
 
-	MW_Setup ( self )
+	self:Setup()
 
 	construct.SetPhysProp( self:GetOwner() , self, 0, nil,  { GravityToggle = true, Material = "ice" } )
 end

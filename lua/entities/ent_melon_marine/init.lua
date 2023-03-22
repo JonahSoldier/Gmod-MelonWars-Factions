@@ -19,7 +19,7 @@ function ENT:Initialize()
 
 	self.captureSpeed = 0.25
 
-	MW_Setup( self )
+	self:Setup()
 end
 
 function ENT:SlowThink( ent )

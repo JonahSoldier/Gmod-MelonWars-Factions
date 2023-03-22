@@ -30,7 +30,7 @@ function ENT:Initialize()
 
 	self.dootChance = 0
 
-	MW_Setup ( self )
+	self:Setup()
 
 	self:SetNWInt("mw_charge", 0)
 	self:SetNWInt("maxCharge", 50)

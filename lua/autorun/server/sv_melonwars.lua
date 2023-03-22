@@ -1247,7 +1247,7 @@ end )
 net.Receive("MW_Stop", function( _, ply ) -- Previously concommand.Add( "mw_stop", function( ply )
 	local stopedMelons = false
 
-	foundMelons = {}
+	local foundMelons = {}
 	local entity = net.ReadEntity();
 	while (not entity:IsWorld() and entity:IsValid() and entity ~= nil) do
 		if (string.StartWith(entity:GetClass(), "ent_melon_")) then
@@ -1294,15 +1294,15 @@ net.Receive( "MW_Order", function( _, ply ) -- Previously concommand.Add( "mw_or
 		mask = MASK_WATER + MASK_SOLID
 	} )
 
-	foundMelons = {}
+	local foundMelons = {}
 	local rally = net.ReadBool()
 	local alt = net.ReadBool()
-	local entity = net.ReadEntity();
+	local entity = net.ReadEntity()
 	while not entity:IsWorld() and entity:IsValid() and entity ~= nil do
 		if string.StartWith( entity:GetClass(), "ent_melon_" ) then
 			table.insert( foundMelons, entity )
 		end
-		entity = net.ReadEntity();
+		entity = net.ReadEntity()
 	end
 
 	if foundMelons == nil then return end

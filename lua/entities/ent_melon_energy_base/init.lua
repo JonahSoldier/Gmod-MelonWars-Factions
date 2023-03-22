@@ -253,7 +253,7 @@ function MW_Energy_Defaults( ent )
 end
 
 function MW_Energy_Setup( ent )
-	MW_Setup(ent)
+	ent:Setup()
 	MW_CalculateConnections(ent, ent.connectToMachines)
 end
 

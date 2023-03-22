@@ -30,7 +30,7 @@ end
 function ENT:Think()
 	if (self:GetNWBool("launching", false)) then
 		if (self.nextParticle < CurTime()) then
-			MW_SiloSmoke(self, 2)
+			self:DrawSiloSmoke( 2 )
 			self.nextParticle = CurTime()+0.2
 		end
 	end

@@ -23,7 +23,7 @@ function ENT:Initialize()
 
 	self.idsInside = {}
 
-	MW_Setup ( self )
+	self:Setup()
 
 	self:SetCollisionGroup(COLLISION_GROUP_NONE)
 

@@ -11,7 +11,7 @@ end
 
 function ENT:Think()
 	if (self.nextParticle < CurTime()) then
-		MW_SickEffect(self, 3)
+		self:DrawSickEffect( 3 )
 		self.nextParticle = CurTime() + 0.02
 	end
 end

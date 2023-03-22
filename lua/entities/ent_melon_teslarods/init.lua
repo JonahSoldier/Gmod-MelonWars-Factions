@@ -24,7 +24,7 @@ function ENT:Initialize()
 
 	self.slowThinkTimer = 0.75
 
-	MW_Setup ( self )
+	self:Setup()
 
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 	self:GetPhysicsObject():EnableMotion(false)

@@ -30,7 +30,7 @@ function ENT:Initialize()
 
 	self.dootChance = 0
 
-	MW_Setup ( self )
+	self:Setup()
 end
 
 function ENT:ModifyColor()

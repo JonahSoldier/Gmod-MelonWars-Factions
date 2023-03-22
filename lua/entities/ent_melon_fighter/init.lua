@@ -37,7 +37,7 @@ function ENT:Initialize()
 
 	self:SetStats()
 
-	MW_Setup ( self )
+	self:Setup()
 
 	self:GetPhysicsObject():EnableGravity( false )
 

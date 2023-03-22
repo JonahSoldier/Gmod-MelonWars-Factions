@@ -28,7 +28,7 @@ function ENT:Initialize()
 	self.maxspinup = 4
 	self.minspinup = 1
 
-	MW_Setup ( self )
+	self:Setup()
 end
 
 function ENT:ModifyColor()

@@ -24,21 +24,6 @@ function ENT:PropDefaults( ent )
 	ent.Angles = Angle(0,0,0)
 end
 
-function MW_PropSpawn(ent)
-	if (SERVER) then
-
-		ent:SetMoveType( ent.moveType )   -- after all, gmod is a physics
-
-		ent:SetMaterial(ent.materialString)
-		ent.spawned = true
-		ent.HP = ent.maxHP
-		ent:SetNWFloat( "maxhealth", ent.maxHP )
-		ent:SetNWFloat( "health", ent.HP )
-
-		hook.Run("MelonWarsEntitySpawned", ent)
-	end
-end
-
 function ENT:MW_PropDefaultDeathEffect( ent )
 	local effectdata = EffectData()
 	effectdata:SetOrigin( ent:GetPos() )

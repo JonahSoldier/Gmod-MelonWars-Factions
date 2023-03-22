@@ -16,7 +16,7 @@ function ENT:Initialize()
 	self.population = 1
 	self:SetNWInt("maxunits", 5)
 
-	MW_Setup ( self )
+	self:Setup()
 end
 
 function ENT:Think(ent)

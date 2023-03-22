@@ -20,7 +20,7 @@ function ENT:Initialize()
 
 	self:SetStats()
 
-	MW_Setup ( self )
+	self:Setup()
 
 	self:SetNWBool("active", false)
 	--InciteConnections(self)

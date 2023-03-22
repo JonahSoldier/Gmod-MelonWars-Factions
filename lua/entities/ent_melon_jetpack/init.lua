@@ -24,7 +24,7 @@ function ENT:Initialize()
 
 	self.captureSpeed = 2
 
-	MW_Setup( self )
+	self:Setup()
 
 	self:GetPhysicsObject():EnableGravity( false )
 end

@@ -27,8 +27,8 @@ function ENT:Draw()
 end
 
 function ENT:Think()
-	if (self.nextParticle < CurTime()) then
-		MW_SiloSmoke(self, 1)
-		self.nextParticle = CurTime()+0.3
+	if self.nextParticle < CurTime() then
+		self:DrawSiloSmoke( 1 )
+		self.nextParticle = CurTime() + 0.3
 	end
 end

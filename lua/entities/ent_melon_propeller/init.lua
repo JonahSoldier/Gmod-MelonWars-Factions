@@ -26,7 +26,7 @@ function ENT:Initialize()
 	self.maxHP = 25
 	self.shotOffset = Vector(0,0,15)
 
-	MW_Setup ( self )
+	self:Setup()
 
 end
 

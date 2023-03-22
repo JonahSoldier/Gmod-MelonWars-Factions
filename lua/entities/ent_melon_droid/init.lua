@@ -31,7 +31,7 @@ function ENT:Initialize()
 
 	--print("My Initialization")
 
-	MW_Setup ( self )
+	self:Setup()
 
 	self.phys:SetDamping(10,100000)
 	self.phys:SetMaterial("gmod_ice")

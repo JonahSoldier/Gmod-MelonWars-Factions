@@ -34,7 +34,7 @@ function ENT:Initialize()
 
 	self.slowThinkTimer = 0.5
 
-	MW_Setup ( self )
+	self:Setup()
 
 	construct.SetPhysProp( self:GetOwner() , self, 0, nil,  { GravityToggle = true, Material = "ice" } )
 end

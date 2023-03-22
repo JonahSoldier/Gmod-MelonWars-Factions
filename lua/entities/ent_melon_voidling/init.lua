@@ -29,7 +29,7 @@ function ENT:Initialize()
 
 	self.canBeSelected = false
 
-	MW_Setup ( self )
+	self:Setup()
 
 	self:SetMaterial("phoenix_storms/wire/pcb_blue")
 end

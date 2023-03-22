@@ -25,7 +25,7 @@ function ENT:Initialize()
 	self.deathSound = "ambient/explosions/explode_9.wav"
 	self.deathEffect = "Explosion"
 
-	MW_Setup ( self )
+	self:Setup()
 
 
 	self.zone = ents.Create( "ent_melon_zone" )

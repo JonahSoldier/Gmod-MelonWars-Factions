@@ -31,7 +31,7 @@ function ENT:Initialize()
 
 	self.canBeSelected = false
 
-	MW_Setup ( self )
+	self:Setup()
 end
 
 function ENT:SlowThink ( ent )

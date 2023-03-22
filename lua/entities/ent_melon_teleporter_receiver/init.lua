@@ -18,7 +18,7 @@ function ENT:Initialize()
 	--self.canMove = false
 	self.population = 1
 
-	MW_Setup ( self )
+	self:Setup()
 
 	self:SetCollisionGroup(COLLISION_GROUP_NONE)
 

@@ -27,7 +27,7 @@ function ENT:Initialize()
 	self.damageDeal = 250
 	self.maxHP = 250
 
-	MW_Setup ( self )
+	self:Setup()
 
 	--self:SetColor(Color(self:GetColor().r/2, self:GetColor().g/2, self:GetColor().b/2, 255))
 

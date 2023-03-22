@@ -18,7 +18,7 @@ function ENT:Initialize()
 	self:BarrackInitialize()
 	self:SetNWInt("maxunits", 4)
 
-	MW_Setup ( self )
+	self:Setup()
 end
 
 function ENT:Think(ent)
