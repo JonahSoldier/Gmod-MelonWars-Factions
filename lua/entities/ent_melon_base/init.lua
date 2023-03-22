@@ -692,7 +692,7 @@ function MW_Bullet(ent, startingPos, direction, distance, ignore, callback, dept
 	if (forceTargetPos == nil and ent.targetEntity.Base == "ent_melon_prop_base") then
 		ent.targetEntity:SetNWFloat( "health", ent.targetEntity:GetNWFloat( "health", 1)-ent.damageDeal)
 		if (ent.targetEntity:GetNWFloat( "health", 1) <= 0) then
-			PropDie( ent.targetEntity )
+			ent.targetEntity:PropDie()
 		end
 	elseif (forceTargetPos == nil and ent.targetEntity:GetClass() == "prop_physics") then
 		ent.targetEntity:TakeDamage( ent.damageDeal, ent, ent )
@@ -785,12 +785,12 @@ function MW_Die( ent )
 	ent:DeathEffect ( ent )
 end
 
-function ENT:MW_PropDefaultDeathEffect( ent )
+function ENT:PropDefaultDeathEffect()
 	local effectdata = EffectData()
-	effectdata:SetOrigin( ent:GetPos() )
-	util.Effect( ent.deathEffect, effectdata )
-	sound.Play( ent.deathSound, ent:GetPos() )
-	ent:Remove()
+	effectdata:SetOrigin( self:GetPos() )
+	util.Effect( self.deathEffect, effectdata )
+	sound.Play( self.deathSound, self:GetPos() )
+	self:Remove()
 end
 
 function ENT:PhysicsUpdate()

@@ -37,7 +37,7 @@ local function takedmg( target, dmginfo )
 		end
 		target:SetNWFloat( "health", target:GetNWFloat( "health", 1) - damage )
 		if target:GetNWFloat( "health", 1 ) <= 0 and not cvars.Bool("mw_admin_immortality") then
-			target:MW_PropDefaultDeathEffect( target )
+			target:PropDefaultDeathEffect()
 		end
 	elseif (target:GetNWInt("propHP", -1) ~= -1) then
 		target:SetNWInt( "propHP", target:GetNWInt( "propHP", 1 ) - dmginfo:GetDamage() )

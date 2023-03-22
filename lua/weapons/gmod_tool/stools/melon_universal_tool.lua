@@ -3215,6 +3215,58 @@ local function MW_BeginSelection() -- Previously concommand.Add( "+mw_select", f
 	table.Empty( ply.foundMelons )
 end
 
+local function isInRangeLoop( vector, teamIndex, entClass, buildDist )
+	for _, v in ipairs( ents.FindByClass( entClass ) ) do
+		if vector:Distance( v:GetPos() ) < buildDist and v:GetNWInt( "mw_melonTeam", 0 ) == teamIndex then
+			return true
+		end
+	end
+end
+
+local function isInRange( vector, teamIndex ) -- Why does this not just use findinsphere?
+	local canBuild = false
+
+	if isInRangeLoop( vector, teamIndex, "ent_melon_main_building", 800 ) then return true end
+	if isInRangeLoop( vector, teamIndex, "ent_melon_station", 250 ) then return true end
+	if isInRangeLoop( vector, teamIndex, "ent_melon_main_unit", 250 ) then return true end
+	if isInRangeLoop( vector, teamIndex, "ent_melon_main_building_grand_war", 1600 ) then return true end
+
+	local foundPoints = ents.FindByClass( "ent_melon_outpost_point" )
+
+	for _, v in ipairs( foundPoints ) do
+		if not canBuild then
+			if vector:Distance(v:GetPos()) < 600 then
+				if teamgrid == nil or teamgrid[v:GetNWInt( "capTeam", 0 )] == nil or teamgrid[v:GetNWInt( "capTeam", 0 )][teamIndex] == nil then
+					canBuild = v:GetNWInt( "capTeam", 0 ) == teamIndex
+				elseif v:GetNWInt( "capTeam", 0 ) == teamIndex or teamgrid[v:GetNWInt( "capTeam", 0 )][teamIndex] then
+					canBuild = true
+				end
+			end
+		end
+	end
+
+	return canBuild
+end
+
+local function noEnemyNear( vector, teamIndex )
+	local foundEnts = ents.FindInSphere( vector, 300 )
+	local canBuild = true
+
+	for _, v in pairs( foundEnts ) do
+		if v.Base == "ent_melon_base" then
+			if v:GetNWInt( "mw_melonTeam", 0 ) ~= teamIndex then
+				if v:GetNWInt( "mw_melonTeam", 0 ) ~= 0 then
+					if not teamgrid[v:GetNWInt( "mw_melonTeam", 0 )][teamIndex] then
+						canBuild = false
+					end
+				end
+			end
+		end
+	end
+
+	return canBuild
+end
+
 function TOOL:LeftClick( tr )
 	if not CLIENT then return end
 	local pl = LocalPlayer()
@@ -3249,7 +3301,7 @@ function TOOL:LeftClick( tr )
 		if (cvars.Bool("mw_admin_playing")) then
 			local attach = pl:GetInfoNum("mw_unit_option_welded", 0)
 			local unit_index = pl:GetInfoNum("mw_chosen_unit", 0)
-			if (cvars.Bool("mw_admin_allow_free_placing") or MW_noEnemyNear(trace.HitPos, mw_melonTeam)) then
+			if (cvars.Bool("mw_admin_allow_free_placing") or noEnemyNear(trace.HitPos, mw_melonTeam)) then
 				if (mw_units[unit_index].population == 0 or pl.mw_units + mw_units[unit_index].population <= cvars.Number("mw_admin_max_units")) then
 					if (pl.canPlace) then
 						local cost, mw_delay = 0
@@ -3289,7 +3341,7 @@ function TOOL:LeftClick( tr )
 							if attach == false or canFloorSpawn and notPointOrWater and entHasTeam then
 								if unit_index >= 0 then
 									if (cvars.Number("mw_admin_spawn_time") == 1) then
-										if (cvars.Bool("mw_admin_allow_free_placing") or mw_units[unit_index].buildAnywere or MW_isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
+										if (cvars.Bool("mw_admin_allow_free_placing") or mw_units[unit_index].buildAnywere or isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
 											if (pl.mw_spawntime < CurTime()) then
 												pl.mw_spawntime = CurTime() + mw_units[unit_index].spawn_time * pl.spawnTimeMult -- spawntimemult has been added here so I can compensate for matches with uneven numbers of commanders
 											else
@@ -3331,7 +3383,7 @@ function TOOL:LeftClick( tr )
 								effectdata:SetEntity( newMarine )
 								util.Effect( "propspawn", effectdata )
 
-								if (cvars.Bool("mw_admin_allow_free_placing") or mw_units[unit_index].buildAnywere or MW_isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
+								if (cvars.Bool("mw_admin_allow_free_placing") or mw_units[unit_index].buildAnywere or isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
 									if cvars.Bool( "mw_admin_credit_cost" ) or mw_melonTeam == 0 then
 										self:IndicateIncome(-cost)
 										pl.mw_credits = pl.mw_credits-cost
@@ -3367,8 +3419,8 @@ function TOOL:LeftClick( tr )
 		local prop_index = pl:GetInfoNum("mw_chosen_prop", 0)
 		local cost = mw_base_props[prop_index].cost
 		if not cvars.Bool("mw_admin_playing") then return end
-		if not (cvars.Bool("mw_admin_allow_free_placing") or MW_isInRange(trace.HitPos, mw_melonTeam)) then return end
-		if not (cvars.Bool("mw_admin_allow_free_placing") or MW_noEnemyNear(trace.HitPos, mw_melonTeam)) then return end
+		if not (cvars.Bool("mw_admin_allow_free_placing") or isInRange(trace.HitPos, mw_melonTeam)) then return end
+		if not (cvars.Bool("mw_admin_allow_free_placing") or noEnemyNear(trace.HitPos, mw_melonTeam)) then return end
 		if not (pl.mw_credits >= cost or not cvars.Bool("mw_admin_credit_cost")) then return end
 
 		if (cvars.Number("mw_admin_spawn_time") == 1) then
@@ -4513,58 +4565,6 @@ function TOOL:DrawHUD()
 			surface.DrawOutlinedRect( mx-5-4, my-4-4, 9+4*2, 9+4*2 )
 		end
 	end
-end
-
-local function isInRangeLoop( vector, teamIndex, entClass, buildDist )
-	for _, v in ipairs( ents.FindByClass( entClass ) ) do
-		if vector:Distance( v:GetPos() ) < buildDist and v:GetNWInt( "mw_melonTeam", 0 ) == teamIndex then
-			return true
-		end
-	end
-end
-
-function MW_isInRange( vector, teamIndex ) -- Why does this not just use findinsphere?
-	local canBuild = false
-
-	if isInRangeLoop( vector, teamIndex, "ent_melon_main_building", 800 ) then return true end
-	if isInRangeLoop( vector, teamIndex, "ent_melon_station", 250 ) then return true end
-	if isInRangeLoop( vector, teamIndex, "ent_melon_main_unit", 250 ) then return true end
-	if isInRangeLoop( vector, teamIndex, "ent_melon_main_building_grand_war", 1600 ) then return true end
-
-	local foundPoints = ents.FindByClass( "ent_melon_outpost_point" )
-
-	for _, v in ipairs( foundPoints ) do
-		if not canBuild then
-			if vector:Distance(v:GetPos()) < 600 then
-				if teamgrid == nil or teamgrid[v:GetNWInt( "capTeam", 0 )] == nil or teamgrid[v:GetNWInt( "capTeam", 0 )][teamIndex] == nil then
-					canBuild = v:GetNWInt( "capTeam", 0 ) == teamIndex
-				elseif v:GetNWInt( "capTeam", 0 ) == teamIndex or teamgrid[v:GetNWInt( "capTeam", 0 )][teamIndex] then
-					canBuild = true
-				end
-			end
-		end
-	end
-
-	return canBuild
-end
-
-function MW_noEnemyNear( vector, teamIndex )
-	local foundEnts = ents.FindInSphere( vector, 300 )
-	local canBuild = true
-
-	for _, v in pairs( foundEnts ) do
-		if v.Base == "ent_melon_base" then
-			if v:GetNWInt( "mw_melonTeam", 0 ) ~= teamIndex then
-				if v:GetNWInt( "mw_melonTeam", 0 ) ~= 0 then
-					if not teamgrid[v:GetNWInt( "mw_melonTeam", 0 )][teamIndex] then
-						canBuild = false
-					end
-				end
-			end
-		end
-	end
-
-	return canBuild
 end
 
 net.Receive( "UpdateClientTeams", function()

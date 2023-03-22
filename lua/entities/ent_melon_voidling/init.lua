@@ -95,7 +95,7 @@ function ENT:Explode()
 					if (self.targetEntity.Base == "ent_melon_prop_base") then
 						self.targetEntity:SetNWFloat( "health", self.targetEntity:GetNWFloat( "health", 1)-self.damageDeal/2)
 						if (self.targetEntity:GetNWFloat( "health", 1) <= 0) then
-							PropDie( self.targetEntity )
+							self.targetEntity:PropDie()
 						end
 						sound.Play( self.shotSound, self:GetPos(), 75, 145 )
 						MW_Die ( self )
@@ -111,7 +111,7 @@ function ENT:Explode()
 	end )
 end
 
-function ENT:DeathEffect ( ent )
+function ENT:DeathEffect( ent )
 	local effectdata = EffectData()
 	effectdata:SetOrigin( ent:GetPos() )
 	util.Effect( ent.deathEffect, effectdata )
@@ -119,13 +119,12 @@ function ENT:DeathEffect ( ent )
 	ent:Remove()
 end
 
-
 /*
 
 	if (forceTargetPos == nil and ent.targetEntity.Base == "ent_melon_prop_base") then
 		ent.targetEntity:SetNWFloat( "health", ent.targetEntity:GetNWFloat( "health", 1)-ent.damageDeal)
 		if (ent.targetEntity:GetNWFloat( "health", 1) <= 0) then
-			PropDie( ent.targetEntity )
+			ent.targetEntity:PropDie()
 		end
 	elseif (forceTargetPos == nil and ent.targetEntity:GetClass() == "prop_physics") then
 		ent.targetEntity:TakeDamage( ent.damageDeal, ent, ent )

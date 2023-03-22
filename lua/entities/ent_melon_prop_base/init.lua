@@ -24,18 +24,9 @@ function ENT:PropDefaults( ent )
 	ent.Angles = Angle(0,0,0)
 end
 
-function ENT:MW_PropDefaultDeathEffect( ent )
-	local effectdata = EffectData()
-	effectdata:SetOrigin( ent:GetPos() )
-	util.Effect( ent.deathEffect, effectdata )
-	sound.Play( ent.deathSound, ent:GetPos() )
-	ent:Remove()
-end
-
-function PropDie( ent )
-	if (not cvars.Bool("mw_admin_immortality")) then
-		ent:MW_PropDefaultDeathEffect ( ent )
-	end
+function ENT:PropDie()
+	if cvars.Bool( "mw_admin_immortality" ) then return end
+	self:PropDefaultDeathEffect()
 end
 --[[
 function ENT:OnTakeDamage( damage )
@@ -44,7 +35,7 @@ function ENT:OnTakeDamage( damage )
 			local HP = self:GetNWFloat("health", 1) - damage:GetDamage()
 			self:SetNWFloat( "health", HP )
 			if (HP <= 0) then
-				PropDie (self)
+				self:PropDie()
 			end
 		end
 	end

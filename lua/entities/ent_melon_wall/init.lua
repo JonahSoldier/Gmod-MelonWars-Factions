@@ -59,7 +59,6 @@ local function PropSetup( ent )
 end
 
 function ENT:Initialize()
-
 	self:PropDefaults( self )
 
 	self.moveType = MOVETYPE_VPHYSICS
@@ -75,6 +74,6 @@ function ENT:Initialize()
 	self:SetCollisionGroup(COLLISION_GROUP_DISSOLVING)
 end
 
-function ENT:PropDeathEffect ( ent )
-	MW_PropDefaultDeathEffect ( ent )
+function ENT:PropDeathEffect()
+	self:PropDefaultDeathEffect()
 end
