@@ -3103,30 +3103,35 @@ function TOOL:Reload()
 end
 
 function TOOL:DrawToolScreen( width, height )
+	local textColor = Color( 200, 200, 200 )
+
 	-- Draw black background
-	surface.SetDrawColor( Color( 20, 20, 20 ) )
+	surface.SetDrawColor( 20, 20, 20 )
 	surface.DrawRect( 0, 0, width, height )
 
 	if cvars.Bool( "mw_admin_cutscene" ) then
-		draw.SimpleText( "Toolgun Disabled", "DermaLarge", width / 2, height / 2, Color( 200, 200, 200 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Toolgun Disabled", "DermaLarge", width / 2, height / 2, textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		return
 	end
 
 	-- Draw white text in middle
 	local action = LocalPlayer():GetInfoNum( "mw_action", 0 )
+	local textString = "Unknown Action"
 	if action == 0 then
-		draw.SimpleText( "Selecting units", "DermaLarge", width / 2, height / 2, Color( 200, 200, 200 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		textString = "Selecting Units"
 	elseif action == 1 then
-		draw.SimpleText( "Spawning units", "DermaLarge", width / 2, height / 2, Color( 200, 200, 200 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		textString = "Spawning Units"
 	elseif action == 2 then
-		draw.SimpleText( "Spawning Base", "DermaLarge", width / 2, height / 2, Color( 200, 200, 200 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		textString = "Spawning Base"
 	elseif action == 3 then
-		draw.SimpleText( "Spawning Prop", "DermaLarge", width / 2, height / 2, Color( 200, 200, 200 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		textString = "Spawning Prop"
 	elseif action == 4 then
-		draw.SimpleText( "Contraptions", "DermaLarge", width / 2, height / 2, Color( 200, 200, 200 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		textString = "Contraptions"
 	elseif action == 945 then
-		draw.SimpleText( "Click on a unit", "DermaLarge", width / 2, height / 2, Color( 200, 200, 200 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		textString = "Click on a Unit"
 	end
+
+	draw.SimpleText( textString, "DermaLarge", width / 2, height / 2, textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 end
 
 function TOOL:Deploy()
