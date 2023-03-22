@@ -248,45 +248,48 @@ function ENT:Welded( ent, parent )
 end
 
 function ENT:Think()
-	if (self.carryingMelonium) then
-		self:SetNWFloat("mw_sick", 30)
+	if self.carryingMelonium then
+		self:SetNWFloat( "mw_sick", 30 )
 	end
 
-	local sick = self:GetNWFloat("mw_sick", 0)
-	if (sick > 0) then
-		self:SetNWFloat("mw_sick", sick-0.2)
-		self.damage = self.damage+0.12
+	local sick = self:GetNWFloat( "mw_sick", 0 )
+	if sick > 0 then
+		self:SetNWFloat( "mw_sick", sick - 0.2 )
+		self.damage = self.damage + 0.12
 	end
 
-	if not self.phys:IsAsleep() then
-		if (self.moving == false and self.canMove) then
-			local tr = util.QuickTrace( self:GetPos(), Vector(0,0,-self.sphereRadius+15), self )
-			if (tr.Entity ~= nil) then
+	local phys = self.phys
+	if not phys:IsAsleep() then
+		if self.moving == false and self.canMove then -- NOTE: Is the commented-out code in this section actually necessary? If not having it breaks something, add it back in.
+			--local tr = util.QuickTrace( self:GetPos(), Vector( 0, 0, -self.sphereRadius + 15 ), self )
+			--if tr.Entity ~= nil then
 				--self.phys:SetDamping(self.damping*5,self.damping*5)
-				local stoppingForce = self.phys:GetMass()*-self:GetVelocity()*0.5
+				local velocity = self:GetVelocity()
+				local stoppingForce = phys:GetMass() * -velocity * 0.5
 				stoppingForce.z = 0
-				self.phys:ApplyForceCenter(stoppingForce)
-				if (self:GetVelocity():LengthSqr() < 800) then
-					self.phys:Sleep()
+				phys:ApplyForceCenter( stoppingForce )
+				if velocity:LengthSqr() < 800 then
+					phys:Sleep()
 				end
-			end
-		else
-			self.phys:SetDamping(self.damping,self.damping)
+			--end
+		--else
+			--phys:SetDamping( self.damping, self.damping )
 		end
 	end
-	if (self.spawned) then
-		self:Update(self)
+
+	if self.spawned then
+		self:Update()
 	end
-	if not self.canMove and self:GetClass() ~= "ent_melon_unit_transport" and self:GetClass() ~= "ent_melon_main_unit" then
-		if (self:GetMoveType() ~= MOVETYPE_NONE ) then
-			local const = constraint.FindConstraints( self, "Weld" )
-			table.Add(const, constraint.FindConstraints( self, "Axis" ))
-			if (table.Count(const) == 0) then
-				self.damage = 5
-			end
+
+	if not self.canMove and self:GetClass() ~= ( "ent_melon_unit_transport" or "ent_melon_main_unit" ) and self:GetMoveType() ~= MOVETYPE_NONE then
+		local const = constraint.FindConstraints( self, "Weld" )
+		table.Add( const, constraint.FindConstraints( self, "Axis" ) )
+		if table.Count( const ) == 0 then
+			self.damage = 5
 		end
 	end
-	if (not (IsValid(self.parent) or self.parent == nil or self.parent:IsWorld())) then
+
+	if not ( IsValid( self.parent ) or self.parent == nil or self.parent:IsWorld() ) then
 		self.damage = 5
 	end
 end
@@ -301,117 +304,117 @@ function ENT:SpawnDoot()
 	SpawnUnitAtPos("ent_melon_doot", 0, self:GetPos(), self:GetAngles(), 0, 0, 0, false, nil, nil)
 end
 ]]
-function ENT:Update( ent )
-	if not cvars.Bool("mw_admin_playing") then return end
-	if (CurTime() > ent.nextSlowThink) then
-		ent.nextSlowThink = CurTime()+ent.slowThinkTimer
-		ent:SlowThink( ent )
+function ENT:Update()
+	if not cvars.Bool( "mw_admin_playing" ) then return end
+	if CurTime() > self.nextSlowThink then
+		self.nextSlowThink = CurTime() + self.slowThinkTimer
+		self:SlowThink( self )
 	end
 
-	if (ent.damage > 0) then -- Apply damage
-		ent.gotHit = true
-		ent.HP = ent.HP-ent.damage
-		ent:SetNWFloat( "health", ent.HP )
-		ent.damage = 0
-		if (ent.HP <= 0) then
-			MW_Die( ent )
+	if self.damage > 0 then -- Apply damage
+		self.gotHit = true
+		self.HP = self.HP - self.damage
+		self:SetNWFloat( "health", self.HP )
+		self.damage = 0
+		if self.HP <= 0 then
+			MW_Die( self )
 		end
 	end
 
-	ent:SetNWEntity( "targetEntity", ent.targetEntity )
-	ent:SetNWEntity( "followEntity", ent.followEntity )
+	self:SetNWEntity( "targetEntity", self.targetEntity )
+	self:SetNWEntity( "followEntity", self.followEntity )
 
-	local entPos = ent:GetPos()
-	local followEntityPos = Vector(0,0,0)
-	if (IsValid(ent.followEntity)) then
-		followEntityPos = ent.followEntity:GetPos()
+	local entPos = self:GetPos()
+	local followEntityPos = Vector( 0, 0, 0 )
+	if IsValid( self.followEntity ) then
+		followEntityPos = self.followEntity:GetPos()
 	end
-	local targetEntityPos = Vector(0,0,0)
-	if (IsValid(ent.targetEntity)) then
-		targetEntityPos = ent.targetEntity:GetPos()
+	local targetEntityPos = Vector( 0, 0, 0 )
+	if IsValid( self.targetEntity ) then
+		targetEntityPos = self.targetEntity:GetPos()
 	end
 
-	if not ent.canMove then return end
-	if (ent.followEntity ~= ent) then
-		if (IsValid(ent.followEntity)) then
-			if ((followEntityPos-entPos):LengthSqr() > ent.range*ent.range) then
-				ent.targetPos = followEntityPos+(entPos-followEntityPos):GetNormalized()*ent.range*0.5
-				ent.moving = true
+	if not self.canMove then return end
+	if self.followEntity ~= self then
+		if IsValid( self.followEntity ) then
+			if (followEntityPos-entPos):LengthSqr() > self.range*self.range then
+				self.targetPos = followEntityPos+(entPos-followEntityPos):GetNormalized()*self.range*0.5
+				self.moving = true
 			end
 		end
 	else
-		if (ent.chasing) then
-			if (IsValid(ent.targetEntity)) then
-				if ((targetEntityPos-entPos):LengthSqr() > ent.range*ent.range) then
+		if self.chasing then
+			if IsValid(self.targetEntity) then
+				if (targetEntityPos-entPos):LengthSqr() > self.range*self.range then
 					local chanceDistMul = 0.9
-					if (ent.meleeAi) then
+					if self.meleeAi then
 						chanceDistMul = 0.2
 					end
-					ent.targetPos = targetEntityPos+(entPos-targetEntityPos):GetNormalized()*ent.range*chanceDistMul
-					ent.moving = true
+					self.targetPos = targetEntityPos+(entPos-targetEntityPos):GetNormalized()*self.range*chanceDistMul
+					self.moving = true
 				end
 			end
 		end
 	end
 
-	local phys = ent.phys
+	local phys = self.phys
 
-	if (IsValid(phys)) then
+	if IsValid(phys) then
 		---------------------------------------------------------------------------Movimiento
-		if (ent.moving) then
-			--if (ent.chaseStance == false or ent.targetEntity == nil) then
-			local moveVector = (ent.targetPos-entPos):GetNormalized()*ent.speed-ent:GetVelocity()*0.5
+		if self.moving then
+			--if (self.chaseStance == false or self.targetEntity == nil) then
+			local moveVector = (self.targetPos-entPos):GetNormalized()*self.speed-self:GetVelocity()*0.5
 			local force = Vector(moveVector.x, moveVector.y, 0)
 			-- OLD MOVEMENT, MOVE IN THINK. NEW MOVEMENT IN PHYSICS UPDATE
 			--phys:ApplyForceCenter (force*phys:GetMass())
 			-- new:
-			ent.phys:Wake()
-			ent.moveForce = force*0.5*ent.moveForceMultiplier
+			self.phys:Wake()
+			self.moveForce = force*0.5*self.moveForceMultiplier
 			--end
 		end
 
-		if (ent.moving and ent.ai) then
-			local distanceToLastPosition = (ent.lastPosition-entPos):LengthSqr()
+		if self.moving and self.ai then
+			local distanceToLastPosition = (self.lastPosition-entPos):LengthSqr()
 
-			if (ent.lastPosition ~= Vector(0,0,0) and distanceToLastPosition > 500000) then --Stop moving if distance from lastposition is ridiculous (teleported)
-				ent:FinishMovement()
-				ent.lastPosition = Vector(0,0,0)
-			elseif (distanceToLastPosition < (ent.speed/2)*(ent.speed/2))then
-				ent.stuck = ent.stuck+1
+			if self.lastPosition ~= Vector(0,0,0) and distanceToLastPosition > 500000 then --Stop moving if distance from lastposition is ridiculous (teleported)
+				self:FinishMovement()
+				self.lastPosition = Vector(0,0,0)
+			elseif distanceToLastPosition < (self.speed/2)*(self.speed/2)then
+				self.stuck = self.stuck+1
 			else
-				ent.lastPosition = entPos
-				ent.stuck = 0
+				self.lastPosition = entPos
+				self.stuck = 0
 			end
 
-			if (ent.stuck%8 == 7) then
-				if (ent.stuck > 40) then
-					if not ent.chaseStance then
-						ent.targetEntity = nil
-						ent:FinishMovement()
-						ent.stuck = 0
+			if self.stuck % 8 == 7 then
+				if self.stuck > 40 then
+					if not self.chaseStance then
+						self.targetEntity = nil
+						self:FinishMovement()
+						self.stuck = 0
 					end
 				else
-					if not ent.chaseStance or (ent.chaseStance and not IsValid(ent.targetEntity)) then
-						ent:Unstuck()
+					if not self.chaseStance or (self.chaseStance and not IsValid(self.targetEntity)) then
+						self:Unstuck()
 					end
 				end
 			end
 		end
 	end
 
-	local flattenedTargetPos = Vector(ent.targetPos.x, ent.targetPos.y, entPos.z)
-	if (ent.ai) then
-		if ((flattenedTargetPos-entPos):LengthSqr() < 30*30) then
-			ent:FinishMovement()
+	local flattenedTargetPos = Vector(self.targetPos.x, self.targetPos.y, entPos.z)
+	if self.ai then
+		if (flattenedTargetPos-entPos):LengthSqr() < 900 then
+			self:FinishMovement()
 		end
 	else
-		if ((flattenedTargetPos-entPos):LengthSqr() < 10*10) then
-			ent:FinishMovement()
+		if (flattenedTargetPos-entPos):LengthSqr() < 100 then
+			self:FinishMovement()
 		end
 	end
 
-	ent:SetNWBool("moving", ent.moving)
-	ent:NextThink(CurTime() + 0.1)
+	self:SetNWBool("moving", self.moving)
+	self:NextThink(CurTime() + 0.1)
 	return true
 end
 
