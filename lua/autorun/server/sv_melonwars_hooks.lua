@@ -1,5 +1,10 @@
 local function MW_Initialize()
 	mw_team_colors[0] = Color( 100, 100, 100, 255 )
+
+	-- Create a file for contraption validation
+	local text = util.Compress( util.TableToJSON( mw_units ) )
+	file.CreateDir( "melonwars/validation" )
+	file.Write( "melonwars/validation/unitValues.txt", text )
 end
 hook.Add( "Initialize", "MelonWars_InitializeTeams", MW_Initialize )
 

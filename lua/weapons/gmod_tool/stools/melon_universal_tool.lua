@@ -1455,12 +1455,6 @@ u.angleSnap		= false
 u.contraptionPart = true
 u.spawnable_on_floor = false
 
-
--- Create a file for contraption validation
-local text = util.Compress(util.TableToJSON(mw_units))
-file.CreateDir( "melonwars/validation" )
-file.Write( "melonwars/validation/unitValues.txt", text )
-
 teamgrid = {
 	{false,false,false,false,false,false,false,false},
 	{false,false,false,false,false,false,false,false},
