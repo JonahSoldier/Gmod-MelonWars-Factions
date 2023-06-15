@@ -28,11 +28,11 @@ end
 
 function ENT:Think()
 	if self.nextParticle < CurTime() then
-		self:DrawSickEffect( 1 )
-		self.nextParticle = CurTime()+0.2
+		MelonWars_DrawSickEffect( self, 1 )
+		self.nextParticle = CurTime() + 0.2
 	end
 end
 
 function ENT:OnRemove()
-	self:DrawSickEffect( 50 )
+	MelonWars_DrawSickEffect( self, 50 )
 end

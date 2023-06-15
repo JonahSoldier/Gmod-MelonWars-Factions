@@ -34,10 +34,10 @@ function ENT:Initialize()
 	self.nextParticle = 0
 end
 
-function ENT:DrawSickEffect( amount )
-	local emitter = ParticleEmitter( self:GetPos() ) -- Particle emitter in this position
+function MelonWars_DrawSickEffect( ent, amount )
+	local emitter = ParticleEmitter( ent:GetPos() ) -- Particle emitter in this position
 	for i = 1, amount do -- SMOKE
-		local part = emitter:Add( "effects/yellowflare", self:GetPos() ) -- Create a new particle at pos
+		local part = emitter:Add( "effects/yellowflare", ent:GetPos() ) -- Create a new particle at pos
 		if ( part ) then
 			part:SetDieTime( math.Rand(1.0, 2.0) ) -- How long the particle should "live"
 			part:SetColor(100, 255, 0)
@@ -96,7 +96,7 @@ function ENT:Think()
 		if (self.nextParticle < CurTime()) then
 			local sick = self:GetNWFloat("mw_sick", 0)
 			if (sick > 0) then
-				self:DrawSickEffect( 1 )
+				MelonWars_DrawSickEffect( self, 1 )
 				self.nextParticle = CurTime()+math.min(1/sick, 1)
 			end
 		end
