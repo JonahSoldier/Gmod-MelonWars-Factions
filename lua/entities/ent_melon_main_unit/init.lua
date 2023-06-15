@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.slowThinkTimer = 1
 	self.nextSlowThink = 0
@@ -84,11 +84,11 @@ function ENT:DeathEffect ( ent )
 				util.Effect( "Explosion", effectdata )
 			end
 
-			local count = table.Count(debri_props)
+			local count = table.Count(MelonWars.debrisProps)
 
 			for i = 1, count do
 				local debris = ents.Create( "prop_physics" )
-				debris:SetModel(debri_props[i])
+				debris:SetModel(MelonWars.debrisProps[i])
 				debris:Ignite( 60 )
 				debris:SetPos(ent:GetPos() + Vector(math.random(-100,100), math.random(-100,100), math.random(-100,100)))
 				debris:Spawn()
@@ -114,16 +114,16 @@ end
 function ENT:SlowThink(ent)
 	if (cvars.Bool("mw_admin_cutscene")) then return end
 	if (self:GetNWInt("mw_melonTeam", 0) ~= 0) then
-		mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)]+self.income*cvars.Number("mw_admin_base_income")
+		MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] = MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)]+self.income*cvars.Number("mw_admin_base_income")
 		for k, v in pairs( player.GetAll() ) do
 			if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
 				net.Start("MW_TeamCredits")
-					net.WriteInt(mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
+					net.WriteInt(MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
 				net.Send(v)
 			end
 		end
 	end
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 end
 
 function ENT:Shoot ( ent )

@@ -4,7 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include('shared.lua')
 
 function ENT:Initialize()
-	MW_Defaults( self )
+	MelonWars.defaults( self )
 
 	self.maxHP = 15
 	self.speed = 125
@@ -39,7 +39,7 @@ end
 
 function ENT:SlowThink( ent )
 	if not cvars.Bool( "mw_admin_playing" ) then return end
-	MW_UnitDefaultThink( ent )
+	MelonWars.unitDefaultThink( ent )
 	if self.dropdown > 0 then
 		self.dropdown = self.dropdown - 1
 	end
@@ -50,12 +50,12 @@ end
 
 function ENT:Shoot( ent, forcedTargetPos )
 	if not ( ent.ai or CurTime() > ent.nextControlShoot ) then return end
-	MW_DefaultShoot( ent, forcedTargetPos )
+	MelonWars.defaultShoot( ent, forcedTargetPos )
 	ent.nextControlShoot = CurTime() + ent.slowThinkTimer
 end
 
 function ENT:DeathEffect( ent )
-	MW_DefaultDeathEffect( ent )
+	MelonWars.defaultDeathEffect( ent )
 end
 
 function ENT:Unstuck()

@@ -3,7 +3,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 
 include('shared.lua')
 
-mw_team_colors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(255,50,255,255),Color(100,255,255,255),Color(255,120,0,255),Color(10,30,70,255)}
+MelonWars.teamColors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(255,50,255,255),Color(100,255,255,255),Color(255,120,0,255),Color(10,30,70,255)}
 
 function ENT:Initialize()
 
@@ -47,11 +47,11 @@ function ENT:SlowThink()
 
 	if (SERVER) then
 		if (self.capTeam ~= 0) then
-			mw_teamCredits[self.capTeam] = mw_teamCredits[self.capTeam]+5
+			MelonWars.teamCredits[self.capTeam] = MelonWars.teamCredits[self.capTeam]+5
 			for k, v in pairs( player.GetAll() ) do
 				if (v:GetInfo("mw_team") == tostring(self.capTeam)) then
 					net.Start("MW_TeamCredits")
-						net.WriteInt(mw_teamCredits[self.capTeam] ,32)
+						net.WriteInt(MelonWars.teamCredits[self.capTeam] ,32)
 					net.Send(v)
 				end
 			end
@@ -129,7 +129,7 @@ end
 
 function ENT:GetCaptured(capturingTeam, ent)
 	local newColor = Color(255,255,255,255)
-	if (capturingTeam > 0) then newColor = mw_team_colors[capturingTeam] end
+	if (capturingTeam > 0) then newColor = MelonWars.teamColors[capturingTeam] end
 	--[[if (capturingTeam == 1) then
 		newColor = Color(255,50,50,255)
 	end

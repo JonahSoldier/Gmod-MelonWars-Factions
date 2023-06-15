@@ -4,7 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-	MW_Energy_Defaults ( self )
+	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_combine/combine_train02a.mdl"
 	self.maxHP = 500
@@ -21,7 +21,7 @@ function ENT:Initialize()
 	self.capacity = 15000
 	self:SetNWVector("energyPos", Vector(0,0,30))
 
-	MW_Energy_Setup ( self )
+	MelonWars.energySetup ( self )
 end
 
 function ENT:Think(ent)

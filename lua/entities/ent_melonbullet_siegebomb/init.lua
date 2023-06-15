@@ -43,7 +43,7 @@ function ENT:PhysicsCollide( colData, collider )
 			local newHealth = otherhealth-100
 			other:SetNWFloat("health", newHealth)
 			if (other:GetNWFloat("health", 1) <= 0) then
-				MW_Die(other)
+				MelonWars.die(other)
 			end
 		end
 		self:GetPhysicsObject():SetVelocity(Vector(0,0,-1000))

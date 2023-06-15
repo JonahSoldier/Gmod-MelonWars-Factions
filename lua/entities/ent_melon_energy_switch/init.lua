@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Energy_Defaults ( self )
+	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_trainstation/trashcan_indoor001b.mdl"
 	self.maxHP = 20
@@ -29,7 +29,7 @@ function ENT:Initialize()
 	self.capacity = 0
 	self:SetNWVector("energyPos", Vector(0,0,10))
 
-	MW_Energy_Setup ( self )
+	MelonWars.energySetup ( self )
 end
 
 function ENT:Actuate ()
@@ -39,13 +39,13 @@ function ENT:Actuate ()
 		if (self.open) then
 			self:SetNWString("message", "Open")
 			self:Energy_Add_State()
-			MW_CalculateConnections(self, self.connectToMachines)
+			MelonWars.calculateConnections(self, self.connectToMachines)
 		else
 			self:SetNWString("message", "Closed")
 			for k, v in pairs(self.connections) do
 				table.RemoveByValue(v.connections, self)
 			end
-			MW_Energy_Network_Remove_Element(self)
+			MelonWars.energyNetworkRemoveElement(self)
 		end
 		self.allowConnections = self.open
 		self.lastSwitch = CurTime()
@@ -72,5 +72,5 @@ function ENT:Shoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

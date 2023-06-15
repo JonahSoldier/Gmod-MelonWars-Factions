@@ -6,7 +6,7 @@ include( "shared.lua" )
 function ENT:Initialize()
 	--self:SetPos(self:GetPos()+Vector(0,0,-5))
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/xqm/jetenginepropellerlarge.mdl"
 	self.moveType = MOVETYPE_NONE
@@ -41,9 +41,9 @@ function ENT:SlowThink(ent)
 end
 
 function ENT:Shoot ( ent )
-	--MW_DefaultShoot ( ent )
+	--MelonWars.defaultShoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

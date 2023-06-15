@@ -60,6 +60,8 @@ util.AddNetworkString( "SetMWConvar" )
 util.AddNetworkString( "MWReadyUp" )
 util.AddNetworkString( "MW_ClientModifySpawnTime" )
 
+MelonWars = {}
+
 net.Receive( "SetMWConvar", function( _, pl )
 	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
 
@@ -110,7 +112,7 @@ net.Receive( "MWReadyUp", function()
 	end )
 end )
 
-mw_team_colors = {
+MelonWars.teamColors = {
 	Color(255,50,50,255),
 	Color(50,50,255,255),
 	Color(255,200,50,255),
@@ -129,9 +131,9 @@ mw_special_steam_decoration["STEAM_0:0:165277892"] = {
 	chance = 0.2
 }
 ]]--
-mw_special_steam_skins = {}
+MelonWars.specialSteamSkins = {}
 --  Marum
-mw_special_steam_skins["STEAM_0:0:29138250"] = {
+MelonWars.specialSteamSkins["STEAM_0:0:29138250"] = {
 	material = "models/shiny",
 	trail = "trails/laser",
 	length = 1,
@@ -141,7 +143,7 @@ mw_special_steam_skins["STEAM_0:0:29138250"] = {
 }-- trails/laser
 
 --  JonahSoldier
-mw_special_steam_skins["STEAM_0:0:16826885"] = {
+MelonWars.specialSteamSkins["STEAM_0:0:16826885"] = {
 	material = "phoenix_storms/gear",
 	trail = "trails/physbeam",
 	length = 0.5,
@@ -151,7 +153,7 @@ mw_special_steam_skins["STEAM_0:0:16826885"] = {
 }-- trails/physbeam
 
 --  VarixDog
-mw_special_steam_skins["STEAM_0:1:101608555"] = {
+MelonWars.specialSteamSkins["STEAM_0:1:101608555"] = {
 	material = "phoenix_storms/plastic",
 	trail = "trails/lol",
 	length = 0.5,
@@ -161,7 +163,7 @@ mw_special_steam_skins["STEAM_0:1:101608555"] = {
 }-- trails/lol
 
 --  EvilDuckGuy
-mw_special_steam_skins["STEAM_0:0:460204826"] = {
+MelonWars.specialSteamSkins["STEAM_0:0:460204826"] = {
 	material = "models/combine_scanner/scanner_eye",
 	trail = "effects/beam_generic01",
 	length = 0.5,
@@ -171,7 +173,7 @@ mw_special_steam_skins["STEAM_0:0:460204826"] = {
 }-- effects/beam_generic01
 
 --  MerekiDor
-mw_special_steam_skins["STEAM_0:1:93155236"] = {
+MelonWars.specialSteamSkins["STEAM_0:1:93155236"] = {
 	material = "phoenix_storms/cube",
 	trail = "trails/smoke",
 	length = 0.5,
@@ -180,10 +182,10 @@ mw_special_steam_skins["STEAM_0:1:93155236"] = {
 	teamcolor = 0.5
 }-- trails/smoke
 
-mw_teamCredits = {2000,2000,2000,2000,2000,2000,2000,2000}
-mw_teamUnits = {0,0,0,0,0,0,0,0}
+MelonWars.teamCredits = {2000,2000,2000,2000,2000,2000,2000,2000}
+MelonWars.teamUnits = {0,0,0,0,0,0,0,0}
 
-teamgrid = teamgrid or {}
+MelonWars.teamGrid = MelonWars.teamGrid or {}
 
 net.Receive( "MW_SelectContraption", function( _, pl )
 	local count = net.ReadUInt( 16 )
@@ -305,10 +307,10 @@ net.Receive( "MW_UpdateClientInfo", function( _, pl )
 
 	if a ~= 0 then
 		net.Start("MW_TeamCredits")
-			net.WriteInt(mw_teamCredits[a] ,32)
+			net.WriteInt(MelonWars.teamCredits[a] ,32)
 		net.Send(pl)
 		net.Start("MW_TeamUnits")
-			net.WriteInt(mw_teamUnits[a] ,16)
+			net.WriteInt(MelonWars.teamUnits[a] ,16)
 		net.Send(pl)
 	else
 		net.Start("MW_TeamCredits")
@@ -322,7 +324,7 @@ end )
 
 net.Receive( "MW_UpdateServerInfo", function()
 	local a = net.ReadInt(8)
-	mw_teamCredits[a] = net.ReadInt(32)
+	MelonWars.teamCredits[a] = net.ReadInt(32)
 end )
 
 net.Receive( "ToggleBarracks", function()
@@ -351,11 +353,11 @@ net.Receive( "MW_UseWaterTank", function( _, pl )
 	local _team = ent:GetNWInt("capTeam", -1)
 	if _team ~= pl:GetInfoNum( "mw_team", -1 ) then return end
 
-	mw_teamCredits[_team] = mw_teamCredits[_team] + ent.waterVal
+	MelonWars.teamCredits[_team] = MelonWars.teamCredits[_team] + ent.waterVal
 	for _, v in ipairs( player.GetAll() ) do
 		if v:GetInfo( "mw_team" ) == tostring( _team ) then
 			net.Start( "MW_TeamCredits" )
-				net.WriteInt( mw_teamCredits[_team], 32 )
+				net.WriteInt( MelonWars.teamCredits[_team], 32 )
 			net.Send( v )
 			v:PrintMessage( HUD_PRINTTALK, "== Received " .. ent.waterVal .. " water! ==" )
 		end
@@ -392,9 +394,9 @@ local function MW_Server_IsInBuildRange( vector, teamIndex ) -- This is copied f
 
 	for _, v in ipairs( foundPoints ) do
 		if vector:Distance( v:GetPos() ) < 600 then
-			if teamgrid == nil or teamgrid[v:GetNWInt("capTeam", 0)] == nil or teamgrid[v:GetNWInt("capTeam", 0)][teamIndex] == nil then
+			if MelonWars.teamGrid == nil or MelonWars.teamGrid[v:GetNWInt("capTeam", 0)] == nil or MelonWars.teamGrid[v:GetNWInt("capTeam", 0)][teamIndex] == nil then
 				canBuild = v:GetNWInt("capTeam", 0) == teamIndex
-			elseif v:GetNWInt("capTeam", 0) == teamIndex or teamgrid[v:GetNWInt("capTeam", 0)][teamIndex] then
+			elseif v:GetNWInt("capTeam", 0) == teamIndex or MelonWars.teamGrid[v:GetNWInt("capTeam", 0)][teamIndex] then
 				canBuild = true
 			end
 			if canBuild then break end
@@ -405,7 +407,7 @@ local function MW_Server_IsInBuildRange( vector, teamIndex ) -- This is copied f
 end
 
 local function MW_Server_UpdateWater( team, credits )
-	mw_teamCredits[team] = credits
+	MelonWars.teamCredits[team] = credits
 end
 
 net.Receive( "MW_SpawnUnit", function( _, pl )
@@ -421,13 +423,13 @@ net.Receive( "MW_SpawnUnit", function( _, pl )
 	local position = net.ReadVector()
 
 	if IsValid( trace.Entity ) and trace.Entity.Base == "ent_melon_base" then return end
-	if trace.Entity:GetClass() == "ent_melon_wall" and (attach == false and mw_units[unit_index].welded_cost ~= -1 and unit_index < 9 --[[<< first building]]) then
+	if trace.Entity:GetClass() == "ent_melon_wall" and (attach == false and MelonWars.units[unit_index].welded_cost ~= -1 and unit_index < 9 --[[<< first building]]) then
 		pl:PrintMessage( HUD_PRINTCENTER, "Cant spawn mobile units directly on buildings" )
 		return
 	end
 
-	if MW_Server_IsInBuildRange(position, _team) or cvars.Bool("mw_admin_allow_free_placing") or mw_units[unit_index].buildAnywere or _team == 0 then
-		local newMarine = SpawnUnitAtPos(class, unit_index, position --[[trace.HitPos + trace.HitNormal * 5]], angle, cost, spawntime, _team, attach, trace.Entity, pl, spawndelay)
+	if MW_Server_IsInBuildRange(position, _team) or cvars.Bool("mw_admin_allow_free_placing") or MelonWars.units[unit_index].buildAnywere or _team == 0 then
+		local newMarine = MelonWars.spawnUnitAtPos(class, unit_index, position --[[trace.HitPos + trace.HitNormal * 5]], angle, cost, spawntime, _team, attach, trace.Entity, pl, spawndelay)
 
 		undo.Create("Melon Marine")
 			undo.AddEntity( newMarine )
@@ -435,14 +437,14 @@ net.Receive( "MW_SpawnUnit", function( _, pl )
 		undo.Finish()
 
 		if cvars.Bool("mw_admin_credit_cost") or _team == 0 then
-			MW_Server_UpdateWater(_team, mw_teamCredits[_team]-cost)
+			MW_Server_UpdateWater(_team, MelonWars.teamCredits[_team]-cost)
 		end
 	else
 		pl:PrintMessage( HUD_PRINTTALK, "== Too far from an outpost! ==" )
 	end
 end )
 
-function SpawnUnitAtPos( class, unit_index, pos, ang, cost, spawntime, _team, attach, parent, pl, spawndelay )
+function MelonWars.spawnUnitAtPos( class, unit_index, pos, ang, cost, spawntime, _team, attach, parent, pl, spawndelay )
 	local newMarine = ents.Create( class )
 	if not IsValid( newMarine ) then return end -- Check whether we successfully made an entity, if not - bail
 
@@ -484,7 +486,7 @@ function SpawnUnitAtPos( class, unit_index, pos, ang, cost, spawntime, _team, at
 		end
 
 		if (pl:GetInfo( "mw_enable_skin" ) == "1") then
-			local _skin = mw_special_steam_skins[pl:SteamID()]
+			local _skin = MelonWars.specialSteamSkins[pl:SteamID()]
 			if _skin ~= nil and _skin.material ~= nil then
 				newMarine:SkinMaterial( _skin.material )
 				-- if (_skin.trail ~= nil) then
@@ -529,7 +531,7 @@ local function MW_CalculateContraptionValues( betadupetable )
 		if v.Class == "prop_physics" then
 			cost = cost + v.Cost
 		elseif string.StartWith(v.Class, "ent_melon_") then
-			local unit_data = mw_units[mw_unit_ids[v.Class]]
+			local unit_data = MelonWars.units[mw_unit_ids[v.Class]]
 			if unit_data.welded_cost == -1 and (unit_data.contraptionPart == nil or unit_data.contraptionPart == false) then
 				return "A non weldable unit can't be part of a contraption!", 0, 0
 			else
@@ -745,16 +747,16 @@ net.Receive( "ContraptionSave", function( _, pl )
 	end
 end )
 
-mrtsMessageReceivingEntity = nil
-mrtsMessageReceivingState = "idle"
-mrtsNetworkBuffer = ""
+MelonWars.messageReceivingEntity = nil
+MelonWars.messageReceivingState = "idle"
+MelonWars.networkBuffer = ""
 
 net.Receive( "BeginContraptionLoad", function()
-	if mrtsMessageReceivingState ~= "idle" then return end
+	if MelonWars.messageReceivingState ~= "idle" then return end
 	local pl = net.ReadEntity()
-	mrtsMessageReceivingEntity = pl
-	mrtsMessageReceivingState = tostring( pl )
-	mrtsNetworkBuffer = ""
+	MelonWars.messageReceivingEntity = pl
+	MelonWars.messageReceivingState = tostring( pl )
+	MelonWars.networkBuffer = ""
 end )
 
 net.Receive( "ContraptionLoad", function( _, pl )
@@ -765,12 +767,12 @@ net.Receive( "ContraptionLoad", function( _, pl )
 	local data = net.ReadData(size)
 
 	-- local text = util.Decompress(data)
-	mrtsNetworkBuffer = mrtsNetworkBuffer .. data
+	MelonWars.networkBuffer = MelonWars.networkBuffer .. data
 
 	if not last then return end
-	local text = util.Decompress(mrtsNetworkBuffer)
+	local text = util.Decompress(MelonWars.networkBuffer)
 	local dupetable = util.JSONToTable( text )
-	local ent = mrtsMessageReceivingEntity
+	local ent = MelonWars.messageReceivingEntity
 	local pos
 	if (ent:GetClass() == "player") then
 		pos = ent:GetEyeTrace().HitPos
@@ -793,7 +795,7 @@ net.Receive( "ContraptionLoad", function( _, pl )
 			v:SetCollisionGroup(2)
 
 			if (pl:GetInfo( "mw_enable_skin" ) == "1") then
-				local _skin = mw_special_steam_skins[pl:SteamID()]
+				local _skin = MelonWars.specialSteamSkins[pl:SteamID()]
 				if _skin ~= nil and _skin.material ~= nil then
 					v:SkinMaterial( _skin.material )
 					-- if (_skin.trail ~= nil) then
@@ -807,7 +809,7 @@ net.Receive( "ContraptionLoad", function( _, pl )
 			v:SetNWBool("done",true)
 		end
 		if not string.StartWith( v:GetClass(), "ent_melon") then
-			v:SetColor(mw_team_colors[mw_melonTeam])
+			v:SetColor(MelonWars.teamColors[mw_melonTeam])
 			v:SetMaterial("")
 			v:SetRenderFX(kRenderFxNone)
 			v:SetNWInt("mw_melonTeam", mw_melonTeam)
@@ -834,9 +836,9 @@ net.Receive( "ContraptionLoad", function( _, pl )
 		v:GetPhysicsObject():EnableMotion(true)
 	end
 
-	mrtsMessageReceivingEntity = nil
-	mrtsMessageReceivingState = "idle"
-	mrtsNetworkBuffer = ""
+	MelonWars.messageReceivingEntity = nil
+	MelonWars.messageReceivingState = "idle"
+	MelonWars.networkBuffer = ""
 end )
 
 net.Receive( "ContraptionAutoValidate", function( _, pl )
@@ -845,13 +847,13 @@ net.Receive( "ContraptionAutoValidate", function( _, pl )
 	local data = net.ReadData(size)
 	local name = net.ReadString()
 
-	mrtsNetworkBuffer = mrtsNetworkBuffer .. data
+	MelonWars.networkBuffer = MelonWars.networkBuffer .. data
 
 	if not last then return end
-	local text = util.Decompress(mrtsNetworkBuffer)
+	local text = util.Decompress(MelonWars.networkBuffer)
 	local dupetable = util.JSONToTable( text )
-	-- local ent = mrtsMessageReceivingEntity
-	-- print(mrtsNetworkBuffer) -- prints [
+	-- local ent = MelonWars.messageReceivingEntity
+	-- print(MelonWars.networkBuffer) -- prints [
 	-- print(text) --  Returns the file properly.
 
 	-- PrintTable(dupetable) --  Sometimes this is a table and sometimes it's nil?????????
@@ -943,9 +945,9 @@ net.Receive( "ContraptionAutoValidate", function( _, pl )
 		start = endbyte
 	end
 
-	mrtsMessageReceivingEntity = nil
-	mrtsMessageReceivingState = "idle"
-	mrtsNetworkBuffer = ""
+	MelonWars.messageReceivingEntity = nil
+	MelonWars.messageReceivingState = "idle"
+	MelonWars.networkBuffer = ""
 end )
 
 net.Receive( "RequestContraptionLoadToAssembler", function( _, pl )
@@ -1020,14 +1022,14 @@ net.Receive( "MW_SpawnProp", function( _, pl )
 	local spawntime = net.ReadInt(16)
 	local propAngle = net.ReadAngle()
 
-	local offset = Vector(0,0,mw_base_props[index].offset.z)
+	local offset = Vector(0,0,MelonWars.baseProps[index].offset.z)
 	if (cvars.Bool("mw_prop_offset") == true) then
-		offset = mw_base_props[index].offset
+		offset = MelonWars.baseProps[index].offset
 	end
 	local xoffset = Vector( offset.x * ( math.cos( propAngle.y / 180 * math.pi ) ), offset.x * ( math.sin( propAngle.y / 180 * math.pi ) ), 0 )
 	local yoffset = Vector( offset.y * ( -math.sin( propAngle.y / 180 * math.pi ) ), offset.y * ( math.cos( propAngle.y / 180 * math.pi ) ), 0 )
 	offset = xoffset + yoffset + Vector( 0, 0, offset.z )
-	MW_SpawnProp(mw_base_props[index].model, trace.HitPos + trace.HitNormal + offset, propAngle + mw_base_props[index].angle, _team, trace.Entity, mw_base_props[index].hp, cost, pl, spawntime, offset)
+	MW_SpawnProp(MelonWars.baseProps[index].model, trace.HitPos + trace.HitNormal + offset, propAngle + MelonWars.baseProps[index].angle, _team, trace.Entity, MelonWars.baseProps[index].hp, cost, pl, spawntime, offset)
 end )
 
 local function MW_SpawnBaseAtPos(_team, vector, pl, grandwar, unit)
@@ -1116,7 +1118,7 @@ net.Receive( "SellEntity", function( _, pl )
 	if entity.Base == "ent_melon_base" then
 		if entity.canMove ~= true then return end
 		if entity.gotHit or CurTime() - entity:GetCreationTime() >= 30 or entity.fired ~= false then
-			pl:PrintMessage( HUD_PRINTTALK, "== Can't sell mobile mw_units after 30 seconds, after they got hit, or after they fired! ==" )
+			pl:PrintMessage( HUD_PRINTTALK, "== Can't sell mobile MelonWars.units after 30 seconds, after they got hit, or after they fired! ==" )
 			sound.Play( "buttons/button2.wav", pl:GetPos(), 75, 100, 1 )
 			entity = nil
 		end
@@ -1134,11 +1136,11 @@ net.Receive( "SellEntity", function( _, pl )
 	end
 	if entity == nil then return end
 	if entity:GetClass() == "prop_physics" or entity.gotHit or CurTime() - entity:GetCreationTime() >= 30 or ( entity.Base == "ent_melon_base" and entity.fired ~= false ) then --pregunta si NO se va a recivir el dinero de refund NULL ENTITY
-		mw_teamCredits[playerTeam] = mw_teamCredits[playerTeam] + entity.value * 0.25
+		MelonWars.teamCredits[playerTeam] = MelonWars.teamCredits[playerTeam] + entity.value * 0.25
 		for _, v in ipairs( player.GetAll() ) do
 			if v:GetInfo( "mw_team" ) == tostring( entity:GetNWInt( "mw_melonTeam", 0 ) ) then
 				net.Start("MW_TeamCredits")
-					net.WriteInt(mw_teamCredits[entity:GetNWInt("mw_melonTeam", 0)] ,32)
+					net.WriteInt(MelonWars.teamCredits[entity:GetNWInt("mw_melonTeam", 0)] ,32)
 				net.Send(v)
 				v:PrintMessage( HUD_PRINTTALK, "== " .. tostring( entity.value * 0.25 ) .. " Water Recovered! ==" )
 			end
@@ -1171,28 +1173,28 @@ net.Receive( "LegalizeContraption", function( _, pl )
 	end
 	local massCostMultiplier = 10
 	local massHealthMultiplier = 1
-	if not ( mw_teamCredits[mw_melonTeam] >= mass * massCostMultiplier or not cvars.Bool( "mw_admin_credit_cost" ) ) then return end
+	if not ( MelonWars.teamCredits[mw_melonTeam] >= mass * massCostMultiplier or not cvars.Bool( "mw_admin_credit_cost" ) ) then return end
 	for _, ent in pairs( entities ) do
 		if string.StartWith( ent:GetClass(), "gmod_" ) or string.StartWith( ent:GetClass(), "prop_vehicle") then
 			ent:Remove()
 		else
 			if string.StartWith( ent:GetClass(), "ent_melon") then return end
-			ent:SetColor( mw_team_colors[mw_melonTeam] )
+			ent:SetColor( MelonWars.teamColors[mw_melonTeam] )
 			ent:SetNWInt( "mw_melonTeam", mw_melonTeam )
 			ent:SetNWInt( "propHP", math.min( 1000, ent:GetPhysicsObject():GetMass() * massHealthMultiplier ) ) --max 1000 de vida
 			ent.realvalue = ent:GetPhysicsObject():GetMass() * massCostMultiplier
 		end
 	end
 	if not cvars.Bool( "mw_admin_credit_cost" ) then return end
-	mw_teamCredits[mw_melonTeam] = mw_teamCredits[mw_melonTeam] - mass * massCostMultiplier
+	MelonWars.teamCredits[mw_melonTeam] = MelonWars.teamCredits[mw_melonTeam] - mass * massCostMultiplier
 	net.Start( "MW_TeamCredits" )
-		net.WriteInt( mw_teamCredits[mw_melonTeam], 32 )
+		net.WriteInt( MelonWars.teamCredits[mw_melonTeam], 32 )
 	net.Send( pl )
 end )
 
 concommand.Add( "mw_reset_credits", function()
 	local c = cvars.Number( "mw_admin_starting_credits" )
-	mw_teamCredits = { c, c, c, c, c, c, c, c }
+	MelonWars.teamCredits = { c, c, c, c, c, c, c, c }
 	for _, v in ipairs( player.GetAll() ) do
 		net.Start( "MW_TeamCredits" )
 			net.WriteInt( c, 32 )
@@ -1201,12 +1203,12 @@ concommand.Add( "mw_reset_credits", function()
 end )
 
 concommand.Add( "mw_reset_power", function()
-	mw_teamUnits = {0,0,0,0,0,0,0,0}
+	MelonWars.teamUnits = {0,0,0,0,0,0,0,0}
 
 	for _, v in ipairs( player.GetAll() ) do
 		local mw_melonTeam = v:GetInfoNum( "mw_team", 0 )
 		net.Start( "MW_TeamUnits" )
-			net.WriteInt( mw_teamUnits[mw_melonTeam], 32 )
+			net.WriteInt( MelonWars.teamUnits[mw_melonTeam], 32 )
 		net.Send( v )
 	end
 end )
@@ -1397,18 +1399,18 @@ end )
 
 concommand.Add( "mw_admin_reset_teams", function()
 	for i = 1, 8 do
-		teamgrid[i] = {}     -- create a new row
+		MelonWars.teamGrid[i] = {}     -- create a new row
 		for j = 1, 8 do
-			teamgrid[i][j] = false
+			MelonWars.teamGrid[i][j] = false
 		end
 	end
 end )
 
 net.Receive( "UpdateServerTeams", function()
-	teamgrid = net.ReadTable()
+	MelonWars.teamGrid = net.ReadTable()
 	for _, v in ipairs( player.GetAll() ) do
 		net.Start( "UpdateClientTeams" )
-			net.WriteTable( teamgrid )
+			net.WriteTable( MelonWars.teamGrid )
 		net.Send( v )
 	end
 end )

@@ -8,7 +8,7 @@ local unit_colors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50
 -- Possible tesla unit models/props_c17/utilityconnecter006c.mdl
 -- Charging Station models/props_c17/substation_transformer01d.mdl
 
-function MW_Defaults( ent )
+function MelonWars.defaults( ent )
 	--ent:NextThink(CurTime() + 0.1)
 	ent.maxHP = 20
 	ent.HP = 1
@@ -110,7 +110,7 @@ function ENT:Ini( teamnumber, affectPopulation )
 	self:MelonSetColor( teamnumber )
 	self.nextSlowThink = CurTime() + 1
 	if affectPopulation ~= false then
-		MW_UpdatePopulation( self.population, teamnumber )
+		MelonWars.updatePopulation( self.population, teamnumber )
 	end
 	if teamnumber == 0 then
 		self.chaseStance = true
@@ -242,9 +242,9 @@ function ENT:Welded( ent, parent )
 
 	ent:SetCollisionGroup(2)
 	--Resta su poblacion para luego sumar la nueva
-	--MW_UpdatePopulation(-ent.population, mw_melonTeam)
+	--MelonWars.updatePopulation(-ent.population, mw_melonTeam)
 	ent.population = math.ceil(ent.population/2)
-	--MW_UpdatePopulation(ent.population, mw_melonTeam)
+	--MelonWars.updatePopulation(ent.population, mw_melonTeam)
 end
 
 function ENT:Think()
@@ -301,7 +301,7 @@ function ENT:SpawnDoot()
 	effectdata:SetOrigin( vPoint )
 	util.Effect( "AntlionGib", effectdata )
 	sound.Play("npc/zombie/zombie_voice_idle7.wav", self:GetPos(), 75, 240)
-	SpawnUnitAtPos("ent_melon_doot", 0, self:GetPos(), self:GetAngles(), 0, 0, 0, false, nil, nil)
+	MelonWars.spawnUnitAtPos("ent_melon_doot", 0, self:GetPos(), self:GetAngles(), 0, 0, 0, false, nil, nil)
 end
 ]]
 function ENT:Update()
@@ -317,7 +317,7 @@ function ENT:Update()
 		self:SetNWFloat( "health", self.HP )
 		self.damage = 0
 		if self.HP <= 0 then
-			MW_Die( self )
+			MelonWars.die( self )
 		end
 	end
 
@@ -455,7 +455,7 @@ function ENT:SameTeam(ent)
 	if (myTeam == 0 or otherTeam == 0) then
 		return false
 	end
-	return teamgrid[myTeam][otherTeam];
+	return MelonWars.teamGrid[myTeam][otherTeam];
 end
 
 function ENT:Align( reference, target, multiplier )
@@ -479,7 +479,7 @@ function ENT:ApplyTorque( torque )
 	self.phys:ApplyForceOffset( -forceDirection, self:GetPos()-forceOffset )
 end
 
-function MW_UnitDefaultThink( ent )
+function MelonWars.unitDefaultThink( ent )
 	if not util.IsInWorld( ent:GetPos() ) then ent:Remove() end
 	if not ( ent.canShoot and ent.ai ) then return end
 	local pos = ent:GetPos()
@@ -655,7 +655,7 @@ function ENT:PhysicsCollide( colData, physObject )
 	end
 end
 
-function MW_DefaultShoot( ent, forceTargetPos )
+function MelonWars.defaultShoot( ent, forceTargetPos )
 	local pos = ent:GetPos()+ent.shotOffset
 	--------------------------------------------------------Disparar
 	if (forceTargetPos ~= nil or IsValid(ent.targetEntity)) then
@@ -672,7 +672,7 @@ function MW_DefaultShoot( ent, forceTargetPos )
 			dir = (forceTargetPos-pos):GetNormalized()
 		end
 
-		MW_Bullet(ent, pos, dir, ent.range, ent, nil, 0)
+		MelonWars.bullet(ent, pos, dir, ent.range, ent, nil, 0)
 
 		local effectdata = EffectData()
 		effectdata:SetScale(1)
@@ -683,7 +683,7 @@ function MW_DefaultShoot( ent, forceTargetPos )
 	end
 end
 
-function MW_Bullet(ent, startingPos, direction, distance, ignore, callback, depth)
+function MelonWars.bullet(ent, startingPos, direction, distance, ignore, callback, depth)
 	local damage = ent.damageDeal
 	local spread = Angle(math.random(-ent.spread/4, ent.spread/4),math.random(-ent.spread/4, ent.spread/4),0)
 	ent.fired = true
@@ -758,7 +758,7 @@ function MW_Bullet(ent, startingPos, direction, distance, ignore, callback, dept
 				end
 				local cl = tr.Entity:GetClass()
 				if (tr.Entity.canMove and ent:SameTeam(tr.Entity) and cl ~= "ent_melon_wheel" and cl ~= "ent_melon_propeller" and cl ~= "ent_melon_hover") then
-					MW_Bullet(ent, tr.HitPos+direction*5, direction, (distance-5)*(1-tr.Fraction), tr.Entity, callback, depth+1)
+					MelonWars.bullet(ent, tr.HitPos+direction*5, direction, (distance-5)*(1-tr.Fraction), tr.Entity, callback, depth+1)
 				end
 			end
 		end
@@ -768,7 +768,7 @@ function MW_Bullet(ent, startingPos, direction, distance, ignore, callback, dept
 	ent:FireBullets(bullet)*/
 end
 
-function MW_DefaultDeathEffect( ent )
+function MelonWars.defaultDeathEffect( ent )
 	local effectdata = EffectData()
 	effectdata:SetOrigin( ent:GetPos() )
 	util.Effect( ent.deathEffect, effectdata )
@@ -777,10 +777,10 @@ function MW_DefaultDeathEffect( ent )
 end
 
 function ENT:DeathEffect( ent )
-	MW_DefaultDeathEffect(ent)
+	MelonWars.defaultDeathEffect(ent)
 end
 
-function MW_Die( ent )
+function MelonWars.die( ent )
 	if not IsValid(ent) then return end
 	if cvars.Bool("mw_admin_immortality") then return end
 	if ent.DeathEffect == nil then return end
@@ -834,7 +834,7 @@ function ENT:OnTakeDamage( damage )
 		end
 		self:SetNWFloat( "health", self.HP )
 		if (self.HP <= 0) then
-			MW_Die (self)
+			MelonWars.die (self)
 		end
 	end
 end
@@ -853,16 +853,16 @@ end
 function ENT:DefaultOnRemove()
 	if not SERVER then return end
 	if not IsValid(self) then return end
-	MW_UpdatePopulation(-self.population, self:GetNWInt("mw_melonTeam", 0))
+	MelonWars.updatePopulation(-self.population, self:GetNWInt("mw_melonTeam", 0))
 	if not self.gotHit and CurTime()-self:GetCreationTime() < 30 and not self.fired then
-		if (mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ~= nil) then
-			mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)]+self.value
+		if (MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] ~= nil) then
+			MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] = MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)]+self.value
 		end
 		for _, v in ipairs( player.GetAll() ) do
 			if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
 				if (self:GetNWInt("mw_melonTeam", 0) ~= 0) then
 					net.Start("MW_TeamCredits")
-						net.WriteInt(mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
+						net.WriteInt(MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
 					net.Send(v)
 					--v:PrintMessage( HUD_PRINTTALK, "== "..self.value.." Water Refunded" )
 				end
@@ -871,10 +871,10 @@ function ENT:DefaultOnRemove()
 	end
 end
 
-function MW_UpdatePopulation( amount, teamID )
+function MelonWars.updatePopulation( amount, teamID )
 	-- if not SERVER then return end
 	if amount ~= 0 and teamID ~= 0 and teamID ~= nil then
-		mw_teamUnits[teamID] = mw_teamUnits[teamID] + amount
+		MelonWars.teamUnits[teamID] = MelonWars.teamUnits[teamID] + amount
 		local ownerPlayers = player.GetAll()
 		local i = 0 --Parche horrible: cada vez que elimina a alguien de la lista, al remover a alguien mas busca un lugar antes, ya que la lista se acomodó para rellenar el espacio vacio
 		for k, v in ipairs( player.GetAll() ) do
@@ -883,8 +883,8 @@ function MW_UpdatePopulation( amount, teamID )
 				i = i + 1
 			end
 		end
-		net.Start( "mw_teamUnits" )
-			net.WriteInt( mw_teamUnits[teamID], 16 )
+		net.Start( "MelonWars.teamUnits" )
+			net.WriteInt( MelonWars.teamUnits[teamID], 16 )
 		net.Send( ownerPlayers )
 	end
 end
@@ -917,9 +917,9 @@ function ENT:BarrackInitialize ()
 	self.population = 5
 
 	if (self.unit ~= nil) then
-		self.slowThinkTimer = mw_units[self.unit].spawn_time*3
-		self.unit_class = mw_units[self.unit].class
-		self.unit_cost = mw_units[self.unit].cost/2
+		self.slowThinkTimer = MelonWars.units[self.unit].spawn_time*3
+		self.unit_class = MelonWars.units[self.unit].class
+		self.unit_cost = MelonWars.units[self.unit].cost/2
 	end
 
 	self:SetNWFloat("slowThinkTimer", self.slowThinkTimer)
@@ -929,7 +929,7 @@ end
 local function EnoughPower(_team)
 	local res = false
 	if (_team > 0) then
-		res = mw_teamUnits[_team] < cvars.Number("mw_admin_max_units")
+		res = MelonWars.teamUnits[_team] < cvars.Number("mw_admin_max_units")
 	else
 		res = true
 	end
@@ -945,7 +945,7 @@ function ENT:BarrackSlowThink()
 		self:SetNWFloat( "health", self.HP )
 		self.damage = 0
 		if (self.HP <= 0) then
-			MW_Die( self )
+			MelonWars.die( self )
 		end
 	end
 
@@ -990,7 +990,7 @@ function ENT:BarrackSlowThink()
 
 				if (IsValid(self:GetOwner())) then
 					if (self:GetOwner():GetInfo( "mw_enable_skin" ) == "1") then
-						local _skin = mw_special_steam_skins[self:GetOwner():SteamID()]
+						local _skin = MelonWars.specialSteamSkins[self:GetOwner():SteamID()]
 						if (_skin ~= nil) then
 							if (_skin.material ~= nil) then
 								newMarine:SkinMaterial(_skin.material)
@@ -1031,16 +1031,16 @@ function ENT:BarrackSlowThink()
 	if (self:GetNWBool("active", false)) then
 		if self.unitspawned == false then return end
 		if (self:GetNWInt("count", 0) < self:GetNWInt("maxunits", 0) and EnoughPower(self:GetNWInt("mw_melonTeam", -1))) then
-			if not (mw_teamCredits[ent:GetNWInt("mw_melonTeam", 0)] >= self.unit_cost or not cvars.Bool("mw_admin_credit_cost")) then return end
+			if not (MelonWars.teamCredits[ent:GetNWInt("mw_melonTeam", 0)] >= self.unit_cost or not cvars.Bool("mw_admin_credit_cost")) then return end
 			-- Start Production
 			--self:SetNWBool("spawned", false)
 
 			if (cvars.Bool("mw_admin_credit_cost")) then
-				mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)]-self.unit_cost
+				MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] = MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)]-self.unit_cost
 				for k, v in pairs( player.GetAll() ) do
 					if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
 						net.Start("MW_TeamCredits")
-							net.WriteInt(mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
+							net.WriteInt(MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
 						net.Send(v)
 					end
 				end

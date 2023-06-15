@@ -4,7 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-	MW_Energy_Defaults ( self )
+	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/mechanics/roboticslarge/claw_hub_8l.mdl"
 	self.maxHP = 100
@@ -22,7 +22,7 @@ function ENT:Initialize()
 	self.capacity = 0
 	self:SetNWVector("energyPos", Vector(0,0,30))
 
-	MW_Energy_Setup ( self )
+	MelonWars.energySetup ( self )
 end
 
 function ENT:Actuate()
@@ -42,14 +42,14 @@ function ENT:Think(ent)
 			local waterCost = 5
 			local energyGain = 20
 			if (self:GetNWBool("active", false)) then
-				if (mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] >= waterCost or not cvars.Bool("mw_admin_credit_cost")) then
+				if (MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] >= waterCost or not cvars.Bool("mw_admin_credit_cost")) then
 					if (self:GivePower(energyGain)) then
 						if (cvars.Bool("mw_admin_credit_cost")) then
-							mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)]-waterCost
+							MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] = MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)]-waterCost
 							for k, v in pairs( player.GetAll() ) do
 								if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
 									net.Start("MW_TeamCredits")
-										net.WriteInt(mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
+										net.WriteInt(MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
 									net.Send(v)
 								end
 							end
@@ -82,5 +82,5 @@ function ENT:Shoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

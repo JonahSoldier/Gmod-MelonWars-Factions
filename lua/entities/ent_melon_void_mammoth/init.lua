@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/mechanics/wheels/wheel_spike_48.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -37,7 +37,7 @@ function ENT:SkinMaterial()
 end
 
 function ENT:SlowThink ( ent )
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 
 end
 
@@ -62,12 +62,12 @@ function ENT:Explode()
 				self.nextSlowThink = CurTime()+0.1
 				return false
 			else
-				MW_DefaultShoot ( self, forceTargetPos )
+				MelonWars.defaultShoot ( self, forceTargetPos )
 			end
 		end
 	end )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

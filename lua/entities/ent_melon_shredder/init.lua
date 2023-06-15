@@ -4,7 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include('shared.lua')
 
 function ENT:Initialize()
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_c17/TrapPropeller_Blade.mdl"
 	--self.Angles = Angle(0,0,0)
@@ -56,11 +56,11 @@ function ENT:SlowThink(ent)
 						--if (v:GetVar("mw_melonTeam") ~= self:GetNWInt("mw_melonTeam", 0)) then
 						--	gain = math.max(15, gain)
 						--end
-						mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)]+gain
+						MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] = MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)]+gain
 						for k, v in pairs( player.GetAll() ) do
 							if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
 								net.Start("MW_TeamCredits")
-									net.WriteInt(mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
+									net.WriteInt(MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
 								net.Send(v)
 							end
 						end
@@ -73,7 +73,7 @@ function ENT:SlowThink(ent)
 				--v:SetNWFloat("health", v:GetNWFloat("health", 1)-self.damageDeal)
 				v.gotHit = true
 				/*if (v:GetNWFloat("health", 1) <= 0) then
-					MW_Die(v)
+					MelonWars.die(v)
 				end*/
 			end
 		end
@@ -88,11 +88,11 @@ function ENT:StartTouch( entity )
 			if (entity:GetVar("mw_melonTeam") ~= self.mw_melonTeam) then
 				gain = math.max(15, gain)
 			end
-			mw_teamCredits[self.mw_melonTeam] = mw_teamCredits[self.mw_melonTeam]+gain
+			MelonWars.teamCredits[self.mw_melonTeam] = MelonWars.teamCredits[self.mw_melonTeam]+gain
 			for k, v in pairs( player.GetAll() ) do
 				if (v:GetInfo("mw_team") == tostring(self.mw_melonTeam)) then
 					net.Start("MW_TeamCredits")
-						net.WriteInt(mw_teamCredits[self.mw_melonTeam] ,32)
+						net.WriteInt(MelonWars.teamCredits[self.mw_melonTeam] ,32)
 					net.Send(v)
 				end
 			end
@@ -104,9 +104,9 @@ end
 ]]
 
 function ENT:Shoot ( ent )
-	--MW_DefaultShoot ( ent )
+	--MelonWars.defaultShoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

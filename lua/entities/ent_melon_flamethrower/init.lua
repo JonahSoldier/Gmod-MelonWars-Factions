@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_citizen_tech/firetrap_propanecanister01a.mdl"
 
@@ -49,7 +49,7 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 end
 
 function ENT:PhysicsUpdate()
@@ -103,5 +103,5 @@ function ENT:Shoot ( ent, forcedTargetPos )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

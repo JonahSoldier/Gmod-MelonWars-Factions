@@ -4,7 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-	MW_Energy_Defaults ( self )
+	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_combine/combine_light001a.mdl"
 	self.maxHP = 100
@@ -24,7 +24,7 @@ function ENT:Initialize()
 	self.population = 0
 	self.canBeSelected = false
 
-	MW_Energy_Setup ( self )
+	MelonWars.energySetup ( self )
 
 	self.connection = nil
 
@@ -95,7 +95,7 @@ function ENT:Shoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end
 
 function ENT:BarrackSlowThink()

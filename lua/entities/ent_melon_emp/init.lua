@@ -4,7 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/maxofs2d/hover_classic.mdl"
 	self.materialString = ""
@@ -75,13 +75,13 @@ function ENT:DeathEffect( ent )
 					end
 
 					if(v.Base == "ent_melon_energy_base") then
-						if (mw_electric_network[v.network].energy > 1000) then
-							mw_electric_network[v.network].energy = mw_electric_network[v.network].energy - 1000
+						if (MelonWars.electricNetwork[v.network].energy > 1000) then
+							MelonWars.electricNetwork[v.network].energy = MelonWars.electricNetwork[v.network].energy - 1000
 						else
-							mw_electric_network[v.network].energy = 0
+							MelonWars.electricNetwork[v.network].energy = 0
 						end
 
-						for k, v in pairs(mw_electric_network[v.network].elements) do
+						for k, v in pairs(MelonWars.electricNetwork[v.network].elements) do
 							v:Energy_Set_State()
 							if(v.nextSlowThink < CurTime()) then
 								v.nextSlowThink = CurTime()
@@ -127,7 +127,7 @@ function ENT:SlowThink ( ent )
 		self.canShoot = true
 	end
 
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 end
 
 
@@ -146,7 +146,7 @@ function ENT:OnTakeDamage( damage )
 			end
 			self:SetNWFloat( "health", self.HP )
 			if (self.HP <= 0) then
-				MW_Die (self)
+				MelonWars.die (self)
 			end
 		end
 	else
@@ -170,7 +170,7 @@ function ENT:Shoot ( ent, forcedTargetPos)
 			--util.Effect( "Explosion", effectdata )
 			--ent:Remove()
 				ent:SetPos(ent:GetPos()+Vector(0,0,3))
-				MW_Die ( ent )
+				MelonWars.die ( ent )
 			end
 		end
 	end )

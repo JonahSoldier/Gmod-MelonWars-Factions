@@ -4,7 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_junk/propanecanister001a.mdl"
 	self.materialString = ""
@@ -64,9 +64,9 @@ function ENT:DeathEffect( ent )
 end
 
 function ENT:SlowThink ( ent )
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 	--[[if (ent.canMove) then
-		MW_UnitDefaultThink ( ent )
+		MelonWars.unitDefaultThink ( ent )
 	else
 		local pos = ent:GetPos()
 		if (ent.targetEntity == nil) then
@@ -97,7 +97,7 @@ function ENT:Welded (ent, trace)
 	ent.maxHP = 10
 	ent.HP = 10
 	ent.population = 1
-	--MW_UpdatePopulation(-1, mw_melonTeam)
+	--MelonWars.updatePopulation(-1, mw_melonTeam)
 	ent.range = 100
 	ent.materialString = "Models/effects/comball_sphere"
 	--[[for i = 1, 4 do
@@ -131,7 +131,7 @@ function ENT:OnTakeDamage( damage )
 			end
 			self:SetNWFloat( "health", self.HP )
 			if (self.HP <= 0) then
-				MW_Die (self)
+				MelonWars.die (self)
 			end
 		end
 	else
@@ -156,7 +156,7 @@ function ENT:Shoot ( ent, forcedTargetPos)
 			--util.Effect( "Explosion", effectdata )
 			--ent:Remove()
 				ent:SetPos(ent:GetPos()+Vector(0,0,3))
-				MW_Die ( ent )
+				MelonWars.die ( ent )
 			end
 		end
 	end )

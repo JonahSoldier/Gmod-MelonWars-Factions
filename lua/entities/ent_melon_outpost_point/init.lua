@@ -3,7 +3,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 
 include( "shared.lua" )
 
-mw_team_colors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(255,50,255,255),Color(100,255,255,255),Color(255,120,0,255),Color(10,30,70,255)}
+MelonWars.teamColors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(255,50,255,255),Color(100,255,255,255),Color(255,120,0,255),Color(10,30,70,255)}
 
 function ENT:Initialize()
 
@@ -135,7 +135,7 @@ end
 
 function ENT:GetCaptured(capturingTeam, ent)
 	local newColor = Color(255,255,255,255)
-	if (capturingTeam > 0) then newColor = mw_team_colors[capturingTeam] end
+	if (capturingTeam > 0) then newColor = MelonWars.teamColors[capturingTeam] end
 
 	ent.capTeam = capturingTeam
 	ent:SetNWInt("capTeam", capturingTeam)

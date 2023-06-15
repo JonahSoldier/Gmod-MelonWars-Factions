@@ -4,7 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-	MW_Energy_Defaults ( self )
+	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_buildings/watertower_001c.mdl"
 	self.maxHP = 100
@@ -25,7 +25,7 @@ function ENT:Initialize()
 	self.maxWater = 4000
 	self.waterGenerated = 0
 
-	MW_Energy_Setup ( self )
+	MelonWars.energySetup ( self )
 end
 
 function ENT:Actuate()
@@ -47,7 +47,7 @@ function ENT:Think(ent)
 			if (self.maxWater > self.waterGenerated) then
 				if (self:GetNWBool("active", false)) then
 					if (self:DrainPower(energyCost)) then
-						mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)]+waterGain
+						MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] = MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)]+waterGain
 						if (self.value > 0) then
 							self.value = self.value-waterGain
 							if (self.value < 0) then
@@ -58,7 +58,7 @@ function ENT:Think(ent)
 						for k, v in pairs( player.GetAll() ) do
 							if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
 								net.Start("MW_TeamCredits")
-									net.WriteInt(mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
+									net.WriteInt(MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
 								net.Send(v)
 							end
 						end
@@ -78,7 +78,7 @@ function ENT:Think(ent)
 				self.HP = self.HP-10
 				self:SetNWFloat( "health", self.HP )
 				if (self.HP <= 0) then
-					MW_Die( self )
+					MelonWars.die( self )
 				end
 			end
 		end
@@ -97,5 +97,5 @@ function ENT:Shoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

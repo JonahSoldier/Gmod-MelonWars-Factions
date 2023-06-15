@@ -4,7 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/XQM/airplanewheel1.mdl"--"models/props_c17/TrapPropeller_Engine.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -40,7 +40,7 @@ function ENT:Initialize()
 end
 
 function ENT:SlowThink ( ent )
-	--MW_UnitDefaultThink ( ent )
+	--MelonWars.unitDefaultThink ( ent )
 end
 
 function ENT:Welded( ent, parent )
@@ -58,9 +58,9 @@ function ENT:Welded( ent, parent )
 
 	--self.weld = constraint.Weld( self, parent, 0, 0, 0, true , false )
 	--Resta su poblacion para luego sumar la nueva
-	MW_UpdatePopulation(-ent.population, mw_melonTeam)
+	MelonWars.updatePopulation(-ent.population, mw_melonTeam)
 	ent.population = math.ceil(ent.population/2)
-	MW_UpdatePopulation(ent.population, mw_melonTeam)
+	MelonWars.updatePopulation(ent.population, mw_melonTeam)
 
 	/*
 	self.axisConstraint = constraint.FindConstraint( self, "Axis" )
@@ -110,7 +110,7 @@ function ENT:OnFinishMovement(parent)
 end
 
 function ENT:Shoot ( ent )
-	--MW_DefaultShoot ( ent )
+	--MelonWars.defaultShoot ( ent )
 end
 
 function ENT:PhysicsUpdate()
@@ -138,5 +138,5 @@ function ENT:Update (ent)
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

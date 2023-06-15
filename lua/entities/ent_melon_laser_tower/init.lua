@@ -4,7 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-	MW_Energy_Defaults ( self )
+	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_wasteland/lighthouse_fresnel_light_base.mdl"
 	--self.speed = 320
@@ -28,7 +28,7 @@ function ENT:Initialize()
 	--self.capacity = 0
 	self:SetNWVector("energyPos", Vector(0,0,20))
 
-	MW_Energy_Setup ( self )
+	MelonWars.energySetup ( self )
 
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 	self:GetPhysicsObject():EnableMotion(false)
@@ -40,7 +40,7 @@ function ENT:SlowThink ( ent )
 
 	local pos = (ent:GetPos()+Vector(0,0,200))
 	local energyCost = 5000
-	if (mw_electric_network[self.network].energy >= energyCost) then
+	if (MelonWars.electricNetwork[self.network].energy >= energyCost) then
 		if (ent.ai or CurTime() > ent.nextControlShoot) then
 			if (forcedTargetPos ~= nil) then
 				--The way mw does this is pretty weird
@@ -108,5 +108,5 @@ end
 
 function ENT:DeathEffect ( ent )
 	--ent:StopSound("d3_citadel.combine_ball_field_loop1")
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

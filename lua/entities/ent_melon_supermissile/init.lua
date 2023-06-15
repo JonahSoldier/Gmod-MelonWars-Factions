@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Energy_Defaults ( self )
+	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_citizen_tech/steamengine001a.mdl"
 	self.speed = 320
@@ -38,7 +38,7 @@ function ENT:Initialize()
 	self.population = 0
 
 
-	MW_Energy_Setup ( self )
+	MelonWars.energySetup ( self )
 
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 	self:GetPhysicsObject():EnableMotion(false)
@@ -55,7 +55,7 @@ end
 function ENT:SlowThink ( ent )
 	local pos = (ent:GetPos()+Vector(0,0,180))
 	local energyCost = 500
-	if (mw_electric_network[self.network].energy >= energyCost) then
+	if (MelonWars.electricNetwork[self.network].energy >= energyCost) then
 		if (ent.ai or CurTime() > ent.nextControlShoot) then
 			--------------------------------------------------------Disparar
 			if (forcedTargetPos ~= nil) then
@@ -136,7 +136,7 @@ end
 
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end
 
 /*

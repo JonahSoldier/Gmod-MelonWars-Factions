@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_junk/plasticbucket001a.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -44,7 +44,7 @@ function ENT:SlowThink ( ent )
 	--local vel = ent.phys:GetVelocity()
 	--ent.phys:SetAngles( ent.Angles )
 	--ent.phys:SetVelocity(vel)
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 
 end
 
@@ -101,7 +101,7 @@ function ENT:Shoot ( ent, forceTargetPos )
 
 				ent:FireBullets(bullet)*/
 
-				MW_Bullet(ent, pos, dir, ent.range*1.1, ent, nil, 0)
+				MelonWars.bullet(ent, pos, dir, ent.range*1.1, ent, nil, 0)
 			end
 			local effectdata = EffectData()
 					effectdata:SetScale(1)
@@ -114,5 +114,5 @@ function ENT:Shoot ( ent, forceTargetPos )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

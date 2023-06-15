@@ -33,7 +33,7 @@ end
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self:SetStats()
 
@@ -52,7 +52,7 @@ end
 
 function ENT:SlowThink ( ent )
 	if (cvars.Bool("mw_admin_playing") ) then
-		MW_UnitDefaultThink ( ent )
+		MelonWars.unitDefaultThink ( ent )
 		if ((ent:GetPos():Distance(ent.targetPos)) < 160) then
 			self:FinishMovement()
 		end
@@ -61,13 +61,13 @@ end
 
 function ENT:Shoot ( ent, forcedTargetPos )
 	if ((ent.ai or CurTime() > ent.nextControlShoot) and ent.exhaustedUntil < CurTime() and ent.moving) then
-		MW_DefaultShoot ( ent, forcedTargetPos )
+		MelonWars.defaultShoot ( ent, forcedTargetPos )
 		ent.nextControlShoot = CurTime()+ent.slowThinkTimer
 	end
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end
 
 function ENT:Unstuck()

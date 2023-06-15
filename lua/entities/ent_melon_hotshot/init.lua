@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/xqm/afterburner1.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -46,7 +46,7 @@ function ENT:SlowThink ( ent )
 	--local vel = ent.phys:GetVelocity()
 	--ent.phys:SetAngles( ent.Angles )
 	--ent.phys:SetVelocity(vel)
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 
 end
 
@@ -96,7 +96,7 @@ function ENT:Shoot ( ent, forceTargetPos )
 						end
 					end
 				end
-				MW_Bullet(ent, pos, dir, ent.range*1.1, ent, cb, 0)
+				MelonWars.bullet(ent, pos, dir, ent.range*1.1, ent, cb, 0)
 			end
 			local effectdata = EffectData()
 					effectdata:SetScale(1)
@@ -109,5 +109,5 @@ function ENT:Shoot ( ent, forceTargetPos )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

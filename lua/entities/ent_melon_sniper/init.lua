@@ -4,7 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_junk/propane_tank001a.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -43,7 +43,7 @@ function ENT:SlowThink ( ent )
 	--local vel = ent.phys:GetVelocity()
 	--ent.phys:SetAngles( ent.Angles )
 	--ent.phys:SetVelocity(vel)
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 end
 
 function ENT:PhysicsUpdate()
@@ -56,7 +56,7 @@ end
 function ENT:Shoot ( ent, forceTargetPos )
 	if (ent:GetVelocity():Length() < 15 and ent.nextShot < CurTime()) then
 		if (ent.ai or CurTime() > ent.nextControlShoot) then
-			MW_DefaultShoot ( ent, forceTargetPos )
+			MelonWars.defaultShoot ( ent, forceTargetPos )
 			for k, v in pairs( player.GetAll() ) do
 				sound.Play("physics/metal/metal_computer_impact_bullet1.wav", v:GetPos(), 40, 90, 1)
 				sound.Play("weapons/357/357_fire2.wav", v:GetPos(), 40, 80, 1)
@@ -72,5 +72,5 @@ function ENT:Shoot ( ent, forceTargetPos )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

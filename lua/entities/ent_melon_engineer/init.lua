@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_wasteland/light_spotlight01_lamp.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -185,5 +185,5 @@ function ENT:Shoot ( ent, forcedTargetPos )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

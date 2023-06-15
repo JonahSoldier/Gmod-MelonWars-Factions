@@ -34,7 +34,7 @@ function ENT:PhysicsCollide( colData, collider )
 			local newHealth = otherhealth-100
 			other:SetNWFloat("health", newHealth)
 			if (other:GetNWFloat("health", 1) <= 0) then
-				MW_Die(other)
+				MelonWars.die(other)
 			else
 				if (other:GetClass() == "ent_melon_wall") then
 					if (newHealth < 100) then

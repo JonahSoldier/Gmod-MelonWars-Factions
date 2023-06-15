@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Energy_Defaults ( self )
+	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_trainstation/trainstation_column001.mdl"
 	self.speed = 80
@@ -33,7 +33,7 @@ function ENT:Initialize()
 	self.population = 0
 	self:SetNWVector("energyPos", Vector(0,0,62.5))
 
-	MW_Energy_Setup ( self )
+	MelonWars.energySetup ( self )
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 	self:GetPhysicsObject():EnableMotion(false)
 
@@ -42,10 +42,10 @@ end
 function ENT:SlowThink ( ent )
 	local energyCost = 2
 
-	self:SetNWBool("working", mw_electric_network[self.network].energy > 0)
+	self:SetNWBool("working", MelonWars.electricNetwork[self.network].energy > 0)
 
 	if (self:DrainPower(energyCost)) then
-		MW_UnitDefaultThink ( ent )
+		MelonWars.unitDefaultThink ( ent )
 	end
 
 	self:Energy_Set_State()
@@ -60,7 +60,7 @@ function ENT:Shoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end
 
 function ENT:CreateAlert (pos, _team)

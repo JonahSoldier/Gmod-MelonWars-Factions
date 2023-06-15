@@ -180,14 +180,14 @@ function ENT:Explode()
 				end
 			end
 
-			local count = table.Count(debri_props)
+			local count = table.Count(MelonWars.debrisProps)
 
 			for i = 1, count do --nicked the code from the HQ to make it spit out radioactive debris
 				local debris = ents.Create( "ent_melonium_plate" )
 				debris:Ignite( 500 )
 				debris:SetPos(self:GetPos() + Vector(math.random(-100,100), math.random(-100,100), math.random(0,200)))
 				debris:Spawn()
-				debris:SetModel(debri_props[i])
+				debris:SetModel(MelonWars.debrisProps[i])
 				debris:PhysicsInit(6)
 				local debrisPhys = debris:GetPhysicsObject()
 				debrisPhys:ApplyForceCenter(Vector(math.random(-5000,5000), math.random(-5000,5000), math.random(5000,35000)))

@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/combine_turrets/ground_turret.mdl"
 	self.speed = 80
@@ -33,21 +33,21 @@ function ENT:Initialize()
 end
 
 function ENT:SlowThink ( ent )
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 end
 
 function ENT:Shoot ( ent )
-	MW_DefaultShoot(ent)
+	MelonWars.defaultShoot(ent)
 	local angle = (ent.targetEntity:GetPos()-self:GetPos()):Angle() + Angle(180,180,0)
 	self:SetAngles( Angle(-angle.x, angle.y, angle.z) )
-	/*MW_DefaultShoot(ent)
+	/*MelonWars.defaultShoot(ent)
 	local angle = (ent.targetEntity:GetPos()-self:GetPos()):Angle() + Angle(180,180,0)
 	self:SetAngles( Angle(-angle.x, angle.y, angle.z) )
 	for i = 1, 3 do
 		timer.Simple( i/4, function()
 			if (IsValid(ent)) then
 				if (IsValid(ent.targetEntity)) then
-					MW_DefaultShoot(ent)
+					MelonWars.defaultShoot(ent)
 					local angle = (ent.targetEntity:GetPos()-self:GetPos()):Angle() + Angle(180,180,0)
 					self:SetAngles( Angle(-angle.x, angle.y, angle.z) )
 				end
@@ -57,5 +57,5 @@ function ENT:Shoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

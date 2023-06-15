@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.birth = CurTime()
 
@@ -35,7 +35,7 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-	--MW_UnitDefaultThink ( ent )
+	--MelonWars.unitDefaultThink ( ent )
 
 	--if ((ent:GetPos():Distance(ent.targetPos)) < 160) then
 	--	self.moving = false
@@ -43,7 +43,7 @@ function ENT:SlowThink ( ent )
 end
 
 function ENT:Shoot ( ent )
-	--MW_DefaultShoot ( ent )
+	--MelonWars.defaultShoot ( ent )
 end
 
 function ENT:Update (ent)
@@ -56,7 +56,7 @@ function ENT:Think ()
 		self:SetNWFloat( "health", self.HP )
 		self.damage = 0
 		if (self.HP <= 0) then
-			MW_Die( self )
+			MelonWars.die( self )
 		end
 	end
 
@@ -77,7 +77,7 @@ function ENT:PropellerReady ()
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end
 
 function ENT:PhysicsUpdate()

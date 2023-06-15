@@ -5,7 +5,7 @@ include('shared.lua')
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/Roller.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -43,17 +43,17 @@ function ENT:SlowThink ( ent )
 			self.spinup = self.maxspinup
 		end
 	end
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 end
 
 function ENT:Shoot ( ent, forcedTargetPos )
 	if (ent.ai or CurTime() > ent.nextControlShoot) then
-		MW_DefaultShoot ( ent, forcedTargetPos )
+		MelonWars.defaultShoot ( ent, forcedTargetPos )
 		ent.nextControlShoot = CurTime()+ent.slowThinkTimer
 		for i = 1, 2 do
 			timer.Simple( i*self.spinup/3, function()
 				if (IsValid(ent)) then
-					MW_DefaultShoot ( ent, forcedTargetPos )
+					MelonWars.defaultShoot ( ent, forcedTargetPos )
 				end
 			end)
 		end
@@ -70,5 +70,5 @@ function ENT:Shoot ( ent, forcedTargetPos )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

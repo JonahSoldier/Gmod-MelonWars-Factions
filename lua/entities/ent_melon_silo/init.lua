@@ -34,7 +34,7 @@ function ENT:AlliedTeams(myTeam, otherTeam)
 	if (myTeam == 0 or otherTeam == 0) then
 		return false
 	end
-	return teamgrid[myTeam][otherTeam];
+	return MelonWars.teamGrid[myTeam][otherTeam];
 end
 
 function ENT:PhysicsCollide( data, phys )

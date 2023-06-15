@@ -4,7 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_lab/teleplatform.mdl"
 	self.maxHP = 75
@@ -34,11 +34,11 @@ function ENT:SlowThink(ent)
 end
 
 function ENT:Shoot ( ent )
-	--MW_DefaultShoot ( ent )
+	--MelonWars.defaultShoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end
 
 function ENT:ConnectToBarrack()
@@ -79,5 +79,5 @@ end
 
 
 function ENT:OnRemove()
-	MW_UpdatePopulation(-self.population, self:GetNWInt("mw_melonTeam", 0))
+	MelonWars.updatePopulation(-self.population, self:GetNWInt("mw_melonTeam", 0))
 end

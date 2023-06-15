@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/xqm/rails/trackball_1.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -42,7 +42,7 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 end
 
 function ENT:Shoot ( ent, forcedTargetPos )
@@ -85,5 +85,5 @@ function ENT:Shoot ( ent, forcedTargetPos )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

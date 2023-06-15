@@ -4,7 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-	MW_Energy_Defaults ( self )
+	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_docks/channelmarker02a.mdl"
 	self.moveType = MOVETYPE_NONE
@@ -24,7 +24,7 @@ function ENT:Initialize()
 
 	self.shotOffset = Vector(0,0,23.5)
 
-	MW_Energy_Setup ( self )
+	MelonWars.energySetup ( self )
 end
 
 function ENT:ModifyColor()
@@ -36,7 +36,7 @@ function ENT:SlowThink ( ent )
 	if(self.nextShot<CurTime()) then
 		local chargeAmount = 75
 
-		if (mw_electric_network[self.network].energy >= chargeAmount) then
+		if (MelonWars.electricNetwork[self.network].energy >= chargeAmount) then
 			local entities = ents.FindInSphere( ent:GetPos()+Vector(0,0,200), ent.range )
 			--------------------------------------------------------Disparar
 			local targets = 0
@@ -129,5 +129,5 @@ function ENT:Shoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

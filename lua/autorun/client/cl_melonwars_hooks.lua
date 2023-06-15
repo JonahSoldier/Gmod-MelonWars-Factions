@@ -19,7 +19,7 @@ hook.Add( "Initialize", "MelonWars_StartPlyData", function()
 	LocalPlayer().mw_cooldown = 0
 	LocalPlayer().mw_frame = nil
 
-	LocalPlayer().mw_units = 0
+	LocalPlayer().MelonWars.units = 0
 	LocalPlayer().mw_credits = 0
 
 	LocalPlayer().foundMelons = {}
@@ -70,11 +70,11 @@ hook.Add( "PostDrawTranslucentRenderables", "MelonWars_AddHalos", function()
 	local a = LocalPlayer():GetInfoNum("mw_team", 0)
 
 	for i = table.Count(zoneTable), 1, -1 do
-		if teamgrid == nil or teamgrid[zoneTable[i]:GetNWInt("zoneTeam", 0)] == nil or teamgrid[zoneTable[i]:GetNWInt("zoneTeam", 0)][a] == nil then
+		if MelonWars.teamGrid == nil or MelonWars.teamGrid[zoneTable[i]:GetNWInt("zoneTeam", 0)] == nil or MelonWars.teamGrid[zoneTable[i]:GetNWInt("zoneTeam", 0)][a] == nil then
 			if (zoneTable[i]:GetNWInt("zoneTeam", 0) ~= a) then
 				table.remove(zoneTable, i)
 			end
-		elseif (zoneTable[i]:GetNWInt("zoneTeam", 0) ~= a and not teamgrid[zoneTable[i]:GetNWInt("zoneTeam", 0)][a]) or (zoneTable[i]:GetPos() - LocalPlayer():GetPos()):LengthSqr() > 7500000 then
+		elseif (zoneTable[i]:GetNWInt("zoneTeam", 0) ~= a and not MelonWars.teamGrid[zoneTable[i]:GetNWInt("zoneTeam", 0)][a]) or (zoneTable[i]:GetPos() - LocalPlayer():GetPos()):LengthSqr() > 7500000 then
 			table.remove(zoneTable, i)
 		end
 	end
@@ -276,7 +276,7 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 						surface.DrawRect( pos.x - 8, pos.y - 123, 16, 106 )
 						surface.SetDrawColor( 255, 255, 255, 255 )
 						surface.DrawRect( pos.x - 5 , pos.y - 120, 10, 100 )
-						surface.SetDrawColor( mw_team_colors[i] )
+						surface.SetDrawColor( MelonWars.teamColors[i] )
 						local capture = v:GetNWInt( "captured" .. tostring( i ), 0 )
 						surface.DrawRect( pos.x - 5 , pos.y - 20 - capture, 10 , capture )
 					end

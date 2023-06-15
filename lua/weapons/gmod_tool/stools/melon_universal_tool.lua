@@ -87,7 +87,7 @@ TOOL.ClientConVar[ "mw_action" ] = 0
 
 -- Convars (End)
 
--- mw_team_colors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
+-- MelonWars.teamColors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
 local button_energy_color = Color(255, 255, 80)
 local button_barrack_color = Color(200, 255, 255)
 local orangeColor = Color( 255, 100, 0, 255 )
@@ -148,20 +148,20 @@ local function Unit() -- Code is an optional argument.
 end
 
 local unitCount = 88
-mw_units = {}
+MelonWars.units = {}
 local u = nil
 for i = 1, unitCount do
-	mw_units[i] = Unit()
+	MelonWars.units[i] = Unit()
 end
 
 local function BarracksText( number, max )
-	return "This is a building that produces a " .. mw_units[number].name .. " every " .. tostring(mw_units[number].spawn_time * 3) .. " seconds, up to " .. max .. " at any given time, at half the price. Select this building and command it to move somewhere to set a rally point for its deployed units. Look at it and press E to toggle it on and off."
+	return "This is a building that produces a " .. MelonWars.units[number].name .. " every " .. tostring(MelonWars.units[number].spawn_time * 3) .. " seconds, up to " .. max .. " at any given time, at half the price. Select this building and command it to move somewhere to set a rally point for its deployed units. Look at it and press E to toggle it on and off."
 end
 
 local i = 0
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Marine"
 u.class 		= "ent_melon_marine"
 u.cost 			= 75
@@ -172,7 +172,7 @@ u.description 	= [[The basic unit.]]
 u.model 		= "models/props_junk/watermelon01.mdl"
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Medic"
 u.class 		= "ent_melon_medic"
 u.cost 			= 180
@@ -183,7 +183,7 @@ u.description 	= [[The healer of the group, always good to have one around.]]
 u.model 		= "models/props_junk/watermelon01.mdl"
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Jetpack"
 u.class 		= "ent_melon_jetpack"
 u.cost 			= 250
@@ -195,7 +195,7 @@ u.model 		= "models/props_junk/watermelon01.mdl"
 u.offset 		= Vector(0,0,140)
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Bomb"
 u.class 		= "ent_melon_bomb"
 u.cost 			= 400
@@ -206,7 +206,7 @@ u.description 	= [[Explodes on proximity after 0.3 seconds. Send some cannon fod
 u.model 		= "models/props_phx/misc/soccerball.mdl"
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Gunner"
 u.class 		= "ent_melon_gunner"
 u.cost 			= 500
@@ -217,7 +217,7 @@ u.description 	= [[Equipped with a minigun, this tougher and slower unit will sh
 u.model 		= "models/Roller.mdl"
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Missiles"
 u.class 		= "ent_melon_missiles"
 u.cost 			= 500
@@ -228,7 +228,7 @@ u.description 	= [[This unit launches medium range homing missiles to suppress h
 u.model 		= "models/xqm/rails/trackball_1.mdl"
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Sniper"
 u.class 		= "ent_melon_sniper"
 u.cost 			= 800
@@ -240,7 +240,7 @@ u.model 		= "models/props_junk/propane_tank001a.mdl"
 u.offset 		= Vector(0,0,12)
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Hot Shot"
 u.class 		= "ent_melon_hotshot"
 u.cost 			= 1000
@@ -252,7 +252,7 @@ u.model 		= "models/xqm/afterburner1.mdl"
 u.offset 		= Vector(0,0,10)
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Mortar"
 u.class 		= "ent_melon_mortar"
 u.cost 			= 3000
@@ -264,7 +264,7 @@ u.model 		= "models/props_borealis/bluebarrel001.mdl"
 u.offset 		= Vector(0,0,20)
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Nuke"
 u.class 		= "ent_melon_nuke"
 u.cost 			= 3000
@@ -276,7 +276,7 @@ u.model 		= "models/props_phx/cannonball.mdl"
 u.offset 		= Vector(0,0,20)
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Cannon"
 u.class 		= "ent_melon_cannon"
 u.cost 			= 7000
@@ -289,7 +289,7 @@ u.offset 		= Vector(0,0,0)
 u.isBonusUnit   = true
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "void"
 u.name 			= "Voidling"
 u.class 		= "ent_melon_voidling"
@@ -302,7 +302,7 @@ u.model 		= "models/hunter/misc/sphere025x025.mdl"
 u.code 			= "--banned--"
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "void"
 u.name 			= "Raider"
 u.class 		= "ent_melon_void_raider"
@@ -316,7 +316,7 @@ u.description 	= [[A backpack-wearing void unit that can capture enemy buildings
 u.model 		= "models/props_junk/MetalBucket01a.mdl"
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "full"
 u.name 			= "Buck"
 u.class 		= "ent_melon_buck"
@@ -329,7 +329,7 @@ u.description 	= [[A slow trooper that fires a shotgun blast in a tight spread. 
 u.model 		= "models/props_junk/plasticbucket001a.mdl"
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "full"
 u.name 			= "Fighter"
 u.class 		= "ent_melon_fighter"
@@ -342,7 +342,7 @@ u.model 		= "models/props_phx/construct/metal_plate1_tri.mdl"
 
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "prot"
 u.name 			= "Gatling"
 u.class 		= "ent_melon_gatling"
@@ -354,7 +354,7 @@ u.description 	= [[A gunner with an electric motor to spin up its barrels immedi
 u.model 		= "models/Mechanics/gears/gear12x24.mdl"
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "prot"
 u.name 			= "Molotov"
 u.class 		= "ent_melon_molotov"
@@ -367,7 +367,7 @@ u.description 	= [[A bomb that leaves behind a flaming, dangerous area on the fl
 u.model 		= "models/props_junk/propanecanister001a.mdl"
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Droid"
 u.class 		= "ent_melon_droid"
 u.cost 			= 300
@@ -381,7 +381,7 @@ u.button_color 	= button_energy_color
 u.isBonusUnit   = true
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Long-boy"
 u.class 		= "ent_melon_longboy"
 u.cost 			= 8000
@@ -394,7 +394,7 @@ u.model 		= "models/props_trainstation/trainstation_ornament001.mdl"
 u.button_color 	= button_energy_color
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "--banned--"
 u.name 			= "Forcefield"
 u.class 		= "ent_melon_forcefield"
@@ -408,7 +408,7 @@ u.model 		= "models/hunter/tubes/tube4x4x2to2x2.mdl"
 
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code = "prot"
 u.name 			= "Heavy Flamethrower"
 u.class 		= "ent_melon_flamethrower"
@@ -422,7 +422,7 @@ u.model 		= "models/props_citizen_tech/firetrap_propanecanister01a.mdl"
 u.isBonusUnit   = true
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code = "full"
 u.name 			= "EMP Device"
 u.class 		= "ent_melon_emp"
@@ -436,7 +436,7 @@ u.model 		= "models/maxofs2d/hover_classic.mdl"
 u.isBonusUnit   = true
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "admin"
 u.name 			= "Siege Gun"
 u.class 		= "ent_melon_siegegun"
@@ -450,7 +450,7 @@ u.model 		= "models/props_trainstation/trashcan_indoor001b.mdl"
 
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Doot"
 u.class 		= "ent_melon_doot"
 u.cost 			= 25
@@ -462,7 +462,7 @@ u.model 		= "models/Gibs/HGIBS.mdl"
 u.isBonusUnit   = true
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "void"
 u.name 			= "Mammoth"
 u.class 		= "ent_melon_void_mammoth"
@@ -476,7 +476,7 @@ u.model 		= "models/mechanics/wheels/wheel_spike_48.mdl"
 u.isBonusUnit   = true
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "admin"
 u.name 			= "Engineer"
 u.class 		= "ent_melon_engineer"
@@ -494,7 +494,7 @@ i = i + 1
 local firstBuilding = i --------------------------------- First building
 
 
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "City Energy Network Connection"
 u.code 			= "admin"
 u.class 		= "ent_melon_energy_uplink"
@@ -508,7 +508,7 @@ u.offset 		= Vector(0,0,100)
 u.angle 		= Angle(90, -90, 90)
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "full"
 u.name 			= "Refuel Station"
 u.class 		= "ent_melon_refuel"
@@ -522,7 +522,7 @@ u.offset 		= Vector(0,0,-2)
 u.angle 		= Angle(90, 0, 0)
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Turret"
 u.class 		= "ent_melon_turret"
 u.cost 			= 350
@@ -536,7 +536,7 @@ u.angle 		= Angle(180, 180, 0)
 u.energyRange		= 500
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Shredder"
 u.class 		= "ent_melon_shredder"
 u.cost 			= 100
@@ -548,7 +548,7 @@ u.model 		= "models/props_c17/TrapPropeller_Blade.mdl"
 u.offset 		= Vector(0,0,0)
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "prot"
 u.name 			= "Electrified Debris"
 u.class 		= "ent_melon_teslarods"
@@ -562,7 +562,7 @@ u.offset 		= Vector(0,0,60)
 u.angle 		= Angle(0, 0, 0)
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Elevator Pad"
 u.class 		= "ent_melon_elevator_pad"
 u.cost 			= 100
@@ -574,7 +574,7 @@ u.model 		= "models/hunter/tubes/circle2x2.mdl"
 u.offset 		= Vector(0,0,-5)
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Loading Bay"
 u.class 		= "ent_melon_loading_bay"
 u.cost 			= 200
@@ -586,7 +586,7 @@ u.model 		= "models/props_phx/construct/metal_plate2x2.mdl"
 u.offset 		= Vector(0,0,-5)
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "void"
 u.name 			= "Teleporter Transmitter"
 u.class 		= "ent_melon_teleporter_sender"
@@ -599,7 +599,7 @@ u.model 		= "models/props_lab/teleplatform.mdl"
 u.offset 		= Vector(0,0,-5)
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "void"
 u.name 			= "Teleporter Receiver"
 u.class 		= "ent_melon_teleporter_receiver"
@@ -614,7 +614,7 @@ u.offset 		= Vector(0,0,-5)
 
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Gate"
 u.class 		= "ent_melon_gate"
 u.cost 			= 200
@@ -627,7 +627,7 @@ u.offset 		= Vector(0,0,18.5)
 u.angle 		= Angle(90,0,0)
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Station"
 u.class 		= "ent_melon_station"
 u.cost 			= 1250
@@ -641,7 +641,7 @@ u.angle 		= Angle(0,0,0)
 u.code			= "admin"
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "prot"
 u.name 			= "Energy Siphon"
 --[[
@@ -664,7 +664,7 @@ u.buildAnywere  = true
 u.energyRange	= 750
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Large Gate"
 u.class 		= "ent_melon_gate_big"
 u.cost 			= 500
@@ -679,7 +679,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Tesla Tower"
 u.class 		= "ent_melon_tesla_tower"
 u.cost 			= 300
@@ -694,7 +694,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "full"
 u.name 			= "Particle Tower"
 u.class 		= "ent_melon_laser_tower"
@@ -710,7 +710,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "void"
 u.name 			= "Anti-Power Reactor"
 u.class 		= "ent_melon_energy_powerupgrader"
@@ -726,7 +726,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "void"
 u.name 			= "Unit Launcher"
 u.class 		= "ent_melon_unit_launcher"
@@ -743,7 +743,7 @@ u.energyRange	= defaultenergyrange
 u.isBonusUnit   = true
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "admin"
 u.name 			= "Supergun"
 u.class 		= "ent_melon_supergun"
@@ -759,7 +759,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "admin"
 u.name 			= "Melonium Silo"
 u.class 		= "ent_melon_supermissile"
@@ -775,7 +775,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "--banned--"
 u.name 			= "Universal Overclocker"
 u.class 		= "ent_melon_energy_superoverclocker"
@@ -791,7 +791,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "admin"
 u.name 			= "Siege Mortar"
 u.class 		= "ent_melon_supermortar"
@@ -807,7 +807,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Over-Clocker"
 u.class 		= "ent_melon_overclocker"
 u.cost 			= 200
@@ -822,7 +822,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Medical Bay"
 u.class 		= "ent_melon_medical_bay"
 u.cost 			= 600
@@ -837,7 +837,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Charging Station"
 u.class 		= "ent_melon_charging_station"
 u.cost 			= 300
@@ -852,7 +852,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Radar"
 u.class 		= "ent_melon_radar"
 u.cost 			= 100
@@ -867,7 +867,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Forcefield generator"
 u.class 		= "ent_melon_forcefield_generator"
 u.cost 			= 750
@@ -883,7 +883,7 @@ u.energyRange	= defaultenergyrange
 u.isBonusUnit   = true
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "full"
 u.name 			= "Point Defense Station"
 u.class 		= "ent_melon_point_defence"
@@ -899,7 +899,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Marine Barracks"
 u.class 		= "ent_melon_barracks_marine"
 u.cost 			= 750
@@ -913,7 +913,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Medic Academy"
 u.class 		= "ent_melon_barracks_medic"
 u.cost 			= 1000
@@ -927,7 +927,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Jetpack Flight School"
 u.class 		= "ent_melon_barracks_jetpack"
 u.cost 			= 2000
@@ -941,7 +941,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Bomb Factory"
 u.class 		= "ent_melon_barracks_bomb"
 u.cost 			= 1800
@@ -956,7 +956,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Gunner Training Camp"
 u.class 		= "ent_melon_barracks_gunner"
 u.cost 			= 3000
@@ -970,7 +970,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Missiles Production Line"
 u.class 		= "ent_melon_barracks_missiles"
 u.cost 			= 3000
@@ -985,7 +985,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Sniper Shooting Range"
 u.class 		= "ent_melon_barracks_sniper"
 u.cost 			= 3000
@@ -1000,7 +1000,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Hot Shot Forge"
 u.class 		= "ent_melon_barracks_hotshot"
 u.cost 			= 4000
@@ -1014,7 +1014,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Mortar Production Facility"
 u.class 		= "ent_melon_barracks_mortar"
 u.cost 			= 5000
@@ -1028,7 +1028,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Nuke Assembler"
 u.class 		= "ent_melon_barracks_nuke"
 u.cost 			= 4500
@@ -1042,7 +1042,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 --[[
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Tombstone"
 u.class 		= "ent_melon_barracks_doot"
 u.cost 			= 300
@@ -1056,7 +1056,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 ]]
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "void"
 u.name 			= "Voidling Reactor"
 u.class 		= "ent_melon_barracks_voidling"
@@ -1071,7 +1071,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "void"
 u.name 			= "Raider Fabrication Platform"
 u.class 		= "ent_melon_barracks_void_raider"
@@ -1087,7 +1087,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "void"
 u.name 			= "Mammoth Spawning Vat"
 u.class 		= "ent_melon_barracks_void_mammoth"
@@ -1103,7 +1103,7 @@ u.button_color 	= button_barrack_color
 u.isBonusUnit   = true
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "full"
 u.name 			= "Buck University"
 u.class 		= "ent_melon_barracks_buck"
@@ -1118,7 +1118,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "full"
 u.name 			= "Fighter University"
 u.class 		= "ent_melon_barracks_fighter"
@@ -1133,7 +1133,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "prot"
 u.name 			= "Gatling Depot"
 u.class 		= "ent_melon_barracks_gatling"
@@ -1148,7 +1148,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.code 			= "prot"
 u.name 			= "Molotov Depot"
 u.class 		= "ent_melon_barracks_molotov"
@@ -1163,7 +1163,7 @@ u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Contraption Assembler"
 u.class 		= "ent_melon_contraption_assembler"
 u.cost 			= 750
@@ -1184,7 +1184,7 @@ i = i + 1
 local firstEnergy = i ----------------------------------First energy
 
 
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Relay"
 u.class 		= "ent_melon_energy_relay"
 u.cost 			= 75
@@ -1199,7 +1199,7 @@ u.energyRange	= defaultenergyrange
 u.buildAnywere  = true
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Big Relay"
 u.class 		= "ent_melon_energy_relay_large"
 u.cost 			= 100
@@ -1215,7 +1215,7 @@ u.energyRange	= 1000
 u.buildAnywere  = true
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Switch"
 u.class 		= "ent_melon_energy_switch"
 u.cost 			= 100
@@ -1230,7 +1230,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "S Battery"
 u.class 		= "ent_melon_energy_capacitor"
 u.cost 			= 350
@@ -1245,7 +1245,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "M Battery"
 u.class 		= "ent_melon_energy_capacitor_medium"
 u.cost 			= 1000
@@ -1260,7 +1260,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "L Battery"
 u.class 		= "ent_melon_energy_capacitor_large"
 u.cost 			= 6000
@@ -1275,7 +1275,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Solar Panel"
 u.class 		= "ent_melon_energy_solar_panel"
 u.cost 			= 200
@@ -1292,7 +1292,7 @@ u.energyRange	= defaultenergyrange
 u.changeAngles  = false
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Steam Generator"
 u.class 		= "ent_melon_energy_steam_plant"
 u.cost 			= 2250
@@ -1308,7 +1308,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Nuclear Plant"
 u.class 		= "ent_melon_energy_nuclear_plant"
 u.cost 			= 8000
@@ -1324,7 +1324,7 @@ u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Water Pump"
 u.class 		= "ent_melon_energy_water_pump"
 u.cost 			= 2000
@@ -1344,7 +1344,7 @@ i = i + 1
 local firstContraption = i ---------------------------- First Contraption
 
 
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Engine"
 u.class 		= "ent_melon_engine"
 u.cost 			= 100
@@ -1360,7 +1360,7 @@ u.contraptionPart = true
 u.spawnable_on_floor = false
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Large Engine"
 u.class 		= "ent_melon_engine_large"
 u.cost 			= 350
@@ -1376,7 +1376,7 @@ u.contraptionPart = true
 u.spawnable_on_floor = false
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Propeller"
 u.class 		= "ent_melon_propeller"
 u.cost 			= 200
@@ -1392,7 +1392,7 @@ u.contraptionPart = true
 u.spawnable_on_floor = false
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Hover Pad"
 u.class 		= "ent_melon_hover"
 u.cost 			= 100
@@ -1408,7 +1408,7 @@ u.contraptionPart = true
 u.spawnable_on_floor = false
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Wheel"
 u.class 		= "ent_melon_wheel"
 u.cost 			= 25
@@ -1425,7 +1425,7 @@ u.contraptionPart = true
 u.spawnable_on_floor = false
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Unit Transport"
 u.class 		= "ent_melon_unit_transport"
 u.cost 			= 150
@@ -1440,7 +1440,7 @@ u.angleSnap		= false
 u.canOverlap 	= false
 
 i = i + 1
-u = mw_units[i]
+u = MelonWars.units[i]
 u.name 			= "Capacitor"
 u.class 		= "ent_melon_contraption_capacitor"
 u.cost 			= 350
@@ -1455,7 +1455,7 @@ u.angleSnap		= false
 u.contraptionPart = true
 u.spawnable_on_floor = false
 
-teamgrid = {
+MelonWars.teamGrid = {
 	{false,false,false,false,false,false,false,false},
 	{false,false,false,false,false,false,false,false},
 	{false,false,false,false,false,false,false,false},
@@ -1481,16 +1481,16 @@ local function BaseProp() -- Code is an optional argument.
 end
 
 local basePropCount = 25
-mw_base_props = {}
+MelonWars.baseProps = {}
 local u = nil
 for i = 1, basePropCount do
-	mw_base_props[i] = BaseProp()
+	MelonWars.baseProps[i] = BaseProp()
 end
 
 i = 0
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Blast Door"
 u.model = "models/props_lab/blastdoor001c.mdl"
 u.offset = Vector(0,0,0)
@@ -1499,7 +1499,7 @@ u.cost = 200
 u.hp = 150
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Barricade"
 u.model = "models/props_wasteland/barricade002a.mdl"
 u.offset = Vector(0,0,12)
@@ -1508,7 +1508,7 @@ u.cost = 15
 u.hp = 40
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Fence"
 u.model = "models/props_wasteland/wood_fence01a.mdl"
 u.offset = Vector(0,0,40)
@@ -1517,7 +1517,7 @@ u.cost = 40
 u.hp = 100
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Pallet"
 u.model = "models/props_junk/wood_pallet001a.mdl"
 u.offset = Vector(0,0,32)
@@ -1526,7 +1526,7 @@ u.cost = 25
 u.hp = 50
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Brick"
 u.model = "models/hunter/blocks/cube05x1x05.mdl"
 u.offset = Vector(0,0,12)
@@ -1535,7 +1535,7 @@ u.cost = 15
 u.hp = 35
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Half Block"
 u.model = "models/hunter/blocks/cube1x1x05.mdl"
 u.offset = Vector(0,0,12)
@@ -1544,7 +1544,7 @@ u.cost = 35
 u.hp = 50
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Block"
 u.model = "models/hunter/blocks/cube1x1x1.mdl"
 u.offset = Vector(0,0,24)
@@ -1553,7 +1553,7 @@ u.cost = 75
 u.hp = 100
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Half Platform"
 u.model = "models/hunter/blocks/cube2x2x05.mdl"
 u.offset = Vector(47,0,10.5)
@@ -1562,7 +1562,7 @@ u.cost = 115
 u.hp = 150
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Platform"
 u.model = "models/hunter/blocks/cube2x2x1.mdl"
 u.offset = Vector(47,0,24)
@@ -1571,7 +1571,7 @@ u.cost = 150
 u.hp = 200
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Concrete Barrier"
 u.model = "models/props_c17/concrete_barrier001a.mdl"
 u.offset = Vector(0,0,0)
@@ -1580,7 +1580,7 @@ u.cost = 75
 u.hp = 150
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Wall"
 u.model = "models/hunter/blocks/cube2x2x05.mdl"
 u.offset = Vector(0,0,48)
@@ -1589,7 +1589,7 @@ u.cost = 100
 u.hp = 175
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Long Wall"
 u.model = "models/hunter/blocks/cube1x4x05.mdl"
 u.offset = Vector(0,0,24)
@@ -1598,7 +1598,7 @@ u.cost = 100
 u.hp = 175
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Flat Platform"
 u.model = "models/hunter/plates/plate2x2.mdl"
 u.offset = Vector(47,0,-2.5)
@@ -1607,7 +1607,7 @@ u.cost = 15
 u.hp = 35
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Short Ramp"
 u.model = "models/hunter/plates/plate1x2.mdl"
 u.offset = Vector(23,0,4.5)
@@ -1616,7 +1616,7 @@ u.cost = 25
 u.hp = 25
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Slim Half Ramp"
 u.model = "models/hunter/plates/plate1x2.mdl"
 u.offset = Vector(33,0,7.3)
@@ -1625,7 +1625,7 @@ u.cost = 25
 u.hp = 25
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Half Ramp"
 u.model = "models/hunter/plates/plate2x2.mdl"
 u.offset = Vector(33,0,7.3)
@@ -1634,7 +1634,7 @@ u.cost = 50
 u.hp = 40
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Slim Full Ramp"
 u.model = "models/hunter/triangles/2x1x1.mdl"
 u.offset = Vector(48.3,0,23.1)
@@ -1643,7 +1643,7 @@ u.cost = 75
 u.hp = 75
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Barrel"
 u.model = "models/props_c17/oildrum001.mdl"
 u.offset = Vector(0,0,0)
@@ -1652,7 +1652,7 @@ u.cost = 25
 u.hp = 50
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "3D Frame"
 u.model = "models/props_phx/construct/metal_wire1x2x2b.mdl"
 u.offset = Vector(-70,24,0)
@@ -1661,7 +1661,7 @@ u.cost = 20
 u.hp = 20
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Railing"
 u.model = "models/PHXtended/bar2x.mdl"
 u.offset = Vector(2,48,5.5)
@@ -1670,7 +1670,7 @@ u.cost = 8
 u.hp = 5
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Half Pipe"
 u.model = "models/props_phx/construct/metal_plate_curve180.mdl"
 u.offset = Vector(-46,0,48)
@@ -1679,7 +1679,7 @@ u.cost = 50
 u.hp = 75
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Pole"
 u.model = "models/props_docks/dock01_pole01a_128.mdl"
 u.offset = Vector(0,0,64)
@@ -1688,7 +1688,7 @@ u.cost = 15
 u.hp = 15
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Disk"
 u.model = "models/props_phx/construct/metal_angle360.mdl"
 u.offset = Vector(-48,0,0)
@@ -1697,7 +1697,7 @@ u.cost = 15
 u.hp = 15
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Half Disk"
 u.model = "models/props_phx/construct/metal_angle180.mdl"
 u.offset = Vector(-48,0,0)
@@ -1706,7 +1706,7 @@ u.cost = 8
 u.hp = 8
 
 i = i + 1
-u = mw_base_props[i]
+u = MelonWars.baseProps[i]
 u.name = "Stilt"
 u.model = "models/props_docks/dock01_pole01a_128.mdl"
 u.offset = Vector(0,0,-64)
@@ -1824,39 +1824,39 @@ local function _MakeButton(number, posnumber, parent) -- Make Button
 	button:SetSize(120,40)
 	button:SetPos( 10, 10 + ( posnumber - 1 ) * 45 )
 	button:SetFont("CloseCaption_Normal")
-	button:SetText(mw_units[number].name)
+	button:SetText(MelonWars.units[number].name)
 	function button:DoClick()
 		pl:ConCommand( "mw_chosen_unit " .. tostring( number ) )
 		pl:ConCommand( "mw_action 1" )
 		pl.mw_frame:Remove()
 		pl.mw_frame = nil
 	end
-	local color = mw_units[number].button_color
+	local color = MelonWars.units[number].button_color
 	button.Paint = function(s, w, h)
 		draw.RoundedBox( 6, 0, 0, w, h, Color(color.r-40,color.g-40,color.b-40) )
 		draw.RoundedBox( 3, 5, 5, w-10, h-10, color )
 	end
 	function button:OnCursorEntered()
 		pl.mw_hover = number
-		pl.info:SetText(mw_units[number].description)
+		pl.info:SetText(MelonWars.units[number].description)
 		if (cvars.Number("mw_admin_credit_cost") == 1) then
-			pl.info_cost:SetText( "Cost: " .. mw_units[number].cost )
-			if (mw_units[number].welded_cost == -1) then
+			pl.info_cost:SetText( "Cost: " .. MelonWars.units[number].cost )
+			if (MelonWars.units[number].welded_cost == -1) then
 				pl.info_turret_cost:SetText("")
 			else
-				pl.info_turret_cost:SetText( "Turret cost: " .. mw_units[number].welded_cost )
+				pl.info_turret_cost:SetText( "Turret cost: " .. MelonWars.units[number].welded_cost )
 			end
 		else
 			pl.info_cost:SetText("")
 			pl.info_turret_cost:SetText("")
 		end
-		pl.info_power:SetText( "Power: " .. mw_units[number].population )
+		pl.info_power:SetText( "Power: " .. MelonWars.units[number].population )
 		if (cvars.Number("mw_admin_spawn_time") == 1) then
-			pl.info_time:SetText( "Spawn time: " .. mw_units[number].spawn_time .. "s" )
+			pl.info_time:SetText( "Spawn time: " .. MelonWars.units[number].spawn_time .. "s" )
 		else
 			pl.info_time:SetText("")
 		end
-		pl.info_name:SetText(mw_units[number].name)
+		pl.info_name:SetText(MelonWars.units[number].name)
 	end
 end
 
@@ -1911,8 +1911,8 @@ local function _CreatePanel()
 		end
 		local ipos = 1
 		for i = 1, firstBuilding-1 do
-			if (cvars.Bool("mw_admin_allow_manual_placing") or mw_units[i].welded_cost ~= -1) then
-				if ((mw_units[i].code == nil or pl:GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVar( "mw_admin_bonusunits" ):GetInt() == 1)) then
+			if (cvars.Bool("mw_admin_allow_manual_placing") or MelonWars.units[i].welded_cost ~= -1) then
+				if ((MelonWars.units[i].code == nil or pl:GetInfo("mw_code") == MelonWars.units[i].code) and (MelonWars.units[i].isBonusUnit ~= true or GetConVar( "mw_admin_bonusunits" ):GetInt() == 1)) then
 					_MakeButton(i, ipos, scroll)
 					ipos = ipos + 1
 				end
@@ -1964,8 +1964,8 @@ local function _CreatePanel()
 
 		local ipos = 1
 		for i = firstBuilding, firstEnergy - 1 do
-			if (mw_units[i].code == nil or pl:GetInfo("mw_code") == mw_units[i].code) and (mw_units[i].isBonusUnit ~= true or GetConVar( "mw_admin_bonusunits" ):GetInt() == 1) then
-				if mw_units[i].name ~= "Contraption Assembler" or cvars.Number("mw_admin_ban_contraptions") == 0 then
+			if (MelonWars.units[i].code == nil or pl:GetInfo("mw_code") == MelonWars.units[i].code) and (MelonWars.units[i].isBonusUnit ~= true or GetConVar( "mw_admin_bonusunits" ):GetInt() == 1) then
+				if MelonWars.units[i].name ~= "Contraption Assembler" or cvars.Number("mw_admin_ban_contraptions") == 0 then
 					_MakeButton(i, ipos, scroll)
 					ipos = ipos + 1
 				end
@@ -2000,7 +2000,7 @@ local function _CreatePanel()
 
 		-- local a = table.getn(base_models)
 		-- for i = 1, a do -- Make a loop to create a bunch of panels inside of the DIconLayout
-		for k, v in pairs(mw_base_props) do
+		for k, v in pairs(MelonWars.baseProps) do
 			local ListItem = List:Add( "SpawnIcon" ) -- Add DPanel to the DIconLayout
 			ListItem:SetSize( 75, 75 ) -- Set the size of it
 			ListItem:SetModel(v.model)
@@ -2240,7 +2240,7 @@ local function _CreatePanel()
 			end
 			button.Paint = function( s, w, h )
 				draw.RoundedBox( 6, 0, 0, w, h, Color( 100, 100, 100, 255 ) )
-				draw.RoundedBox( 4, 2, 2, w - 4, h - 4, mw_team_colors[i] )
+				draw.RoundedBox( 4, 2, 2, w - 4, h - 4, MelonWars.teamColors[i] )
 			end
 		end
 
@@ -2539,7 +2539,7 @@ local function _CreatePanel()
 				end
 				button.Paint = function(s, w, h)
 					draw.RoundedBox( 6, 0, 0, w, h, Color(100,100,100,255) )
-					draw.RoundedBox( 4, 2, 2, w-4, h-4, mw_team_colors[i] )
+					draw.RoundedBox( 4, 2, 2, w-4, h-4, MelonWars.teamColors[i] )
 				end
 			end
 
@@ -2567,7 +2567,7 @@ local function _CreatePanel()
 				end
 				button.Paint = function(s, w, h)
 					draw.RoundedBox( 6, 0, 0, w, h, Color(100,100,100,255) )
-					draw.RoundedBox( 4, 2, 2, w-4, h-4, mw_team_colors[i] )
+					draw.RoundedBox( 4, 2, 2, w-4, h-4, MelonWars.teamColors[i] )
 				end
 			end
 
@@ -2595,7 +2595,7 @@ local function _CreatePanel()
 				end
 				button.Paint = function(s, w, h)
 					draw.RoundedBox( 6, 0, 0, w, h, Color(100,100,100,255) )
-					draw.RoundedBox( 4, 2, 2, w-4, h-4, mw_team_colors[i] )
+					draw.RoundedBox( 4, 2, 2, w-4, h-4, MelonWars.teamColors[i] )
 				end
 			end
 
@@ -2878,32 +2878,32 @@ local function _CreatePanel()
 				for j=1, 8 do
 					local checkbox = vgui.Create( "DButton" ) -- Create the checkbox
 					checkbox:SetPos( 20, y ) -- Set the position
-					-- checkbox:SetValue( teamgrid[i][j] )
+					-- checkbox:SetValue( MelonWars.teamGrid[i][j] )
 					checkbox:SetSize(30,30)
 					checkbox:SetText("")
 
 					if (9-i ~= j) then
 						function checkbox:DoClick()
-							teamgrid[9-i][j] = not teamgrid[9-i][j]
-							teamgrid[j][9-i] = teamgrid[9-i][j]
+							MelonWars.teamGrid[9-i][j] = not MelonWars.teamGrid[9-i][j]
+							MelonWars.teamGrid[j][9-i] = MelonWars.teamGrid[9-i][j]
 							net.Start("UpdateServerTeams")
-								net.WriteTable(teamgrid)
+								net.WriteTable(MelonWars.teamGrid)
 							net.SendToServer()
 						end
 						if (i+j < 9) then
 							checkbox.Paint = function(s, w, h)
 								draw.RoundedBox( 4, 0, 0, w, h, Color(150,150,150) )
 								draw.RoundedBox( 2, 2, 2, w-4, h-4, Color(0,0,0) )
-								if (teamgrid[9-i][j]) then
-									draw.RoundedBox( 0, 4, 4, w / 2-4, h-8, mw_team_colors[9-i] )
-									draw.RoundedBox( 0, 4+w / 2-4, 4, w / 2-4, h-8, mw_team_colors[j] )
+								if (MelonWars.teamGrid[9-i][j]) then
+									draw.RoundedBox( 0, 4, 4, w / 2-4, h-8, MelonWars.teamColors[9-i] )
+									draw.RoundedBox( 0, 4+w / 2-4, 4, w / 2-4, h-8, MelonWars.teamColors[j] )
 								end
 							end
 						else
 							checkbox.Paint = function(s, w, h)
 								draw.RoundedBox( 8, 0, 0, w, h, Color(30,30,30) )
 								draw.RoundedBox( 6, 2, 2, w-4, h-4, Color(20,20,20) )
-								if (teamgrid[9-i][j]) then
+								if (MelonWars.teamGrid[9-i][j]) then
 									draw.RoundedBox( 4, 4, 4, w-8, h-8, Color(30,30,30) )
 								end
 							end
@@ -2925,7 +2925,7 @@ local function _CreatePanel()
 				DPanel:SetSize( 30, 30 ) -- Set the size of the panel
 				DPanel.Paint = function(s, w, h)
 					draw.RoundedBox( 8, 0, 0, w, h, Color(150,150,150) )
-					draw.RoundedBox( 6, 2, 2, w-4, h-4, mw_team_colors[i] )
+					draw.RoundedBox( 6, 2, 2, w-4, h-4, MelonWars.teamColors[i] )
 				end
 				grid:AddItem(DPanel)
 			end
@@ -2939,7 +2939,7 @@ local function _CreatePanel()
 					DPanel:SetSize( 30, 30 ) -- Set the size of the panel
 				DPanel.Paint = function(s, w, h)
 					draw.RoundedBox( 8, 0, 0, w, h, Color(150,150,150) )
-					draw.RoundedBox( 6, 2, 2, w-4, h-4, mw_team_colors[i] )
+					draw.RoundedBox( 6, 2, 2, w-4, h-4, MelonWars.teamColors[i] )
 				end
 				grid:AddItem(DPanel)
 			end
@@ -3142,11 +3142,11 @@ function TOOL:Deploy()
 	if not SERVER then return end
 	if _team ~= 0 then
 		net.Start( "MW_TeamCredits" )
-			net.WriteInt( mw_teamCredits[_team], 32 )
+			net.WriteInt( MelonWars.teamCredits[_team], 32 )
 		net.Send( owner )
 
 		net.Start( "MW_TeamUnits" )
-			net.WriteInt( mw_teamUnits[_team], 16 )
+			net.WriteInt( MelonWars.teamUnits[_team], 16 )
 		net.Send( owner )
 	end
 	owner:PrintMessage( HUD_PRINTCENTER, "Press R to open the menu" )
@@ -3235,9 +3235,9 @@ local function isInRange( vector, teamIndex ) -- Why does this not just use find
 	for _, v in ipairs( foundPoints ) do
 		if not canBuild then
 			if vector:Distance(v:GetPos()) < 600 then
-				if teamgrid == nil or teamgrid[v:GetNWInt( "capTeam", 0 )] == nil or teamgrid[v:GetNWInt( "capTeam", 0 )][teamIndex] == nil then
+				if MelonWars.teamGrid == nil or MelonWars.teamGrid[v:GetNWInt( "capTeam", 0 )] == nil or MelonWars.teamGrid[v:GetNWInt( "capTeam", 0 )][teamIndex] == nil then
 					canBuild = v:GetNWInt( "capTeam", 0 ) == teamIndex
-				elseif v:GetNWInt( "capTeam", 0 ) == teamIndex or teamgrid[v:GetNWInt( "capTeam", 0 )][teamIndex] then
+				elseif v:GetNWInt( "capTeam", 0 ) == teamIndex or MelonWars.teamGrid[v:GetNWInt( "capTeam", 0 )][teamIndex] then
 					canBuild = true
 				end
 			end
@@ -3255,7 +3255,7 @@ local function noEnemyNear( vector, teamIndex )
 		if v.Base == "ent_melon_base" then
 			if v:GetNWInt( "mw_melonTeam", 0 ) ~= teamIndex then
 				if v:GetNWInt( "mw_melonTeam", 0 ) ~= 0 then
-					if not teamgrid[v:GetNWInt( "mw_melonTeam", 0 )][teamIndex] then
+					if not MelonWars.teamGrid[v:GetNWInt( "mw_melonTeam", 0 )][teamIndex] then
 						canBuild = false
 					end
 				end
@@ -3301,28 +3301,28 @@ function TOOL:LeftClick( tr )
 			local attach = pl:GetInfoNum("mw_unit_option_welded", 0)
 			local unit_index = pl:GetInfoNum("mw_chosen_unit", 0)
 			if (cvars.Bool("mw_admin_allow_free_placing") or noEnemyNear(trace.HitPos, mw_melonTeam)) then
-				if (mw_units[unit_index].population == 0 or pl.mw_units + mw_units[unit_index].population <= cvars.Number("mw_admin_max_units")) then
+				if (MelonWars.units[unit_index].population == 0 or pl.MelonWars.units + MelonWars.units[unit_index].population <= cvars.Number("mw_admin_max_units")) then
 					if (pl.canPlace) then
 						local cost, mw_delay = 0
 						local class = ""
 
 						if (unit_index > 0) then
-							class = mw_units[unit_index].class
-							mw_delay = mw_units[unit_index].spawn_time
+							class = MelonWars.units[unit_index].class
+							mw_delay = MelonWars.units[unit_index].spawn_time
 							cost = 1337
 
 							if (attach == 1) then
-								cost = mw_units[unit_index].welded_cost
+								cost = MelonWars.units[unit_index].welded_cost
 							else
-								cost = mw_units[unit_index].cost
+								cost = MelonWars.units[unit_index].cost
 							end
 
 							if (cost == -1) then
-								cost = mw_units[unit_index].cost
+								cost = MelonWars.units[unit_index].cost
 								attach = false
 							end
 
-							if (mw_units[unit_index].contraptionPart) then
+							if (MelonWars.units[unit_index].contraptionPart) then
 								attach = true
 							end
 
@@ -3333,18 +3333,18 @@ function TOOL:LeftClick( tr )
 
 						--if (unit_index >= firstBuilding) then attach = true end
 						if pl.mw_credits >= cost or not cvars.Bool("mw_admin_credit_cost") or mw_melonTeam == 0 then
-							local canFloorSpawn = mw_units[unit_index].spawnable_on_floor or not trace.Entity:IsWorld()
+							local canFloorSpawn = MelonWars.units[unit_index].spawnable_on_floor or not trace.Entity:IsWorld()
 							local notPointOrWater = trace.Entity:GetClass() ~= "ent_melon_outpost_point" and trace.Entity:GetClass() ~= "ent_melon_cap_point" and trace.Entity:GetClass() ~= "ent_melon_water_tank"
 							local entHasTeam = trace.Entity:GetNWInt("mw_melonTeam", 0) == mw_melonTeam or trace.Entity:GetNWInt("mw_melonTeam", 0) == 0
 
 							if attach == false or canFloorSpawn and notPointOrWater and entHasTeam then
 								if unit_index >= 0 then
 									if (cvars.Number("mw_admin_spawn_time") == 1) then
-										if (cvars.Bool("mw_admin_allow_free_placing") or mw_units[unit_index].buildAnywere or isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
+										if (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.units[unit_index].buildAnywere or isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
 											if (pl.mw_spawntime < CurTime()) then
-												pl.mw_spawntime = CurTime() + mw_units[unit_index].spawn_time * pl.spawnTimeMult -- spawntimemult has been added here so I can compensate for matches with uneven numbers of commanders
+												pl.mw_spawntime = CurTime() + MelonWars.units[unit_index].spawn_time * pl.spawnTimeMult -- spawntimemult has been added here so I can compensate for matches with uneven numbers of commanders
 											else
-												pl.mw_spawntime = pl.mw_spawntime + mw_units[unit_index].spawn_time * pl.spawnTimeMult
+												pl.mw_spawntime = pl.mw_spawntime + MelonWars.units[unit_index].spawn_time * pl.spawnTimeMult
 											end
 										end
 									end
@@ -3353,17 +3353,17 @@ function TOOL:LeftClick( tr )
 								end
 
 								local spawnAngle
-								if (mw_units[unit_index].normalAngle) then
-									spawnAngle = trace.HitNormal:Angle() + mw_units[unit_index].angle
+								if (MelonWars.units[unit_index].normalAngle) then
+									spawnAngle = trace.HitNormal:Angle() + MelonWars.units[unit_index].angle
 								else
-									if (mw_units[unit_index].changeAngles) then
-										spawnAngle = pl.propAngle + mw_units[unit_index].angle
+									if (MelonWars.units[unit_index].changeAngles) then
+										spawnAngle = pl.propAngle + MelonWars.units[unit_index].angle
 									else
-										spawnAngle = mw_units[unit_index].angle
+										spawnAngle = MelonWars.units[unit_index].angle
 									end
 								end
 
-								local spawnPosition = trace.HitPos + Vector(0,0,1) + trace.HitNormal*5+mw_units[unit_index].offset
+								local spawnPosition = trace.HitPos + Vector(0,0,1) + trace.HitNormal*5+MelonWars.units[unit_index].offset
 
 								 net.Start("MW_SpawnUnit")
 									net.WriteString(class)
@@ -3382,7 +3382,7 @@ function TOOL:LeftClick( tr )
 								effectdata:SetEntity( newMarine )
 								util.Effect( "propspawn", effectdata )
 
-								if (cvars.Bool("mw_admin_allow_free_placing") or mw_units[unit_index].buildAnywere or isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
+								if (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.units[unit_index].buildAnywere or isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
 									if cvars.Bool( "mw_admin_credit_cost" ) or mw_melonTeam == 0 then
 										self:IndicateIncome(-cost)
 										pl.mw_credits = pl.mw_credits-cost
@@ -3416,7 +3416,7 @@ function TOOL:LeftClick( tr )
 	elseif action == 3 then
 		if pl.mw_spawnTimer >= CurTime() - 0.1 then return end
 		local prop_index = pl:GetInfoNum("mw_chosen_prop", 0)
-		local cost = mw_base_props[prop_index].cost
+		local cost = MelonWars.baseProps[prop_index].cost
 		if not cvars.Bool("mw_admin_playing") then return end
 		if not (cvars.Bool("mw_admin_allow_free_placing") or isInRange(trace.HitPos, mw_melonTeam)) then return end
 		if not (cvars.Bool("mw_admin_allow_free_placing") or noEnemyNear(trace.HitPos, mw_melonTeam)) then return end
@@ -3424,9 +3424,9 @@ function TOOL:LeftClick( tr )
 
 		if (cvars.Number("mw_admin_spawn_time") == 1) then
 			if (pl.mw_spawntime < CurTime()) then
-				pl.mw_spawntime = CurTime() + mw_base_props[prop_index].spawn_time
+				pl.mw_spawntime = CurTime() + MelonWars.baseProps[prop_index].spawn_time
 			else
-				pl.mw_spawntime = pl.mw_spawntime + mw_base_props[prop_index].spawn_time
+				pl.mw_spawntime = pl.mw_spawntime + MelonWars.baseProps[prop_index].spawn_time
 			end
 		end
 		net.Start("MW_SpawnProp")
@@ -3558,7 +3558,7 @@ local function MW_UpdateGhostEntity(model, pos, offset, angle, newColor, ghostSp
 		local overlappingEntities = ents.FindInBox( mins, maxs )
 
 		locPly.canPlace = true
-		if locPly.mw_action == 1 and not mw_units[locPly:GetInfoNum( "mw_chosen_unit", 0 )].canOverlap then
+		if locPly.mw_action == 1 and not MelonWars.units[locPly:GetInfoNum( "mw_chosen_unit", 0 )].canOverlap then
 			for _, v in pairs( overlappingEntities ) do
 				if v.Base ~= nil and string.StartWith( v.Base, "ent_melon_" ) then
 					locPly.canPlace = false
@@ -3678,7 +3678,7 @@ function TOOL:Think()
 	if ply.mw_action == 1 then
 		ply.propAngle = Vector( vector.x, vector.y, 0 ):Angle()
 		if ply:GetInfoNum( "mw_chosen_unit", 0 ) ~= 0 then
-			if mw_units[ply:GetInfoNum( "mw_chosen_unit", 0 )].angleSnap then
+			if MelonWars.units[ply:GetInfoNum( "mw_chosen_unit", 0 )].angleSnap then
 				ply.propAngle = Angle( ply.propAngle.p, 180+math.Round(ply.propAngle.y / 90) * 90, ply.propAngle.r )
 			end
 		end
@@ -3809,7 +3809,7 @@ function TOOL:Think()
 	end
 
 	if (newTeam ~= 0) then
-		newColor = mw_team_colors[newTeam]
+		newColor = MelonWars.teamColors[newTeam]
 	else
 		newColor = Color(100,100,100,255)
 	end
@@ -3864,8 +3864,8 @@ function TOOL:Think()
 		ply.mw_cooldown = CurTime()
 	end
 
-	if (ply.mw_units == nil) then
-		ply.mw_units = 0
+	if (ply.MelonWars.units == nil) then
+		ply.MelonWars.units = 0
 	end
 	if (ply.mw_credits == nil) then
 		ply.mw_credits = 0
@@ -3878,35 +3878,35 @@ function TOOL:Think()
 	end
 
 	if (ply.mw_action == 1) then
-		local newColor = mw_team_colors[ply:GetInfoNum("mw_team", 0)]
+		local newColor = MelonWars.teamColors[ply:GetInfoNum("mw_team", 0)]
 		local unit_index = ply:GetInfoNum("mw_chosen_unit", 0)
-		if unit_index > 0 and mw_units[unit_index].offset ~= nil then
-			local offset = mw_units[unit_index].offset
+		if unit_index > 0 and MelonWars.units[unit_index].offset ~= nil then
+			local offset = MelonWars.units[unit_index].offset
 			local xoffset = Vector(offset.x * (math.cos(ply.propAngle.y / 180 * math.pi)), offset.x * (math.sin(ply.propAngle.y / 180 * math.pi)),0)
 			local yoffset = Vector(offset.y * (-math.sin(ply.propAngle.y / 180 * math.pi)), offset.y * (math.cos(ply.propAngle.y / 180 * math.pi)),0)
 			offset = xoffset + yoffset + Vector(0,0,offset.z)
-			local ang = ply.propAngle + mw_units[unit_index].angle
-			if (mw_units[unit_index].normalAngle) then
-				ang = trace.HitNormal:Angle() + mw_units[unit_index].angle
+			local ang = ply.propAngle + MelonWars.units[unit_index].angle
+			if (MelonWars.units[unit_index].normalAngle) then
+				ang = trace.HitNormal:Angle() + MelonWars.units[unit_index].angle
 			end
 
-			MW_UpdateGhostEntity(mw_units[unit_index].model, trace.HitPos, trace.HitNormal * 5+offset, ang, newColor, mw_units[unit_index].energyRange, trace.HitPos)
+			MW_UpdateGhostEntity(MelonWars.units[unit_index].model, trace.HitPos, trace.HitNormal * 5+offset, ang, newColor, MelonWars.units[unit_index].energyRange, trace.HitPos)
 		end
 	elseif (ply.mw_action == 3) then
-		local newColor = mw_team_colors[ply:GetInfoNum("mw_team", 0)]
+		local newColor = MelonWars.teamColors[ply:GetInfoNum("mw_team", 0)]
 		-- local modeltable = list.Get( "WallModels" )
 		local prop_index = ply:GetInfoNum("mw_chosen_prop", 0)
 		local offset
 		if (cvars.Bool("mw_prop_offset") == true) then
-			offset = mw_base_props[prop_index].offset
+			offset = MelonWars.baseProps[prop_index].offset
 			--offset:Rotate( ply.propAngle )
 			local xoffset = Vector(offset.x * (math.cos(ply.propAngle.y / 180 * math.pi)), offset.x * (math.sin(ply.propAngle.y / 180 * math.pi)),0)
 			local yoffset = Vector(offset.y * (-math.sin(ply.propAngle.y / 180 * math.pi)), offset.y * (math.cos(ply.propAngle.y / 180 * math.pi)),0)
 			offset = xoffset + yoffset + Vector(0,0,offset.z)
 		else
-			offset = Vector(0,0,mw_base_props[prop_index].offset.z)
+			offset = Vector(0,0,MelonWars.baseProps[prop_index].offset.z)
 		end
-		MW_UpdateGhostEntity (mw_base_props[prop_index].model, ply:GetEyeTrace().HitPos, Vector(0,0,1) + offset, ply.propAngle + mw_base_props[prop_index].angle, newColor, 0, trace.HitPos, mw_units[prop_index].defenseRange)
+		MW_UpdateGhostEntity (MelonWars.baseProps[prop_index].model, ply:GetEyeTrace().HitPos, Vector(0,0,1) + offset, ply.propAngle + MelonWars.baseProps[prop_index].angle, newColor, 0, trace.HitPos, MelonWars.units[prop_index].defenseRange)
 	else
 		if IsValid(ply.GhostEntity) then
 			ply.GhostEntity:Remove()
@@ -4088,9 +4088,9 @@ end
 local function StartBuildingContraption( assembler, _file, cost, power )
 	if assembler:GetNWBool( "active" ) then return end
 	local locPly = LocalPlayer()
-	if locPly.mw_units >= cvars.Number( "mw_admin_max_units" ) then return end
+	if locPly.MelonWars.units >= cvars.Number( "mw_admin_max_units" ) then return end
 	if locPly.mw_credits < locPly.contrapCost or cvars.Bool( "mw_admin_credit_cost" ) then return end
-	if locPly.contrapPower ~= 0 or locPly.mw_units + locPly.contrapPower > cvars.Number( "mw_admin_max_units" ) then return end
+	if locPly.contrapPower ~= 0 or locPly.MelonWars.units + locPly.contrapPower > cvars.Number( "mw_admin_max_units" ) then return end
 
 	assembler.nextSlowThink = CurTime() + assembler:GetNWFloat("slowThinkTimer", 0)
 	assembler:SetNWFloat("nextSlowThink", CurTime() + assembler:GetNWFloat("slowThinkTimer", 0))
@@ -4294,9 +4294,9 @@ function TOOL:DrawHUD()
 		local teamColor = cvars.Number("mw_team")
 		local size = 50
 		for i = 1, 8 do
-			if (teamgrid[i][teamColor] == true) then
+			if (MelonWars.teamGrid[i][teamColor] == true) then
 				draw.RoundedBox( 0, x-pos*size, y-size, size, size, Color(20,20,20,255) )
-				draw.RoundedBox( 5, x + 4-pos*size, y + 4-size, size-8, size-8, mw_team_colors[i] )
+				draw.RoundedBox( 5, x + 4-pos*size, y + 4-size, size-8, size-8, MelonWars.teamColors[i] )
 				pos = pos + 1
 			end
 		end
@@ -4369,7 +4369,7 @@ function TOOL:DrawHUD()
 		elseif (pl.mw_action == 1) then --spawning
 			local teamColor = Color(100,100,100,255)
 			if (cvars.Number("mw_team") ~= 0) then
-				teamColor = mw_team_colors[cvars.Number("mw_team")]
+				teamColor = MelonWars.teamColors[cvars.Number("mw_team")]
 			end
 			if (unit_id > 0) then
 				local w = 300
@@ -4379,21 +4379,21 @@ function TOOL:DrawHUD()
 
 				draw.RoundedBox( 15, x, y, w, h, teamColor )
 				draw.RoundedBox( 10, x + 10, y + 10, w-20, h-20, Color(0,0,0,230) )
-				draw.DrawText( mw_units[unit_id].name, "DermaLarge", x + w / 2, y + 30, color_white, TEXT_ALIGN_CENTER )
-				for i = 1, mw_units[unit_id].population do
-					draw.RoundedBox( 1, x + w / 2-(mw_units[unit_id].population+1) / 2*15+i*15-7, y + 65, 10, 10, color_white )
+				draw.DrawText( MelonWars.units[unit_id].name, "DermaLarge", x + w / 2, y + 30, color_white, TEXT_ALIGN_CENTER )
+				for i = 1, MelonWars.units[unit_id].population do
+					draw.RoundedBox( 1, x + w / 2-(MelonWars.units[unit_id].population+1) / 2*15+i*15-7, y + 65, 10, 10, color_white )
 				end
 				if (freeunits) then
 					draw.DrawText( "- Infinite Water -", "Trebuchet18", x + w / 2, y + 120, color_white, TEXT_ALIGN_CENTER )
 					draw.DrawText( "To enable water cost go to the admin menu", "Trebuchet18", x + w / 2, y + 140, color_white, TEXT_ALIGN_CENTER )
 				else
-					draw.DrawText( "Cost: " .. mw_units[unit_id].cost, "DermaLarge", x + 30, y + 90, color_white, TEXT_ALIGN_LEFT )
-					if (mw_units[unit_id].welded_cost ~= -1) then
-						draw.DrawText( "Welded Cost (RMB): " .. mw_units[unit_id].welded_cost, "Trebuchet18", x + 30, y + 130, color_white, TEXT_ALIGN_LEFT )
+					draw.DrawText( "Cost: " .. MelonWars.units[unit_id].cost, "DermaLarge", x + 30, y + 90, color_white, TEXT_ALIGN_LEFT )
+					if (MelonWars.units[unit_id].welded_cost ~= -1) then
+						draw.DrawText( "Welded Cost (RMB): " .. MelonWars.units[unit_id].welded_cost, "Trebuchet18", x + 30, y + 130, color_white, TEXT_ALIGN_LEFT )
 					end
 					draw.DrawText( "Water: " .. tostring(self:GetOwner().mw_credits), "DermaLarge", x + 30, y + 160, color_white, TEXT_ALIGN_LEFT )
 				end
-				draw.DrawText( "Power: " .. tostring(self:GetOwner().mw_units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 200, color_white, TEXT_ALIGN_LEFT )
+				draw.DrawText( "Power: " .. tostring(self:GetOwner().MelonWars.units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 200, color_white, TEXT_ALIGN_LEFT )
 
 				draw.DrawText( "R: Open menu", "DermaLarge", x + w-10, y-120, color_white, TEXT_ALIGN_RIGHT )
 				draw.DrawText( "LMB: Spawn", "DermaLarge", x + w-10, y-80, color_white, TEXT_ALIGN_RIGHT )
@@ -4403,9 +4403,9 @@ function TOOL:DrawHUD()
 				--	draw.DrawText( "Spawning Queue: " .. math.floor(pl.mw_spawntime-CurTime()), "DermaLarge", ScrW() / 2, ScrH() - 80, color_white, TEXT_ALIGN_CENTER )
 				--end
 
-				if (cvars.Bool("mw_unit_option_welded") and mw_units[unit_id].welded_cost ~= -1) then
+				if (cvars.Bool("mw_unit_option_welded") and MelonWars.units[unit_id].welded_cost ~= -1) then
 					draw.RoundedBox( 10, mx-100, my + 40, 200, 45, Color(0,0,0,100) )
-					draw.DrawText( "Spawning " .. mw_units[unit_id].name, "Trebuchet24", mx, my + 40, Color(255,255,0,255), TEXT_ALIGN_CENTER )
+					draw.DrawText( "Spawning " .. MelonWars.units[unit_id].name, "Trebuchet24", mx, my + 40, Color(255,255,0,255), TEXT_ALIGN_CENTER )
 					draw.DrawText( "as turret", "Trebuchet24", mx, my + 60, Color(255,255,0,255), TEXT_ALIGN_CENTER )
 
 					draw.RoundedBox( 2, mx-21, my-3, 17, 5, Color(50,50,50))
@@ -4416,7 +4416,7 @@ function TOOL:DrawHUD()
 					draw.RoundedBox( 1, mx-3, my-30-math.sin(CurTime() * 3) * 10, 5, 10, teamColor)
 				else
 					draw.RoundedBox( 10, mx-160, my + 40, 320, 25, Color(0,0,0,100) )
-					draw.DrawText( "Spawning " .. mw_units[unit_id].name, "Trebuchet24", mx, my + 40, Color(255,255,255,200), TEXT_ALIGN_CENTER )
+					draw.DrawText( "Spawning " .. MelonWars.units[unit_id].name, "Trebuchet24", mx, my + 40, Color(255,255,255,200), TEXT_ALIGN_CENTER )
 					local a = math.sin(CurTime() * 3) * 5
 
 					draw.RoundedBox( 2, mx-4, my-23-a, 7, 12, Color(50,50,50))
@@ -4467,7 +4467,7 @@ function TOOL:DrawHUD()
 			else
 				draw.DrawText( "Water: " .. tostring(self:GetOwner().mw_credits), "DermaLarge", x + 30, y + 30, color_white, TEXT_ALIGN_LEFT )
 			end
-			draw.DrawText( "Power: " .. tostring(self:GetOwner().mw_units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 70, color_white, TEXT_ALIGN_LEFT )
+			draw.DrawText( "Power: " .. tostring(self:GetOwner().MelonWars.units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 70, color_white, TEXT_ALIGN_LEFT )
 		elseif pl.mw_action == 3 then
 			local prop_id = pl:GetInfoNum("mw_chosen_prop", 1) -- changed
 
@@ -4480,12 +4480,12 @@ function TOOL:DrawHUD()
 			draw.RoundedBox( 15, x, y, w, h, teamColor )
 			draw.RoundedBox( 10, x + 10, y + 10, w-20, h-20, Color(0,0,0,230) )
 			draw.DrawText( "Base Builder", "DermaLarge", x + w / 2, y + 30, color_white, TEXT_ALIGN_CENTER )
-			draw.DrawText( mw_base_props[prop_id].name, "DermaLarge", x + w-20, y + 70, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "HP: " .. mw_base_props[prop_id].hp, "DermaLarge", x + 30, y + 100, color_white, TEXT_ALIGN_LEFT )
-			draw.DrawText( "Cost: " .. mw_base_props[prop_id].cost, "DermaLarge", x + 30, y + 130, color_white, TEXT_ALIGN_LEFT )
+			draw.DrawText( MelonWars.baseProps[prop_id].name, "DermaLarge", x + w-20, y + 70, color_white, TEXT_ALIGN_RIGHT )
+			draw.DrawText( "HP: " .. MelonWars.baseProps[prop_id].hp, "DermaLarge", x + 30, y + 100, color_white, TEXT_ALIGN_LEFT )
+			draw.DrawText( "Cost: " .. MelonWars.baseProps[prop_id].cost, "DermaLarge", x + 30, y + 130, color_white, TEXT_ALIGN_LEFT )
 			draw.DrawText( "Water: " .. tostring(pl.mw_credits), "DermaLarge", x + 30, y + 180, color_white, TEXT_ALIGN_LEFT ) -- changed
 		elseif pl.mw_action == 4 then
-			local teamColor = mw_team_colors[cvars.Number("mw_team")] -- self:GetOwner().mw_hudColor
+			local teamColor = MelonWars.teamColors[cvars.Number("mw_team")] -- self:GetOwner().mw_hudColor
 			local w = 300
 			local h = 150
 			local x = ScrW() - w
@@ -4501,9 +4501,9 @@ function TOOL:DrawHUD()
 			draw.RoundedBox( 15, x, y, w, h, teamColor )
 			draw.RoundedBox( 10, x + 10, y + 10, w-20, h-20, Color(0,0,0,230) )
 			draw.DrawText( "Water: " .. tostring(pl.mw_credits), "DermaLarge", x + 30, y + 30, color_white, TEXT_ALIGN_LEFT ) -- changed
-			draw.DrawText( "Power: " .. tostring(pl.mw_units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 70, color_white, TEXT_ALIGN_LEFT ) -- changed
+			draw.DrawText( "Power: " .. tostring(pl.MelonWars.units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 70, color_white, TEXT_ALIGN_LEFT ) -- changed
 		elseif pl.mw_action == 5 then
-			local teamColor = mw_team_colors[cvars.Number("mw_team")] -- pl.mw_hudColor -- changed
+			local teamColor = MelonWars.teamColors[cvars.Number("mw_team")] -- pl.mw_hudColor -- changed
 			local w = 160
 			local h = 30
 			local x = ScrW()
@@ -4521,7 +4521,7 @@ function TOOL:DrawHUD()
 			draw.RoundedBox( 10, x-300+10, y-140, 300-20, 130, Color(0,0,0,230) )
 			draw.DrawText( "Water: " .. tostring(pl.mw_credits), "DermaLarge", x-270, y-100, color_white, TEXT_ALIGN_LEFT )
 		elseif pl.mw_action == 6 then
-			local teamColor = mw_team_colors[cvars.Number("mw_team")]--pl.mw_hudColor -- changed
+			local teamColor = MelonWars.teamColors[cvars.Number("mw_team")]--pl.mw_hudColor -- changed
 			local w = 300
 			local h = 150
 			local x = ScrW() - w
@@ -4537,7 +4537,7 @@ function TOOL:DrawHUD()
 			draw.RoundedBox( 15, x, y, w, h, teamColor )
 			draw.RoundedBox( 10, x + 10, y + 10, w-20, h-20, Color(0,0,0,230) )
 			draw.DrawText( "Water: " .. tostring(pl.mw_credits), "DermaLarge", x + 30, y + 30, color_white, TEXT_ALIGN_LEFT )
-			draw.DrawText( "Power: " .. tostring(pl.mw_units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 70, color_white, TEXT_ALIGN_LEFT )
+			draw.DrawText( "Power: " .. tostring(pl.MelonWars.units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 70, color_white, TEXT_ALIGN_LEFT )
 		end
 
 		if (cvars.Bool("mw_income_indicator")) then
@@ -4567,7 +4567,7 @@ function TOOL:DrawHUD()
 end
 
 net.Receive( "UpdateClientTeams", function()
-	teamgrid = net.ReadTable()
+	MelonWars.teamGrid = net.ReadTable()
 end )
 
 if CLIENT then

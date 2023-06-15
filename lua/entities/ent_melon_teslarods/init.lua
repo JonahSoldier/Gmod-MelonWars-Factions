@@ -5,7 +5,7 @@ include('shared.lua')
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_rooftop/antennaclusters01a.mdl"
 	self.spread = 10
@@ -121,5 +121,5 @@ function MW_CleanUp_Network() --This unit is still being counted as an energy un
 end
 ]]
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

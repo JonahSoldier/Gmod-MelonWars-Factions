@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_phx/wheels/magnetic_large_base.mdl" --Physical model, doesn't get shown in this case
 	self.moveType = MOVETYPE_VPHYSICS
@@ -80,7 +80,7 @@ function ENT:SlowThink ( ent )
 	end
 
 
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 end
 
 function ENT:Shoot ( ent, forcedTargetPos )
@@ -88,7 +88,7 @@ function ENT:Shoot ( ent, forcedTargetPos )
 		ent.nextControlShoot = CurTime()+ent.slowThinkTimer
 		if (IsValid(ent)) then
 			if ent:GetNWInt("mw_charge",0)>self.energyCost then
-				MW_DefaultShoot ( ent, forceTargetPos )
+				MelonWars.defaultShoot ( ent, forceTargetPos )
 				ent:SetNWInt("mw_charge",ent:GetNWInt("mw_charge",0)-self.energyCost)
 			end
 		end
@@ -104,5 +104,5 @@ function ENT:PhysicsUpdate()
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

@@ -1,11 +1,13 @@
 if engine.ActiveGamemode() ~= "sandbox" then return end
 
-mw_team_colors = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
-mw_team_colors[0] = Color(100,100,100,255)
+MelonWars = {}
 
-mrtsMessageReceivingEntity = nil
-mrtsMessageReceivingState = "idle"
-mrtsNetworkBuffer = ""
+MelonWars.teamColors = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
+MelonWars.teamColors[0] = Color(100,100,100,255)
+
+MelonWars.messageReceivingEntity = nil
+MelonWars.messageReceivingState = "idle"
+MelonWars.networkBuffer = ""
 
 net.Receive( "MW_ReturnSelection", function()
 	local returnedSelectionID = net.ReadInt(20)
@@ -42,23 +44,23 @@ net.Receive( "RestartQueue", function()
 end )
 
 net.Receive( "BeginContraptionSaveClient", function()
-	mrtsMessageReceivingState = net.ReadString()
-	mrtsMessageReceivingEntity = net.ReadEntity()
-	mrtsNetworkBuffer = ""
+	MelonWars.messageReceivingState = net.ReadString()
+	MelonWars.messageReceivingEntity = net.ReadEntity()
+	MelonWars.networkBuffer = ""
 end )
 
 net.Receive( "ContraptionSaveClient", function()
 	local last = net.ReadBool()
 	local size = net.ReadUInt( 16 )
 	local data = net.ReadData( size )
-	mrtsNetworkBuffer = mrtsNetworkBuffer .. data
+	MelonWars.networkBuffer = MelonWars.networkBuffer .. data
 	if not last then return end
-	local text = util.Decompress( mrtsNetworkBuffer )
+	local text = util.Decompress( MelonWars.networkBuffer )
 	file.CreateDir( "melonwars/contraptions" )
-	file.Write( "melonwars/contraptions/" .. mrtsMessageReceivingState .. ".txt", text )
-	mrtsMessageReceivingEntity = nil
-	mrtsMessageReceivingState = "idle"
-	mrtsNetworkBuffer = ""
+	file.Write( "melonwars/contraptions/" .. MelonWars.messageReceivingState .. ".txt", text )
+	MelonWars.messageReceivingEntity = nil
+	MelonWars.messageReceivingState = "idle"
+	MelonWars.networkBuffer = ""
 end )
 
 net.Receive( "ContraptionValidateClient", function()
@@ -116,7 +118,7 @@ net.Receive( "MW_TeamCredits", function()
 end )
 
 net.Receive( "MW_TeamUnits", function()
-	LocalPlayer().mw_units = net.ReadInt(16)
+	LocalPlayer().MelonWars.units = net.ReadInt(16)
 end )
 
 net.Receive( "RequestContraptionLoadToClient", function()

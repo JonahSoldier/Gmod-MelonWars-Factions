@@ -1,8 +1,8 @@
 local function MW_Initialize()
-	mw_team_colors[0] = Color( 100, 100, 100, 255 )
+	MelonWars.teamColors[0] = Color( 100, 100, 100, 255 )
 
 	-- Create a file for contraption validation
-	local text = util.Compress( util.TableToJSON( mw_units ) )
+	local text = util.Compress( util.TableToJSON( MelonWars.units ) )
 	file.CreateDir( "melonwars/validation" )
 	file.Write( "melonwars/validation/unitValues.txt", text )
 end
@@ -22,7 +22,7 @@ local function spawn( ply )
 	ply.mw_credits = 2000
 	for _, v in ipairs( player.GetAll() ) do
 		net.Start( "UpdateClientTeams" )
-			net.WriteTable( teamgrid )
+			net.WriteTable( MelonWars.teamGrid )
 		net.Send( ply )
 	end
 	util.PrecacheModel( "models/hunter/tubes/circle2x2.mdl" )
@@ -64,11 +64,11 @@ end
 hook.Add( "EntityTakeDamage", "MelonWars_EntTakeDmg", takedmg )
 
 hook.Add( "InitPostEntity", "MelonWars_StartLoad", function()
-	teamgrid = {}          -- create the matrix
+	MelonWars.teamGrid = {}          -- create the matrix
 	for i = 1, 8 do
-		teamgrid[i] = {}     -- create a new row
+		MelonWars.teamGrid[i] = {}     -- create a new row
 		for j = 1, 8 do
-			teamgrid[i][j] = false
+			MelonWars.teamGrid[i][j] = false
 		end
 	end
 end )

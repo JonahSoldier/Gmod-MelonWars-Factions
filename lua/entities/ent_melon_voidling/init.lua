@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/hunter/misc/sphere025x025.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -38,7 +38,7 @@ function ENT:SkinMaterial()
 end
 
 function ENT:SlowThink ( ent )
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 	if (ent:GetNWInt("mw_melonTeam", 0) == 0 and ent.targetEntity == nil) then
 		local pos = ent:GetPos()+VectorRand(-100, 100)
 		ent:RemoveRallyPoints()
@@ -98,12 +98,12 @@ function ENT:Explode()
 							self.targetEntity:PropDie()
 						end
 						sound.Play( self.shotSound, self:GetPos(), 75, 145 )
-						MW_Die ( self )
+						MelonWars.die ( self )
 					else
 						--self.targetEntity.damage = self.damageDeal --Doesn't work on static entities for some reason
 						self.targetEntity:TakeDamage( self.damageDeal, self, self )
 						sound.Play( self.shotSound, self:GetPos(), 75, 145 )
-						MW_Die ( self )
+						MelonWars.die ( self )
 					end
 				end
 			end

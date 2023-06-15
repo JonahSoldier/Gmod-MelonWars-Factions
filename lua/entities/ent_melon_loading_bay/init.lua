@@ -6,7 +6,7 @@ include( "shared.lua" )
 function ENT:Initialize()
 	--self:SetPos(self:GetPos()+Vector(0,0,-5))
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_phx/construct/metal_plate2x2.mdl"
 	self.materialString = "phoenix_storms/metalfloor_2-3"
@@ -79,9 +79,9 @@ function ENT:SlowThink(ent)
 end
 
 function ENT:Shoot ( ent )
-	--MW_DefaultShoot ( ent )
+	--MelonWars.defaultShoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

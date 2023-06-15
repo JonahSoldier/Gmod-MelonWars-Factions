@@ -4,7 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_junk/MetalBucket01a.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -56,7 +56,7 @@ function ENT:SlowThink ( ent )
 	--local vel = ent.phys:GetVelocity()
 	--ent.phys:SetAngles( ent.Angles )
 	--ent.phys:SetVelocity(vel)
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 
 	if(self.targetEntity ~= nil) then
 		if(self.targetEntity.moveType ~= MOVETYPE_NONE) then
@@ -83,8 +83,8 @@ function ENT:Shoot ( ent, forceTargetPos )
 		if(ent.targetEntity.moveType == MOVETYPE_NONE) then
 			if(self.targetEntity:GetClass() ~= "ent_melon_main_building" and self.targetEntity:GetClass() ~= "ent_melon_main_building_grand_war") then
 
-				MW_UpdatePopulation(ent.targetEntity.population*-1, ent.targetEntity:GetNWInt("mw_melonTeam",-1))
-				MW_UpdatePopulation(ent.targetEntity.population, self:GetNWInt("mw_melonTeam",-1))
+				MelonWars.updatePopulation(ent.targetEntity.population*-1, ent.targetEntity:GetNWInt("mw_melonTeam",-1))
+				MelonWars.updatePopulation(ent.targetEntity.population, self:GetNWInt("mw_melonTeam",-1))
 
 				ent.targetEntity:SetNWInt("mw_melonTeam", self:GetNWInt("mw_melonTeam", 0))
 				ent.targetEntity:MelonSetColor( self:GetNWInt("mw_melonTeam", 0) )
@@ -105,5 +105,5 @@ function ENT:Shoot ( ent, forceTargetPos )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

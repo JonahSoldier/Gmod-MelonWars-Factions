@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/hunter/misc/sphere1x1.mdl"
 	self.materialString = "phoenix_storms/dome"
@@ -153,7 +153,7 @@ function ENT:Shoot ( ent, forcedTargetPos )
 		--effectdata:SetOrigin( ent:GetPos() )
 		--util.Effect( "Explosion", effectdata )
 		--ent:Remove()
-			MW_Die ( ent )
+			MelonWars.die ( ent )
 		end
 	end )
 end

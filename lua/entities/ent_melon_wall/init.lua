@@ -54,7 +54,7 @@ local function PropSetup( ent )
 
 	local mw_melonTeam = ent:GetNWInt("mw_melonTeam", 0)
 
-	local newColor = mw_team_colors[mw_melonTeam]
+	local newColor = MelonWars.teamColors[mw_melonTeam]
 	ent:SetColor(newColor)
 end
 

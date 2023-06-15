@@ -5,7 +5,7 @@ include('shared.lua')
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_c17/trappropeller_engine.mdl"--"models/props_c17/TrapPropeller_Engine.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -37,7 +37,7 @@ function ENT:Initialize()
 end
 
 function ENT:SlowThink ( ent )
-	--MW_UnitDefaultThink ( ent )
+	--MelonWars.unitDefaultThink ( ent )
 end
 
 function ENT:Welded( ent, parent )
@@ -49,9 +49,9 @@ function ENT:Welded( ent, parent )
 	ent.parent = parent
 
 	--Resta su poblacion para luego sumar la nueva
-	MW_UpdatePopulation(-ent.population, mw_melonTeam)
+	MelonWars.updatePopulation(-ent.population, mw_melonTeam)
 	ent.population = math.ceil(ent.population/2)
-	MW_UpdatePopulation(ent.population, mw_melonTeam)
+	MelonWars.updatePopulation(ent.population, mw_melonTeam)
 end
 
 function ENT:Update( ent )
@@ -64,7 +64,7 @@ function ENT:Update( ent )
 			ent:SetNWFloat( "health", ent.HP )
 			ent.damage = 0
 			if (ent.HP <= 0) then
-				MW_Die( ent )
+				MelonWars.die( ent )
 			end
 		end
 
@@ -128,9 +128,9 @@ function ENT:PhysicsUpdate()
 end
 
 function ENT:Shoot ( ent )
-	--MW_DefaultShoot ( ent )
+	--MelonWars.defaultShoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

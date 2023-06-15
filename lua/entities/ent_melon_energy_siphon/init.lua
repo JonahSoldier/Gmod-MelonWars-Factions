@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Energy_Defaults ( self )
+	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_c17/substation_stripebox01a.mdl"
 	self.maxHP = 50
@@ -18,7 +18,7 @@ function ENT:Initialize()
 	self.connectToMachines = true
 	self:SetNWVector("energyPos", Vector(0,0,60))
 
-	MW_Energy_Setup ( self )
+	MelonWars.energySetup ( self )
 	timer.Simple(0.5, function () self:ConnectToBarrack() end)
 
 	self.connectionRange = 750
@@ -35,8 +35,8 @@ function ENT:Think(ent)
 
 	for k, v in pairs(self.targetConnections) do
 		if(IsValid(v)) then
-			if((mw_electric_network[self.network].capacity - mw_electric_network[self.network].energy >= 5)) then
-				if(mw_electric_network[v.network].energy >= 5) then
+			if((MelonWars.electricNetwork[self.network].capacity - MelonWars.electricNetwork[self.network].energy >= 5)) then
+				if(MelonWars.electricNetwork[v.network].energy >= 5) then
 					v:DrainPower(5)
 					self:GivePower(5) --Steal power if we have space for it
 				end
@@ -105,5 +105,5 @@ function ENT:SlowThink(ent) end
 function ENT:Shoot( ent ) end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

@@ -4,7 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_trainstation/trashcan_indoor001b.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -67,7 +67,7 @@ function ENT:SlowThink ( ent )
 	end
 
 	if (self:GetNWInt("mw_charge",0) >= self.energyCost and self:GetNWFloat("mw_ready", 0) >= 1 and self:GetNWBool("mw_active", false) == true) then
-		MW_UnitDefaultThink ( ent )
+		MelonWars.unitDefaultThink ( ent )
 	end
 end
 
@@ -113,7 +113,7 @@ function ENT:Shoot ( ent, forcedTargetPos )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end
 
 function ENT:PhysicsUpdate()

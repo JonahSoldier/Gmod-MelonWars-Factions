@@ -12,7 +12,7 @@ end
 
 function ENT:Think()
 	local vPoint = self:GetPos()+Vector(0,0,35)
-	SpawnUnitAtPos("ent_melon_doot", 0, vPoint, Angle(0,0,0), 0, 0, 0, false, nil, nil)
+	MelonWars.spawnUnitAtPos("ent_melon_doot", 0, vPoint, Angle(0,0,0), 0, 0, 0, false, nil, nil)
 	local effectdata = EffectData()
 	effectdata:SetOrigin( vPoint )
 	util.Effect( "AntlionGib", effectdata )

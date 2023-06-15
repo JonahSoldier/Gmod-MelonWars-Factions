@@ -4,7 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-	MW_Energy_Defaults ( self )
+	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_c17/FurnitureBoiler001a.mdl"
 	self.speed = 80
@@ -25,7 +25,7 @@ function ENT:Initialize()
 	self.capacity = 0
 	self:SetNWVector("energyPos", Vector(0,0,20))
 
-	MW_Energy_Setup ( self )
+	MelonWars.energySetup ( self )
 
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 	self:GetPhysicsObject():EnableMotion(false)
@@ -34,7 +34,7 @@ end
 function ENT:SlowThink ( ent )
 
 	local energyCost = 15
-	if (mw_electric_network[self.network].energy >= energyCost) then
+	if (MelonWars.electricNetwork[self.network].energy >= energyCost) then
 		local entities = ents.FindInSphere( ent:GetPos(), ent.range )
 		--------------------------------------------------------Disparar
 		local targets = 0
@@ -105,5 +105,5 @@ function ENT:Shoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

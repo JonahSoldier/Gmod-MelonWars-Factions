@@ -16,7 +16,7 @@ end
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self:SetStats()
 
@@ -24,7 +24,7 @@ function ENT:Initialize()
 
 	self:SetNWBool("active", false)
 	--InciteConnections(self)
-	--MW_CalculateConnections(self)
+	--MelonWars.calculateConnections(self)
 	--self:SetNWBool("canGive", false)
 end
 
@@ -40,7 +40,7 @@ function ENT:Think(ent)
 		--	self:SetNWInt("energy", self:GetNWInt("energy", 0)-20)
 		--end
 		if (NST < CurTime()+self:GetNWFloat("overdrive", 0)*3) then
-			if (self.powerCost+mw_teamUnits[self:GetNWInt("mw_melonTeam", 0)] <= cvars.Number("mw_admin_max_units")) then
+			if (self.powerCost+MelonWars.teamUnits[self:GetNWInt("mw_melonTeam", 0)] <= cvars.Number("mw_admin_max_units")) then
 				self:SetNWFloat("overdrive", 0)
 				self:SetNWFloat("nextSlowThink", CurTime())
 				self:SetNWBool("active", false)
@@ -64,7 +64,7 @@ function ENT:Shoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end
 
 function ENT:BarrackSlowThink()

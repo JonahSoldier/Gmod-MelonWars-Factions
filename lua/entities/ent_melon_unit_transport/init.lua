@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.unit = 2
 	self.modelString = "models/props_junk/wood_crate002a.mdl"
@@ -45,11 +45,11 @@ function ENT:SlowThink(ent)
 end
 
 function ENT:Shoot ( ent )
-	--MW_DefaultShoot ( ent )
+	--MelonWars.defaultShoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end
 
 function ENT:PhysicsCollide( data, physobj )
@@ -73,7 +73,7 @@ function ENT:AbsorbUnit(unit)
 				self:SetNWInt("value"..index, unit.value)
 				self:SetNWInt("energy"..index, unit:GetNWInt("mw_charge", 0))
 				self:SetNWInt("entindex"..index, unit:EntIndex())
-				MW_UpdatePopulation(unit.population, self:GetNWInt("mw_melonTeam", 0))
+				MelonWars.updatePopulation(unit.population, self:GetNWInt("mw_melonTeam", 0))
 				--self.population = self.population+unit.population
 				unit.fired = true
 
@@ -163,6 +163,6 @@ function ENT:FreeUnits()
 end
 
 function ENT:OnRemove()
-	MW_UpdatePopulation(-self.population, self:GetNWInt("mw_melonTeam", 0))
+	MelonWars.updatePopulation(-self.population, self:GetNWInt("mw_melonTeam", 0))
 	self:FreeUnits()
 end

@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Energy_Defaults ( self )
+	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_combine/weaponstripper.mdl"
 	self.maxHP = 20
@@ -27,7 +27,7 @@ function ENT:Initialize()
 	self.history = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
 	self.historyTotal = 25
 
-	MW_Energy_Setup ( self )
+	MelonWars.energySetup ( self )
 
 	self:EstimateEfficiency()
 end
@@ -100,5 +100,5 @@ function ENT:Shoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

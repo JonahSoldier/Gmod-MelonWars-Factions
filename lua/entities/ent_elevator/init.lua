@@ -39,9 +39,9 @@ function ENT:Think()
 end
 --[[
 function ENT:Shoot( ent )
-	--MW_DefaultShoot( ent )
+	--MelonWars.defaultShoot( ent )
 end
 ]]
 function ENT:DeathEffect( ent )
-	MW_DefaultDeathEffect( ent )
+	MelonWars.defaultDeathEffect( ent )
 end

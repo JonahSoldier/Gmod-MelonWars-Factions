@@ -5,7 +5,7 @@ include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Energy_Defaults ( self )
+	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_phx/construct/metal_plate2x4.mdl"--"models/props_c17/TrapPropeller_Engine.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -34,7 +34,7 @@ function ENT:Initialize()
 
 	self.damping = 4
 
-	MW_Energy_Setup ( self )
+	MelonWars.energySetup ( self )
 
 	self:GetPhysicsObject():EnableMotion(false)
 end
@@ -44,7 +44,7 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-	--MW_UnitDefaultThink ( ent )
+	--MelonWars.unitDefaultThink ( ent )
 end
 
 function ENT:Actuate ()
@@ -74,9 +74,9 @@ function ENT:Update()
 end
 
 function ENT:Shoot ( ent )
-	--MW_DefaultShoot ( ent )
+	--MelonWars.defaultShoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end
