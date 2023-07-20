@@ -28,10 +28,9 @@ function ENT:Draw()
 end
 
 function ENT:Think()
-	if (self:GetNWBool("launching", false)) then
-		if (self.nextParticle < CurTime()) then
-			self:DrawSiloSmoke( 2 )
-			self.nextParticle = CurTime()+0.2
-		end
-	end
+	if not self:GetNWBool("launching", false) then return end
+	if self.nextParticle >= CurTime() then return end
+
+	MelonWars.drawSiloSmoke( self, 2 )
+	self.nextParticle = CurTime() + 0.2
 end

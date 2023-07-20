@@ -28,7 +28,7 @@ end
 
 function ENT:Think()
 	if self.nextParticle < CurTime() then
-		self:DrawSiloSmoke( 1 )
+		MelonWars.drawSiloSmoke( self, 1 )
 		self.nextParticle = CurTime() + 0.3
 	end
 end

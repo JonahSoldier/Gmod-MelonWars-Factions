@@ -54,10 +54,10 @@ function MelonWars.drawSickEffect( ent, amount )
 	emitter:Finish()
 end
 
-function ENT:DrawSiloSmoke( amount )
-	local emitter = ParticleEmitter( self:GetPos() ) -- Particle emitter in this position
+function MelonWars.drawSiloSmoke( ent, amount )
+	local emitter = ParticleEmitter( ent:GetPos() ) -- Particle emitter in this position
 	for i = 1, amount do -- SMOKE
-		local part = emitter:Add( "effects/yellowflare", self:GetPos() + Vector(math.random(-30, 30), math.random(-30, 30), 0) ) -- Create a new particle at pos
+		local part = emitter:Add( "effects/yellowflare", ent:GetPos() + Vector(math.random(-30, 30), math.random(-30, 30), 0) ) -- Create a new particle at pos
 		if ( part ) then
 			part:SetDieTime( math.Rand(1.0, 2.0) ) -- How long the particle should "live"
 			part:SetColor(100, 255, 0)
@@ -78,8 +78,8 @@ end
 function ENT:Think()
 	local pos = self:GetPos()
 	local tr = util.TraceLine( {
-	start = pos+Vector(0,0,20),
-	endpos = pos+Vector(0,0,-280),
+	start = pos + Vector(0,0,20),
+	endpos = pos + Vector(0,0,-280),
 	filter = function( ent ) if ( ent:GetClass() == "prop_physics" ) then return true end end,
 	mask = bit.bor(MASK_SOLID,MASK_WATER)
 	} )
