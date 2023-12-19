@@ -33,6 +33,9 @@ end )
 hook.Add( "Think", "MelonWars_SelectingUpdate", function()
 	local tr = LocalPlayer():GetEyeTrace()
 	local ent = tr.Entity
+
+	if not IsValid( ent ) then return end
+
 	if ent:GetNWString( "message", "nope" ) ~= "nope" then
 		AddWorldTip( nil, ent:GetNWString( "message", "nope" ), nil, Vector( 0, 0, 0 ), ent )
 	end
