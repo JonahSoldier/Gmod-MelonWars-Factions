@@ -1,6 +1,8 @@
 if engine.ActiveGamemode() ~= "sandbox" then return end
 
-MelonWars = {}
+MelonWars = MelonWars or {}
+
+include("melonwars/sh_unitlist.lua")
 
 MelonWars.teamColors = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
 MelonWars.teamColors[0] = Color(100,100,100,255)
@@ -118,7 +120,8 @@ net.Receive( "MW_TeamCredits", function()
 end )
 
 net.Receive( "MW_TeamUnits", function()
-	LocalPlayer().MelonWars.units = net.ReadInt(16)
+	--LocalPlayer().MelonWars.units = net.ReadInt(16)
+	LocalPlayer().mw_units = net.ReadInt(16)
 end )
 
 net.Receive( "RequestContraptionLoadToClient", function()

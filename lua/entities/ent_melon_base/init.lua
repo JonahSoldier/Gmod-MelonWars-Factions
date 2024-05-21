@@ -248,19 +248,20 @@ function ENT:Welded( ent, parent )
 end
 
 function ENT:Think()
-	if self.carryingMelonium then
+	local selfTbl = self:GetTable()
+	if selfTbl.carryingMelonium then
 		self:SetNWFloat( "mw_sick", 30 )
 	end
 
 	local sick = self:GetNWFloat( "mw_sick", 0 )
 	if sick > 0 then
 		self:SetNWFloat( "mw_sick", sick - 0.2 )
-		self.damage = self.damage + 0.12
+		selfTbl.damage = selfTbl.damage + 0.12
 	end
 
-	local phys = self.phys
+	local phys = selfTbl.phys
 	if not phys:IsAsleep() then
-		if self.moving == false and self.canMove then -- NOTE: Is the commented-out code in this section actually necessary? If not having it breaks something, add it back in.
+		if selfTbl.moving == false and selfTbl.canMove then -- NOTE: Is the commented-out code in this section actually necessary? If not having it breaks something, add it back in.
 			--local tr = util.QuickTrace( self:GetPos(), Vector( 0, 0, -self.sphereRadius + 15 ), self )
 			--if tr.Entity ~= nil then
 				--self.phys:SetDamping(self.damping*5,self.damping*5)
@@ -277,20 +278,20 @@ function ENT:Think()
 		end
 	end
 
-	if self.spawned then
+	if selfTbl.spawned then
 		self:Update()
 	end
 
-	if not self.canMove and self:GetClass() ~= ( "ent_melon_unit_transport" or "ent_melon_main_unit" ) and self:GetMoveType() ~= MOVETYPE_NONE then
+	if not selfTbl.canMove and self:GetClass() ~= ( "ent_melon_unit_transport" or "ent_melon_main_unit" ) and self:GetMoveType() ~= MOVETYPE_NONE then
 		local const = constraint.FindConstraints( self, "Weld" )
 		table.Add( const, constraint.FindConstraints( self, "Axis" ) )
 		if table.Count( const ) == 0 then
-			self.damage = 5
+			selfTbl.damage = 5
 		end
 	end
 
-	if not ( IsValid( self.parent ) or self.parent == nil or self.parent:IsWorld() ) then
-		self.damage = 5
+	if not ( IsValid( selfTbl.parent ) or selfTbl.parent == nil or selfTbl.parent:IsWorld() ) then
+		selfTbl.damage = 5
 	end
 end
 --[[
@@ -306,95 +307,96 @@ end
 ]]
 function ENT:Update()
 	if not cvars.Bool( "mw_admin_playing" ) then return end
-	if CurTime() > self.nextSlowThink then
-		self.nextSlowThink = CurTime() + self.slowThinkTimer
+	local selfTbl = self:GetTable()
+	if CurTime() > selfTbl.nextSlowThink then
+		selfTbl.nextSlowThink = CurTime() + selfTbl.slowThinkTimer
 		self:SlowThink( self )
 	end
 
-	if self.damage > 0 then -- Apply damage
-		self.gotHit = true
-		self.HP = self.HP - self.damage
-		self:SetNWFloat( "health", self.HP )
-		self.damage = 0
-		if self.HP <= 0 then
+	if selfTbl.damage > 0 then -- Apply damage
+		selfTbl.gotHit = true
+		selfTbl.HP = selfTbl.HP - selfTbl.damage
+		self:SetNWFloat( "health", selfTbl.HP )
+		selfTbl.damage = 0
+		if selfTbl.HP <= 0 then
 			MelonWars.die( self )
 		end
 	end
 
-	self:SetNWEntity( "targetEntity", self.targetEntity )
-	self:SetNWEntity( "followEntity", self.followEntity )
+	self:SetNWEntity( "targetEntity", selfTbl.targetEntity )
+	self:SetNWEntity( "followEntity", selfTbl.followEntity )
 
 	local entPos = self:GetPos()
-	local followEntityPos = Vector( 0, 0, 0 )
-	if IsValid( self.followEntity ) then
-		followEntityPos = self.followEntity:GetPos()
+	local followEntityPos = vector_origin
+	if IsValid( selfTbl.followEntity ) then
+		followEntityPos = selfTbl.followEntity:GetPos()
 	end
-	local targetEntityPos = Vector( 0, 0, 0 )
-	if IsValid( self.targetEntity ) then
-		targetEntityPos = self.targetEntity:GetPos()
+	local targetEntityPos = vector_origin
+	if IsValid( selfTbl.targetEntity ) then
+		targetEntityPos = selfTbl.targetEntity:GetPos()
 	end
 
-	if not self.canMove then return end
-	if self.followEntity ~= self then
-		if IsValid( self.followEntity ) then
-			if (followEntityPos-entPos):LengthSqr() > self.range*self.range then
-				self.targetPos = followEntityPos+(entPos-followEntityPos):GetNormalized()*self.range*0.5
-				self.moving = true
+	if not selfTbl.canMove then return end
+	if selfTbl.followEntity ~= self then
+		if IsValid( selfTbl.followEntity ) then
+			if (followEntityPos-entPos):LengthSqr() > selfTbl.range*selfTbl.range then
+				selfTbl.targetPos = followEntityPos+(entPos-followEntityPos):GetNormalized()*selfTbl.range*0.5
+				selfTbl.moving = true
 			end
 		end
 	else
-		if self.chasing then
-			if IsValid(self.targetEntity) then
-				if (targetEntityPos-entPos):LengthSqr() > self.range*self.range then
+		if selfTbl.chasing then
+			if IsValid(selfTbl.targetEntity) then
+				if (targetEntityPos-entPos):LengthSqr() > selfTbl.range*selfTbl.range then
 					local chanceDistMul = 0.9
-					if self.meleeAi then
+					if selfTbl.meleeAi then
 						chanceDistMul = 0.2
 					end
-					self.targetPos = targetEntityPos+(entPos-targetEntityPos):GetNormalized()*self.range*chanceDistMul
-					self.moving = true
+					selfTbl.targetPos = targetEntityPos+(entPos-targetEntityPos):GetNormalized()*selfTbl.range*chanceDistMul
+					selfTbl.moving = true
 				end
 			end
 		end
 	end
 
-	local phys = self.phys
+	local phys = selfTbl.phys
 
 	if IsValid(phys) then
 		---------------------------------------------------------------------------Movimiento
-		if self.moving then
+		if selfTbl.moving then
 			--if (self.chaseStance == false or self.targetEntity == nil) then
-			local moveVector = (self.targetPos-entPos):GetNormalized()*self.speed-self:GetVelocity()*0.5
+			local moveVector = (selfTbl.targetPos-entPos):GetNormalized()*selfTbl.speed-self:GetVelocity()*0.5
 			local force = Vector(moveVector.x, moveVector.y, 0)
 			-- OLD MOVEMENT, MOVE IN THINK. NEW MOVEMENT IN PHYSICS UPDATE
 			--phys:ApplyForceCenter (force*phys:GetMass())
 			-- new:
-			self.phys:Wake()
-			self.moveForce = force*0.5*self.moveForceMultiplier
+			selfTbl.phys:Wake()
+			selfTbl.moveForce = force*0.5*selfTbl.moveForceMultiplier
 			--end
 		end
 
-		if self.moving and self.ai then
-			local distanceToLastPosition = (self.lastPosition-entPos):LengthSqr()
+		if selfTbl.moving and selfTbl.ai then
+			local distanceToLastPosition = (selfTbl.lastPosition-entPos):LengthSqr()
 
-			if self.lastPosition ~= Vector(0,0,0) and distanceToLastPosition > 500000 then --Stop moving if distance from lastposition is ridiculous (teleported)
+			if selfTbl.lastPosition ~= vector_origin and distanceToLastPosition > 500000 then --Stop moving if distance from lastposition is ridiculous (teleported)
 				self:FinishMovement()
-				self.lastPosition = Vector(0,0,0)
-			elseif distanceToLastPosition < (self.speed/2)*(self.speed/2)then
-				self.stuck = self.stuck+1
+				selfTbl.lastPosition = vector_origin
+			elseif distanceToLastPosition < (selfTbl.speed/2)*(selfTbl.speed/2)then
+				selfTbl.stuck = selfTbl.stuck+1
 			else
-				self.lastPosition = entPos
-				self.stuck = 0
+				selfTbl.lastPosition = entPos
+				selfTbl.stuck = 0
 			end
 
-			if self.stuck % 8 == 7 then
-				if self.stuck > 40 then
-					if not self.chaseStance then
-						self.targetEntity = nil
+			if selfTbl.stuck % 8 == 7 then
+				if selfTbl.stuck > 40 then
+					if not selfTbl.chaseStance then
+						selfTbl.targetEntity = nil
 						self:FinishMovement()
-						self.stuck = 0
+						selfTbl.stuck = 0
 					end
 				else
-					if not self.chaseStance or (self.chaseStance and not IsValid(self.targetEntity)) then
+					if not selfTbl.chaseStance or (selfTbl.chaseStance and not IsValid(selfTbl.targetEntity)) then
 						self:Unstuck()
 					end
 				end
@@ -402,8 +404,8 @@ function ENT:Update()
 		end
 	end
 
-	local flattenedTargetPos = Vector(self.targetPos.x, self.targetPos.y, entPos.z)
-	if self.ai then
+	local flattenedTargetPos = Vector(selfTbl.targetPos.x, selfTbl.targetPos.y, entPos.z)
+	if selfTbl.ai then
 		if (flattenedTargetPos-entPos):LengthSqr() < 900 then
 			self:FinishMovement()
 		end
@@ -413,7 +415,7 @@ function ENT:Update()
 		end
 	end
 
-	self:SetNWBool("moving", self.moving)
+	self:SetNWBool("moving", selfTbl.moving)
 	self:NextThink(CurTime() + 0.1)
 	return true
 end
@@ -426,23 +428,24 @@ function ENT:Unstuck()
 end
 
 function ENT:FinishMovement()
-	if (self.rallyPoints[1] == Vector(0,0,0)) then
-		self.moving = false
-		self.stuck = 0
+	local selfTbl = self:GetTable()
+	if (selfTbl.rallyPoints[1] == vector_origin) then
+		selfTbl.moving = false
+		selfTbl.stuck = 0
 	else
-		self.targetPos = self.rallyPoints[1]
-		self:SetNWVector("targetPos", self.rallyPoints[1])
-		self.moving = true
+		selfTbl.targetPos = selfTbl.rallyPoints[1]
+		self:SetNWVector("targetPos", selfTbl.rallyPoints[1])
+		selfTbl.moving = true
 		for i=1, 30 do
-			self.rallyPoints[i] = self.rallyPoints[i+1]
+			selfTbl.rallyPoints[i] = selfTbl.rallyPoints[i+1]
 		end
-		self.rallyPoints[30] = Vector(0,0,0)
+		selfTbl.rallyPoints[30] = vector_origin
 	end
 end
 
 function ENT:RemoveRallyPoints()
 	for i=1, 30 do
-		self.rallyPoints[i] = Vector(0,0,0)
+		self.rallyPoints[i] = vector_origin
 	end
 end
 
@@ -475,23 +478,28 @@ function ENT:ApplyTorque( torque )
 	local forceOffset = torque:Angle():Right()
 	local forceDirection = torque:Cross(forceOffset)
 
-	self.phys:ApplyForceOffset( forceDirection, self:GetPos()+forceOffset )
-	self.phys:ApplyForceOffset( -forceDirection, self:GetPos()-forceOffset )
+	local phys = self.phys
+	local pos = self:GetPos()
+
+	phys:ApplyForceOffset( forceDirection, pos + forceOffset )
+	phys:ApplyForceOffset( -forceDirection, pos - forceOffset )
 end
 
-function MelonWars.unitDefaultThink( ent )
-	if not util.IsInWorld( ent:GetPos() ) then ent:Remove() end
-	if not ( ent.canShoot and ent.ai ) then return end
+function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 	local pos = ent:GetPos()
-	if (ent.targetEntity == nil or ent.targetEntity.Base == "ent_melon_prop_base" or ent.targetEntity:GetNWInt("propHP",-1) ~= -1) then
+	if not util.IsInWorld( pos ) then ent:Remove() end
+	local entTbl = ent:GetTable()
+	if not ( entTbl.canShoot and entTbl.ai ) then return end
+
+	if ( not(IsValid(entTbl.targetEntity)) or entTbl.targetEntity.Base == "ent_melon_prop_base" or entTbl.targetEntity:GetNWInt("propHP",-1) ~= -1) then
 		----------------------------------------------------------------------Buscar target
-		local foundEnts = ents.FindInSphere(pos, ent.range )
+		local foundEnts = ents.FindInSphere(pos, entTbl.range )
 		for _, v in ipairs( foundEnts ) do
 			if (v.Base == "ent_melon_base") then --si es una sandía
 				if (v:GetNWInt("mw_melonTeam", 0) ~= ent:GetNWInt("mw_melonTeam", 0)) then -- si tienen distinto equipo
 					if (v.targetable) then -- si es targeteable
 						if not ent:SameTeam(v) then -- si no es un aliado
-							if (ent.careForWalls) then
+							if (entTbl.careForWalls) then
 								local tr = util.TraceLine( {
 								start = pos,
 								endpos = v:GetPos()+v:GetVar("shotOffset",Vector(0,0,0)),
@@ -499,7 +507,7 @@ function MelonWars.unitDefaultThink( ent )
 									if ( foundEnt:GetClass() == "prop_physics") then--si hay un prop en el medio
 										return true
 									end
-									if (ent.careForFriendlyFire) then --No dispara si hay un compañero en el camino
+									if (entTbl.careForFriendlyFire) then --No dispara si hay un compañero en el camino
 										if ( foundEnt.Base == "ent_melon_base" ) then
 											if (foundEnt:GetNWInt("mw_melonTeam", -1) == ent:GetNWInt("mw_melonTeam", 0) and foundEnt ~= ent) then
 												return true
@@ -509,9 +517,9 @@ function MelonWars.unitDefaultThink( ent )
 								end
 								})
 							end
-							if (not ent.careForWalls or (tr ~= nil and tostring(tr.Entity) == '[NULL Entity]')) then
+							if (not entTbl.careForWalls or (tr ~= nil and tostring(tr.Entity) == '[NULL Entity]')) then
 							----------------------------------------------------------Encontró target
-								ent.targetEntity = v
+								entTbl.targetEntity = v
 							end
 						end
 					end
@@ -519,66 +527,66 @@ function MelonWars.unitDefaultThink( ent )
 			end
 		end
 		-------------------------------------------------Si aun asi no encontró target
-		if (ent.targetEntity == nil) then
+		if (entTbl.targetEntity == nil) then
 			for _, v in ipairs( foundEnts ) do
 				if (v:GetNWInt("mw_melonTeam", ent:GetNWInt("mw_melonTeam", 0)) ~= ent:GetNWInt("mw_melonTeam", 0) and not string.StartWith( v:GetClass(), "ent_melonbullet_" ) and not ent:SameTeam(v)) then --si es de otro equipo
-					if (ent.chaseStance) then
+					if (entTbl.chaseStance) then
 						if (v:GetClass() == "ent_melon_wall") then
-							if (ent.stuck > 15) then
-								if (IsValid(ent.barrier)) then
-									ent.targetEntity = ent.barrier
+							if (entTbl.stuck > 15) then
+								if (IsValid(entTbl.barrier)) then
+									entTbl.targetEntity = entTbl.barrier
 								else
-									ent.targetEntity = v
+									entTbl.targetEntity = v
 								end
 							end
 						else
-							ent.targetEntity = v
+							entTbl.targetEntity = v
 						end
 					else
-						ent.targetEntity = v
+						entTbl.targetEntity = v
 					end
 				end
 			end
 		end
 	end
 
-	if (ent.targetEntity ~= nil) then
+	if (entTbl.targetEntity ~= nil) then
 		----------------------------------------------------------------------Perder target
 		----------------------------------------porque no existe
-		if not IsValid(ent.targetEntity) then
-			ent.stuck = 0
+		if not IsValid(entTbl.targetEntity) then
+			entTbl.stuck = 0
 			return ent:LoseTarget()
 		----------------------------------------por que esta en el 0,0,0
-		elseif (ent.targetEntity:GetPos() == Vector(0,0,0)) then
+		elseif (entTbl.targetEntity:GetPos() == Vector(0,0,0)) then
 			return ent:LoseTarget()
 		end
 		----------------------------------------porque es intargeteable
-		if (not ent.targetable) then
+		if (not entTbl.targetable) then
 			return ent:LoseTarget()
 		end
 		----------------------------------------porque es el mismo
-		if (ent.targetEntity == ent or ent.forcedTargetEntity == ent) then
+		if (entTbl.targetEntity == ent or entTbl.forcedTargetEntity == ent) then
 			return ent:LoseTarget()
 		end
 		----------------------------------------porque es un aliado
-		if (ent:SameTeam(ent.targetEntity) or ent:SameTeam(ent.targetEntity)) then
+		if (ent:SameTeam(entTbl.targetEntity) or ent:SameTeam(entTbl.targetEntity)) then
 			return ent:LoseTarget()
 		end
 		----------------------------------------porque está lejos (o muy cerca)
-		local targetDist = ent.targetEntity:GetPos():Distance(pos)
-		if (IsValid(ent.targetEntity) and (targetDist > ent.range+ent.targetEntity:GetNWFloat( "baseSize", 0) or targetDist < ent.minRange)) then
-			if (ent.chaseStance and ent.ai_chases) then
-				if (not ent.chasing) then
-					ent.holdGroundPosition = ent:GetPos()
-					ent.chasing = true
+		local targetDist = entTbl.targetEntity:GetPos():Distance(pos)
+		if (IsValid(entTbl.targetEntity) and (targetDist > entTbl.range+entTbl.targetEntity:GetNWFloat( "baseSize", 0) or targetDist < entTbl.minRange)) then
+			if (entTbl.chaseStance and entTbl.ai_chases) then
+				if (not entTbl.chasing) then
+					entTbl.holdGroundPosition = pos
+					entTbl.chasing = true
 				end
-				local tepos = ent.targetEntity:GetPos()
+				local tepos = entTbl.targetEntity:GetPos()
 				ent:SetVar("targetPos", tepos)
 				ent:SetNWVector("targetPos", tepos)
 				ent:SetVar("moving", true)
 				ent:SetVar("followEntity", ent)
 				ent:SetNWEntity("followEntity", ent)
-				if ((tepos-ent.holdGroundPosition):LengthSqr() > ent.maxChaseDistance*ent.maxChaseDistance) then
+				if ((tepos-entTbl.holdGroundPosition):LengthSqr() > entTbl.maxChaseDistance*entTbl.maxChaseDistance) then
 					ent:LoseTarget()
 				end
 			else
@@ -588,21 +596,20 @@ function MelonWars.unitDefaultThink( ent )
 		end
 
 		----------------------------------------------objetivo forzado
-		if (IsValid(ent.forcedTargetEntity)) then
-			ent.targetEntity = ent.forcedTargetEntity
+		if (IsValid(entTbl.forcedTargetEntity)) then
+			entTbl.targetEntity = entTbl.forcedTargetEntity
 		else
-			ent.forcedTargetEntity = nil
+			entTbl.forcedTargetEntity = nil
 		end
 
 		local tr = util.TraceLine( {
 			start = pos,
-			endpos = ent.targetEntity:GetPos()+ent.targetEntity:GetVar("shotOffset", Vector(0,0,0)),
-			--filter = function( foundEntity ) if (( (foundEntity:GetClass() == "ent_melon_wall" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1)) or (foundEntity:GetClass() == "prop_physics" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1)) ) and foundEntity ~= ent.targetEntity ) then return true end end
-			filter = function( foundEntity ) if (foundEntity.Base ~= "ent_melon_base" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1) or foundEntity:GetClass() == "prop_physics" and foundEntity ~= ent.targetEntity) then return true end end
+			endpos = entTbl.targetEntity:GetPos()+entTbl.targetEntity:GetVar("shotOffset", vector_origin),
+				filter = function( foundEntity ) if (foundEntity.Base ~= "ent_melon_base" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1) or foundEntity:GetClass() == "prop_physics" and foundEntity ~= entTbl.targetEntity) then return true end end
 			})
 		----------------------------------------por que hay algo en el medio
 
-		if (ent.careForWalls) then
+		if (entTbl.careForWalls) then
 			if (tostring(tr.Entity) ~= '[NULL Entity]') then
 				return ent:LoseTarget()
 			end
@@ -613,10 +620,10 @@ function MelonWars.unitDefaultThink( ent )
 		end
 	end
 
-	if (ent.targetEntity ~= nil) then
-		local distance = ent.targetEntity:GetPos():Distance(ent:GetPos())
-		if (distance < ent.range+ent.targetEntity:GetNWFloat( "baseSize", 0) and distance > ent.minRange) then
-			if (ent.targetEntity:GetNWInt("mw_melonTeam", 0) ~= ent:GetNWInt("mw_melonTeam", 0)) then
+	if (entTbl.targetEntity ~= nil) then
+		local distance = entTbl.targetEntity:GetPos():Distance(pos)
+		if (distance < entTbl.range+entTbl.targetEntity:GetNWFloat( "baseSize", 0) and distance > entTbl.minRange) then
+			if (entTbl.targetEntity:GetNWInt("mw_melonTeam", 0) ~= ent:GetNWInt("mw_melonTeam", 0)) then
 				ent:Shoot( ent )
 			end
 		end
@@ -641,21 +648,26 @@ function ENT:LoseTarget()
 end
 
 function ENT:PhysicsCollide( colData, physObject )
-	if not IsValid(colData.HitEntity) then return end
 	local other = colData.HitEntity
-	local otherTargetPos = other:GetVar('targetPos')
-	if (otherTargetPos == self.targetPos and other:GetVar('moving', false) == false) or self.rallyPoints[1] == otherTargetPos then
+	if not IsValid(other) then return end
+
+	local selfTbl = self:GetTable()
+	local otherTbl = other:GetTable()
+
+	local otherTargetPos = otherTbl.targetPos
+	if (otherTargetPos == selfTbl.targetPos and not otherTbl.moving) or selfTbl.rallyPoints[1] == otherTargetPos then
 		self:FinishMovement()
 	end
-	if other:GetNWFloat("mw_sick", 0) > self:GetNWFloat("mw_sick", 0) then
-		self:SetNWFloat("mw_sick", other:GetNWFloat("mw_sick", 0))
+	local otherSick = other:GetNWFloat("mw_sick", 0)
+	if otherSick > 0 and otherSick > self:GetNWFloat("mw_sick", 0) then --Slightly less efficient when the target is sick, but slightly more-so when they aren't (which is more common).
+		self:SetNWFloat("mw_sick", otherSick)
 	end
 	if other:GetClass() == "ent_melon_wall" then
-		self.barrier = other
+		selfTbl.barrier = other
 	end
 end
 
-function MelonWars.defaultShoot( ent, forceTargetPos )
+function MelonWars.defaultShoot( ent, forceTargetPos ) --TODO: Optimize
 	local pos = ent:GetPos()+ent.shotOffset
 	--------------------------------------------------------Disparar
 	if (forceTargetPos ~= nil or IsValid(ent.targetEntity)) then
@@ -667,7 +679,7 @@ function MelonWars.defaultShoot( ent, forceTargetPos )
 					targetPos = ent.targetEntity:GetPos()+ent.targetEntity:GetVar("shotOffset")
 				end
 			end
-			dir= (targetPos-pos):GetNormalized()
+			dir = (targetPos-pos):GetNormalized()
 		else
 			dir = (forceTargetPos-pos):GetNormalized()
 		end
@@ -677,7 +689,7 @@ function MelonWars.defaultShoot( ent, forceTargetPos )
 		local effectdata = EffectData()
 		effectdata:SetScale(1)
 		effectdata:SetAngles( dir:Angle())
-		effectdata:SetOrigin( pos + dir:GetNormalized()*10 )
+		effectdata:SetOrigin( pos + dir:GetNormalized() * 10 )
 		util.Effect( "MuzzleEffect", effectdata )
 		sound.Play( ent.shotSound, pos )
 	end
@@ -794,15 +806,19 @@ end
 
 function ENT:DefaultPhysicsUpdate()
 	if cvars.Bool("mw_admin_playing") then
-		if (self.moving) then
-			if (self:GetVelocity():LengthSqr() < self.speed*self.speed) then
-				self.phys:ApplyForceCenter (self.moveForce*self.phys:GetMass())
+		local selfTbl = self:GetTable()
+		if (selfTbl.moving) then
+			if (self:GetVelocity():LengthSqr() < selfTbl.speed ^ 2) then
+				local phys = selfTbl.phys
+				phys:ApplyForceCenter (selfTbl.moveForce * phys:GetMass())
 			else
-				local horizontalVelocity = Vector(self:GetVelocity().x, self:GetVelocity().y, 0)
-				self.phys:ApplyForceCenter (-horizontalVelocity*0.02*self.phys:GetMass())
+				local vel = self:GetVelocity()
+				local horizontalVelocity = Vector(vel.x, vel.y, 0) --TODO: Can probably just use "vel" vector and set z component to 0, instead of creating a new one.
+				local phys = selfTbl.phys
+				phys:ApplyForceCenter (-horizontalVelocity * 0.02 * phys:GetMass())
 			end
 		else
-			self.moveForce = Vector(0,0,0)
+			selfTbl.moveForce = vector_origin
 		end
 	else
 		self.phys:Sleep()
@@ -810,30 +826,32 @@ function ENT:DefaultPhysicsUpdate()
 end
 
 function ENT:OnTakeDamage( damage )
-	if (damage:GetAttacker():GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not damage:GetAttacker():GetVar('careForFriendlyFire')) and not damage:GetAttacker():IsPlayer() then
+	local attacker = damage:GetAttacker()
+	if (attacker:GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not attacker:GetVar('careForFriendlyFire')) and not attacker:IsPlayer() then
+		local selfTbl = self:GetTable()
 		local damageDone = 0
 
-		if (self.canMove == true) then
+		if (selfTbl.canMove == true) then
 			damageDone = damage:GetDamage()
 		else
-			local mul = damage:GetAttacker().buildingDamageMultiplier
+			local mul = attacker.buildingDamageMultiplier
 			if (mul == nil) then
 				mul = 1
 			end
 			damageDone = damage:GetDamage()*mul
 		end
 		if (damage:GetDamageType() == DMG_BURN) then
-			damageDone = damageDone*0.5
+			damageDone = damageDone * 0.5
 		end
-		if (damage:GetAttacker():GetNWInt("mw_melonTeam", 0) == self:GetNWInt("mw_melonTeam", 0)) then
-			damageDone = damageDone/10
+		if (attacker:GetNWInt("mw_melonTeam", 0) == self:GetNWInt("mw_melonTeam", 0)) then --TODO: Alliance check. I've accidentally wiped a teammate's squad with bombs on at least one occasion.
+			damageDone = damageDone / 10
 		end
-		self.HP = self.HP - damageDone
+		selfTbl.HP = selfTbl.HP - damageDone
 		if (damageDone > 0) then
-			self.gotHit = true
+			selfTbl.gotHit = true
 		end
-		self:SetNWFloat( "health", self.HP )
-		if (self.HP <= 0) then
+		self:SetNWFloat( "health", selfTbl.HP )
+		if (selfTbl.HP <= 0) then
 			MelonWars.die (self)
 		end
 	end
@@ -883,7 +901,7 @@ function MelonWars.updatePopulation( amount, teamID )
 				i = i + 1
 			end
 		end
-		net.Start( "MelonWars.teamUnits" )
+		net.Start( "MW_TeamUnits" )
 			net.WriteInt( MelonWars.teamUnits[teamID], 16 )
 		net.Send( ownerPlayers )
 	end
@@ -936,7 +954,7 @@ local function EnoughPower(_team)
 	return res
 end
 
-function ENT:BarrackSlowThink()
+function ENT:BarrackSlowThink() --TODO: Optimize
 	local ent = self
 
 	if (not (IsValid(self.parent) or self.parent == nil or self.parent:IsWorld())) then

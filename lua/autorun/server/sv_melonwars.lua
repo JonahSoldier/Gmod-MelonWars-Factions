@@ -62,6 +62,8 @@ util.AddNetworkString( "MW_ClientModifySpawnTime" )
 
 MelonWars = {}
 
+include("melonwars/sh_unitlist.lua")
+
 net.Receive( "SetMWConvar", function( _, pl )
 	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
 
@@ -122,6 +124,7 @@ MelonWars.teamColors = {
 	Color(255,120,0,255),
 	Color(255,100,150,255)
 }
+
 --[[
 mw_special_steam_decoration = {}
 --  Doorsday

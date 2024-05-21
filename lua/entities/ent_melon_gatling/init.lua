@@ -18,14 +18,13 @@ function ENT:Initialize()
 
 	--showing the actual model part
 	self.visualmodel = ents.Create( "prop_physics" )
-	if not IsValid( self.visualmodel ) then return end
 
 	self.visualmodel:SetModel("models/Mechanics/gears/gear12x24.mdl")
 	self.visualmodel:SetMaterial(self.materialString)
 	self.visualmodel:SetParent(self)
 
 	self.visualmodel:SetLocalAngles(Angle(0,0,0))
-	self.visualmodel:SetLocalPos(Vector(0,0,0))
+	self.visualmodel:SetLocalPos( vector_origin )
 	self.visualmodel:SetColor( self.color )
 
 	self.visualmodel:Spawn()

@@ -3,7 +3,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 
 include( "shared.lua" )
 
-MelonWars.teamColors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(255,50,255,255),Color(100,255,255,255),Color(255,120,0,255),Color(10,30,70,255)}
+MelonWars.teamColors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(50,0,40,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
 
 function ENT:Initialize()
 
@@ -14,9 +14,6 @@ function ENT:Initialize()
 	self.nextSlowThink = 0
 
 	self:SetModel( "models/props_wasteland/buoy01.mdl" )
-
-	--self:SetAngles(Angle(90,0,0))
-	--self:SetPos(self:GetPos()+Vector(0,0,35))
 
 	self:SetMaterial("models/shiny")
 

@@ -19,7 +19,8 @@ hook.Add( "Initialize", "MelonWars_StartPlyData", function()
 	LocalPlayer().mw_cooldown = 0
 	LocalPlayer().mw_frame = nil
 
-	LocalPlayer().MelonWars.units = 0
+	--LocalPlayer().MelonWars.units = 0
+	LocalPlayer().mw_units = 0
 	LocalPlayer().mw_credits = 0
 
 	LocalPlayer().foundMelons = {}
