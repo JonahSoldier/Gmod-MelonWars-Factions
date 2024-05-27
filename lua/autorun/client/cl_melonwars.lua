@@ -3,6 +3,7 @@ if engine.ActiveGamemode() ~= "sandbox" then return end
 MelonWars = MelonWars or {}
 
 include("melonwars/sh_unitlist.lua")
+include("melonwars/sh_miscfunctions.lua")
 
 MelonWars.teamColors = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
 MelonWars.teamColors[0] = Color(100,100,100,255)

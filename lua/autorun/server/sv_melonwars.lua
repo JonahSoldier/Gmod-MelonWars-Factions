@@ -60,9 +60,10 @@ util.AddNetworkString( "SetMWConvar" )
 util.AddNetworkString( "MWReadyUp" )
 util.AddNetworkString( "MW_ClientModifySpawnTime" )
 
-MelonWars = {}
+MelonWars = MelonWars or {}
 
 include("melonwars/sh_unitlist.lua")
+include("melonwars/sh_miscfunctions.lua")
 
 net.Receive( "SetMWConvar", function( _, pl )
 	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
@@ -378,52 +379,23 @@ net.Receive( "MW_UseWaterTank", function( _, pl )
 	ent:Remove()
 end )
 
-local function isInRangeLoop( vector, teamIndex, entClass, buildDist )
-	for _, v in ipairs( ents.FindByClass( entClass ) ) do
-		if vector:Distance( v:GetPos() ) < buildDist and v:GetNWInt( "mw_melonTeam", 0 ) == teamIndex then
-			return true
-		end
-	end
-end
-
-local function MW_Server_IsInBuildRange( vector, teamIndex ) -- This is copied from the clientside function, it's coded pretty weirdly so don't blame me for that. - Jonah
-	local canBuild = false
-	if isInRangeLoop( vector, teamIndex, "ent_melon_main_building", 800 ) then return true end
-	if isInRangeLoop( vector, teamIndex, "ent_melon_station", 250 ) then return true end
-	if isInRangeLoop( vector, teamIndex, "ent_melon_main_unit", 250 ) then return true end
-	if isInRangeLoop( vector, teamIndex, "ent_melon_main_building_grand_war", 1600 ) then return true end
-
-	local foundPoints = ents.FindByClass( "ent_melon_outpost_point" )
-
-	for _, v in ipairs( foundPoints ) do
-		if vector:Distance( v:GetPos() ) < 600 then
-			if MelonWars.teamGrid == nil or MelonWars.teamGrid[v:GetNWInt("capTeam", 0)] == nil or MelonWars.teamGrid[v:GetNWInt("capTeam", 0)][teamIndex] == nil then
-				canBuild = v:GetNWInt("capTeam", 0) == teamIndex
-			elseif v:GetNWInt("capTeam", 0) == teamIndex or MelonWars.teamGrid[v:GetNWInt("capTeam", 0)][teamIndex] then
-				canBuild = true
-			end
-			if canBuild then break end
-		end
-	end
-
-	return canBuild
-end
-
 local function MW_Server_UpdateWater( team, credits )
 	MelonWars.teamCredits[team] = credits
 end
 
-net.Receive( "MW_SpawnUnit", function( _, pl )
-	local class = net.ReadString()
+net.Receive( "MW_SpawnUnit", function( _, pl ) --TODO: This requires substantial cleanup. "CanSpawnUnit" should probably be created as a shared function to make this all cleaner and consistent.
 	local unit_index = net.ReadInt(16)
-	local trace = net.ReadTable()
-	local cost = net.ReadInt(16)
-	local spawntime = net.ReadInt(16)
-	local _team = net.ReadInt(8)
-	local spawndelay = net.ReadInt(16)
+	local _team = net.ReadInt(4)
 	local attach = net.ReadBool()
 	local angle = net.ReadAngle()
-	local position = net.ReadVector()
+
+	local trace = pl:GetEyeTrace( {mask = MASK_SOLID + MASK_WATER} ) --Does setting mask here actually work? I can't remember if Marum did this in the original or if I did it.
+	local position = trace.HitPos + vector_up + trace.HitNormal * 5 + MelonWars.units[unit_index].offset --Lets see if this gets horribly de-synced between client and server!
+
+	local unit = MelonWars.units[unit_index]
+	local class = unit.class
+	local cost = unit.cost
+	local spawndelay = unit.spawn_time
 
 	if IsValid( trace.Entity ) and trace.Entity.Base == "ent_melon_base" then return end
 	if trace.Entity:GetClass() == "ent_melon_wall" and (attach == false and MelonWars.units[unit_index].welded_cost ~= -1 and unit_index < 9 --[[<< first building]]) then
@@ -431,7 +403,26 @@ net.Receive( "MW_SpawnUnit", function( _, pl )
 		return
 	end
 
-	if MW_Server_IsInBuildRange(position, _team) or cvars.Bool("mw_admin_allow_free_placing") or MelonWars.units[unit_index].buildAnywere or _team == 0 then
+	--Copied from client,
+	pl.mw_spawntime = pl.mw_spawntime or 0
+	if unit_index >= 0 then
+		if (cvars.Number("mw_admin_spawn_time") == 1) then
+			if (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.units[unit_index].buildAnywere or MelonWars.isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
+				if (pl.mw_spawntime < CurTime()) then
+					pl.mw_spawntime = CurTime() + MelonWars.units[unit_index].spawn_time * (pl.spawnTimeMult or 1) -- spawntimemult has been added here so I can compensate for matches with uneven numbers of commanders
+				else
+					pl.mw_spawntime = pl.mw_spawntime + MelonWars.units[unit_index].spawn_time * (pl.spawnTimeMult or 1)
+				end
+			end
+		end
+	else
+		pl.mw_spawntime = 0
+	end
+	local spawntime = pl.mw_spawntime
+
+
+
+	if MelonWars.isInRange(position, _team) or cvars.Bool("mw_admin_allow_free_placing") or MelonWars.units[unit_index].buildAnywere or _team == 0 then
 		local newMarine = MelonWars.spawnUnitAtPos(class, unit_index, position --[[trace.HitPos + trace.HitNormal * 5]], angle, cost, spawntime, _team, attach, trace.Entity, pl, spawndelay)
 
 		undo.Create("Melon Marine")
@@ -844,7 +835,7 @@ net.Receive( "ContraptionLoad", function( _, pl )
 	MelonWars.networkBuffer = ""
 end )
 
-net.Receive( "ContraptionAutoValidate", function( _, pl )
+net.Receive( "ContraptionAutoValidate", function( _, pl ) --TODO: Rewrite. Probably replace entirely.
 	local last = net.ReadBool()
 	local size = net.ReadInt(16)
 	local data = net.ReadData(size)
@@ -866,6 +857,8 @@ net.Receive( "ContraptionAutoValidate", function( _, pl )
 	-- 	print(text)
 	-- end
 
+	--I'm pretty sure the thing that made this work got removed in one of Craft's refactoring passes. 
+	--Not a big deal, since it was a shit way of going about it anyway. This needs to be replaced.
 	local unitStatsValidation = util.JSONToTable(util.Decompress(file.Read("melonwars/validation/unitvalues.txt"))) -- hehehe this line of code is very long
 
 	for _, v in pairs(dupetable) do

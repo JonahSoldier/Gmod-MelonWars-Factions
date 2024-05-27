@@ -134,256 +134,12 @@ MelonWars.teamGrid = {
 	{false,false,false,false,false,false,false,false}
 }
 
-local BasePropClass = {}
-BasePropClass.name = "Prop"
-BasePropClass.model = "models/hunter/blocks/cube05x1x05.mdl"
-BasePropClass.offset = Vector(0,0,0)
-BasePropClass.angle = Angle(0,0,0)
-BasePropClass.cost = 1
-BasePropClass.hp = 1
-BasePropClass.spawn_time = 2
-
-local function BaseProp() -- Code is an optional argument.
-	local newProp = table.Copy( BasePropClass )
-	return newProp
-end
-
-local basePropCount = 25
-MelonWars.baseProps = {}
-local u = nil
-for i = 1, basePropCount do
-	MelonWars.baseProps[i] = BaseProp()
-end
-
-i = 0
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Blast Door"
-u.model = "models/props_lab/blastdoor001c.mdl"
-u.offset = Vector(0,0,0)
-u.angle = Angle(0,0,0)
-u.cost = 200
-u.hp = 150
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Barricade"
-u.model = "models/props_wasteland/barricade002a.mdl"
-u.offset = Vector(0,0,12)
-u.angle = Angle(0,90,0)
-u.cost = 15
-u.hp = 40
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Fence"
-u.model = "models/props_wasteland/wood_fence01a.mdl"
-u.offset = Vector(0,0,40)
-u.angle = Angle(0,90,0)
-u.cost = 40
-u.hp = 100
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Pallet"
-u.model = "models/props_junk/wood_pallet001a.mdl"
-u.offset = Vector(0,0,32)
-u.angle = Angle(90,0,0)
-u.cost = 25
-u.hp = 50
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Brick"
-u.model = "models/hunter/blocks/cube05x1x05.mdl"
-u.offset = Vector(0,0,12)
-u.angle = Angle(0,0,0)
-u.cost = 15
-u.hp = 35
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Half Block"
-u.model = "models/hunter/blocks/cube1x1x05.mdl"
-u.offset = Vector(0,0,12)
-u.angle = Angle(0,0,0)
-u.cost = 35
-u.hp = 50
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Block"
-u.model = "models/hunter/blocks/cube1x1x1.mdl"
-u.offset = Vector(0,0,24)
-u.angle = Angle(0,0,0)
-u.cost = 75
-u.hp = 100
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Half Platform"
-u.model = "models/hunter/blocks/cube2x2x05.mdl"
-u.offset = Vector(47,0,10.5)
-u.angle = Angle(0,0,0)
-u.cost = 115
-u.hp = 150
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Platform"
-u.model = "models/hunter/blocks/cube2x2x1.mdl"
-u.offset = Vector(47,0,24)
-u.angle = Angle(0,0,0)
-u.cost = 150
-u.hp = 200
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Concrete Barrier"
-u.model = "models/props_c17/concrete_barrier001a.mdl"
-u.offset = Vector(0,0,0)
-u.angle = Angle(0,0,0)
-u.cost = 75
-u.hp = 150
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Wall"
-u.model = "models/hunter/blocks/cube2x2x05.mdl"
-u.offset = Vector(0,0,48)
-u.angle = Angle(90,0,0)
-u.cost = 100
-u.hp = 175
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Long Wall"
-u.model = "models/hunter/blocks/cube1x4x05.mdl"
-u.offset = Vector(0,0,24)
-u.angle = Angle(90,0,0)
-u.cost = 100
-u.hp = 175
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Flat Platform"
-u.model = "models/hunter/plates/plate2x2.mdl"
-u.offset = Vector(47,0,-2.5)
-u.angle = Angle(0,0,0)
-u.cost = 15
-u.hp = 35
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Short Ramp"
-u.model = "models/hunter/plates/plate1x2.mdl"
-u.offset = Vector(23,0,4.5)
-u.angle = Angle(-17,0,0)
-u.cost = 25
-u.hp = 25
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Slim Half Ramp"
-u.model = "models/hunter/plates/plate1x2.mdl"
-u.offset = Vector(33,0,7.3)
-u.angle = Angle(0,90,-17)
-u.cost = 25
-u.hp = 25
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Half Ramp"
-u.model = "models/hunter/plates/plate2x2.mdl"
-u.offset = Vector(33,0,7.3)
-u.angle = Angle(0,90,-17)
-u.cost = 50
-u.hp = 40
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Slim Full Ramp"
-u.model = "models/hunter/triangles/2x1x1.mdl"
-u.offset = Vector(48.3,0,23.1)
-u.angle = Angle(0,90,0)
-u.cost = 75
-u.hp = 75
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Barrel"
-u.model = "models/props_c17/oildrum001.mdl"
-u.offset = Vector(0,0,0)
-u.angle = Angle(0,0,0)
-u.cost = 25
-u.hp = 50
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "3D Frame"
-u.model = "models/props_phx/construct/metal_wire1x2x2b.mdl"
-u.offset = Vector(-70,24,0)
-u.angle = Angle(0,0,0)
-u.cost = 20
-u.hp = 20
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Railing"
-u.model = "models/PHXtended/bar2x.mdl"
-u.offset = Vector(2,48,5.5)
-u.angle = Angle(90,180,0)
-u.cost = 8
-u.hp = 5
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Half Pipe"
-u.model = "models/props_phx/construct/metal_plate_curve180.mdl"
-u.offset = Vector(-46,0,48)
-u.angle = Angle(180,0,0)
-u.cost = 50
-u.hp = 75
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Pole"
-u.model = "models/props_docks/dock01_pole01a_128.mdl"
-u.offset = Vector(0,0,64)
-u.angle = Angle(0,0,0)
-u.cost = 15
-u.hp = 15
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Disk"
-u.model = "models/props_phx/construct/metal_angle360.mdl"
-u.offset = Vector(-48,0,0)
-u.angle = Angle(0,0,0)
-u.cost = 15
-u.hp = 15
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Half Disk"
-u.model = "models/props_phx/construct/metal_angle180.mdl"
-u.offset = Vector(-48,0,0)
-u.angle = Angle(180,0,0)
-u.cost = 8
-u.hp = 8
-
-i = i + 1
-u = MelonWars.baseProps[i]
-u.name = "Stilt"
-u.model = "models/props_docks/dock01_pole01a_128.mdl"
-u.offset = Vector(0,0,-64)
-u.angle = Angle(0,0,0)
-u.cost = 25
-u.hp = 25
 
 local w = 700
 local h = 500
+
+
+-- CUSTOM UI ELEMENTS: ----------------------------------
 
 local function _MakeCheckbox (x, y, parent, textstr, command, labelstr, inverted)
 	local checkbox = vgui.Create( "DButton", parent ) --  Create the checkbox
@@ -1715,6 +1471,9 @@ local function _CreatePanel()
 	end
 end
 
+-- End of custom UI elements ----------------------------
+
+
 function TOOL:MenuButton( pl, y, h, text, number )
 	local button = vgui.Create( "DButton", pl.mw_frame )
 	button:SetSize( 100, h )
@@ -1764,36 +1523,26 @@ function TOOL:Reload()
 	self:MenuButton(pl, 470, 25, "Player", 8)
 end
 
+local toolScreenTextCol =  Color( 200, 200, 200 )
 function TOOL:DrawToolScreen( width, height )
-	local textColor = Color( 200, 200, 200 )
 
 	-- Draw black background
 	surface.SetDrawColor( 20, 20, 20 )
 	surface.DrawRect( 0, 0, width, height )
 
 	if cvars.Bool( "mw_admin_cutscene" ) then
-		draw.SimpleText( "Toolgun Disabled", "DermaLarge", width / 2, height / 2, textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Toolgun Disabled", "DermaLarge", width / 2, height / 2, toolScreenTextCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		return
 	end
 
 	-- Draw white text in middle
 	local action = LocalPlayer():GetInfoNum( "mw_action", 0 )
-	local textString = "Unknown Action"
-	if action == 0 then
-		textString = "Selecting Units"
-	elseif action == 1 then
-		textString = "Spawning Units"
-	elseif action == 2 then
-		textString = "Spawning Base"
-	elseif action == 3 then
-		textString = "Spawning Prop"
-	elseif action == 4 then
-		textString = "Contraptions"
-	elseif action == 945 then
-		textString = "Click on a Unit"
-	end
+	local textStrings = {"Selecting Units", "Spawning Units", "Spawning Base", "Spawning Prop", "Contraptions"}
+	textStrings[944] = "Click on a Unit"
 
-	draw.SimpleText( textString, "DermaLarge", width / 2, height / 2, textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	local txtStr = textStrings[action + 1] or "Unknown Action"
+
+	draw.SimpleText( txtStr, "DermaLarge", width / 2, height / 2, toolScreenTextCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 end
 
 function TOOL:Deploy()
@@ -1882,39 +1631,6 @@ local function MW_BeginSelection() -- Previously concommand.Add( "+mw_select", f
 	table.Empty( ply.foundMelons )
 end
 
-local function isInRangeLoop( vector, teamIndex, entClass, buildDist )
-	for _, v in ipairs( ents.FindByClass( entClass ) ) do
-		if vector:Distance( v:GetPos() ) < buildDist and v:GetNWInt( "mw_melonTeam", 0 ) == teamIndex then
-			return true
-		end
-	end
-end
-
-local function isInRange( vector, teamIndex ) -- Why does this not just use findinsphere?
-	local canBuild = false
-
-	if isInRangeLoop( vector, teamIndex, "ent_melon_main_building", 800 ) then return true end
-	if isInRangeLoop( vector, teamIndex, "ent_melon_station", 250 ) then return true end
-	if isInRangeLoop( vector, teamIndex, "ent_melon_main_unit", 250 ) then return true end
-	if isInRangeLoop( vector, teamIndex, "ent_melon_main_building_grand_war", 1600 ) then return true end
-
-	local foundPoints = ents.FindByClass( "ent_melon_outpost_point" )
-
-	for _, v in ipairs( foundPoints ) do
-		if not canBuild then
-			if vector:Distance(v:GetPos()) < 600 then
-				if MelonWars.teamGrid == nil or MelonWars.teamGrid[v:GetNWInt( "capTeam", 0 )] == nil or MelonWars.teamGrid[v:GetNWInt( "capTeam", 0 )][teamIndex] == nil then
-					canBuild = v:GetNWInt( "capTeam", 0 ) == teamIndex
-				elseif v:GetNWInt( "capTeam", 0 ) == teamIndex or MelonWars.teamGrid[v:GetNWInt( "capTeam", 0 )][teamIndex] then
-					canBuild = true
-				end
-			end
-		end
-	end
-
-	return canBuild
-end
-
 local function noEnemyNear( vector, teamIndex )
 	local foundEnts = ents.FindInSphere( vector, 300 )
 	local canBuild = true
@@ -1965,115 +1681,118 @@ function TOOL:LeftClick( tr )
 		pl.mw_spawnTimer = CurTime()
 	elseif action == 1 then
 		if pl.mw_spawnTimer >= CurTime() - 0.1 then return end
-		if (cvars.Bool("mw_admin_playing")) then
-			local attach = pl:GetInfoNum("mw_unit_option_welded", 0)
-			local unit_index = pl:GetInfoNum("mw_chosen_unit", 0)
-			if (cvars.Bool("mw_admin_allow_free_placing") or noEnemyNear(trace.HitPos, mw_melonTeam)) then
-				if (MelonWars.units[unit_index].population == 0 or pl.mw_units + MelonWars.units[unit_index].population <= cvars.Number("mw_admin_max_units")) then
-					if (pl.canPlace) then
-						local cost, mw_delay = 0
-						local class = ""
+		pl.mw_spawnTimer = CurTime()
 
-						if (unit_index > 0) then
-							class = MelonWars.units[unit_index].class
-							mw_delay = MelonWars.units[unit_index].spawn_time
-							cost = 1337
+		if not cvars.Bool("mw_admin_playing") then
+			pl:PrintMessage( HUD_PRINTTALK, "== The admin has paused the game! ==" )
+			return
+		end
 
-							if (attach == 1) then
-								cost = MelonWars.units[unit_index].welded_cost
+		if not(cvars.Bool("mw_admin_allow_free_placing") or noEnemyNear(trace.HitPos, mw_melonTeam)) then
+			pl:PrintMessage( HUD_PRINTTALK, "== Enemy too close! ==" )
+			return
+		end
+
+		local attach = pl:GetInfoNum("mw_unit_option_welded", 0)
+		local unit_index = pl:GetInfoNum("mw_chosen_unit", 0)
+
+		if not (MelonWars.units[unit_index].population == 0 or pl.mw_units + MelonWars.units[unit_index].population <= cvars.Number("mw_admin_max_units")) then
+			pl:PrintMessage( HUD_PRINTTALK, "== Power max reached! ==" )
+			return
+		end
+
+		if not pl.canPlace then
+			pl:PrintMessage( HUD_PRINTTALK, "== What you're trying to spawn overlaps with something else! ==" )
+			return
+		end
+
+		local cost, mw_delay = 0
+		local class = ""
+
+		if (unit_index > 0) then
+			class = MelonWars.units[unit_index].class
+			mw_delay = MelonWars.units[unit_index].spawn_time
+			cost = 1337
+
+			if (attach == 1) then
+				cost = MelonWars.units[unit_index].welded_cost
+			else
+				cost = MelonWars.units[unit_index].cost
+			end
+
+			if (cost == -1) then
+				cost = MelonWars.units[unit_index].cost
+				attach = false
+			end
+
+			if (MelonWars.units[unit_index].contraptionPart) then
+				attach = true
+			end
+
+			if (unit_index >= firstBuilding and unit_index < firstContraption) then
+				attach = true
+			end
+		end
+
+		--if (unit_index >= firstBuilding) then attach = true end
+		if pl.mw_credits >= cost or not cvars.Bool("mw_admin_credit_cost") or mw_melonTeam == 0 then
+			local canFloorSpawn = MelonWars.units[unit_index].spawnable_on_floor or not trace.Entity:IsWorld()
+			local notPointOrWater = trace.Entity:GetClass() ~= "ent_melon_outpost_point" and trace.Entity:GetClass() ~= "ent_melon_cap_point" and trace.Entity:GetClass() ~= "ent_melon_water_tank"
+			local entHasTeam = trace.Entity:GetNWInt("mw_melonTeam", 0) == mw_melonTeam or trace.Entity:GetNWInt("mw_melonTeam", 0) == 0
+
+			if attach == false or canFloorSpawn and notPointOrWater and entHasTeam then
+				if unit_index >= 0 then
+					if (cvars.Number("mw_admin_spawn_time") == 1) then
+						if (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.units[unit_index].buildAnywere or MelonWars.isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
+							if (pl.mw_spawntime < CurTime()) then
+								pl.mw_spawntime = CurTime() + MelonWars.units[unit_index].spawn_time * pl.spawnTimeMult + 1 -- spawntimemult has been added here so I can compensate for matches with uneven numbers of commanders
 							else
-								cost = MelonWars.units[unit_index].cost
-							end
-
-							if (cost == -1) then
-								cost = MelonWars.units[unit_index].cost
-								attach = false
-							end
-
-							if (MelonWars.units[unit_index].contraptionPart) then
-								attach = true
-							end
-
-							if (unit_index >= firstBuilding and unit_index < firstContraption) then
-								attach = true
+								pl.mw_spawntime = pl.mw_spawntime + MelonWars.units[unit_index].spawn_time * pl.spawnTimeMult
 							end
 						end
-
-						--if (unit_index >= firstBuilding) then attach = true end
-						if pl.mw_credits >= cost or not cvars.Bool("mw_admin_credit_cost") or mw_melonTeam == 0 then
-							local canFloorSpawn = MelonWars.units[unit_index].spawnable_on_floor or not trace.Entity:IsWorld()
-							local notPointOrWater = trace.Entity:GetClass() ~= "ent_melon_outpost_point" and trace.Entity:GetClass() ~= "ent_melon_cap_point" and trace.Entity:GetClass() ~= "ent_melon_water_tank"
-							local entHasTeam = trace.Entity:GetNWInt("mw_melonTeam", 0) == mw_melonTeam or trace.Entity:GetNWInt("mw_melonTeam", 0) == 0
-
-							if attach == false or canFloorSpawn and notPointOrWater and entHasTeam then
-								if unit_index >= 0 then
-									if (cvars.Number("mw_admin_spawn_time") == 1) then
-										if (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.units[unit_index].buildAnywere or isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
-											if (pl.mw_spawntime < CurTime()) then
-												pl.mw_spawntime = CurTime() + MelonWars.units[unit_index].spawn_time * pl.spawnTimeMult -- spawntimemult has been added here so I can compensate for matches with uneven numbers of commanders
-											else
-												pl.mw_spawntime = pl.mw_spawntime + MelonWars.units[unit_index].spawn_time * pl.spawnTimeMult
-											end
-										end
-									end
-								else
-									pl.mw_spawntime = 0
-								end
-
-								local spawnAngle
-								if (MelonWars.units[unit_index].normalAngle) then
-									spawnAngle = trace.HitNormal:Angle() + MelonWars.units[unit_index].angle
-								else
-									if (MelonWars.units[unit_index].changeAngles) then
-										spawnAngle = pl.propAngle + MelonWars.units[unit_index].angle
-									else
-										spawnAngle = MelonWars.units[unit_index].angle
-									end
-								end
-
-								local spawnPosition = trace.HitPos + Vector(0,0,1) + trace.HitNormal*5+MelonWars.units[unit_index].offset
-
-								net.Start("MW_SpawnUnit") --TODO: Rewrite to only use unit index, targetpos for trace, attach, angle(?), team(?). Rest should be supplied by other netvalues or shared unitlist
-									net.WriteString(class)
-									net.WriteInt(unit_index, 16)
-									net.WriteTable(trace)
-									net.WriteInt(cost, 16)
-									net.WriteInt(pl.mw_spawntime * cvars.Number("mw_admin_spawn_time"), 16)
-									net.WriteInt(mw_melonTeam, 8)
-									net.WriteInt(mw_delay, 16)
-									net.WriteBool(attach)
-									net.WriteAngle(spawnAngle)
-									net.WriteVector(spawnPosition)
-								net.SendToServer()
-
-								local effectdata = EffectData()
-								effectdata:SetEntity( newMarine )
-								util.Effect( "propspawn", effectdata )
-
-								if (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.units[unit_index].buildAnywere or isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
-									if cvars.Bool( "mw_admin_credit_cost" ) or mw_melonTeam == 0 then
-										self:IndicateIncome(-cost)
-										pl.mw_credits = pl.mw_credits-cost
-									end
-								end
-							else
-								pl:PrintMessage( HUD_PRINTTALK, "== Can't attach units onto non legalized props! ==" )
-							end
-						else
-							pl:PrintMessage( HUD_PRINTTALK, "== Not enough resources! ==" )
-						end
-					else
-						pl:PrintMessage( HUD_PRINTTALK, "== What you're trying to spawn overlaps with something else! ==" )
 					end
 				else
-					pl:PrintMessage( HUD_PRINTTALK, "== Power max reached! ==" )
+					pl.mw_spawntime = 0
+				end
+
+				local spawnAngle
+				if (MelonWars.units[unit_index].normalAngle) then
+					spawnAngle = trace.HitNormal:Angle() + MelonWars.units[unit_index].angle
+				else
+					if (MelonWars.units[unit_index].changeAngles) then
+						spawnAngle = pl.propAngle + MelonWars.units[unit_index].angle
+					else
+						spawnAngle = MelonWars.units[unit_index].angle
+					end
+				end
+
+				--local spawnPosition = trace.HitPos + Vector(0,0,1) + trace.HitNormal*5+MelonWars.units[unit_index].offset
+
+				net.Start("MW_SpawnUnit")
+					net.WriteInt(unit_index, 16)
+					net.WriteInt(mw_melonTeam, 4)
+					net.WriteBool(attach)
+					net.WriteAngle(spawnAngle)
+					--net.WriteVector(spawnPosition)
+				net.SendToServer()
+
+				local effectdata = EffectData()
+				effectdata:SetEntity( newMarine )
+				util.Effect( "propspawn", effectdata )
+
+				if (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.units[unit_index].buildAnywere or MelonWars.isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
+					if cvars.Bool( "mw_admin_credit_cost" ) or mw_melonTeam == 0 then
+						self:IndicateIncome(-cost)
+						pl.mw_credits = pl.mw_credits-cost
+					end
 				end
 			else
-				pl:PrintMessage( HUD_PRINTTALK, "== Enemy too close! ==" )
+				pl:PrintMessage( HUD_PRINTTALK, "== Can't attach units onto non legalized props! ==" )
 			end
 		else
-			pl:PrintMessage( HUD_PRINTTALK, "== The admin has paused the game! ==" )
+			pl:PrintMessage( HUD_PRINTTALK, "== Not enough resources! ==" )
 		end
+
 		pl.mw_spawnTimer = CurTime()
 	elseif action == 2 then
 		net.Start("SpawnBase")
@@ -2086,7 +1805,7 @@ function TOOL:LeftClick( tr )
 		local prop_index = pl:GetInfoNum("mw_chosen_prop", 0)
 		local cost = MelonWars.baseProps[prop_index].cost
 		if not cvars.Bool("mw_admin_playing") then return end
-		if not (cvars.Bool("mw_admin_allow_free_placing") or isInRange(trace.HitPos, mw_melonTeam)) then return end
+		if not (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.isInRange(trace.HitPos, mw_melonTeam)) then return end
 		if not (cvars.Bool("mw_admin_allow_free_placing") or noEnemyNear(trace.HitPos, mw_melonTeam)) then return end
 		if not (pl.mw_credits >= cost or not cvars.Bool("mw_admin_credit_cost")) then return end
 

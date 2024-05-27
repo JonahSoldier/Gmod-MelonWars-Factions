@@ -1,4 +1,10 @@
 AddCSLuaFile()
+--[[
+	This file determines the details of units as they appear in the melon-wars tool.
+	It is shared, as things like spawn-time and cost need to be known by the server as well.
+	The rest is either visual or directly tied in with the tool.
+	If you want to edit unit stats like HP, speed, their *actual* model, etc then edit the entity files.
+--]]
 
 local UnitClass = {}
 UnitClass.name = "Marine"
@@ -1330,3 +1336,253 @@ u.angle 		= Angle(90,90,90)
 u.angleSnap		= false
 u.contraptionPart = true
 u.spawnable_on_floor = false
+
+
+
+local BasePropClass = {}
+BasePropClass.name = "Prop"
+BasePropClass.model = "models/hunter/blocks/cube05x1x05.mdl"
+BasePropClass.offset = Vector(0,0,0)
+BasePropClass.angle = Angle(0,0,0)
+BasePropClass.cost = 1
+BasePropClass.hp = 1
+BasePropClass.spawn_time = 2
+
+local function BaseProp() -- Code is an optional argument.
+	local newProp = table.Copy( BasePropClass )
+	return newProp
+end
+
+local basePropCount = 25
+MelonWars.baseProps = {}
+local u = nil
+for i = 1, basePropCount do
+	MelonWars.baseProps[i] = BaseProp()
+end
+
+i = 0
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Blast Door"
+u.model = "models/props_lab/blastdoor001c.mdl"
+u.offset = Vector(0,0,0)
+u.angle = Angle(0,0,0)
+u.cost = 200
+u.hp = 150
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Barricade"
+u.model = "models/props_wasteland/barricade002a.mdl"
+u.offset = Vector(0,0,12)
+u.angle = Angle(0,90,0)
+u.cost = 15
+u.hp = 40
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Fence"
+u.model = "models/props_wasteland/wood_fence01a.mdl"
+u.offset = Vector(0,0,40)
+u.angle = Angle(0,90,0)
+u.cost = 40
+u.hp = 100
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Pallet"
+u.model = "models/props_junk/wood_pallet001a.mdl"
+u.offset = Vector(0,0,32)
+u.angle = Angle(90,0,0)
+u.cost = 25
+u.hp = 50
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Brick"
+u.model = "models/hunter/blocks/cube05x1x05.mdl"
+u.offset = Vector(0,0,12)
+u.angle = Angle(0,0,0)
+u.cost = 15
+u.hp = 35
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Half Block"
+u.model = "models/hunter/blocks/cube1x1x05.mdl"
+u.offset = Vector(0,0,12)
+u.angle = Angle(0,0,0)
+u.cost = 35
+u.hp = 50
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Block"
+u.model = "models/hunter/blocks/cube1x1x1.mdl"
+u.offset = Vector(0,0,24)
+u.angle = Angle(0,0,0)
+u.cost = 75
+u.hp = 100
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Half Platform"
+u.model = "models/hunter/blocks/cube2x2x05.mdl"
+u.offset = Vector(47,0,10.5)
+u.angle = Angle(0,0,0)
+u.cost = 115
+u.hp = 150
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Platform"
+u.model = "models/hunter/blocks/cube2x2x1.mdl"
+u.offset = Vector(47,0,24)
+u.angle = Angle(0,0,0)
+u.cost = 150
+u.hp = 200
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Concrete Barrier"
+u.model = "models/props_c17/concrete_barrier001a.mdl"
+u.offset = Vector(0,0,0)
+u.angle = Angle(0,0,0)
+u.cost = 75
+u.hp = 150
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Wall"
+u.model = "models/hunter/blocks/cube2x2x05.mdl"
+u.offset = Vector(0,0,48)
+u.angle = Angle(90,0,0)
+u.cost = 100
+u.hp = 175
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Long Wall"
+u.model = "models/hunter/blocks/cube1x4x05.mdl"
+u.offset = Vector(0,0,24)
+u.angle = Angle(90,0,0)
+u.cost = 100
+u.hp = 175
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Flat Platform"
+u.model = "models/hunter/plates/plate2x2.mdl"
+u.offset = Vector(47,0,-2.5)
+u.angle = Angle(0,0,0)
+u.cost = 15
+u.hp = 35
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Short Ramp"
+u.model = "models/hunter/plates/plate1x2.mdl"
+u.offset = Vector(23,0,4.5)
+u.angle = Angle(-17,0,0)
+u.cost = 25
+u.hp = 25
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Slim Half Ramp"
+u.model = "models/hunter/plates/plate1x2.mdl"
+u.offset = Vector(33,0,7.3)
+u.angle = Angle(0,90,-17)
+u.cost = 25
+u.hp = 25
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Half Ramp"
+u.model = "models/hunter/plates/plate2x2.mdl"
+u.offset = Vector(33,0,7.3)
+u.angle = Angle(0,90,-17)
+u.cost = 50
+u.hp = 40
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Slim Full Ramp"
+u.model = "models/hunter/triangles/2x1x1.mdl"
+u.offset = Vector(48.3,0,23.1)
+u.angle = Angle(0,90,0)
+u.cost = 75
+u.hp = 75
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Barrel"
+u.model = "models/props_c17/oildrum001.mdl"
+u.offset = Vector(0,0,0)
+u.angle = Angle(0,0,0)
+u.cost = 25
+u.hp = 50
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "3D Frame"
+u.model = "models/props_phx/construct/metal_wire1x2x2b.mdl"
+u.offset = Vector(-70,24,0)
+u.angle = Angle(0,0,0)
+u.cost = 20
+u.hp = 20
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Railing"
+u.model = "models/PHXtended/bar2x.mdl"
+u.offset = Vector(2,48,5.5)
+u.angle = Angle(90,180,0)
+u.cost = 8
+u.hp = 5
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Half Pipe"
+u.model = "models/props_phx/construct/metal_plate_curve180.mdl"
+u.offset = Vector(-46,0,48)
+u.angle = Angle(180,0,0)
+u.cost = 50
+u.hp = 75
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Pole"
+u.model = "models/props_docks/dock01_pole01a_128.mdl"
+u.offset = Vector(0,0,64)
+u.angle = Angle(0,0,0)
+u.cost = 15
+u.hp = 15
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Disk"
+u.model = "models/props_phx/construct/metal_angle360.mdl"
+u.offset = Vector(-48,0,0)
+u.angle = Angle(0,0,0)
+u.cost = 15
+u.hp = 15
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Half Disk"
+u.model = "models/props_phx/construct/metal_angle180.mdl"
+u.offset = Vector(-48,0,0)
+u.angle = Angle(180,0,0)
+u.cost = 8
+u.hp = 8
+
+i = i + 1
+u = MelonWars.baseProps[i]
+u.name = "Stilt"
+u.model = "models/props_docks/dock01_pole01a_128.mdl"
+u.offset = Vector(0,0,-64)
+u.angle = Angle(0,0,0)
+u.cost = 25
+u.hp = 25
