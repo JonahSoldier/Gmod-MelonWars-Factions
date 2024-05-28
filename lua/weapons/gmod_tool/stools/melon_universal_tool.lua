@@ -1683,114 +1683,50 @@ function TOOL:LeftClick( tr )
 		if pl.mw_spawnTimer >= CurTime() - 0.1 then return end
 		pl.mw_spawnTimer = CurTime()
 
-		if not cvars.Bool("mw_admin_playing") then
-			pl:PrintMessage( HUD_PRINTTALK, "== The admin has paused the game! ==" )
-			return
-		end
-
-		if not(cvars.Bool("mw_admin_allow_free_placing") or noEnemyNear(trace.HitPos, mw_melonTeam)) then
-			pl:PrintMessage( HUD_PRINTTALK, "== Enemy too close! ==" )
-			return
-		end
-
-		local attach = pl:GetInfoNum("mw_unit_option_welded", 0)
 		local unit_index = pl:GetInfoNum("mw_chosen_unit", 0)
+		local attach = pl:GetInfoNum("mw_unit_option_welded", 0)
 
-		if not (MelonWars.units[unit_index].population == 0 or pl.mw_units + MelonWars.units[unit_index].population <= cvars.Number("mw_admin_max_units")) then
-			pl:PrintMessage( HUD_PRINTTALK, "== Power max reached! ==" )
+		if not MelonWars.canSpawn(unit_index, attach, mw_melonTeam, trace.HitPos, pl, trace.Entity) then
 			return
 		end
 
-		if not pl.canPlace then
-			pl:PrintMessage( HUD_PRINTTALK, "== What you're trying to spawn overlaps with something else! ==" )
-			return
-		end
-
-		local cost, mw_delay = 0
-		local class = ""
-
-		if (unit_index > 0) then
-			class = MelonWars.units[unit_index].class
-			mw_delay = MelonWars.units[unit_index].spawn_time
-			cost = 1337
-
-			if (attach == 1) then
-				cost = MelonWars.units[unit_index].welded_cost
+		if cvars.Number("mw_admin_spawn_time") == 1 then
+			if (pl.mw_spawntime < CurTime()) then
+				pl.mw_spawntime = CurTime() + MelonWars.units[unit_index].spawn_time * pl.spawnTimeMult + 1 -- spawntimemult has been added here so I can compensate for matches with uneven numbers of commanders
 			else
-				cost = MelonWars.units[unit_index].cost
-			end
-
-			if (cost == -1) then
-				cost = MelonWars.units[unit_index].cost
-				attach = false
-			end
-
-			if (MelonWars.units[unit_index].contraptionPart) then
-				attach = true
-			end
-
-			if (unit_index >= firstBuilding and unit_index < firstContraption) then
-				attach = true
+				pl.mw_spawntime = pl.mw_spawntime + MelonWars.units[unit_index].spawn_time * pl.spawnTimeMult
 			end
 		end
 
-		--if (unit_index >= firstBuilding) then attach = true end
-		if pl.mw_credits >= cost or not cvars.Bool("mw_admin_credit_cost") or mw_melonTeam == 0 then
-			local canFloorSpawn = MelonWars.units[unit_index].spawnable_on_floor or not trace.Entity:IsWorld()
-			local notPointOrWater = trace.Entity:GetClass() ~= "ent_melon_outpost_point" and trace.Entity:GetClass() ~= "ent_melon_cap_point" and trace.Entity:GetClass() ~= "ent_melon_water_tank"
-			local entHasTeam = trace.Entity:GetNWInt("mw_melonTeam", 0) == mw_melonTeam or trace.Entity:GetNWInt("mw_melonTeam", 0) == 0
-
-			if attach == false or canFloorSpawn and notPointOrWater and entHasTeam then
-				if unit_index >= 0 then
-					if (cvars.Number("mw_admin_spawn_time") == 1) then
-						if (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.units[unit_index].buildAnywere or MelonWars.isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
-							if (pl.mw_spawntime < CurTime()) then
-								pl.mw_spawntime = CurTime() + MelonWars.units[unit_index].spawn_time * pl.spawnTimeMult + 1 -- spawntimemult has been added here so I can compensate for matches with uneven numbers of commanders
-							else
-								pl.mw_spawntime = pl.mw_spawntime + MelonWars.units[unit_index].spawn_time * pl.spawnTimeMult
-							end
-						end
-					end
-				else
-					pl.mw_spawntime = 0
-				end
-
-				local spawnAngle
-				if (MelonWars.units[unit_index].normalAngle) then
-					spawnAngle = trace.HitNormal:Angle() + MelonWars.units[unit_index].angle
-				else
-					if (MelonWars.units[unit_index].changeAngles) then
-						spawnAngle = pl.propAngle + MelonWars.units[unit_index].angle
-					else
-						spawnAngle = MelonWars.units[unit_index].angle
-					end
-				end
-
-				--local spawnPosition = trace.HitPos + Vector(0,0,1) + trace.HitNormal*5+MelonWars.units[unit_index].offset
-
-				net.Start("MW_SpawnUnit")
-					net.WriteInt(unit_index, 16)
-					net.WriteInt(mw_melonTeam, 4)
-					net.WriteBool(attach)
-					net.WriteAngle(spawnAngle)
-					--net.WriteVector(spawnPosition)
-				net.SendToServer()
-
-				local effectdata = EffectData()
-				effectdata:SetEntity( newMarine )
-				util.Effect( "propspawn", effectdata )
-
-				if (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.units[unit_index].buildAnywere or MelonWars.isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
-					if cvars.Bool( "mw_admin_credit_cost" ) or mw_melonTeam == 0 then
-						self:IndicateIncome(-cost)
-						pl.mw_credits = pl.mw_credits-cost
-					end
-				end
-			else
-				pl:PrintMessage( HUD_PRINTTALK, "== Can't attach units onto non legalized props! ==" )
-			end
+		local spawnAngle
+		if (MelonWars.units[unit_index].normalAngle) then
+			spawnAngle = trace.HitNormal:Angle() + MelonWars.units[unit_index].angle
 		else
-			pl:PrintMessage( HUD_PRINTTALK, "== Not enough resources! ==" )
+			if (MelonWars.units[unit_index].changeAngles) then
+				spawnAngle = pl.propAngle + MelonWars.units[unit_index].angle
+			else
+				spawnAngle = MelonWars.units[unit_index].angle
+			end
+		end
+
+		--local spawnPosition = trace.HitPos + Vector(0,0,1) + trace.HitNormal*5+MelonWars.units[unit_index].offset
+
+		net.Start("MW_SpawnUnit")
+			net.WriteInt(unit_index, 16)
+			net.WriteInt(mw_melonTeam, 4)
+			net.WriteBool(attach)
+			net.WriteAngle(spawnAngle)
+			--net.WriteVector(spawnPosition)
+		net.SendToServer()
+
+		local effectdata = EffectData()
+		effectdata:SetEntity( newMarine )
+		util.Effect( "propspawn", effectdata )
+
+		if cvars.Bool( "mw_admin_credit_cost" ) or mw_melonTeam == 0 then
+			local cost = MelonWars.unitCost(unit_index, attach)
+			self:IndicateIncome(-cost)
+			pl.mw_credits = pl.mw_credits-cost
 		end
 
 		pl.mw_spawnTimer = CurTime()

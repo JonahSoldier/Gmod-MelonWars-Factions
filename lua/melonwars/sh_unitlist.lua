@@ -1355,9 +1355,9 @@ end
 
 local basePropCount = 25
 MelonWars.baseProps = {}
-local u = nil
-for i = 1, basePropCount do
-	MelonWars.baseProps[i] = BaseProp()
+--u = nil
+for j = 1, basePropCount do
+	MelonWars.baseProps[j] = BaseProp()
 end
 
 i = 0

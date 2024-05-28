@@ -394,47 +394,36 @@ net.Receive( "MW_SpawnUnit", function( _, pl ) --TODO: This requires substantial
 
 	local unit = MelonWars.units[unit_index]
 	local class = unit.class
-	local cost = unit.cost
+	local cost
+	cost, attach = MelonWars.unitCost(unit_index, attach)
 	local spawndelay = unit.spawn_time
 
-	if IsValid( trace.Entity ) and trace.Entity.Base == "ent_melon_base" then return end
-	if trace.Entity:GetClass() == "ent_melon_wall" and (attach == false and MelonWars.units[unit_index].welded_cost ~= -1 and unit_index < 9 --[[<< first building]]) then
-		pl:PrintMessage( HUD_PRINTCENTER, "Cant spawn mobile units directly on buildings" )
+	if not MelonWars.canSpawn( unit_index, attach, _team, position, pl, trace.Entity ) then
 		return
 	end
 
 	--Copied from client,
 	pl.mw_spawntime = pl.mw_spawntime or 0
-	if unit_index >= 0 then
-		if (cvars.Number("mw_admin_spawn_time") == 1) then
-			if (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.units[unit_index].buildAnywere or MelonWars.isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
-				if (pl.mw_spawntime < CurTime()) then
-					pl.mw_spawntime = CurTime() + MelonWars.units[unit_index].spawn_time * (pl.spawnTimeMult or 1) -- spawntimemult has been added here so I can compensate for matches with uneven numbers of commanders
-				else
-					pl.mw_spawntime = pl.mw_spawntime + MelonWars.units[unit_index].spawn_time * (pl.spawnTimeMult or 1)
-				end
+	if (cvars.Number("mw_admin_spawn_time") == 1) then
+		if (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.units[unit_index].buildAnywere or MelonWars.isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
+			if (pl.mw_spawntime < CurTime()) then
+				pl.mw_spawntime = CurTime() + MelonWars.units[unit_index].spawn_time * (pl.spawnTimeMult or 1) -- spawntimemult has been added here so I can compensate for matches with uneven numbers of commanders
+			else
+				pl.mw_spawntime = pl.mw_spawntime + MelonWars.units[unit_index].spawn_time * (pl.spawnTimeMult or 1)
 			end
 		end
-	else
-		pl.mw_spawntime = 0
 	end
 	local spawntime = pl.mw_spawntime
 
+	local newMarine = MelonWars.spawnUnitAtPos(class, unit_index, position --[[trace.HitPos + trace.HitNormal * 5]], angle, cost, spawntime, _team, attach, trace.Entity, pl, spawndelay)
 
+	undo.Create("Melon " .. unit.name)
+		undo.AddEntity( newMarine )
+		undo.SetPlayer( pl)
+	undo.Finish()
 
-	if MelonWars.isInRange(position, _team) or cvars.Bool("mw_admin_allow_free_placing") or MelonWars.units[unit_index].buildAnywere or _team == 0 then
-		local newMarine = MelonWars.spawnUnitAtPos(class, unit_index, position --[[trace.HitPos + trace.HitNormal * 5]], angle, cost, spawntime, _team, attach, trace.Entity, pl, spawndelay)
-
-		undo.Create("Melon Marine")
-			undo.AddEntity( newMarine )
-			undo.SetPlayer( pl)
-		undo.Finish()
-
-		if cvars.Bool("mw_admin_credit_cost") or _team == 0 then
-			MW_Server_UpdateWater(_team, MelonWars.teamCredits[_team]-cost)
-		end
-	else
-		pl:PrintMessage( HUD_PRINTTALK, "== Too far from an outpost! ==" )
+	if cvars.Bool("mw_admin_credit_cost") or _team == 0 then
+		MW_Server_UpdateWater(_team, MelonWars.teamCredits[_team]-cost)
 	end
 end )
 
