@@ -1,34 +1,47 @@
 AddCSLuaFile()
 
-local function isInRangeLoop( vector, teamIndex, entClass, buildDist )
+
+local function isClassInRange(pos, teamIndex, entClass, range)
+	local rngSqr = range^2
 	for _, v in ipairs( ents.FindByClass( entClass ) ) do
-		if vector:Distance( v:GetPos() ) < buildDist and v:GetNWInt( "mw_melonTeam", 0 ) == teamIndex then
+		if pos:DistToSqr( v:GetPos() ) < rngSqr then
+			local vTeam = v:GetNWInt( "mw_melonTeam", 0 )
+			if vTeam == teamIndex or MelonWars.teamGrid[vTeam][teamIndex] then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+function MelonWars.isInRange( pos, teamIndex )
+	--Not a huge fan of this being hardcoded, but I can't be bothered to restructure it.
+	local classes = {
+		["ent_melon_main_building"] = 800,
+		["ent_melon_station"] = 250,
+		["ent_melon_main_unit"] = 250,
+		["ent_melon_main_building_grand_war"] = 1600,
+	}
+
+	for k, v in pairs(classes) do
+		if isClassInRange(pos, teamIndex, k, v) then
 			return true
 		end
 	end
-end
-
-function MelonWars.isInRange( vector, teamIndex ) -- TODO: Re-write.
-	local canBuild = false
-
-	if isInRangeLoop( vector, teamIndex, "ent_melon_main_building", 800 ) then return true end
-	if isInRangeLoop( vector, teamIndex, "ent_melon_station", 250 ) then return true end
-	if isInRangeLoop( vector, teamIndex, "ent_melon_main_unit", 250 ) then return true end
-	if isInRangeLoop( vector, teamIndex, "ent_melon_main_building_grand_war", 1600 ) then return true end
 
 	local foundPoints = ents.FindByClass( "ent_melon_outpost_point" )
-
+	local rngSqr = 600^2
 	for _, v in ipairs( foundPoints ) do
-		if not canBuild and vector:Distance(v:GetPos()) < 600 then
-			if MelonWars.teamGrid == nil or MelonWars.teamGrid[v:GetNWInt( "capTeam", 0 )] == nil or MelonWars.teamGrid[v:GetNWInt( "capTeam", 0 )][teamIndex] == nil then
-				canBuild = v:GetNWInt( "capTeam", 0 ) == teamIndex
-			elseif v:GetNWInt( "capTeam", 0 ) == teamIndex or MelonWars.teamGrid[v:GetNWInt( "capTeam", 0 )][teamIndex] then
-				canBuild = true
+		if pos:DistToSqr( v:GetPos() ) < rngSqr then
+			local vTeam =  v:GetNWInt( "capTeam", 0 )
+			local teamGridTeam = MelonWars.teamGrid[vTeam]
+			if vTeam == teamIndex or (teamGridTeam and teamGridTeam[teamIndex]) then
+				return true
 			end
 		end
 	end
 
-	return canBuild
+	return false
 end
 
 function MelonWars.noEnemyNear( pos, teamIndex )
