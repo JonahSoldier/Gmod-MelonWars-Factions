@@ -4,6 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include("shared.lua")
 
 local unit_colors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
+local mw_admin_playing_cv = GetConVar( "mw_admin_playing" )
 
 -- Possible tesla unit models/props_c17/utilityconnecter006c.mdl
 -- Charging Station models/props_c17/substation_transformer01d.mdl
@@ -306,7 +307,7 @@ function ENT:SpawnDoot()
 end
 ]]
 function ENT:Update()
-	if not cvars.Bool( "mw_admin_playing" ) then return end
+	if not mw_admin_playing_cv:GetBool() then return end
 	local selfTbl = self:GetTable()
 	if CurTime() > selfTbl.nextSlowThink then
 		selfTbl.nextSlowThink = CurTime() + selfTbl.slowThinkTimer
@@ -323,6 +324,7 @@ function ENT:Update()
 		end
 	end
 
+	--TODO: Find where target/follow entities are set, and see if this can be moved out. Doing it in update is expensive.
 	self:SetNWEntity( "targetEntity", selfTbl.targetEntity )
 	self:SetNWEntity( "followEntity", selfTbl.followEntity )
 
@@ -415,7 +417,9 @@ function ENT:Update()
 		end
 	end
 
+	--TODO: Ditto of other todo in this function
 	self:SetNWBool("moving", selfTbl.moving)
+
 	self:NextThink(CurTime() + 0.1)
 	return true
 end
@@ -449,7 +453,7 @@ function ENT:RemoveRallyPoints()
 	end
 end
 
-function ENT:SameTeam(ent)
+function ENT:SameTeam(ent) --TODO: Optimized version that takes teamindex as input instead.
 	local myTeam = self:GetNWInt("mw_melonTeam", 0)
 	local otherTeam = ent:GetNWInt("mw_melonTeam", 0)
 	if (myTeam == otherTeam) then
@@ -494,44 +498,43 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 	if ( not(IsValid(entTbl.targetEntity)) or entTbl.targetEntity.Base == "ent_melon_prop_base" or entTbl.targetEntity:GetNWInt("propHP",-1) ~= -1) then
 		----------------------------------------------------------------------Buscar target
 		local foundEnts = ents.FindInSphere(pos, entTbl.range )
+		local ourTeam = ent:GetNWInt("mw_melonTeam", 0)
 		for _, v in ipairs( foundEnts ) do
-			if (v.Base == "ent_melon_base") then --si es una sandía
-				if (v:GetNWInt("mw_melonTeam", 0) ~= ent:GetNWInt("mw_melonTeam", 0)) then -- si tienen distinto equipo
-					if (v.targetable) then -- si es targeteable
-						if not ent:SameTeam(v) then -- si no es un aliado
-							if (entTbl.careForWalls) then
-								local tr = util.TraceLine( {
-								start = pos,
-								endpos = v:GetPos()+v:GetVar("shotOffset",Vector(0,0,0)),
-								filter = function( foundEnt )
-									if ( foundEnt:GetClass() == "prop_physics") then--si hay un prop en el medio
-										return true
-									end
-									if (entTbl.careForFriendlyFire) then --No dispara si hay un compañero en el camino
-										if ( foundEnt.Base == "ent_melon_base" ) then
-											if (foundEnt:GetNWInt("mw_melonTeam", -1) == ent:GetNWInt("mw_melonTeam", 0) and foundEnt ~= ent) then
-												return true
-											end
-										end
-									end
-								end
-								})
+			local vTbl = v:GetTable()
+			if vTbl.Base == "ent_melon_base" and vTbl.targetable and not ent:SameTeam(v) then
+				if (entTbl.careForWalls) then
+					local tr = util.TraceLine( {
+						start = pos,
+						endpos = v:GetPos() + v:GetVar("shotOffset",vector_origin),
+						filter = function( foundEnt )
+							if foundEnt:GetClass() == "prop_physics" then--si hay un prop en el medio
+								return true
 							end
-							if (not entTbl.careForWalls or (tr ~= nil and tostring(tr.Entity) == '[NULL Entity]')) then
-							----------------------------------------------------------Encontró target
-								entTbl.targetEntity = v
+							if entTbl.careForFriendlyFire then --No dispara si hay un compañero en el camino
+								if foundEnt.Base == "ent_melon_base" and foundEnt:GetNWInt("mw_melonTeam", -1) == ourTeam and foundEnt ~= ent then
+									return true
+								end
 							end
 						end
+						})
+					if not tr.Entity:IsValid() then
+						entTbl.targetEntity = v
+						break
 					end
+				else
+					entTbl.targetEntity = v
+					break
 				end
 			end
 		end
 		-------------------------------------------------Si aun asi no encontró target
+		--not 100% sure what the point of having this second loop here is.
 		if (entTbl.targetEntity == nil) then
 			for _, v in ipairs( foundEnts ) do
-				if (v:GetNWInt("mw_melonTeam", ent:GetNWInt("mw_melonTeam", 0)) ~= ent:GetNWInt("mw_melonTeam", 0) and not string.StartWith( v:GetClass(), "ent_melonbullet_" ) and not ent:SameTeam(v)) then --si es de otro equipo
+				local vClass = v:GetClass()
+				if not( ourTeam == v:GetNWInt("mw_melonTeam", ourTeam) or ent:SameTeam(v) or string.StartWith( vClass, "ent_melonbullet_" ) ) then --si es de otro equipo
 					if (entTbl.chaseStance) then
-						if (v:GetClass() == "ent_melon_wall") then
+						if (vClass == "ent_melon_wall") then
 							if (entTbl.stuck > 15) then
 								if (IsValid(entTbl.barrier)) then
 									entTbl.targetEntity = entTbl.barrier
@@ -557,7 +560,7 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 			entTbl.stuck = 0
 			return ent:LoseTarget()
 		----------------------------------------por que esta en el 0,0,0
-		elseif (entTbl.targetEntity:GetPos() == Vector(0,0,0)) then
+		elseif (entTbl.targetEntity:GetPos() == vector_origin) then
 			return ent:LoseTarget()
 		end
 		----------------------------------------porque es intargeteable
@@ -602,15 +605,20 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 			entTbl.forcedTargetEntity = nil
 		end
 
+		local ourTeam = ent:GetNWInt("mw_melonTeam", 0)
 		local tr = util.TraceLine( {
 			start = pos,
 			endpos = entTbl.targetEntity:GetPos()+entTbl.targetEntity:GetVar("shotOffset", vector_origin),
-				filter = function( foundEntity ) if (foundEntity.Base ~= "ent_melon_base" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1) or foundEntity:GetClass() == "prop_physics" and foundEntity ~= entTbl.targetEntity) then return true end end
+				filter = function( foundEntity ) 
+					if (foundEntity.Base ~= "ent_melon_base" and foundEntity:GetNWInt("mw_melonTeam", -1) == ourTeam or foundEntity:GetClass() == "prop_physics" and foundEntity ~= entTbl.targetEntity) then
+						 return true
+					end
+				end
 			})
 		----------------------------------------por que hay algo en el medio
 
 		if (entTbl.careForWalls) then
-			if (tostring(tr.Entity) ~= '[NULL Entity]') then
+			if (tostring(tr.Entity) ~= "[NULL Entity]") then
 				return ent:LoseTarget()
 			end
 
@@ -621,9 +629,9 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 	end
 
 	if (entTbl.targetEntity ~= nil) then
-		local distance = entTbl.targetEntity:GetPos():Distance(pos)
-		if (distance < entTbl.range+entTbl.targetEntity:GetNWFloat( "baseSize", 0) and distance > entTbl.minRange) then
-			if (entTbl.targetEntity:GetNWInt("mw_melonTeam", 0) ~= ent:GetNWInt("mw_melonTeam", 0)) then
+		local distSqr = entTbl.targetEntity:GetPos():DistToSqr(pos)
+		if distSqr < (entTbl.range + entTbl.targetEntity:GetNWFloat( "baseSize", 0)) ^ 2 and distSqr > entTbl.minRange ^ 2 then
+			if (entTbl.targetEntity:GetNWInt("mw_melonTeam", 0) ~= ent:GetNWInt("mw_melonTeam", 0)) then --TODO: maybe re-structure to get our team earlier and recycle it here too.
 				ent:Shoot( ent )
 			end
 		end
@@ -805,17 +813,17 @@ function ENT:PhysicsUpdate()
 end
 
 function ENT:DefaultPhysicsUpdate()
-	if cvars.Bool("mw_admin_playing") then
+	if mw_admin_playing_cv:GetBool() then
 		local selfTbl = self:GetTable()
 		if (selfTbl.moving) then
-			if (self:GetVelocity():LengthSqr() < selfTbl.speed ^ 2) then
+			local vel = self:GetVelocity()
+			if (vel:LengthSqr() < selfTbl.speed ^ 2) then
 				local phys = selfTbl.phys
 				phys:ApplyForceCenter (selfTbl.moveForce * phys:GetMass())
 			else
-				local vel = self:GetVelocity()
-				local horizontalVelocity = Vector(vel.x, vel.y, 0) --TODO: Can probably just use "vel" vector and set z component to 0, instead of creating a new one.
-				local phys = selfTbl.phys
-				phys:ApplyForceCenter (-horizontalVelocity * 0.02 * phys:GetMass())
+				vel[3] = 0
+				vel:Mul( -0.02 * selfTbl.phys:GetMass())
+				selfTbl.phys:ApplyForceCenter (vel)
 			end
 		else
 			selfTbl.moveForce = vector_origin
@@ -968,7 +976,7 @@ function ENT:BarrackSlowThink() --TODO: Optimize
 	end
 
 	if self.spawned == false then return end
-	if not cvars.Bool("mw_admin_playing") then return end
+	if not mw_admin_playing_cv:GetBool() then return end
 	if not self.unitspawned then
 		if (self:GetNWFloat("nextSlowThink") < CurTime()+self:GetNWFloat("overdrive", 0)) then
 			if (EnoughPower(ent:GetNWInt("mw_melonTeam", 0))) then
