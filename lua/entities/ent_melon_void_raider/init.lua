@@ -26,12 +26,12 @@ function ENT:Initialize()
 
 	self.population = 2
 
+	self.useBBoxPhys = true
 	self:Setup()
 
 	construct.SetPhysProp( self:GetOwner() , self, 0, nil,  { GravityToggle = true, Material = "ice" } )
 
 	self.backpack = ents.Create( "prop_physics" )
-	if not IsValid( self.backpack ) then return end
 
 	self.backpack:SetModel("models/Items/car_battery01.mdl")
 	self.backpack:SetParent(self)

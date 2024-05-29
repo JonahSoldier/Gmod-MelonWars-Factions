@@ -1099,27 +1099,35 @@ end )
 
 net.Receive( "SellEntity", function( _, pl )
 	local entity = net.ReadEntity()
-	local playerTeam = net.ReadInt(8)
+	local playerTeam = net.ReadInt(4)
+
+	if not entity:IsValid() then
+		entity = pl:GetEyeTrace().Entity
+	end
+	if not entity:IsValid() then
+		return
+	end
+
 	if entity.Base == "ent_melon_base" then
-		if entity.canMove ~= true then return end
-		if entity.gotHit or CurTime() - entity:GetCreationTime() >= 30 or entity.fired ~= false then
-			pl:PrintMessage( HUD_PRINTTALK, "== Can't sell mobile MelonWars.units after 30 seconds, after they got hit, or after they fired! ==" )
+		if entity.canMove and (entity.gotHit or CurTime() - entity:GetCreationTime() >= 30 or entity.fired ~= false) then
+			pl:PrintMessage( HUD_PRINTTALK, "== Can't sell mobile units after 30 seconds, after they got hit, or after they fired! ==" )
 			sound.Play( "buttons/button2.wav", pl:GetPos(), 75, 100, 1 )
-			entity = nil
+			return
 		end
 	end
-	if IsValid(entity) then
-		local isMainBuilding = entity:GetClass() == "ent_melon_main_building"
-		local isNotMelonOrPhys = entity.Base ~= ( "ent_melon_base" or "ent_melon_prop_base" or "ent_melon_energy_base" ) and entity:GetClass() ~= "prop_physics"
-		local isNotTeamProp = entity:GetClass() == "prop_physics" and entity:GetNWInt("mw_melonTeam", -1) ~= playerTeam
-		if not ( isMainBuilding or isNotMelonOrPhys or isNotTeamProp ) then return end
+
+	local isMainBuilding = entity:GetClass() == "ent_melon_main_building"
+	local isNotMelonOrPhys = not(entity.Base == "ent_melon_base" or entity.Base ==  "ent_melon_prop_base" or entity.Base == "ent_melon_energy_base") and entity:GetClass() ~= "prop_physics"
+	local isNotTeamProp = entity:GetClass() == "prop_physics" and entity:GetNWInt("mw_melonTeam", -1) ~= playerTeam
+
+	if isMainBuilding or isNotMelonOrPhys or isNotTeamProp then
 		if IsValid( pl ) then
 			pl:PrintMessage( HUD_PRINTTALK, "== That's not a sellable entity! ==" )
 			sound.Play( "buttons/button2.wav", pl:GetPos(), 75, 100, 1 )
 		end
-		entity = nil
+		return
 	end
-	if entity == nil then return end
+
 	if entity:GetClass() == "prop_physics" or entity.gotHit or CurTime() - entity:GetCreationTime() >= 30 or ( entity.Base == "ent_melon_base" and entity.fired ~= false ) then --pregunta si NO se va a recivir el dinero de refund NULL ENTITY
 		MelonWars.teamCredits[playerTeam] = MelonWars.teamCredits[playerTeam] + entity.value * 0.25
 		for _, v in ipairs( player.GetAll() ) do
@@ -1132,7 +1140,6 @@ net.Receive( "SellEntity", function( _, pl )
 		end
 	end
 	sound.Play( "garrysmod/balloon_pop_cute.wav", pl:GetPos(), 75, 100, 1 )
-	-- local vPoint = Vector( 0, 0, 0 )
 	local effectdata = EffectData()
 	effectdata:SetOrigin( entity:GetPos() )
 	for i = 0, 5 do

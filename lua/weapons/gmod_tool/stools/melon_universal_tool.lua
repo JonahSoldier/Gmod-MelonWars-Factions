@@ -2154,7 +2154,7 @@ function TOOL:Think()
 				if (trace.Entity:GetNWInt("mw_melonTeam") == newTeam) then
 					net.Start("SellEntity")
 						net.WriteEntity(trace.Entity)
-						net.WriteInt(cvars.Number("mw_team"), 8)
+						net.WriteInt(cvars.Number("mw_team"), 4)
 					net.SendToServer()
 				end
 				ply.mw_sell = 0

@@ -31,6 +31,7 @@ function ENT:Initialize()
 
 	self.population = 3
 
+	self.useBBoxPhys = true
 	self:Setup()
 
 	construct.SetPhysProp( self:GetOwner() , self, 0, nil,  { GravityToggle = true, Material = "ice" } )

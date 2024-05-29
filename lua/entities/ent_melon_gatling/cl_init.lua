@@ -1,7 +1,7 @@
 include('shared.lua')
 
 function ENT:Draw()
-
+	self:DrawModel()
 	if (cvars.Number("mw_team") == self:GetNWInt("mw_melonTeam", -1)) then
 		render.SetMaterial( Material( "color" ) )
 	    --render.DrawBeam( self:WorldSpaceCenter(), self:GetNWVector("targetPos"), 1, 1, 1, Color( 0, 255, 0, 100 ) )

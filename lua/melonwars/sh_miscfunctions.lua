@@ -98,7 +98,7 @@ function MelonWars.canSpawn( unitIndex, attach, mwTeam, position, pl, attachEnt 
 
 	local units = (SERVER and MelonWars.teamUnits[mwTeam]) or pl.mw_units or 0
 
-	if units + MelonWars.units[unitIndex].population >= cvars.Number("mw_admin_max_units") then
+	if units + MelonWars.units[unitIndex].population > cvars.Number("mw_admin_max_units") then
 		pl:PrintMessage( HUD_PRINTTALK, "== Power max reached! ==" )
 		return false
 	end
@@ -149,4 +149,14 @@ function MelonWars.canSpawn( unitIndex, attach, mwTeam, position, pl, attachEnt 
 	end
 
 	return true
+end
+
+function MelonWars.sameTeam(team1, team2)
+	if (team1 == team2) then
+		return true
+	end
+	if (team1 == 0 or team2 == 0) then
+		return false
+	end
+	return MelonWars.teamGrid[team1][team2]
 end

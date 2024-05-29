@@ -30,6 +30,7 @@ function ENT:Initialize()
 	self.nextShot = CurTime()+3
 
 	self.population = 2
+	self.useBBoxPhys = true
 
 	self:Setup()
 

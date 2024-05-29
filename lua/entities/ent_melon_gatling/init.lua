@@ -7,7 +7,8 @@ function ENT:Initialize()
 
 	MelonWars.defaults ( self )
 
-	self.modelString = "models/props_phx/wheels/magnetic_large_base.mdl" --Physical model, doesn't get shown in this case
+	--self.modelString = "models/props_phx/wheels/magnetic_large_base.mdl" --Physical model, doesn't get shown in this case
+	self.modelString = "models/Mechanics/gears/gear12x24.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
 	self.speed = 100
 	self.spread = 10
@@ -15,7 +16,7 @@ function ENT:Initialize()
 	self.maxHP = 45
 	self.range = 250
 
-
+	--[[
 	--showing the actual model part
 	self.visualmodel = ents.Create( "prop_physics" )
 
@@ -26,10 +27,11 @@ function ENT:Initialize()
 	self.visualmodel:SetLocalAngles(Angle(0,0,0))
 	self.visualmodel:SetLocalPos( vector_origin )
 	self.visualmodel:SetColor( self.color )
-
 	self.visualmodel:Spawn()
 
 	self.visualmodel:SetCollisionGroup( COLLISION_GROUP_IN_VEHICLE )
+
+	--]]
 
 	--self:SetNoDraw( 1 ) -- Makes the actual *real* model invisible, so it just shows the gear thingy
 
@@ -50,13 +52,14 @@ function ENT:Initialize()
 
 	self.nextRecharge = CurTime()
 
+	self.useBBoxPhys = true
 	self:Setup()
 
 	construct.SetPhysProp( self:GetOwner() , self, 0, nil,  { GravityToggle = true, Material = "ice" } )
 end
 
 function ENT:ModifyColor()
-	self.visualmodel:SetColor(Color(self:GetColor().r/1.5, self:GetColor().g/1.5, self:GetColor().b/1.5, 255))
+	self:SetColor(Color(self:GetColor().r/1.5, self:GetColor().g/1.5, self:GetColor().b/1.5, 255))
 end
 
 function ENT:SlowThink ( ent )

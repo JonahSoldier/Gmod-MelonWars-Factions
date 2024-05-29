@@ -191,11 +191,15 @@ function ENT:Setup()
 		self:SetModel( self.modelString )
 	end
 
-	if self.sphereRadius == 0 then
+	if self.sphereRadius > 0 then
+		self:PhysicsInitSphere( self.sphereRadius, "slime" )
+	elseif self.useBBoxPhys then
+		self:PhysicsInit( SOLID_VPHYSICS )
+		local mins, maxs = self:GetPhysicsObject():GetAABB()
+		self:PhysicsInitBox( mins, maxs, "slime" )
+	else
 		self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics
 		self:SetSolid( SOLID_VPHYSICS )
-	else
-		self:PhysicsInitSphere( self.sphereRadius, "slime" )
 	end
 
 	self.phys = self:GetPhysicsObject()
@@ -453,7 +457,7 @@ function ENT:RemoveRallyPoints()
 	end
 end
 
-function ENT:SameTeam(ent) --TODO: Optimized version that takes teamindex as input instead.
+function ENT:SameTeam(ent)
 	local myTeam = self:GetNWInt("mw_melonTeam", 0)
 	local otherTeam = ent:GetNWInt("mw_melonTeam", 0)
 	if (myTeam == otherTeam) then
@@ -501,7 +505,7 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 		local ourTeam = ent:GetNWInt("mw_melonTeam", 0)
 		for _, v in ipairs( foundEnts ) do
 			local vTbl = v:GetTable()
-			if vTbl.Base == "ent_melon_base" and vTbl.targetable and not ent:SameTeam(v) then
+			if vTbl.Base == "ent_melon_base" and vTbl.targetable and not MelonWars.sameTeam(ourTeam, v:GetNWInt("mw_melonTeam", 0)) then
 				if (entTbl.careForWalls) then
 					local tr = util.TraceLine( {
 						start = pos,
@@ -532,7 +536,8 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 		if (entTbl.targetEntity == nil) then
 			for _, v in ipairs( foundEnts ) do
 				local vClass = v:GetClass()
-				if not( ourTeam == v:GetNWInt("mw_melonTeam", ourTeam) or ent:SameTeam(v) or string.StartWith( vClass, "ent_melonbullet_" ) ) then --si es de otro equipo
+				local vTeam = v:GetNWInt("mw_melonTeam", ourTeam)
+				if not( ourTeam == vTeam or MelonWars.sameTeam(ourTeam, vTeam) or string.StartWith( vClass, "ent_melonbullet_" ) ) then --si es de otro equipo
 					if (entTbl.chaseStance) then
 						if (vClass == "ent_melon_wall") then
 							if (entTbl.stuck > 15) then
@@ -540,13 +545,16 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 									entTbl.targetEntity = entTbl.barrier
 								else
 									entTbl.targetEntity = v
+									break
 								end
 							end
 						else
 							entTbl.targetEntity = v
+							break
 						end
 					else
 						entTbl.targetEntity = v
+						break
 					end
 				end
 			end
@@ -572,7 +580,7 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 			return ent:LoseTarget()
 		end
 		----------------------------------------porque es un aliado
-		if (ent:SameTeam(entTbl.targetEntity) or ent:SameTeam(entTbl.targetEntity)) then
+		if ent:SameTeam(entTbl.targetEntity) then
 			return ent:LoseTarget()
 		end
 		----------------------------------------porque está lejos (o muy cerca)
