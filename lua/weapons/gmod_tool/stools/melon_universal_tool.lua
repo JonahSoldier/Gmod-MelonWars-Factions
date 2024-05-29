@@ -1631,25 +1631,6 @@ local function MW_BeginSelection() -- Previously concommand.Add( "+mw_select", f
 	table.Empty( ply.foundMelons )
 end
 
-local function noEnemyNear( vector, teamIndex )
-	local foundEnts = ents.FindInSphere( vector, 300 )
-	local canBuild = true
-
-	for _, v in pairs( foundEnts ) do
-		if v.Base == "ent_melon_base" then
-			if v:GetNWInt( "mw_melonTeam", 0 ) ~= teamIndex then
-				if v:GetNWInt( "mw_melonTeam", 0 ) ~= 0 then
-					if not MelonWars.teamGrid[v:GetNWInt( "mw_melonTeam", 0 )][teamIndex] then
-						canBuild = false
-					end
-				end
-			end
-		end
-	end
-
-	return canBuild
-end
-
 function TOOL:LeftClick( tr )
 	if not CLIENT then return end
 	local pl = LocalPlayer()
@@ -1668,7 +1649,7 @@ function TOOL:LeftClick( tr )
 	if pl.mw_cooldown >= CurTime() - 0.1 then return end
 
 	local trace = self:GetOwner():GetEyeTrace( {
-	mask = MASK_SOLID + MASK_WATER
+		mask = MASK_SOLID + MASK_WATER
 	} )
 
 	pl.mw_cooldown = CurTime()
@@ -1742,7 +1723,7 @@ function TOOL:LeftClick( tr )
 		local cost = MelonWars.baseProps[prop_index].cost
 		if not cvars.Bool("mw_admin_playing") then return end
 		if not (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.isInRange(trace.HitPos, mw_melonTeam)) then return end
-		if not (cvars.Bool("mw_admin_allow_free_placing") or noEnemyNear(trace.HitPos, mw_melonTeam)) then return end
+		if not (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.noEnemyNear(trace.HitPos, mw_melonTeam)) then return end
 		if not (pl.mw_credits >= cost or not cvars.Bool("mw_admin_credit_cost")) then return end
 
 		if (cvars.Number("mw_admin_spawn_time") == 1) then
@@ -1937,10 +1918,6 @@ function TOOL:Think()
 	local vector = trace.HitPos - ply:GetPos()
 
 	if ply.mw_selecting then
-		--[[ Weird code to make the trace sorta act like there's a solid platform on the z level the selection started at:
-		 I can't find a way to calculate the length between the player's eye position and the point we're aiming to hit
-		 so I'm going to see if this really ghetto solution works and/or if it's laggy ]]
-		-- local targetpos = EyePos()
 
 		local specialTrace = util.TraceLine( {
 			start = ply:EyePos(),
