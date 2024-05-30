@@ -44,21 +44,16 @@ util.AddNetworkString( "BeginContraptionLoad" )
 util.AddNetworkString( "ContraptionLoad" )
 util.AddNetworkString( "RequestContraptionLoadToAssembler" )
 util.AddNetworkString( "RequestContraptionLoadToClient" )
-util.AddNetworkString( "ContraptionAutoValidate" )
-util.AddNetworkString( "ContraptionValidateClient" )
-util.AddNetworkString( "LegalizeContraption" )
 
 util.AddNetworkString( "MW_ServerControlUnit" )
 util.AddNetworkString( "MW_ClientControlUnit" )
 util.AddNetworkString( "MWControlShoot" )
 
-util.AddNetworkString( "MWBrute" )
-
 -- (Most of) JonahSoldier's network stuff
 util.AddNetworkString( "MWColourMod" )
 util.AddNetworkString( "SetMWConvar" )
 util.AddNetworkString( "MWReadyUp" )
-util.AddNetworkString( "MW_ClientModifySpawnTime" )
+util.AddNetworkString( "MW_ClientModifySpawnTime" ) --TODO: This needs to be handled on both client and server
 
 MelonWars = MelonWars or {}
 
@@ -67,7 +62,7 @@ include("melonwars/sh_miscfunctions.lua")
 
 AddCSLuaFile("melonwars/cl_worldrings.lua")
 
-net.Receive( "SetMWConvar", function( _, pl )
+net.Receive( "SetMWConvar", function( _, pl ) --TODO: See if there's a better way to do this.
 	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
 
 	if not pl:IsAdmin() or openPerms then return end
@@ -327,7 +322,7 @@ local function MW_Server_UpdateWater( team, credits )
 	MelonWars.teamCredits[team] = credits
 end
 
-net.Receive( "MW_SpawnUnit", function( _, pl ) --TODO: This requires substantial cleanup. "CanSpawnUnit" should probably be created as a shared function to make this all cleaner and consistent.
+net.Receive( "MW_SpawnUnit", function( _, pl )
 	local unit_index = net.ReadInt(16)
 	local _team = net.ReadInt(4)
 	local attach = net.ReadBool()
@@ -449,178 +444,6 @@ function MelonWars.spawnUnitAtPos( class, unit_index, pos, ang, cost, spawntime,
 	return newMarine
 end
 
-local function MW_CalculateContraptionValues( betadupetable ) --TODO: Is this even used?
-	local cost = 0
-	local power = 0
-
-	--  Verify entities
-	for _, v in pairs(betadupetable.Entities) do
-		if v.Class == "prop_physics" then
-			cost = cost + v.Cost
-		elseif string.StartWith(v.Class, "ent_melon_") then
-			local unit_data = MelonWars.units[mw_unit_ids[v.Class]]
-			if unit_data.welded_cost == -1 and (unit_data.contraptionPart == nil or unit_data.contraptionPart == false) then
-				return "A non weldable unit can't be part of a contraption!", 0, 0
-			else
-				cost = cost + unit_data.welded_cost
-				power = power + unit_data.population
-			end
-		end
-	end
-
-	--  Verify constraints
-	for _, v in pairs(betadupetable.Constraints) do
-		local entities = betadupetable.Entities
-		if v.Type == "Weld" then
-			local ent1isMelon = false
-			if string.StartWith( entities[v.Ent1].Class, "ent_melon_" ) then ent1isMelon = true end
-			local ent2isMelon = false
-			if string.StartWith( entities[v.Ent2].Class, "ent_melon_" ) then ent2isMelon = true end
-
-			if (not ent1isMelon and not ent2isMelon) then
-				constraint.Weld( entities[v.Ent1], entities[v.Ent2], v.Bone1, v.Bone2, v.forcelimit, v.nocollide, true )
-			elseif (ent1isMelon and ent2isMelon) then
-				--  Units can't be welded to other units
-				return "Units can't be welded to other units!", 0, 0
-			end
-
-		elseif v.Type == "Axis" then
-			local ent1isMelon = false
-			if string.StartWith( entities[v.Ent1].Class, "ent_melon_" ) then ent1isMelon = true end
-			local ent2isMelon = false
-			if string.StartWith( entities[v.Ent2].Class, "ent_melon_" ) then ent2isMelon = true end
-
-			if (not ent1isMelon or not ent2isMelon) then
-			else
-				--  Units can't be welded to other units
-				return "Units can't have Axis with other units!", 0, 0
-			end
-
-		elseif (v.Type == "Ballsocket") then
-			local ent1isMelon = false
-			if (string.StartWith(entities[v.Ent1].Class, "ent_melon_")) then ent1isMelon = true end
-			local ent2isMelon = false
-			if (string.StartWith(entities[v.Ent2].Class, "ent_melon_")) then ent2isMelon = true end
-
-			if (not ent1isMelon and not ent2isMelon) then
-			else
-				--  Units can't be welded to other units
-				return "Units can't have Ballsockets!", 0, 0
-			end
-
-		elseif (v.Type == "Slider") then
-			local ent1isMelon = false
-			if (string.StartWith(entities[v.Ent1].Class, "ent_melon_")) then ent1isMelon = true end
-			local ent2isMelon = false
-			if (string.StartWith(entities[v.Ent2].Class, "ent_melon_")) then ent2isMelon = true end
-
-			if (not ent1isMelon and not ent2isMelon) then
-			else
-				--  Units can't be welded to other units
-				return "Units can't have Sliders!", 0, 0
-			end
-
-		elseif (v.Type == "NoCollide") then
-			local ent1isMelon = false
-			if (string.StartWith(entities[v.Ent1].Class, "ent_melon_")) then ent1isMelon = true end
-			local ent2isMelon = false
-			if (string.StartWith(entities[v.Ent2].Class, "ent_melon_")) then ent2isMelon = true end
-
-			if (not ent1isMelon or not ent2isMelon) then
-			else
-				--  Units can't be welded to other units
-				return "Units can't have No Collide with other units!", 0, 0
-			end
-		end
-	end
-
-	return "success", cost, power
-end
-
-local function MW_GetBetaContraptionTable( dupetable )
-	local betadupetable = {}
-
-	-- Save Entities
-	betadupetable.Entities = {}
-
-	for k, v in pairs(dupetable.Entities) do
-		betadupetable.Entities[k] = {}
-		betadupetable.Entities[k].Class = v.Class
-		if (v.Class == "prop_physics") then
-			betadupetable.Entities[k].EntIndex = k
-			betadupetable.Entities[k].Angles = v.Angle
-			betadupetable.Entities[k].Pos = v.Pos
-			betadupetable.Entities[k].Model = v.Model
-			betadupetable.Entities[k].Cost = v.realvalue
-		elseif (string.StartWith(v.Class, "ent_melon_")) then
-			betadupetable.Entities[k].EntIndex = k
-			betadupetable.Entities[k].Angles = v.Angle
-			betadupetable.Entities[k].Pos = v.Pos
-		end
-	end
-
-	--  Save Constraints
-	betadupetable.Constraints = {}
-	for k, v in pairs(dupetable.Constraints) do
-		betadupetable.Constraints[k] = {}
-		betadupetable.Constraints[k].Type = v.Type
-		if (v.Type == "Weld") then
-			betadupetable.Constraints[k].Ent1 = v.Ent1:EntIndex()
-			betadupetable.Constraints[k].Ent2 = v.Ent2:EntIndex()
-			betadupetable.Constraints[k].Bone1 = v.Bone1
-			betadupetable.Constraints[k].Bone2 = v.Bone2
-			betadupetable.Constraints[k].forcelimit = v.forcelimit
-			betadupetable.Constraints[k].nocollide = v.nocollide
-		elseif (v.Type == "Axis") then
-			betadupetable.Constraints[k].Ent1 = v.Ent1:EntIndex()
-			betadupetable.Constraints[k].Ent2 = v.Ent2:EntIndex()
-			betadupetable.Constraints[k].Bone1 = v.Bone1
-			betadupetable.Constraints[k].Bone2 = v.Bone2
-			betadupetable.Constraints[k].LPos1 = v.LPos1
-			betadupetable.Constraints[k].LPos2 = v.LPos2
-			betadupetable.Constraints[k].forcelimit = v.forcelimit
-			betadupetable.Constraints[k].torquelimit = v.torquelimit
-			betadupetable.Constraints[k].friction = v.friction
-			betadupetable.Constraints[k].nocollide = v.nocollide
-			betadupetable.Constraints[k].LocalAxis = v.LocalAxis
-		elseif (v.Type == "Ballsocket") then
-			betadupetable.Constraints[k].Ent1 = v.Ent1:EntIndex()
-			betadupetable.Constraints[k].Ent2 = v.Ent2:EntIndex()
-			betadupetable.Constraints[k].Bone1 = v.Bone1
-			betadupetable.Constraints[k].Bone2 = v.Bone2
-			betadupetable.Constraints[k].forcelimit = v.forcelimit
-			betadupetable.Constraints[k].torquelimit = v.torquelimit
-			betadupetable.Constraints[k].nocollide = v.nocollide
-			betadupetable.Constraints[k].LPos = v.LPos
-		elseif (v.Type == "Slider") then
-			betadupetable.Constraints[k].Ent1 = v.Ent1:EntIndex()
-			betadupetable.Constraints[k].Ent2 = v.Ent2:EntIndex()
-			betadupetable.Constraints[k].Bone1 = v.Bone1
-			betadupetable.Constraints[k].Bone2 = v.Bone2
-			betadupetable.Constraints[k].LPos1 = v.LPos1
-			betadupetable.Constraints[k].LPos2 = v.LPos2
-			betadupetable.Constraints[k].width = v.width
-			betadupetable.Constraints[k].material = v.material
-		elseif (v.Type == "NoCollide") then
-			betadupetable.Constraints[k].Ent1 = v.Ent1:EntIndex()
-			betadupetable.Constraints[k].Ent2 = v.Ent2:EntIndex()
-			betadupetable.Constraints[k].Bone1 = v.Bone1
-			betadupetable.Constraints[k].Bone2 = v.Bone2
-		end
-	end
-
-	--  Data
-	betadupetable.Maxs = dupetable.Maxs
-	betadupetable.Mins = dupetable.Mins
-
-	local result, cost, power = MW_CalculateContraptionValues( betadupetable )
-
-	betadupetable.Cost = cost
-	betadupetable.Power = power
-
-	return betadupetable
-end
-
 net.Receive( "ContraptionSave", function( _, pl )
 	local name = net.ReadString()
 	local entity = net.ReadEntity()
@@ -637,18 +460,7 @@ net.Receive( "ContraptionSave", function( _, pl )
 	local dupetable = duplicator.Copy(entity)
 	duplicator.SetLocalPos( Vector(0,0,0) )
 
-	local dubJSON
-
-	if cvars.Bool("mw_admin_contraptions_beta") then
-		print("Saved contraption with the BETA method")
-		local betadupetable = MW_GetBetaContraptionTable( dupetable )
-
-		dubJSON = util.TableToJSON(betadupetable)
-		print(dubJSON)
-	else
-		print("Saved contraption with the CLASSIC method")
-		dubJSON = util.TableToJSON(dupetable)
-	end
+	local dubJSON = util.TableToJSON(dupetable)
 
 	local text = dubJSON
 	local compressed_text = util.Compress( text )
@@ -761,117 +573,6 @@ net.Receive( "ContraptionLoad", function( _, pl )
 
 	for _, v in pairs(paste) do
 		v:GetPhysicsObject():EnableMotion(true)
-	end
-
-	MelonWars.messageReceivingEntity = nil
-	MelonWars.messageReceivingState = "idle"
-	MelonWars.networkBuffer = ""
-end )
-
-net.Receive( "ContraptionAutoValidate", function( _, pl ) --TODO: Rewrite. Probably replace entirely.
-	local last = net.ReadBool()
-	local size = net.ReadInt(16)
-	local data = net.ReadData(size)
-	local name = net.ReadString()
-
-	MelonWars.networkBuffer = MelonWars.networkBuffer .. data
-
-	if not last then return end
-	local text = util.Decompress(MelonWars.networkBuffer)
-	local dupetable = util.JSONToTable( text )
-	-- local ent = MelonWars.messageReceivingEntity
-	-- print(MelonWars.networkBuffer) -- prints [
-	-- print(text) --  Returns the file properly.
-
-	-- PrintTable(dupetable) --  Sometimes this is a table and sometimes it's nil?????????
-
-	-- if (not istable(dupetable)) then --  Prints a list of the dupes that created the nil tables and the text that was sent.
-	-- 	print(name)
-	-- 	print(text)
-	-- end
-
-	--I'm pretty sure the thing that made this work got removed in one of Craft's refactoring passes. 
-	--Not a big deal, since it was a shit way of going about it anyway. This needs to be replaced.
-	local unitStatsValidation = util.JSONToTable(util.Decompress(file.Read("melonwars/validation/unitvalues.txt"))) -- hehehe this line of code is very long
-
-	for _, v in pairs(dupetable) do
-		if istable(v) then
-			for _, i in pairs(v) do
-				if (i.Base == "ent_melon_base") then
-					-- Validation for melon entities.
-					-- I could A: Reference a separate file with a list of all units and their default stats in it
-					-- or B: Do the same thing as I wrote in the comment for props.
-
-					local genericStatCheck = ents.Create(i.Class) -- should spawn and remove a melon entity. Use Mergetables or something here
-					genericStatCheck:Spawn()
-
-					genericStatCheck:Welded(genericStatCheck,genericStatCheck)
-					table.Merge( i, genericStatCheck:GetTable())
-
-					genericStatCheck:Remove()
-
-					for _, p in pairs(unitStatsValidation) do -- I feel like I'm violating some sort of coding convention by doing this
-						if i.Class == p.class then
-							if p.welded_cost == nil or p.welded_cost == -1 then
-								i.realvalue = p.cost
-							else
-								i.realvalue = p.welded_cost
-								i.speed = 0
-							end
-
-							if i.spawnDelay == nil then
-								-- This seems like a horrifically bad way to do this
-								-- but I can't find the 'correct' way.
-
-								local tableAdd = {}
-								tableAdd["spawnDelay"] = p.spawn_time
-								table.Add( i, tableAdd )
-							else
-								i.spawnDelay = p.spawn_time
-							end
-						end
-					end
-				end
-
-				-- For some reason almost every file tries to check some table with almost nothing in it
-				-- Class included, so I have to check if it's there first
-				if i.Class ~= nil and not string.StartWith( i.Class,"ent_melon" ) then
-					-- Spawns a prop and runs getmass on it to validate its price
-
-					local propCheck = ents.Create("prop_physics")
-					propCheck:SetModel(i.Model)
-					propCheck:Spawn()
-
-					i.realvalue = propCheck:GetPhysicsObject():GetMass()
-
-					propCheck:Remove()
-				end
-			end
-		end
-	end
-
-	-- tells melon wars to re-save the contraptions with the same name they had before, overwriting the old files.
-
-	local compressed_text = util.Compress(util.TableToJSON(dupetable))
-	if not compressed_text then compressed_text = util.TableToJSON(dupetable) end
-	local len = string.len( compressed_text )
-	local send_size = 60000
-	local parts = math.ceil( len / send_size )
-	local start = 0
-	net.Start( "BeginContraptionSaveClient" )
-		net.WriteString(name)
-		net.WriteEntity(pl)
-	net.Send(pl)
-	for i = 1, parts do
-		local endbyte = math.min( start + send_size, len )
-		size = endbyte - start
-		data = compressed_text:sub( start + 1, endbyte + 1 )
-		net.Start( "ContraptionSaveClient" )
-			net.WriteBool( i == parts )
-			net.WriteUInt( size, 16 )
-			net.WriteData( data, size )
-		net.Send(pl)
-		start = endbyte
 	end
 
 	MelonWars.messageReceivingEntity = nil
@@ -1092,43 +793,9 @@ net.Receive( "SellEntity", function( _, pl )
 	entity:Remove()
 end )
 
-net.Receive( "LegalizeContraption", function( _, pl )
-	local traceEntity = pl:GetEyeTrace().Entity
-	local mw_melonTeam = net.ReadInt( 8 )
+concommand.Add( "mw_reset_credits", function(ply)
+	if ply:IsValid() and not ply:IsAdmin() then return end
 
-	local mass = 0 --precio por masa
-
-	local entities = constraint.GetAllConstrainedEntities( traceEntity )
-	if not IsValid( traceEntity ) then return end
-	for _, ent in pairs( entities ) do
-		local c = ent:GetClass()
-		local phys = ent:GetPhysicsObject()
-		if not freeze and c == "prop_physics" and ent:GetNWInt("mw_melonTeam", -1) == -1 and IsValid( phys ) then
-			mass = mass + math.min( 1000, phys:GetMass() ) --max 1000 de vida
-		end
-	end
-	local massCostMultiplier = 10
-	local massHealthMultiplier = 1
-	if not ( MelonWars.teamCredits[mw_melonTeam] >= mass * massCostMultiplier or not cvars.Bool( "mw_admin_credit_cost" ) ) then return end
-	for _, ent in pairs( entities ) do
-		if string.StartWith( ent:GetClass(), "gmod_" ) or string.StartWith( ent:GetClass(), "prop_vehicle") then
-			ent:Remove()
-		else
-			if string.StartWith( ent:GetClass(), "ent_melon") then return end
-			ent:SetColor( MelonWars.teamColors[mw_melonTeam] )
-			ent:SetNWInt( "mw_melonTeam", mw_melonTeam )
-			ent:SetNWInt( "propHP", math.min( 1000, ent:GetPhysicsObject():GetMass() * massHealthMultiplier ) ) --max 1000 de vida
-			ent.realvalue = ent:GetPhysicsObject():GetMass() * massCostMultiplier
-		end
-	end
-	if not cvars.Bool( "mw_admin_credit_cost" ) then return end
-	MelonWars.teamCredits[mw_melonTeam] = MelonWars.teamCredits[mw_melonTeam] - mass * massCostMultiplier
-	net.Start( "MW_TeamCredits" )
-		net.WriteInt( MelonWars.teamCredits[mw_melonTeam], 32 )
-	net.Send( pl )
-end )
-
-concommand.Add( "mw_reset_credits", function()
 	local c = cvars.Number( "mw_admin_starting_credits" )
 	MelonWars.teamCredits = { c, c, c, c, c, c, c, c }
 	for _, v in ipairs( player.GetAll() ) do
@@ -1138,7 +805,9 @@ concommand.Add( "mw_reset_credits", function()
 	end
 end )
 
-concommand.Add( "mw_reset_power", function()
+concommand.Add( "mw_reset_power", function(ply)
+	if ply:IsValid() and not ply:IsAdmin() then return end
+
 	MelonWars.teamUnits = {0,0,0,0,0,0,0,0}
 
 	for _, v in ipairs( player.GetAll() ) do
@@ -1333,7 +1002,9 @@ net.Receive( "MW_Order", function( _, ply ) -- Previously concommand.Add( "mw_or
 	end
 end )
 
-concommand.Add( "mw_admin_reset_teams", function()
+concommand.Add( "mw_admin_reset_teams", function(ply)
+	if ply:IsValid() and not ply:IsAdmin() then return end
+
 	for i = 1, 8 do
 		MelonWars.teamGrid[i] = {}     -- create a new row
 		for j = 1, 8 do
@@ -1364,8 +1035,4 @@ net.Receive( "MWControlShoot", function()
 	local u = net.ReadEntity()
 	local pos = net.ReadVector()
 	u:Shoot( u, pos )
-end )
-
-net.Receive( "MWBrute", function( _, pl )
-	pl:Kill()
 end )

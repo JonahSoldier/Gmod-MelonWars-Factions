@@ -71,43 +71,6 @@ net.Receive( "ContraptionSaveClient", function()
 	MelonWars.networkBuffer = ""
 end )
 
-net.Receive( "ContraptionValidateClient", function()
-	local contrapFiles = file.Find("melonwars/contraptions/*.txt", "DATA")
-
-	for i = 1, table.Count(contrapFiles) do
-		timer.Simple( i * 0.1, function()
-			local name = string.gsub(contrapFiles[i], ".txt", "") -- Removes .txt from the name, because other parts of the code add it back in later
-
-			local text =  file.Read( "melonwars/contraptions/" .. contrapFiles[i], "DATA" )
-			local compressed_text = util.Compress(text)
-			if not compressed_text then compressed_text = text end
-
-			local len = string.len( compressed_text )
-			local send_size = 60000
-			local parts = math.ceil( len / send_size )
-			local start = 0
-
-			-- 29 contrap files aren't reaching the serverside function properly (Out of 52, my contraptions are being used for testing.)
-			-- ^^ I had a corrupted contraption file. It was hitting that then failing to do anything after it
-
-			for ii = 1, parts do
-				local endbyte = math.min( start + send_size, len )
-				local size = endbyte - start
-				local data = compressed_text:sub( start + 1, endbyte + 1 )
-				net.Start( "ContraptionAutoValidate" )
-					net.WriteBool( ii == parts )
-					net.WriteUInt( size, 16 )
-					net.WriteData( data, size )
-					net.WriteString(name)
-				net.SendToServer()
-
-				start = endbyte
-			end
-			print("Validated " .. tostring(i) .. " contraption files")
-		end)
-	end
-end )
-
 local function ResourcesChanged( dif )
 	local tool = LocalPlayer():GetTool()
 	if tool == nil then return end

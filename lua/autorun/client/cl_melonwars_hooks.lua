@@ -52,6 +52,7 @@ end)
 
 --TODO: Zone Alpha. Check what impact this has on performance.
 --GetConVar("mw_buildalpha_multiplier"):GetFloat()
+local mw_buildalpha_multiplier_cv = GetConVar("mw_buildalpha_multiplier")
 local outpostRingCol = Color(255, 255, 255, 50)
 hook.Add("PostDrawTranslucentRenderables", "MelonWars_DrawOutpostZones", function(depth, skybox)
 	local locPly = LocalPlayer()
@@ -71,6 +72,7 @@ hook.Add("PostDrawTranslucentRenderables", "MelonWars_DrawOutpostZones", functio
 		end
 	end
 
+	outpostRingCol.a = math.Clamp(50 * mw_buildalpha_multiplier_cv:GetFloat(), 0, 255)
 	render.FinishWorldRings(outpostRingCol)
 end)
 

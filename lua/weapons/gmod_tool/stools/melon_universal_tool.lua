@@ -48,8 +48,6 @@ local mw_admin_playing_cv = CreateConVar( "mw_admin_playing", "0", 8192, "If fal
 TOOL.ClientConVar[ "mw_admin_playing" ] = 1
 CreateConVar( "mw_admin_base_income", "25", 8192, "Amount of income from main buildings. (x2 for grand base)" )
 TOOL.ClientConVar[ "mw_admin_base_income" ] = 25
-local mw_admin_cutscene_cv = CreateConVar( "mw_admin_cutscene", "0", 8192, "Used in the singleplayer mode." )
-TOOL.ClientConVar[ "mw_admin_cutscene" ] = 0
 CreateConVar( "mw_admin_credit_cost", "0", 8192, "If false, units are free." )
 TOOL.ClientConVar[ "mw_admin_credit_cost" ] = 1
 CreateConVar( "mw_admin_bonusunits", "0", 8192, "Whether or not you can use some more poorly balanced units." )
@@ -1489,7 +1487,6 @@ function TOOL:MenuButton( pl, y, h, text, number )
 end
 
 function TOOL:Reload()
-	if cvars.Bool("mw_admin_cutscene") then return end
 	if not CLIENT then return end
 	local pl = LocalPlayer()
 	if pl.mw_frame ~= nil then return end
@@ -1531,11 +1528,6 @@ function TOOL:DrawToolScreen( width, height )
 	surface.SetDrawColor( 20, 20, 20 )
 	surface.DrawRect( 0, 0, width, height )
 
-	if mw_admin_cutscene_cv:GetBool() then
-		draw.SimpleText( "Toolgun Disabled", "DermaLarge", width / 2, height / 2, toolScreenTextCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-		return
-	end
-
 	-- Draw white text in middle
 	local action = mw_action_cv:GetInt() --LocalPlayer():GetInfoNum( "mw_action", 0 )
 	local textStrings = {"Selecting Units", "Spawning Units", "Spawning Base", "Spawning Prop", "Contraptions"}
@@ -1554,7 +1546,6 @@ function TOOL:Deploy()
 	self.disableKeyboard = false
 	self.ctrlPressed = false
 	self.canPlace = true
-	owner.cutsceneOpacity = 0
 	owner.chatTimer = 0
 	local _team = owner:GetInfoNum( "mw_team", 0 )
 	if not SERVER then return end
@@ -1730,7 +1721,6 @@ function TOOL:LeftClick( tr )
 	end
 
 	if IsValid( self:GetOwner().controllingUnit ) then return end
-	if mw_admin_cutscene_cv:GetBool() then return end
 	if pl.mw_cooldown >= CurTime() - 0.1 then return end
 
 	local trace = self:GetOwner():GetEyeTrace( {
@@ -1903,9 +1893,6 @@ function TOOL:LeftClick( tr )
 			net.Start( "MW_ServerControlUnit" )
 				net.WriteEntity( targetUnit )
 			net.SendToServer()
-		else
-			net.Start("MWBrute")
-			net.SendToServer()
 		end
 	end
 end
@@ -2004,30 +1991,11 @@ function TOOL:Think()
 	if plyTbl.chatTimer == nil then
 		plyTbl.chatTimer = 0
 	end
-	--[[
-	if ply.cutsceneOpacity == nil then
-		ply.cutsceneOpacity = 0
-	end
-	--]]
 	if self.canPlace == nil then
 		self.canPlace = false
 	end
 	if plyTbl.chatTimer > 0 then
-		--[[
-		if ply.cutsceneOpacity < 230 then
-			ply.cutsceneOpacity = ply.cutsceneOpacity + 2
-		end
-		--]]
 		plyTbl.chatTimer = plyTbl.chatTimer - 1
-	else
-		--[[
-		if ply.cutsceneOpacity > 0 then
-			ply.cutsceneOpacity = ply.cutsceneOpacity - 0.5
-			if ply.cutsceneOpacity < 0 then
-				ply.cutsceneOpacity = 0
-			end
-		end
-		--]]
 	end
 
 	if plyTbl.mw_action == 1 then
@@ -2502,21 +2470,7 @@ function TOOL:DrawHUD() --TODO: Refactor. This needs to be split up/reorganized 
 	local my = gui.MouseY() or 0
 	if (my == 0) then my = ScrH() / 2 end
 
-	--local cbx, cby = chat.GetChatBoxPos()
-	--local cbw, cbh = chat.GetChatBoxSize()
-
-	--[[
-	if (pl.cutsceneOpacity > 0) then
-		draw.RoundedBox( 5, cbx, cby + 30, cbw-30, cbh-80, Color(0,0,0,pl.cutsceneOpacity) )
-	end
-	--]]
-
-	if mw_admin_cutscene_cv:GetBool() then
-		surface.SetFont("DermaLarge")
-		surface.SetTextColor( 255, 255, 255, 150 )
-		surface.SetTextPos( mx-103, my-17 )
-		surface.DrawText( "Toolgun Disabled" )
-	elseif not mw_admin_playing_cv:GetBool() then
+	if not mw_admin_playing_cv:GetBool() then
 		surface.SetFont("DermaLarge")
 		surface.SetTextColor( 255, 255, 255, 255 )
 		surface.SetTextPos( mx-50, my-17 )
