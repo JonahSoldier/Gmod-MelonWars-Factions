@@ -24,7 +24,7 @@ CreateClientConVar( "mw_chosen_unit", "1", 0, false )
 TOOL.ClientConVar[ "mw_chosen_unit" ] = 1
 CreateClientConVar( "mw_unit_option_welded", "0", 0, true )
 TOOL.ClientConVar[ "mw_unit_option_welded" ] = 0
-CreateClientConVar( "mw_team", "1", 1, true )
+local mw_team_cv = CreateClientConVar( "mw_team", "1", 1, true )
 TOOL.ClientConVar[ "mw_team" ] = 1
 CreateClientConVar( "mw_contraption_name", "default", 0, false )
 TOOL.ClientConVar[ "mw_contraption_name" ] = "default"
@@ -44,11 +44,11 @@ CreateConVar( "mw_admin_move_any_team", "1", 8192, "If true, everyone can move a
 TOOL.ClientConVar[ "mw_admin_move_any_team" ] = 1
 CreateConVar( "mw_admin_allow_free_placing", "1", 8192, "If true, melons can be spawned anywhere." )
 TOOL.ClientConVar[ "mw_admin_allow_free_placing" ] = 1
-CreateConVar( "mw_admin_playing", "0", 8192, "If false, players can't play and income stops." )
+local mw_admin_playing_cv = CreateConVar( "mw_admin_playing", "0", 8192, "If false, players can't play and income stops." )
 TOOL.ClientConVar[ "mw_admin_playing" ] = 1
 CreateConVar( "mw_admin_base_income", "25", 8192, "Amount of income from main buildings. (x2 for grand base)" )
 TOOL.ClientConVar[ "mw_admin_base_income" ] = 25
-CreateConVar( "mw_admin_cutscene", "0", 8192, "Used in the singleplayer mode." )
+local mw_admin_cutscene_cv = CreateConVar( "mw_admin_cutscene", "0", 8192, "Used in the singleplayer mode." )
 TOOL.ClientConVar[ "mw_admin_cutscene" ] = 0
 CreateConVar( "mw_admin_credit_cost", "0", 8192, "If false, units are free." )
 TOOL.ClientConVar[ "mw_admin_credit_cost" ] = 1
@@ -82,7 +82,7 @@ TOOL.ClientConVar[ "mw_code" ] = 1
 CreateClientConVar( "mw_income_indicator", "1", 1, false )
 TOOL.ClientConVar[ "mw_income_indicator" ] = 1
 
-CreateClientConVar( "mw_action", "0", 0, true )
+local mw_action_cv = CreateClientConVar( "mw_action", "0", 0, true )
 TOOL.ClientConVar[ "mw_action" ] = 0
 
 -- Convars (End)
@@ -639,8 +639,9 @@ local function _CreatePanel()
 		label:SetText("Select Team:")
 
 		local selection = vgui.Create("DPanel", pl.panel)
-		if (cvars.Number("mw_team") ~= 0) then
-			selection:SetPos( 135 + cvars.Number( "mw_team" ) * 45, 145 )
+		local mwTeam = mw_team_cv:GetInt()
+		if not mwTeam == 0 then
+			selection:SetPos( 135 + mwTeam * 45, 145 )
 		else
 			selection:SetPos( 180, 210 )
 		end
@@ -1530,13 +1531,13 @@ function TOOL:DrawToolScreen( width, height )
 	surface.SetDrawColor( 20, 20, 20 )
 	surface.DrawRect( 0, 0, width, height )
 
-	if cvars.Bool( "mw_admin_cutscene" ) then
+	if mw_admin_cutscene_cv:GetBool() then
 		draw.SimpleText( "Toolgun Disabled", "DermaLarge", width / 2, height / 2, toolScreenTextCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		return
 	end
 
 	-- Draw white text in middle
-	local action = LocalPlayer():GetInfoNum( "mw_action", 0 )
+	local action = mw_action_cv:GetInt() --LocalPlayer():GetInfoNum( "mw_action", 0 )
 	local textStrings = {"Selecting Units", "Spawning Units", "Spawning Base", "Spawning Prop", "Contraptions"}
 	textStrings[944] = "Click on a Unit"
 
@@ -1729,7 +1730,7 @@ function TOOL:LeftClick( tr )
 	end
 
 	if IsValid( self:GetOwner().controllingUnit ) then return end
-	if GetConVar( "mw_admin_cutscene" ):GetBool() then return end
+	if mw_admin_cutscene_cv:GetBool() then return end
 	if pl.mw_cooldown >= CurTime() - 0.1 then return end
 
 	local trace = self:GetOwner():GetEyeTrace( {
@@ -1739,7 +1740,7 @@ function TOOL:LeftClick( tr )
 	pl.mw_cooldown = CurTime()
 	mw_melonTeam = pl:GetInfoNum("mw_team", 0)
 
-	local action = pl:GetInfoNum("mw_action", 0)
+	local action = mw_action_cv:GetInt() -- pl:GetInfoNum("mw_action", 0)
 	if action == 0 then
 		MW_BeginSelection()
 		pl.mw_selectTimer = CurTime()
@@ -1805,7 +1806,8 @@ function TOOL:LeftClick( tr )
 		if pl.mw_spawnTimer >= CurTime() - 0.1 then return end
 		local prop_index = pl:GetInfoNum("mw_chosen_prop", 0)
 		local cost = MelonWars.baseProps[prop_index].cost
-		if not cvars.Bool("mw_admin_playing") then return end
+		--if not cvars.Bool("mw_admin_playing") then return end
+		if not mw_admin_playing_cv:GetBool() then return end
 		if not (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.isInRange(trace.HitPos, mw_melonTeam)) then return end
 		if not (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.noEnemyNear(trace.HitPos, mw_melonTeam)) then return end
 		if not (pl.mw_credits >= cost or not cvars.Bool("mw_admin_credit_cost")) then return end
@@ -1991,15 +1993,16 @@ function TOOL:Think()
 	if not CLIENT then return end
 
 	local ply = LocalPlayer()
+	local plyTbl = ply:GetTable()
 	local trace = ply:GetEyeTrace()
 	local vector = trace.HitPos - ply:GetPos()
 
-	if ply.mw_selecting and self:MW_SelectionThink() then
+	if plyTbl.mw_selecting and self:MW_SelectionThink() then
 		return
 	end
 
-	if ply.chatTimer == nil then
-		ply.chatTimer = 0
+	if plyTbl.chatTimer == nil then
+		plyTbl.chatTimer = 0
 	end
 	--[[
 	if ply.cutsceneOpacity == nil then
@@ -2009,13 +2012,13 @@ function TOOL:Think()
 	if self.canPlace == nil then
 		self.canPlace = false
 	end
-	if ply.chatTimer > 0 then
+	if plyTbl.chatTimer > 0 then
 		--[[
 		if ply.cutsceneOpacity < 230 then
 			ply.cutsceneOpacity = ply.cutsceneOpacity + 2
 		end
 		--]]
-		ply.chatTimer = ply.chatTimer - 1
+		plyTbl.chatTimer = plyTbl.chatTimer - 1
 	else
 		--[[
 		if ply.cutsceneOpacity > 0 then
@@ -2027,41 +2030,41 @@ function TOOL:Think()
 		--]]
 	end
 
-	if ply.mw_action == 1 then
-		ply.propAngle = Vector( vector.x, vector.y, 0 ):Angle()
+	if plyTbl.mw_action == 1 then
+		plyTbl.propAngle = Vector( vector.x, vector.y, 0 ):Angle()
 		if ply:GetInfoNum( "mw_chosen_unit", 0 ) ~= 0 then
 			local unit = MelonWars.units[ply:GetInfoNum( "mw_chosen_unit", 0 )]
 			if unit and unit.angleSnap then
-				ply.propAngle = Angle( ply.propAngle.p, 180+math.Round(ply.propAngle.y / 90) * 90, ply.propAngle.r )
+				plyTbl.propAngle = Angle( plyTbl.propAngle.p, 180+math.Round(plyTbl.propAngle.y / 90) * 90, plyTbl.propAngle.r )
 			end
 		end
 	elseif cvars.Number("mw_prop_snap") == 1 then
-		ply.propAngle = Vector( vector.x, vector.y, 0 ):Angle()
-		ply.propAngle = Angle( ply.propAngle.p, math.Round(ply.propAngle.y / 45) * 45, ply.propAngle.r )
+		plyTbl.propAngle = Vector( vector.x, vector.y, 0 ):Angle()
+		plyTbl.propAngle = Angle( plyTbl.propAngle.p, math.Round(plyTbl.propAngle.y / 45) * 45, plyTbl.propAngle.r )
 	else
-		ply.propAngle = Vector( vector.x, vector.y, 0 ):Angle()
+		plyTbl.propAngle = Vector( vector.x, vector.y, 0 ):Angle()
 	end
 
-	local newTeam = cvars.Number( "mw_team" )
+	local newTeam = mw_team_cv:GetInt() --cvars.Number( "mw_team" )
 	local newColor = Color( 200, 200, 200, 255 )
 
-	if not ply.disableKeyboard then
+	if not plyTbl.disableKeyboard then
 		if input.IsKeyDown( KEY_R ) then
 			if self.rPressed == nil then
 				self.rPressed = false
 			end
 			if not self.rPressed then
 				self.rPressed = true
-				if ply.mw_frame ~= nil then
-					ply.mw_frame:Remove()
-					ply.mw_frame = nil
+				if plyTbl.mw_frame ~= nil then
+					plyTbl.mw_frame:Remove()
+					plyTbl.mw_frame = nil
 				end
 			end
 		else
 			self.rPressed = false
 		end
 
-		if ply.mw_action == 0 then
+		if plyTbl.mw_action == 0 then
 			if input.IsKeyDown( KEY_E ) then
 				if self.ePressed == nil then
 					self.ePressed = false
@@ -2122,7 +2125,7 @@ function TOOL:Think()
 						-- end
 					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_contraption_assembler" )) then
 						if (correctTeam) then
-							ply.selectedAssembler = tr.Entity
+							plyTbl.selectedAssembler = tr.Entity
 							self:MakeContraptionMenu()
 						end
 					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_energy_water_pump" )) then
@@ -2166,21 +2169,21 @@ function TOOL:Think()
 	else
 		newColor = Color(100,100,100,255)
 	end
-	ply.mw_hudColor = newColor
+	plyTbl.mw_hudColor = newColor
 
-	if (ply.mw_action == 5) then
+	if (plyTbl.mw_action == 5) then
 		if not input.IsMouseDown( MOUSE_LEFT ) then
-			ply.mw_sell = 0
+			plyTbl.mw_sell = 0
 		else
-			ply.mw_sell = ply.mw_sell + 1 / 100
-			if (ply.mw_sell > 1) then
+			plyTbl.mw_sell = plyTbl.mw_sell + 1 / 100
+			if (plyTbl.mw_sell > 1) then
 				if (trace.Entity:GetNWInt("mw_melonTeam") == newTeam) then
 					net.Start("SellEntity")
 						net.WriteEntity(trace.Entity)
-						net.WriteInt(cvars.Number("mw_team"), 4)
+						net.WriteInt(mw_team_cv:GetInt(), 4)  --cvars.Number("mw_team"), 4)
 					net.SendToServer()
 				end
-				ply.mw_sell = 0
+				plyTbl.mw_sell = 0
 			end
 		end
 	end
@@ -2192,11 +2195,11 @@ function TOOL:Think()
 		if not self.ctrlPressed then
 			self.ctrlPressed = true
 
-			if (istable(ply.foundMelons)) then
-			local count = table.Count(ply.foundMelons)
+			if (istable(plyTbl.foundMelons)) then
+			local count = table.Count(plyTbl.foundMelons)
 			if (count > 0) then
 				net.Start("MW_Stop")
-					for k, v in pairs(ply.foundMelons) do
+					for k, v in pairs(plyTbl.foundMelons) do
 						net.WriteEntity(v)
 					end
 				net.SendToServer()
@@ -2207,45 +2210,45 @@ function TOOL:Think()
 		self.ctrlPressed = false
 	end
 
-	if (ply.mw_spawnTimer == nil) then
-		ply.mw_spawnTimer = CurTime()
+	if (plyTbl.mw_spawnTimer == nil) then
+		plyTbl.mw_spawnTimer = CurTime()
 	end
-	if (ply.mw_selectTimer == nil) then
-		ply.mw_selectTimer = CurTime()
+	if (plyTbl.mw_selectTimer == nil) then
+		plyTbl.mw_selectTimer = CurTime()
 	end
-	if (ply.mw_cooldown == nil) then
-		ply.mw_cooldown = CurTime()
-	end
-
-	if (ply.mw_units == nil) then
-		ply.mw_units = 0
-	end
-	if (ply.mw_credits == nil) then
-		ply.mw_credits = 0
-	end
-	if (ply.mw_sell == nil) then
-		ply.mw_sell = 0
-	end
-	if (ply.mw_spawntime == nil) then
-		ply.mw_spawntime = CurTime()
+	if (plyTbl.mw_cooldown == nil) then
+		plyTbl.mw_cooldown = CurTime()
 	end
 
-	if (ply.mw_action == 1) then
+	if (plyTbl.mw_units == nil) then
+		plyTbl.mw_units = 0
+	end
+	if (plyTbl.mw_credits == nil) then
+		plyTbl.mw_credits = 0
+	end
+	if (plyTbl.mw_sell == nil) then
+		plyTbl.mw_sell = 0
+	end
+	if (plyTbl.mw_spawntime == nil) then
+		plyTbl.mw_spawntime = CurTime()
+	end
+
+	if (plyTbl.mw_action == 1) then
 		local newColor = MelonWars.teamColors[ply:GetInfoNum("mw_team", 0)]
 		local unit_index = ply:GetInfoNum("mw_chosen_unit", 0)
 		if unit_index > 0 and MelonWars.units[unit_index].offset ~= nil then
 			local offset = MelonWars.units[unit_index].offset
-			local xoffset = Vector(offset.x * (math.cos(ply.propAngle.y / 180 * math.pi)), offset.x * (math.sin(ply.propAngle.y / 180 * math.pi)),0)
-			local yoffset = Vector(offset.y * (-math.sin(ply.propAngle.y / 180 * math.pi)), offset.y * (math.cos(ply.propAngle.y / 180 * math.pi)),0)
+			local xoffset = Vector(offset.x * (math.cos(plyTbl.propAngle.y / 180 * math.pi)), offset.x * (math.sin(plyTbl.propAngle.y / 180 * math.pi)),0)
+			local yoffset = Vector(offset.y * (-math.sin(plyTbl.propAngle.y / 180 * math.pi)), offset.y * (math.cos(plyTbl.propAngle.y / 180 * math.pi)),0)
 			offset = xoffset + yoffset + Vector(0,0,offset.z)
-			local ang = ply.propAngle + MelonWars.units[unit_index].angle
+			local ang = plyTbl.propAngle + MelonWars.units[unit_index].angle
 			if (MelonWars.units[unit_index].normalAngle) then
 				ang = trace.HitNormal:Angle() + MelonWars.units[unit_index].angle
 			end
 
 			MW_UpdateGhostEntity(MelonWars.units[unit_index].model, trace.HitPos, trace.HitNormal * 5+offset, ang, newColor, MelonWars.units[unit_index].energyRange, trace.HitPos)
 		end
-	elseif (ply.mw_action == 3) then
+	elseif (plyTbl.mw_action == 3) then
 		local newColor = MelonWars.teamColors[ply:GetInfoNum("mw_team", 0)]
 		-- local modeltable = list.Get( "WallModels" )
 		local prop_index = ply:GetInfoNum("mw_chosen_prop", 0)
@@ -2253,19 +2256,19 @@ function TOOL:Think()
 		if (cvars.Bool("mw_prop_offset") == true) then
 			offset = MelonWars.baseProps[prop_index].offset
 			--offset:Rotate( ply.propAngle )
-			local xoffset = Vector(offset.x * (math.cos(ply.propAngle.y / 180 * math.pi)), offset.x * (math.sin(ply.propAngle.y / 180 * math.pi)),0)
-			local yoffset = Vector(offset.y * (-math.sin(ply.propAngle.y / 180 * math.pi)), offset.y * (math.cos(ply.propAngle.y / 180 * math.pi)),0)
+			local xoffset = Vector(offset.x * (math.cos(plyTbl.propAngle.y / 180 * math.pi)), offset.x * (math.sin(plyTbl.propAngle.y / 180 * math.pi)),0)
+			local yoffset = Vector(offset.y * (-math.sin(plyTbl.propAngle.y / 180 * math.pi)), offset.y * (math.cos(plyTbl.propAngle.y / 180 * math.pi)),0)
 			offset = xoffset + yoffset + Vector(0,0,offset.z)
 		else
 			offset = Vector(0,0,MelonWars.baseProps[prop_index].offset.z)
 		end
-		MW_UpdateGhostEntity (MelonWars.baseProps[prop_index].model, ply:GetEyeTrace().HitPos, Vector(0,0,1) + offset, ply.propAngle + MelonWars.baseProps[prop_index].angle, newColor, 0, trace.HitPos, MelonWars.units[prop_index].defenseRange)
+		MW_UpdateGhostEntity (MelonWars.baseProps[prop_index].model, ply:GetEyeTrace().HitPos, Vector(0,0,1) + offset, plyTbl.propAngle + MelonWars.baseProps[prop_index].angle, newColor, 0, trace.HitPos, MelonWars.units[prop_index].defenseRange)
 	else
-		if IsValid(ply.GhostEntity) then
-			ply.GhostEntity:Remove()
+		if IsValid(plyTbl.GhostEntity) then
+			plyTbl.GhostEntity:Remove()
 		end
-		if IsValid(ply.GhostSphere) then
-			ply.GhostSphere:Remove()
+		if IsValid(plyTbl.GhostSphere) then
+			plyTbl.GhostSphere:Remove()
 		end
 	end
 end
@@ -2339,11 +2342,11 @@ local function StartBuildingContraption( assembler, _file, cost, power )
 	if cvars.Bool("mw_admin_credit_cost") then
 		local newCredits = locPly.mw_credits-locPly.contrapCost
 		net.Start("MW_UpdateServerInfo")
-			net.WriteInt(cvars.Number("mw_team"), 8)
+			net.WriteInt(mw_team_cv:GetInt(), 8)
 			net.WriteInt(newCredits, 32)
 		net.SendToServer()
 		net.Start("MW_UpdateClientInfo")
-			net.WriteInt(cvars.Number("mw_team"), 8)
+			net.WriteInt(mw_team_cv:GetInt(), 8)
 		net.SendToServer()
 	end
 
@@ -2471,7 +2474,7 @@ function TOOL:MakeContraptionMenu()
 	end
 end
 
-function TOOL:DrawHUD()
+function TOOL:DrawHUD() --TODO: Refactor. This needs to be split up/reorganized at least a little bit, since it's a giant 400 line function
 	if game.SinglePlayer() then
 		local w = 550
 		local h = 320
@@ -2499,8 +2502,8 @@ function TOOL:DrawHUD()
 	local my = gui.MouseY() or 0
 	if (my == 0) then my = ScrH() / 2 end
 
-	local cbx, cby = chat.GetChatBoxPos()
-	local cbw, cbh = chat.GetChatBoxSize()
+	--local cbx, cby = chat.GetChatBoxPos()
+	--local cbw, cbh = chat.GetChatBoxSize()
 
 	--[[
 	if (pl.cutsceneOpacity > 0) then
@@ -2508,12 +2511,12 @@ function TOOL:DrawHUD()
 	end
 	--]]
 
-	if (GetConVar( "mw_admin_cutscene" ):GetBool()) then
+	if mw_admin_cutscene_cv:GetBool() then
 		surface.SetFont("DermaLarge")
 		surface.SetTextColor( 255, 255, 255, 150 )
 		surface.SetTextPos( mx-103, my-17 )
 		surface.DrawText( "Toolgun Disabled" )
-	elseif (not cvars.Bool("mw_admin_playing")) then
+	elseif not mw_admin_playing_cv:GetBool() then
 		surface.SetFont("DermaLarge")
 		surface.SetTextColor( 255, 255, 255, 255 )
 		surface.SetTextPos( mx-50, my-17 )
@@ -2521,7 +2524,7 @@ function TOOL:DrawHUD()
 		draw.DrawText( "R: Open menu", "DermaLarge", x + w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
 	else
 		local pos = 1
-		local teamColor = cvars.Number("mw_team")
+		local teamColor = mw_team_cv:GetInt()
 		local size = 50
 		for i = 1, 8 do
 			if (MelonWars.teamGrid[i][teamColor] == true) then
@@ -2535,7 +2538,7 @@ function TOOL:DrawHUD()
 			draw.DrawText( "Allies:", "DermaLarge", x-40, y-size-32, color_white, TEXT_ALIGN_CENTER )
 		end
 
-		pl.mw_action = cvars.Number("mw_action")
+		pl.mw_action = mw_action_cv:GetInt()
 
 		local unit_id = cvars.Number("mw_chosen_unit")
 
@@ -2598,8 +2601,9 @@ function TOOL:DrawHUD()
 			draw.DrawText( "RMB: Cancel", "DermaLarge", x + w-10, y-60, color_white, TEXT_ALIGN_RIGHT )
 		elseif (pl.mw_action == 1) then --spawning
 			local teamColor = Color(100,100,100,255)
-			if (cvars.Number("mw_team") ~= 0) then
-				teamColor = MelonWars.teamColors[cvars.Number("mw_team")]
+			local mwTeam = mw_team_cv:GetInt()
+			if mwTeam ~= 0 then
+				teamColor = MelonWars.teamColors[mwTeam]
 			end
 			if (unit_id > 0) then
 				local w = 300
@@ -2715,7 +2719,7 @@ function TOOL:DrawHUD()
 			draw.DrawText( "Cost: " .. MelonWars.baseProps[prop_id].cost, "DermaLarge", x + 30, y + 130, color_white, TEXT_ALIGN_LEFT )
 			draw.DrawText( "Water: " .. tostring(pl.mw_credits), "DermaLarge", x + 30, y + 180, color_white, TEXT_ALIGN_LEFT ) -- changed
 		elseif pl.mw_action == 4 then
-			local teamColor = MelonWars.teamColors[cvars.Number("mw_team")] -- self:GetOwner().mw_hudColor
+			local teamColor = MelonWars.teamColors[mw_team_cv:GetInt()] -- self:GetOwner().mw_hudColor
 			local w = 300
 			local h = 150
 			local x = ScrW() - w
@@ -2733,7 +2737,7 @@ function TOOL:DrawHUD()
 			draw.DrawText( "Water: " .. tostring(pl.mw_credits), "DermaLarge", x + 30, y + 30, color_white, TEXT_ALIGN_LEFT ) -- changed
 			draw.DrawText( "Power: " .. tostring(pl.mw_units) .. " / " .. tostring(cvars.Number("mw_admin_max_units")), "DermaLarge", x + 30, y + 70, color_white, TEXT_ALIGN_LEFT ) -- changed
 		elseif pl.mw_action == 5 then
-			local teamColor = MelonWars.teamColors[cvars.Number("mw_team")] -- pl.mw_hudColor -- changed
+			local teamColor = MelonWars.teamColors[mw_team_cv:GetInt()] -- pl.mw_hudColor -- changed
 			local w = 160
 			local h = 30
 			local x = ScrW()
@@ -2751,7 +2755,7 @@ function TOOL:DrawHUD()
 			draw.RoundedBox( 10, x-300+10, y-140, 300-20, 130, Color(0,0,0,230) )
 			draw.DrawText( "Water: " .. tostring(pl.mw_credits), "DermaLarge", x-270, y-100, color_white, TEXT_ALIGN_LEFT )
 		elseif pl.mw_action == 6 then
-			local teamColor = MelonWars.teamColors[cvars.Number("mw_team")]--pl.mw_hudColor -- changed
+			local teamColor = MelonWars.teamColors[mw_team_cv:GetInt()]--pl.mw_hudColor -- changed
 			local w = 300
 			local h = 150
 			local x = ScrW() - w
