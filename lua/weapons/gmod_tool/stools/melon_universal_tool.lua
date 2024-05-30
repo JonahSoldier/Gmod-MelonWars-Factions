@@ -88,12 +88,11 @@ TOOL.ClientConVar[ "mw_action" ] = 0
 -- Convars (End)
 
 -- MelonWars.teamColors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
-local button_energy_color = Color(255, 255, 80)
-local button_barrack_color = Color(200, 255, 255)
+--local button_energy_color = Color(255, 255, 80)
+--local button_barrack_color = Color(200, 255, 255)
 local orangeColor = Color( 255, 100, 0, 255 )
 local color_white = color_white
 local color_black = color_black
--- { UNIT INFO
 
 local IncomeIndicatorClass = {}
 IncomeIndicatorClass.time = 0
@@ -119,6 +118,7 @@ local incomeIndicators = {
 }
 local currentIncomeIndicator = 1
 
+local unitCount = MelonWars.unitCount
 local firstBuilding = MelonWars.unitlist_firstBuilding
 local firstEnergy = MelonWars.unitlist_firstEnergy
 local firstContraption = MelonWars.unitlist_firstContraption
@@ -1609,14 +1609,17 @@ function TOOL:RightClick( tr )
 	locPly.mw_cooldown = CurTime()
 end
 
+-- SELECTION CODE: ----------------------------------
+
 local function MW_BeginSelection() -- Previously concommand.Add( "+mw_select", function( ply )
 	if not CLIENT then return end
 
 	local ply = LocalPlayer()
 	ply.mw_selecting = true
+	local eyePos = ply:EyePos()
 	local trace = util.TraceLine( {
-		start = ply:EyePos(),
-		endpos = ply:EyePos() + ply:EyeAngles():Forward() * 10000,
+		start = eyePos,
+		endpos = eyePos + ply:EyeAngles():Forward() * 10000,
 		filter = function( ent ) if ( ent:GetClass() ~= "player" ) then return true end end,
 		mask = MASK_SOLID + MASK_WATER
 	} )
@@ -1630,6 +1633,87 @@ local function MW_BeginSelection() -- Previously concommand.Add( "+mw_select", f
 
 	table.Empty( ply.foundMelons )
 end
+
+local function MW_FinishSelection() -- Previously concommand.Add( "-mw_select", function( ply )
+	if not CLIENT then return end
+
+	sound.Play( "buttons/lightswitch2.wav", LocalPlayer():GetPos(), 50, 80, 1 )
+	LocalPlayer().mw_selecting = false
+end
+
+function TOOL:MW_SelectionThink() --This might be a little jank because I wrote it in ~2020. It works properly so I don't feel the need to rewrite it.
+	local ply = LocalPlayer()
+	local eyePos = ply:EyePos()
+	local eyeForwards = ply:EyeAngles():Forward()
+	local specialTrace = util.TraceLine( {
+		start = eyePos,
+		endpos = eyePos + eyeForwards * 10000,
+		filter = function( ent ) if ( ent:GetClass() ~= "player" ) then return true end end,
+		mask = MASK_SOLID + MASK_WATER
+	} )
+
+	local desiredZ = ply.mw_selectionStartingPoint[3]
+	local actualZ = specialTrace.HitPos[3]
+	local eyeZ = eyePos[3]
+	local finalPosition
+
+	if desiredZ < eyeZ and actualZ < desiredZ then
+		local fraction = ( eyeZ - desiredZ ) / ( eyeZ - actualZ ) -- Distance to desired z as fraction of the whole trace's length
+		local length = 10000 * specialTrace.Fraction --The trace's length.
+		finalPosition = eyePos + ( eyeForwards * (fraction * length) )
+	else
+		finalPosition = specialTrace.HitPos
+	end
+
+	ply.mw_selectionEndingPoint = ( ply.mw_selectionEndingPoint * 9 + finalPosition ) / 10
+
+	if input.IsMouseDown( MOUSE_LEFT ) then return true end
+
+	self:DoSelection( ply.mw_selectionStartingPoint, finalPosition )
+	MW_FinishSelection()
+	ply.mw_selecting = false
+end
+
+function TOOL:DoSelection(startingPos, endingPos)
+	local center = (startingPos + endingPos) / 2
+	local radius = (startingPos - endingPos):Length() / 2
+
+	--local foundEntities = {}
+	local locPly = LocalPlayer()
+
+	if locPly.foundMelons and not locPly:KeyDown(IN_SPEED) then
+		table.Empty(locPly.foundMelons)
+	end
+
+	locPly.lastSelectionTime = locPly.lastSelectionTime or CurTime()
+
+	local _team = locPly:GetInfoNum("mw_team", -2)
+
+	locPly.mw_selectionID = locPly.mw_selectionID or 0
+
+	locPly.mw_selectionID = ( locPly.mw_selectionID + 1 ) % 255
+
+	local clickedUnit = locPly:GetEyeTrace().Entity
+	local doubleClick = locPly.lastSelectionTime + 0.3 > CurTime() and IsValid( clickedUnit )
+
+	radius = (doubleClick and 300) or radius
+	foundEntities = MelonWars.selectionCylinder(center, radius, _team, clickedUnit, doubleClick)
+
+	net.Start("MW_RequestSelection")
+		net.WriteUInt(locPly.mw_selectionID, 8)
+		net.WriteVector(center)
+		net.WriteFloat(radius)
+		net.WriteEntity(clickedUnit)
+		net.WriteBool(doubleClick)
+	net.SendToServer()
+
+	locPly.lastSelectionTime = CurTime()
+
+	locPly.foundMelons = table.Copy(foundEntities)
+end
+
+-- END OFSELECTION CODE ----------------------------------
+
 
 function TOOL:LeftClick( tr )
 	if not CLIENT then return end
@@ -1903,13 +1987,6 @@ local function MW_UpdateGhostEntity(model, pos, offset, angle, newColor, ghostSp
 	end
 end
 
-local function MW_FinishSelection() -- Previously concommand.Add( "-mw_select", function( ply )
-	if not CLIENT then return end
-
-	sound.Play( "buttons/lightswitch2.wav", LocalPlayer():GetPos(), 50, 80, 1 )
-	LocalPlayer().mw_selecting = false
-end
-
 function TOOL:Think()
 	if not CLIENT then return end
 
@@ -1917,39 +1994,8 @@ function TOOL:Think()
 	local trace = ply:GetEyeTrace()
 	local vector = trace.HitPos - ply:GetPos()
 
-	if ply.mw_selecting then
-
-		local specialTrace = util.TraceLine( {
-			start = ply:EyePos(),
-			endpos = ply:EyePos() + ply:EyeAngles():Forward() * 10000,
-			filter = function( ent ) if ( ent:GetClass() ~= "player" ) then return true end end,
-			mask = MASK_SOLID + MASK_WATER
-		} )
-
-		local desiredZ = ply.mw_selectionStartingPoint[3]
-		local actualZ = specialTrace.HitPos[3]
-		local eyeZ = ply:EyePos()[3]
-		local processedTrace = ply:EyePos()
-
-		if desiredZ < eyeZ and actualZ < desiredZ then
-			local fraction = ( eyeZ - desiredZ ) / ( eyeZ - actualZ ) -- Distance to desired z as fraction of the whole trace's length
-			processedTrace = processedTrace + ( ply:EyeAngles():Forward() * fraction * specialTrace.StartPos:Distance( specialTrace.HitPos ) )
-		else
-			-- Not sure if I want the commented stuff, it might in some situations make doing some things a bit easier, and it hasn't bothered me or anyone else yet that it behaves this way
-			-- if(actualZ>desiredZ) then
-			--	 processedTrace = Vector(specialTrace.HitPos[1], specialTrace.HitPos[2], desiredZ)
-			-- else
-				processedTrace = specialTrace.HitPos
-			-- end
-		end
-
-		ply.mw_selectionEndingPoint = ( ply.mw_selectionEndingPoint * 9 + processedTrace ) / 10
-
-		if input.IsMouseDown( MOUSE_LEFT ) then return end
-
-		self:DoSelection( ply.mw_selectionStartingPoint, processedTrace )
-		MW_FinishSelection()
-		ply.mw_selecting = false
+	if ply.mw_selecting and self:MW_SelectionThink() then
+		return
 	end
 
 	if ply.chatTimer == nil then
@@ -2221,131 +2267,6 @@ function TOOL:Think()
 		if IsValid(ply.GhostSphere) then
 			ply.GhostSphere:Remove()
 		end
-	end
-end
-
-function TOOL:DoSelection(startingPos, endingPos)
-	local center = (startingPos + endingPos) / 2;
-	local radius = (startingPos-endingPos):Length() / 2
-
-	local foundEntities = {}
-	local allFoundEntities = {}
-	local typeSelect = nil
-	local locPly = LocalPlayer()
-
-	if (locPly.foundMelons ~= nil) then
-		if (not locPly:KeyDown(IN_SPEED)) then
-			table.Empty(locPly.foundMelons)
-		end
-	end
-
-	if (locPly.lastSelectionTime == nil) then
-		locPly.lastSelectionTime = CurTime()
-	end
-
-	local _team = locPly:GetInfoNum("mw_team", -2)
-
-	if (locPly.mw_selectionID == nil) then
-		locPly.mw_selectionID = 0
-	end
-
-	locPly.mw_selectionID = ( locPly.mw_selectionID + 1 ) % 255
-
-	local clickedUnit = locPly:GetEyeTrace().Entity
-
-	if locPly.lastSelectionTime + 0.3 > CurTime() and IsValid( clickedUnit ) then
-		if string.StartWith(clickedUnit:GetClass(),"ent_melon_") then
-			allFoundEntities = ents.FindInSphere( center, 300 )
-			net.Start("MW_RequestSelection")
-				net.WriteInt(locPly.mw_selectionID, 20)
-				net.WriteString(clickedUnit:GetClass())
-				net.WriteVector(center)
-				net.WriteFloat(300)
-			net.SendToServer()
-			typeSelect = clickedUnit:GetClass()
-		end
-	else
-		if radius > 15 then
-			local heightTrace = util.TraceLine( {
-				start = center,
-				endpos = center + Vector(0,0,2000),
-				filter = function( ent ) if ( ent:GetClass() == "prop_physics" ) then return true end end,
-				mask = MASK_SOLID + MASK_WATER
-			} )
-
-			local depthTrace = util.TraceLine( {
-				start = center,
-				endpos = center - Vector(0,0,2000),
-				filter = function( ent ) if ( ent:GetClass() == "prop_physics" ) then return true end end,
-				mask = MASK_SOLID + MASK_WATER
-			} )
-
-			local depth = depthTrace.HitPos:Distance(center)
-			local height = heightTrace.HitPos:Distance(center) -- Using the normal distance function is a bit more computationally expensive but hopefully this shouldn't be bad enough to be an issue
-
-			if depth < 25 then depth = 25 end
-			if height < 25 then height = 25 end
-
-
-			if clickedUnit:GetClass() == "ent_melon_jetpack" then
-				allFoundEntities = ents.FindInBox(center - Vector(radius,radius,50), center + Vector(radius,radius,50) )
-			else
-				allFoundEntities = ents.FindInBox(center - Vector(radius,radius,depth), center + Vector(radius,radius,height) )
-			end
-
-			local xCoord, yCoord, zCoord = center:Unpack()
-			local processedCenter = Vector(xCoord, yCoord, 0) -- probably a better way to do this, I tried multiplying by a vector but that broke the code
-
-			for k, v in pairs(allFoundEntities) do
-				local xCoord2, yCoord2, zCoord2 = v:GetPos():Unpack()
-				local processedPosition = Vector(xCoord2, yCoord2, 0)
-				if processedPosition:DistToSqr( processedCenter ) > radius * radius then -- makes sure we select in just a cylinder, not a box.
-					table.remove( allFoundEntities, k )
-				end
-			end
-
-			-- allFoundEntities = ents.FindInSphere( center, radius )
-			net.Start("MW_RequestSelection")
-				net.WriteInt(locPly.mw_selectionID, 20)
-				net.WriteString("nil")
-				net.WriteVector(center)
-				net.WriteFloat(radius)
-				net.WriteEntity(clickedUnit)
-			net.SendToServer()
-		else
-			-- print("The network thing should've run here")
-			if clickedUnit.Base == "ent_melon_base" then
-				table.Empty(allFoundEntities)
-				table.insert(allFoundEntities, 1, hitEnt)
-			else
-				allFoundEntities = ents.FindInSphere( center, 10 )
-				radius = 15
-			end
-
-			net.Start("MW_RequestSelection")
-				net.WriteInt(locPly.mw_selectionID, 20)
-				net.WriteString("nil")
-				net.WriteVector(center)
-				net.WriteFloat(radius)
-				net.WriteEntity(clickedUnit)
-			net.SendToServer()
-		end
-	end
-
-	locPly.lastSelectionTime = CurTime()
-
-	for _, v in ipairs(allFoundEntities) do
-		if (cvars.Bool("mw_admin_move_any_team", false) or v:GetNWInt("mw_melonTeam", -1) == locPly:GetInfoNum("mw_team", -2)) then
-			if (v:GetClass() ~= "ent_melon_zone") then
-				if (typeSelect == nil or typeSelect == v:GetClass()) then
-					table.insert( foundEntities, v )
-				end
-			end
-		end
-	end
-
-	if (istable(foundEntities)) then
-		locPly.foundMelons = table.Copy(foundEntities)
 	end
 end
 

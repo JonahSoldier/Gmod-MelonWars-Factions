@@ -36,6 +36,7 @@ end
 
 local unitCount = 88
 MelonWars.units = {}
+MelonWars.unitCount = 88
 local u = nil
 for i = 1, unitCount do
 	MelonWars.units[i] = Unit()

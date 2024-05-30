@@ -160,3 +160,74 @@ function MelonWars.sameTeam(team1, team2)
 	end
 	return MelonWars.teamGrid[team1][team2]
 end
+
+local vec2000 = Vector(0,0,2000)
+function MelonWars.selectionCylinder(pos, radius, mwTeam, hitEnt, isTypeSelect)
+	local foundEnts = {}
+
+	local entClass = hitEnt:GetClass()
+
+	if radius > 15 then
+		local allFoundEntities = {}
+		local heightTrace = util.TraceLine( {
+			start = pos,
+			endpos = pos + vec2000,
+			filter = function( ent ) if ( ent:GetClass() == "prop_physics" ) then return true end end,
+			mask = MASK_SOLID + MASK_WATER
+		} )
+
+		local depthTrace = util.TraceLine( {
+			start = pos,
+			endpos = pos - vec2000,
+			filter = function( ent ) if ( ent:GetClass() == "prop_physics" ) then return true end end,
+			mask = MASK_SOLID + MASK_WATER
+		} )
+
+		local depth = 2000 * depthTrace.Fraction
+		local height = 2000 * heightTrace.Fraction
+
+		depth = math.max(25, depth)
+		height = math.max(25, height)
+
+		if entClass == "ent_melon_jetpack" then --TODO: Replace with non-hardcoded version.
+			allFoundEntities = ents.FindInBox(pos - Vector(radius,radius,50), pos + Vector(radius,radius,50) )
+		else
+			allFoundEntities = ents.FindInBox(pos - Vector(radius,radius,depth-1), pos + Vector(radius,radius,height-1) )
+		end
+
+		local processedCentre = Vector(pos:Unpack())
+		processedCentre[3] = 0
+
+		for i, v in ipairs(allFoundEntities) do
+			local processedPosition = Vector( v:GetPos():Unpack() )
+			processedPosition[3] = 0
+			if processedPosition:DistToSqr(processedCentre) < radius ^ 2 then -- makes sure we select in just a cylinder, not a box.
+				table.insert(foundEnts, v)
+			end
+		end
+	else
+		--We will figure this out later.
+		if hitEnt.Base == "ent_melon_base" then
+			table.insert(foundEnts, hitEnt)
+		else
+			foundEnts = ents.FindInSphere( pos, 10 )
+		end
+	end
+
+	local moveAnyTeam =  cvars.Bool( "mw_admin_move_any_team", false )
+
+	for i = #foundEnts, 1, -1 do
+		local v = foundEnts[i]
+		local vClass = v:GetClass()
+
+		classCheck = string.StartWith( vClass, "ent_melon_" ) --TODO: This seems like a bad solution.
+		canMove = moveAnyTeam or v:GetNWInt( "mw_melonTeam", -1 ) == mwTeam
+		notZone = vClass ~= "ent_melon_zone"
+		typeSelectCheck = not isTypeSelect or vClass == entClass
+		if not(classCheck and canMove and notZone and typeSelectCheck and v:IsValid()) then
+			table.remove( foundEnts, i )
+		end
+	end
+
+	return foundEnts
+end

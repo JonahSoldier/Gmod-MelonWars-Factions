@@ -221,77 +221,19 @@ net.Receive( "MW_SelectContraption", function( _, pl )
 end )
 
 net.Receive( "MW_RequestSelection", function( _, pl )
-	local selectionID = net.ReadInt(20)
-	local typeSelect = net.ReadString()
+	local selectionID = net.ReadUInt(8)
 	local center = net.ReadVector()
 	local radius = net.ReadFloat()
 	local hitEnt = net.ReadEntity()
+	local isTypeSelect = net.ReadBool()
 
-	-- local allFoundEntities = ents.FindInSphere( center, radius ) -- I'm guessing this is part of the workaround for selection glitch
-	local allFoundEntities = {}
-	local foundEntities = {}
-
-	if radius > 15 then
-		local heightTrace = util.TraceLine( {
-			start = center,
-			endpos = center + Vector(0,0,2000),
-			filter = function( ent ) if ( ent:GetClass() == "prop_physics" ) then return true end end,
-			mask = MASK_SOLID + MASK_WATER
-		} )
-
-		local depthTrace = util.TraceLine( {
-			start = center,
-			endpos = center - Vector(0,0,2000),
-			filter = function( ent ) if ( ent:GetClass() == "prop_physics" ) then return true end end,
-			mask = MASK_SOLID + MASK_WATER
-		} )
-
-		local depth = depthTrace.HitPos:Distance(center)
-		local height = heightTrace.HitPos:Distance(center) -- Using the normal distance function is a bit more computationally expensive but hopefully this shouldn't be bad enough to be an issue
-
-		if depth < 25 then depth = 25 end
-		if height < 25 then height = 25 end
-
-		if hitEnt:GetClass() == "ent_melon_jetpack" then
-			allFoundEntities = ents.FindInBox(center - Vector(radius,radius,50), center + Vector(radius,radius,50) )
-		else
-			allFoundEntities = ents.FindInBox(center - Vector(radius,radius,depth-1), center + Vector(radius,radius,height-1) )
-		end
-
-		local xCoord, yCoord, zCoord = center:Unpack()
-		local processedCenter = Vector(xCoord, yCoord, 0) -- probably a better way to do this, I tried multiplying by a vector but that broke the code
-
-		for k, v in pairs(allFoundEntities) do
-			local xCoord2, yCoord2, zCoord2 = v:GetPos():Unpack()
-			local processedPosition = Vector(xCoord2, yCoord2, 0)
-			if processedPosition:DistToSqr(processedCenter) > radius * radius then -- makes sure we select in just a cylinder, not a box.
-				table.remove( allFoundEntities, k )
-			end
-		end
-	else
-		if hitEnt.Base == "ent_melon_base" then
-			table.Empty(allFoundEntities)
-			table.insert(allFoundEntities, 1, hitEnt)
-		else
-			allFoundEntities = ents.FindInSphere( center, 10 )
-		end
-	end
-
-	local classCheck, canMove, notZone, typeSelectCheck
-	for _, v in ipairs( allFoundEntities ) do
-		classCheck = string.StartWith( v:GetClass(), "ent_melon_" )
-		canMove = cvars.Bool( "mw_admin_move_any_team", false ) or v:GetNWInt( "mw_melonTeam", -1 ) == pl:GetInfoNum( "mw_team", -2 )
-		notZone = v:GetClass() ~= "ent_melon_zone"
-		typeSelectCheck = typeSelect == ( "nil" or v:GetClass() )
-		if classCheck and canMove and notZone and typeSelectCheck then
-			table.insert( foundEntities, v )
-		end
-	end
+	local pTeam = pl:GetInfoNum( "mw_team", -2 )
+	local foundEntities = MelonWars.selectionCylinder(center, radius, pTeam, hitEnt, isTypeSelect)
 
 	local foundCount = #foundEntities
 	net.Start("MW_ReturnSelection")
-		net.WriteInt(selectionID, 20)
-		net.WriteUInt(foundCount, 16)
+		net.WriteUInt(selectionID, 8)
+		net.WriteUInt(foundCount, 10)
 		for _, v in ipairs(foundEntities) do
 			net.WriteEntity(v)
 		end

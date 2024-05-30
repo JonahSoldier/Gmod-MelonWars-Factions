@@ -13,13 +13,16 @@ MelonWars.messageReceivingState = "idle"
 MelonWars.networkBuffer = ""
 
 net.Receive( "MW_ReturnSelection", function()
-	local returnedSelectionID = net.ReadInt(20)
+	local returnedSelectionID = net.ReadUInt(8)
 
 	if returnedSelectionID ~= LocalPlayer().mw_selectionID then return end
-	local count = net.ReadUInt(16)
+	local count = net.ReadUInt(10)
 
-	for i = 0, count do
+	for i = 1, count do
 		local foundEntity = net.ReadEntity()
+		if not foundEntity:IsValid() then
+			print("== Melon Wars: Received a null entity from the server. If you see this in console please tell a dev, it means something's not working and you may fail to select units.")
+		end
 		if not table.HasValue(LocalPlayer().foundMelons, foundEntity) then
 			table.insert(LocalPlayer().foundMelons, foundEntity)
 		end
