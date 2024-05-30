@@ -65,6 +65,8 @@ MelonWars = MelonWars or {}
 include("melonwars/sh_unitlist.lua")
 include("melonwars/sh_miscfunctions.lua")
 
+AddCSLuaFile("melonwars/cl_worldrings.lua")
+
 net.Receive( "SetMWConvar", function( _, pl )
 	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
 
@@ -447,7 +449,7 @@ function MelonWars.spawnUnitAtPos( class, unit_index, pos, ang, cost, spawntime,
 	return newMarine
 end
 
-local function MW_CalculateContraptionValues( betadupetable )
+local function MW_CalculateContraptionValues( betadupetable ) --TODO: Is this even used?
 	local cost = 0
 	local power = 0
 

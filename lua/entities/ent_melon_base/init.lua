@@ -449,6 +449,10 @@ function ENT:FinishMovement()
 		end
 		selfTbl.rallyPoints[30] = vector_origin
 	end
+	self:OnFinishMovement()
+end
+
+function ENT:OnFinishMovement()
 end
 
 function ENT:RemoveRallyPoints()

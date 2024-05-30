@@ -50,50 +50,29 @@ hook.Add("OnTextEntryLoseFocus", "MelonWars_EnableKeyboard", function (panel)
 	LocalPlayer().disableKeyboard = false
 end)
 
-hook.Add( "PostDrawTranslucentRenderables", "MelonWars_AddHalos", function()
-	local activeWeapon = LocalPlayer():GetActiveWeapon()
-	if not IsValid(activeWeapon) then return end
-	if activeWeapon:GetClass() ~= "gmod_tool" then return end
-	local tool = LocalPlayer():GetTool()
-	if tool == nil then return end
-	if tool.Mode ~= "melon_universal_tool" then return end
+--TODO: Zone Alpha. Check what impact this has on performance.
+--GetConVar("mw_buildalpha_multiplier"):GetFloat()
+local outpostRingCol = Color(255, 255, 255, 50)
+hook.Add("PostDrawTranslucentRenderables", "MelonWars_DrawOutpostZones", function(depth, skybox)
+	local locPly = LocalPlayer()
+	local activeWeapon = locPly:GetActiveWeapon()
+	if not IsValid(activeWeapon) or activeWeapon:GetClass() ~= "gmod_tool" then return end
+	local tool = locPly:GetTool()
+	if not tool or tool.Mode ~= "melon_universal_tool" then return end
 
-	local entityTable = {}
-	if LocalPlayer():KeyDown( IN_WALK ) then
-		table.Empty(entityTable)
-		local tr = LocalPlayer():GetEyeTrace()
-		if tr then
-			local eyeEntity = tr.Entity
-			if (tostring( eyeEntity ~= "Entity [0][worldspawn]")) then
-				table.insert(entityTable, eyeEntity)
-			end
+	local pTeam = locPly:GetInfoNum("mw_team", 0)
+	local teamRels = MelonWars.teamGrid[pTeam]
+
+	render.StartWorldRings()
+	for i, v in ipairs(ents.FindByClass("ent_melon_zone")) do
+		local zoneTeam = v:GetNWInt("zoneTeam", 0)
+		if (pTeam == zoneTeam) or (teamRels and teamRels[pTeam]) then
+			render.AddWorldRing(v:GetPos(), v:GetNWInt( "scale" , 0 ), 5, 20)
 		end
 	end
 
-	local zoneTable = ents.FindByClass( "ent_melon_zone" )
-	local a = LocalPlayer():GetInfoNum("mw_team", 0)
-
-	for i = table.Count(zoneTable), 1, -1 do
-		if MelonWars.teamGrid == nil or MelonWars.teamGrid[zoneTable[i]:GetNWInt("zoneTeam", 0)] == nil or MelonWars.teamGrid[zoneTable[i]:GetNWInt("zoneTeam", 0)][a] == nil then
-			if (zoneTable[i]:GetNWInt("zoneTeam", 0) ~= a) then
-				table.remove(zoneTable, i)
-			end
-		elseif (zoneTable[i]:GetNWInt("zoneTeam", 0) ~= a and not MelonWars.teamGrid[zoneTable[i]:GetNWInt("zoneTeam", 0)][a]) or (zoneTable[i]:GetPos() - LocalPlayer():GetPos()):LengthSqr() > 7500000 then
-			table.remove(zoneTable, i)
-		end
-	end
-
-	for i = table.Count(zoneTable), 1, -1 do
-		local alphaMultiplier = GetConVar("mw_buildalpha_multiplier"):GetFloat()
-		local zoneRadius = zoneTable[i]:GetNWInt( "scale" , 0 )
-
-		render.SetColorMaterial()
-		render.DrawSphere( zoneTable[i]:GetPos(), zoneRadius, 35, 12, Color( 255, 255, 255, 10 * alphaMultiplier ) ) -- pos, radius, qualitylongitude, qualitylatitude, colour
-		render.DrawSphere( zoneTable[i]:GetPos(), -zoneRadius, 35, 12, Color( 255, 255, 255, 10 * alphaMultiplier ) ) -- pos, radius, qualitylongitude, qualitylatitude, colour
-	end
-
-	render.SetStencilEnable(false)
-end )
+	render.FinishWorldRings(outpostRingCol)
+end)
 
 hook.Add( "PostDrawTranslucentRenderables", "MelonWars_UnitSelectionCircles", function()
 	local foundMelons = LocalPlayer().foundMelons

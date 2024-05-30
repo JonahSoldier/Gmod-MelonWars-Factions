@@ -21,14 +21,13 @@ function ENT:SetStats()
 
 	self.sphereRadius = 15
 
+	self.flightRotation = 0
 	self.startRecharging = CurTime()
 
 	self.captureSpeed = 2
 	self.exhaustedUntil = CurTime()
 
 	self.slowThinkTimer = 1
-
-	self.alternate = true
 end
 
 function ENT:Initialize()
@@ -74,33 +73,30 @@ function ENT:Unstuck()
 
 end
 
-function ENT:FinishMovement ()
-	if (self.rallyPoints[1] == Vector(0,0,0)) then
-		if self.exhaustedUntil <= CurTime() then
-			if(self.moving == true) then
-				self.alternate = not self.alternate
-				if(self.alternate) then
-					self.rallyPoints[1] = self.targetPos + Vector(50, 50,0)
-				else
-					self.rallyPoints[1] = self.targetPos - Vector(50, 50,0)
-				end
-			end
-		else
-			self.moving = false
-			self.stuck = 0
-		end
-	else
-		self.targetPos = self.rallyPoints[1]
-		self:SetNWVector("targetPos", self.rallyPoints[1])
-		self.moving = true
-		for i=1, 30 do
-			self.rallyPoints[i] = self.rallyPoints[i+1]
-		end
-		self.rallyPoints[30] = Vector(0,0,0)
+function ENT:OnFinishMovement() --TODO: Drop for refuel stations
+	if not self.isFlying then
+		self.trueTarget = self.targetPos
+		self.isFlying = true
+		self:OnFinishMovement()
+		return
 	end
 
-	self:OnFinishMovement()
+	self.moving = true
+	self.flightRotation = (self.flightRotation + 0.25 * math.pi)
+	local rot = self.flightRotation
+
+	local rotS = math.sin(rot)
+	local rotC = math.cos(rot)
+	self.rallyPoints[1] = self.trueTarget + Vector(rotC * 100, rotS * 100, 0 )
 end
+
+function ENT:RemoveRallyPoints() --Least cursed way I can think to do this rn
+	self.isFlying = false
+	for i=1, 30 do
+		self.rallyPoints[i] = vector_origin
+	end
+end
+
 
 function ENT:SpecificThink()
 	self.phys:Wake()
