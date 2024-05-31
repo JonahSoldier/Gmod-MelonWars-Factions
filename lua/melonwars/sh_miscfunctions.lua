@@ -1,6 +1,5 @@
 AddCSLuaFile()
 
-
 local function isClassInRange(pos, teamIndex, entClass, range)
 	local rngSqr = range^2
 	for _, v in ipairs( ents.FindByClass( entClass ) ) do
@@ -230,4 +229,31 @@ function MelonWars.selectionCylinder(pos, radius, mwTeam, hitEnt, isTypeSelect)
 	end
 
 	return foundEnts
+end
+
+function MelonWars.calculateContraptionValues( dupetable )
+	local cost = 0
+	local power = 0
+	local spawnTime = 0
+	local sizePenalty = 0
+	for _, ent in pairs( dupetable ) do
+		local realID = MelonWars.classIDDict[ent.Class]
+
+		if realID then --If it's a mw unit
+			local realUnit = MelonWars.units[realID]
+			cost = cost + MelonWars.unitCost(realID, true)
+			spawnTime = spawnTime + realUnit.spawn_time * 2
+			power = power + (realUnit.population or 0)
+		elseif ent.realvalue then --If it's any other entity (props)
+			--Ideally we want to be using prop mass here.
+			cost = cost + ent.realvalue
+			spawnTime = spawnTime + ent.realvalue / 25
+		end
+
+		if ent.Pos then
+			sizePenalty = sizePenalty + (ent.Pos):LengthSqr() / 1000
+		end
+	end
+
+	return math.Round( cost + sizePenalty ), spawnTime, power
 end

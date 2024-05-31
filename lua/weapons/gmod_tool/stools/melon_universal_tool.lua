@@ -1470,137 +1470,6 @@ local function _CreatePanel()
 	end
 end
 
--- End of custom UI elements ----------------------------
-
-
-function TOOL:MenuButton( pl, y, h, text, number )
-	local button = vgui.Create( "DButton", pl.mw_frame )
-	button:SetSize( 100, h )
-	button:SetPos( 10, y )
-	button:SetText( text )
-	button:SetFont( "CloseCaption_Normal" )
-	function button:DoClick()
-		pl.panel:Remove()
-		pl.mw_menu = number
-		_CreatePanel()
-	end
-end
-
-function TOOL:Reload()
-	if not CLIENT then return end
-	local pl = LocalPlayer()
-	if pl.mw_frame ~= nil then return end
---	CREATE FRAME
-	pl.mw_frame = vgui.Create("DFrame")
-	pl.mw_frame:SetSize(w, h)
-	pl.mw_frame:SetPos(ScrW() / 2 - w / 2 + 150, ScrH() / 2 - h / 3)
-	pl.mw_frame:SetTitle("Melon Wars")
-	pl.mw_frame:MakePopup()
-	pl.mw_frame:ShowCloseButton()
-	local button = vgui.Create("DButton", pl.mw_frame)
-	button:SetSize(90, 18)
-	button:SetPos(w - 93, 3)
-	button:SetText("Press R to close")
-	function button:DoClick()
-		pl.mw_frame:Remove()
-		pl.mw_frame = nil
-	end
-
-	_CreatePanel()
-
-	local h = 70
-	self:MenuButton(pl, 30 + h * 0, h, "Units", 0)
-	self:MenuButton(pl, 30 + h * 1, h, "Buildings", 1)
-	self:MenuButton(pl, 30 + h * 2, h, "Base", 2)
-	self:MenuButton(pl, 30 + h * 3, h, "Energy", 3)
-	self:MenuButton(pl, 30 + h * 4, h, "Contrap.", 4)
-
-	self:MenuButton(pl, 390, 25, "Help", 6)
-	self:MenuButton(pl, 415, 25, "Team", 5)
-	self:MenuButton(pl, 440, 25, "Admin", 7)
-	self:MenuButton(pl, 470, 25, "Player", 8)
-end
-
-local toolScreenTextCol =  Color( 200, 200, 200 )
-function TOOL:DrawToolScreen( width, height )
-
-	-- Draw black background
-	surface.SetDrawColor( 20, 20, 20 )
-	surface.DrawRect( 0, 0, width, height )
-
-	-- Draw white text in middle
-	local action = mw_action_cv:GetInt() --LocalPlayer():GetInfoNum( "mw_action", 0 )
-	local textStrings = {"Selecting Units", "Spawning Units", "Spawning Base", "Spawning Prop", "Contraptions"}
-	textStrings[944] = "Click on a Unit"
-
-	local txtStr = textStrings[action + 1] or "Unknown Action"
-
-	draw.SimpleText( txtStr, "DermaLarge", width / 2, height / 2, toolScreenTextCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-end
-
-function TOOL:Deploy()
-	local owner = self:GetOwner()
-
-	self.pressed = false
-	self.rPressed = false
-	self.disableKeyboard = false
-	self.ctrlPressed = false
-	self.canPlace = true
-	owner.chatTimer = 0
-	local _team = owner:GetInfoNum( "mw_team", 0 )
-	if not SERVER then return end
-	if _team ~= 0 then
-		net.Start( "MW_TeamCredits" )
-			net.WriteInt( MelonWars.teamCredits[_team], 32 )
-		net.Send( owner )
-
-		net.Start( "MW_TeamUnits" )
-			net.WriteInt( MelonWars.teamUnits[_team], 16 )
-		net.Send( owner )
-	end
-	owner:PrintMessage( HUD_PRINTCENTER, "Press R to open the menu" )
-end
-
-function TOOL:Holster()
-	if IsValid( self.GhostEntity ) then
-		self.GhostEntity:Remove()
-	end
-	if IsValid( self.GhostSphere ) then
-		self.GhostSphere:Remove()
-	end
-end
-
-function TOOL:RightClick( tr )
-	local owner = self:GetOwner()
-	if IsValid( owner.controllingUnit ) then
-		owner.controllingUnit = nil
-	end
-
-	if not CLIENT then return end
-
-	local locPly = LocalPlayer()
-	if locPly.mw_cooldown >= ( CurTime() - 0.05 ) then return end
-
-	if cvars.Number( "mw_chosen_unit" ) == 0 then
-		if istable( locPly.foundMelons ) then
-			net.Start( "MW_Order" )
-				net.WriteBool( locPly:KeyDown(IN_SPEED) )
-				net.WriteBool( locPly:KeyDown(IN_WALK) )
-				for _, v in pairs( locPly.foundMelons ) do
-					if not v:IsWorld() and v:IsValid() and v ~= nil then
-						net.WriteEntity( v )
-					end
-				end
-			net.SendToServer()
-		end
-	else
-		owner:ConCommand( "mw_chosen_unit 0" ) -- Stop spawning
-	end
-
-	locPly:ConCommand("mw_action 0")
-	locPly.mw_cooldown = CurTime()
-end
-
 -- SELECTION CODE: ----------------------------------
 
 local function MW_BeginSelection() -- Previously concommand.Add( "+mw_select", function( ply )
@@ -1704,8 +1573,163 @@ function TOOL:DoSelection(startingPos, endingPos)
 	locPly.foundMelons = table.Copy(foundEntities)
 end
 
--- END OFSELECTION CODE ----------------------------------
+-- CONTRAPTION CODE: ----------------------------------
 
+local function SelectContraption(pl, path, contraptionName, contraptionCost, contraptionPower)
+	local fulltable = util.JSONToTable(file.Read( path ))
+	local dupetable = fulltable.Entities
+
+	local cost, spawnTime, power = MelonWars.calculateContraptionValues( dupetable )
+
+	pl.selectedAssembler:SetNWFloat("slowThinkTimer", spawnTime)
+
+	pl.selectedFile = path
+	contraptionName:SetText("Contraption: " .. string.sub(path, string.len( "melonwars/contraptions/" ) + 1, string.len( path ) - 4))
+	contraptionCost:SetText("Cost: " .. cost)
+	contraptionPower:SetText("Power: " .. power)
+	return cost, power
+end
+
+local function StartBuildingContraption( assembler, _file, cost, power )
+	if assembler:GetNWBool( "active" ) then return end
+	local locPly = LocalPlayer()
+	if locPly.mw_units >= cvars.Number( "mw_admin_max_units" ) then return end
+	if locPly.mw_credits < locPly.contrapCost or cvars.Bool( "mw_admin_credit_cost" ) then return end
+	if locPly.contrapPower ~= 0 and locPly.mw_units + locPly.contrapPower > cvars.Number( "mw_admin_max_units" ) then return end
+
+	--Most of this should be server-only.
+	assembler.nextSlowThink = CurTime() + assembler:GetNWFloat("slowThinkTimer", 0)
+	assembler:SetNWFloat("nextSlowThink", CurTime() + assembler:GetNWFloat("slowThinkTimer", 0))
+	assembler.unitspawned = false
+	assembler:SetNWBool("active", true)
+	assembler.player = locPly
+	assembler.file = _file
+	assembler.contrapCost = cost
+	assembler.contrapPower = power
+
+	net.Start("RequestContraptionLoadToAssembler")
+		net.WriteEntity(assembler)
+		net.WriteUInt(locPly.contrapPower, 10)
+		net.WriteString(_file)
+		net.WriteFloat(assembler:GetNWFloat("slowThinkTimer", 0))
+	net.SendToServer()
+
+	if cvars.Bool("mw_admin_credit_cost") then --TODO: This shouldn't be on client 
+		local newCredits = locPly.mw_credits-locPly.contrapCost
+		net.Start("MW_UpdateServerInfo")
+			net.WriteInt(mw_team_cv:GetInt(), 8)
+			net.WriteInt(newCredits, 32)
+		net.SendToServer()
+		net.Start("MW_UpdateClientInfo")
+			net.WriteInt(mw_team_cv:GetInt(), 8)
+		net.SendToServer()
+	end
+
+	locPly.cmenuframe:Remove()
+	locPly.cmenuframe = nil
+end
+
+function TOOL:MakeContraptionMenu()
+	local locPly = LocalPlayer()
+
+	--I think this is used for the "Double-click e to spawn last contraption" thing. It needs a rewrite.
+	if locPly.cmenuframe ~= nil then
+		if locPly.selectedAssembler.file == nil then return end
+
+		local fulltable = util.JSONToTable(file.Read(locPly.selectedAssembler.file))
+		local dupetable = fulltable.Entities
+
+		local cost, spawnTime, power = MelonWars.calculateContraptionValues( dupetable )
+		locPly.contrapCost = cost
+		locPly.contrapPower = power
+		locPly.selectedAssembler:SetNWFloat("slowThinkTimer", spawnTime) --Does this actually matter on client?
+
+		-- Make the contrap
+		StartBuildingContraption(locPly.selectedAssembler, locPly.selectedAssembler.file, locPly.contrapCost, locPly.contrapPower)
+		return
+	end
+
+	--if locPly.cmenuframe ~= nil then return end
+	if locPly.selectedAssembler:GetNWBool( "active", true ) then return end
+
+	locPly.cmenuframe = vgui.Create("DFrame")
+	local w = 400
+	local h = 400
+	-- local freeze = net.ReadBool()
+	locPly.cmenuframe:SetSize(w, h)
+	locPly.cmenuframe:SetPos(ScrW() / 2 - w / 2, ScrH() / 2 - h / 2)
+	locPly.cmenuframe:SetTitle("Contraption Legalizer")
+	locPly.cmenuframe:MakePopup()
+
+	locPly.cmenuframe.OnClose = function()
+		locPly.cmenuframe = nil
+	end
+
+	local contraptionName = vgui.Create("DLabel", locPly.cmenuframe)
+	contraptionName:SetPos( 30, 90)
+	contraptionName:SetSize(300,30)
+	contraptionName:SetFontInternal( "Trebuchet18" )
+	contraptionName:SetText("Press E again to spawn last spawned contraption")
+
+	local contraptionName = vgui.Create("DLabel", locPly.cmenuframe)
+	contraptionName:SetPos( 30, 110)
+	contraptionName:SetSize(300,30)
+	contraptionName:SetFontInternal( "Trebuchet24" )
+	contraptionName:SetText("Contraption: ")
+
+	local contraptionCost = vgui.Create("DLabel", locPly.cmenuframe)
+	contraptionCost:SetPos( 30, 150)
+	contraptionCost:SetSize(300,30)
+	contraptionCost:SetFontInternal( "Trebuchet24" )
+	contraptionCost:SetText("Cost:")
+
+	local contraptionPower = vgui.Create("DLabel", locPly.cmenuframe)
+	contraptionPower:SetPos( 200, 150)
+	contraptionPower:SetSize(300,30)
+	contraptionPower:SetFontInternal( "Trebuchet24" )
+	contraptionPower:SetText("Power:")
+
+	if (locPly.selectedAssembler ~= nil and locPly.selectedAssembler.file ~= nil) then
+		locPly.contrapCost, locPly.contrapPower = SelectContraption(locPly, locPly.selectedAssembler.file, contraptionName, contraptionCost, contraptionPower)
+	end
+
+	local button = vgui.Create("DButton", locPly.cmenuframe)
+	button:SetSize(180,40)
+	button:SetPos(110, 50)
+	button:SetFont("CloseCaption_Normal")
+	button:SetText("Produce")
+	function button:DoClick()
+		if (IsEntity(locPly.selectedAssembler)) then
+			StartBuildingContraption(locPly.selectedAssembler, locPly.selectedFile, locPly.contrapCost, locPly.contrapPower)
+		else
+			print("Somehow, the contraption assembler you have selected doesn't seem to be an Entity")
+			print(locPly.selectedAssembler)
+			debug.Trace()
+		end
+	end
+	button.Paint = function(s, w, h)
+		draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
+		draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
+	end
+
+	local browser = vgui.Create( "DFileBrowser", locPly.cmenuframe )
+	browser:SetPos( 25, 200 )
+	browser:SetSize(350, 175)
+
+	browser:SetPath( "DATA" ) -- The access path i.e. GAME, LUA, DATA etc.
+	browser:SetBaseFolder( "melonwars/contraptions" ) -- The root folder
+	browser:SetName( "Contraptions" ) -- Name to display in tree
+	browser:SetSearch( "contraptions" ) -- Search folders starting with "props_"
+	browser:SetFileTypes( "*.txt" ) -- File type filter
+	browser:SetOpen( true ) -- Opens the tree ( same as double clicking )
+	browser:SetCurrentFolder( "melonwars/contraptions" ) -- Set the folder to use
+
+	function browser:OnSelect( path, pnl )
+		locPly.contrapCost, locPly.contrapPower = SelectContraption(locPly, path, contraptionName, contraptionCost, contraptionPower)
+	end
+end
+
+-- TOOL FUNCTIONS: ----------------------------------
 
 function TOOL:LeftClick( tr )
 	if not CLIENT then return end
@@ -2248,198 +2272,132 @@ function TOOL:IndicateIncome(amount)
 	indicator.value = amount
 end
 
-local function SelectContraption(pl, path, contraptionName, contraptionCost, contraptionPower)
-	local cost = 0
-	local power = 0
-	local spawnTime = 0
-	local fulltable = util.JSONToTable(file.Read( path ))
-	local duptable = fulltable.Entities
-	local sizePenalty = 0
-	for _, ent in pairs( duptable ) do
-		if (ent.realvalue ~= nil) then
-			cost = cost + ent.realvalue
-			if (ent.spawnDelay == nil) then
-				spawnTime = spawnTime + ent.realvalue / 25
-			end
-		end
-		if (ent.population ~= nil) then
-			power = power + ent.population
-		end
-		if (ent.Pos ~= nil) then
-			sizePenalty = sizePenalty + (ent.Pos):LengthSqr() / 1000
-		end
-		if (ent.spawnDelay ~= nil) then
-			spawnTime = spawnTime + ent.spawnDelay * 2
-		end
-	end
-
-	pl.selectedFile = path
-	cost = math.Round( cost + sizePenalty )
-
-	pl.selectedAssembler:SetNWFloat("slowThinkTimer", spawnTime)
-
-	contraptionName:SetText("Contraption: " .. string.sub(path, string.len( "melonwars/contraptions/" ) + 1, string.len( path ) - 4))
-	contraptionCost:SetText("Cost: " .. cost)
-	contraptionPower:SetText("Power: " .. power)
-	return cost, power
-end
-
-local function StartBuildingContraption( assembler, _file, cost, power )
-	if assembler:GetNWBool( "active" ) then return end
-	local locPly = LocalPlayer()
-	if locPly.mw_units >= cvars.Number( "mw_admin_max_units" ) then return end
-	if locPly.mw_credits < locPly.contrapCost or cvars.Bool( "mw_admin_credit_cost" ) then return end
-	if locPly.contrapPower ~= 0 or locPly.mw_units + locPly.contrapPower > cvars.Number( "mw_admin_max_units" ) then return end
-
-	assembler.nextSlowThink = CurTime() + assembler:GetNWFloat("slowThinkTimer", 0)
-	assembler:SetNWFloat("nextSlowThink", CurTime() + assembler:GetNWFloat("slowThinkTimer", 0))
-	assembler.unitspawned = false
-	assembler:SetNWBool("active", true)
-	assembler.player = locPly
-	assembler.file = _file
-	assembler.contrapCost = cost
-	assembler.contrapPower = power
-
-	net.Start("RequestContraptionLoadToAssembler")
-		net.WriteEntity(assembler)
-		net.WriteUInt(locPly.contrapPower, 16)
-		net.WriteString(_file)
-		net.WriteFloat(assembler:GetNWFloat("slowThinkTimer", 0))
-	net.SendToServer()
-
-	if cvars.Bool("mw_admin_credit_cost") then
-		local newCredits = locPly.mw_credits-locPly.contrapCost
-		net.Start("MW_UpdateServerInfo")
-			net.WriteInt(mw_team_cv:GetInt(), 8)
-			net.WriteInt(newCredits, 32)
-		net.SendToServer()
-		net.Start("MW_UpdateClientInfo")
-			net.WriteInt(mw_team_cv:GetInt(), 8)
-		net.SendToServer()
-	end
-
-	locPly.cmenuframe:Remove()
-	locPly.cmenuframe = nil
-end
-
-function TOOL:MakeContraptionMenu()
-	local locPly = LocalPlayer()
-
-	if locPly.cmenuframe ~= nil then
-		if locPly.selectedAssembler.file == nil then return end
-		-- Fix an exploit resulting from this shit not updating with this
-		-- This means contraption price related stuff has to be updated in two separate places now which is stupid, but I don't want to have to restructure Marum's code just to make updating this less annoying
-
-		local cost = 0
-		local power = 0
-		local spawnTime = 0
-
-		local fulltable = util.JSONToTable(file.Read(locPly.selectedAssembler.file))
-		local duptable = fulltable.Entities
-		local sizePenalty = 0
-		for _, ent in pairs( duptable ) do
-			if (ent.realvalue ~= nil) then
-				cost = cost + ent.realvalue
-				if (ent.spawnDelay == nil) then
-					spawnTime = spawnTime + ent.realvalue / 25
-				end
-			end
-			if (ent.population ~= nil) then
-				power = power + ent.population
-			end
-			if (ent.Pos ~= nil) then
-				sizePenalty = sizePenalty + (ent.Pos):LengthSqr() / 1000
-			end
-			if (ent.spawnDelay ~= nil) then
-				spawnTime = spawnTime + ent.spawnDelay * 2
-			end
-		end
-		locPly.contrapCost = cost
-		locPly.contrapPower = power
-		locPly.selectedAssembler:SetNWFloat("slowThinkTimer", spawnTime)
-
-		-- Make the contrap
-		StartBuildingContraption(locPly.selectedAssembler, locPly.selectedAssembler.file, locPly.contrapCost, locPly.contrapPower)
-	end
-
-	if locPly.cmenuframe ~= nil then return end
-	if locPly.selectedAssembler:GetNWBool( "active", true ) then return end
-
-	locPly.cmenuframe = vgui.Create("DFrame")
-	local w = 400
-	local h = 400
-	-- local freeze = net.ReadBool()
-	locPly.cmenuframe:SetSize(w, h)
-	locPly.cmenuframe:SetPos(ScrW() / 2 - w / 2, ScrH() / 2 - h / 2)
-	locPly.cmenuframe:SetTitle("Contraption Legalizer")
-	locPly.cmenuframe:MakePopup()
-
-	locPly.cmenuframe.OnClose = function()
-		locPly.cmenuframe = nil
-	end
-
-	local contraptionName = vgui.Create("DLabel", locPly.cmenuframe)
-	contraptionName:SetPos( 30, 90)
-	contraptionName:SetSize(300,30)
-	contraptionName:SetFontInternal( "Trebuchet18" )
-	contraptionName:SetText("Press E again to spawn last spawned contraption")
-
-	local contraptionName = vgui.Create("DLabel", locPly.cmenuframe)
-	contraptionName:SetPos( 30, 110)
-	contraptionName:SetSize(300,30)
-	contraptionName:SetFontInternal( "Trebuchet24" )
-	contraptionName:SetText("Contraption: ")
-
-	local contraptionCost = vgui.Create("DLabel", locPly.cmenuframe)
-	contraptionCost:SetPos( 30, 150)
-	contraptionCost:SetSize(300,30)
-	contraptionCost:SetFontInternal( "Trebuchet24" )
-	contraptionCost:SetText("Cost:")
-
-	local contraptionPower = vgui.Create("DLabel", locPly.cmenuframe)
-	contraptionPower:SetPos( 200, 150)
-	contraptionPower:SetSize(300,30)
-	contraptionPower:SetFontInternal( "Trebuchet24" )
-	contraptionPower:SetText("Power:")
-
-	if (locPly.selectedAssembler ~= nil and locPly.selectedAssembler.file ~= nil) then
-		locPly.contrapCost, locPly.contrapPower = SelectContraption(locPly, locPly.selectedAssembler.file, contraptionName, contraptionCost, contraptionPower)
-	end
-
-	local button = vgui.Create("DButton", locPly.cmenuframe)
-	button:SetSize(180,40)
-	button:SetPos(110, 50)
-	button:SetFont("CloseCaption_Normal")
-	button:SetText("Produce")
+function TOOL:MenuButton( pl, y, h, text, number )
+	local button = vgui.Create( "DButton", pl.mw_frame )
+	button:SetSize( 100, h )
+	button:SetPos( 10, y )
+	button:SetText( text )
+	button:SetFont( "CloseCaption_Normal" )
 	function button:DoClick()
-		if (IsEntity(locPly.selectedAssembler)) then
-			StartBuildingContraption(locPly.selectedAssembler, locPly.selectedFile, locPly.contrapCost, locPly.contrapPower)
-		else
-			print("Somehow, the contraption assembler you have selected doesn't seem to be an Entity")
-			print(locPly.selectedAssembler)
-			debug.Trace()
+		pl.panel:Remove()
+		pl.mw_menu = number
+		_CreatePanel()
+	end
+end
+
+function TOOL:Reload()
+	if not CLIENT then return end
+	local pl = LocalPlayer()
+	if pl.mw_frame ~= nil then return end
+	--	CREATE FRAME
+	pl.mw_frame = vgui.Create("DFrame")
+	pl.mw_frame:SetSize(w, h)
+	pl.mw_frame:SetPos(ScrW() / 2 - w / 2 + 150, ScrH() / 2 - h / 3)
+	pl.mw_frame:SetTitle("Melon Wars")
+	pl.mw_frame:MakePopup()
+	pl.mw_frame:ShowCloseButton()
+	local button = vgui.Create("DButton", pl.mw_frame)
+	button:SetSize(90, 18)
+	button:SetPos(w - 93, 3)
+	button:SetText("Press R to close")
+	function button:DoClick()
+		pl.mw_frame:Remove()
+		pl.mw_frame = nil
+	end
+
+	_CreatePanel()
+
+	local h = 70
+	self:MenuButton(pl, 30 + h * 0, h, "Units", 0)
+	self:MenuButton(pl, 30 + h * 1, h, "Buildings", 1)
+	self:MenuButton(pl, 30 + h * 2, h, "Base", 2)
+	self:MenuButton(pl, 30 + h * 3, h, "Energy", 3)
+	self:MenuButton(pl, 30 + h * 4, h, "Contrap.", 4)
+
+	self:MenuButton(pl, 390, 25, "Help", 6)
+	self:MenuButton(pl, 415, 25, "Team", 5)
+	self:MenuButton(pl, 440, 25, "Admin", 7)
+	self:MenuButton(pl, 470, 25, "Player", 8)
+end
+
+local toolScreenTextCol =  Color( 200, 200, 200 )
+function TOOL:DrawToolScreen( width, height )
+
+	-- Draw black background
+	surface.SetDrawColor( 20, 20, 20 )
+	surface.DrawRect( 0, 0, width, height )
+
+	-- Draw white text in middle
+	local action = mw_action_cv:GetInt() --LocalPlayer():GetInfoNum( "mw_action", 0 )
+	local textStrings = {"Selecting Units", "Spawning Units", "Spawning Base", "Spawning Prop", "Contraptions"}
+	textStrings[944] = "Click on a Unit"
+
+	local txtStr = textStrings[action + 1] or "Unknown Action"
+
+	draw.SimpleText( txtStr, "DermaLarge", width / 2, height / 2, toolScreenTextCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+end
+
+function TOOL:Deploy()
+	local owner = self:GetOwner()
+
+	self.pressed = false
+	self.rPressed = false
+	self.disableKeyboard = false
+	self.ctrlPressed = false
+	self.canPlace = true
+	owner.chatTimer = 0
+	local _team = owner:GetInfoNum( "mw_team", 0 )
+	if not SERVER then return end
+	if _team ~= 0 then
+		net.Start( "MW_TeamCredits" )
+			net.WriteInt( MelonWars.teamCredits[_team], 32 )
+		net.Send( owner )
+
+		net.Start( "MW_TeamUnits" )
+			net.WriteInt( MelonWars.teamUnits[_team], 16 )
+		net.Send( owner )
+	end
+	owner:PrintMessage( HUD_PRINTCENTER, "Press R to open the menu" )
+end
+
+function TOOL:Holster()
+	if IsValid( self.GhostEntity ) then
+		self.GhostEntity:Remove()
+	end
+	if IsValid( self.GhostSphere ) then
+		self.GhostSphere:Remove()
+	end
+end
+
+function TOOL:RightClick( tr )
+	local owner = self:GetOwner()
+	if IsValid( owner.controllingUnit ) then
+		owner.controllingUnit = nil
+	end
+
+	if not CLIENT then return end
+
+	local locPly = LocalPlayer()
+	if locPly.mw_cooldown >= ( CurTime() - 0.05 ) then return end
+
+	if cvars.Number( "mw_chosen_unit" ) == 0 then
+		if istable( locPly.foundMelons ) then
+			net.Start( "MW_Order" )
+				net.WriteBool( locPly:KeyDown(IN_SPEED) )
+				net.WriteBool( locPly:KeyDown(IN_WALK) )
+				for _, v in pairs( locPly.foundMelons ) do
+					if not v:IsWorld() and v:IsValid() and v ~= nil then
+						net.WriteEntity( v )
+					end
+				end
+			net.SendToServer()
 		end
-	end
-	button.Paint = function(s, w, h)
-		draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
-		draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
+	else
+		owner:ConCommand( "mw_chosen_unit 0" ) -- Stop spawning
 	end
 
-	local browser = vgui.Create( "DFileBrowser", locPly.cmenuframe )
-	browser:SetPos( 25, 200 )
-	browser:SetSize(350, 175)
-
-	browser:SetPath( "DATA" ) -- The access path i.e. GAME, LUA, DATA etc.
-	browser:SetBaseFolder( "melonwars/contraptions" ) -- The root folder
-	browser:SetName( "Contraptions" ) -- Name to display in tree
-	browser:SetSearch( "contraptions" ) -- Search folders starting with "props_"
-	browser:SetFileTypes( "*.txt" ) -- File type filter
-	browser:SetOpen( true ) -- Opens the tree ( same as double clicking )
-	browser:SetCurrentFolder( "melonwars/contraptions" ) -- Set the folder to use
-
-	function browser:OnSelect( path, pnl )
-		locPly.contrapCost, locPly.contrapPower = SelectContraption(locPly, path, contraptionName, contraptionCost, contraptionPower)
-	end
+	locPly:ConCommand("mw_action 0")
+	locPly.mw_cooldown = CurTime()
 end
 
 function TOOL:DrawHUD() --TODO: Refactor. This needs to be split up/reorganized at least a little bit, since it's a giant 400 line function

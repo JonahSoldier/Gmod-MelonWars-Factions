@@ -34,9 +34,10 @@ local function Unit() -- Code is an optional argument.
 	return newUnit
 end
 
-local unitCount = 88
+--local unitCount = 88
+local unitCount = 85
 MelonWars.units = {}
-MelonWars.unitCount = 88
+MelonWars.unitCount = unitCount
 local u = nil
 for i = 1, unitCount do
 	MelonWars.units[i] = Unit()
@@ -283,6 +284,7 @@ u.description 	= [[A very long range superweapon that needs to deploy to attack.
 u.model 		= "models/props_trainstation/trainstation_ornament001.mdl"
 u.button_color 	= button_energy_color
 
+--[[
 i = i + 1
 u = MelonWars.units[i]
 u.code 			= "--banned--"
@@ -293,9 +295,9 @@ u.welded_cost 	= -1
 u.population 	= 0
 u.spawn_time 	= 20000
 u.offset        = Vector(0,0,42)
-u.description 	= [[A forcefield that blocks bullets from the enemy team.]]
-u.model 		= "models/hunter/tubes/tube4x4x2to2x2.mdl"
-
+--u.description 	= [[A forcefield that blocks bullets from the enemy team.]]
+--u.model 		= "models/hunter/tubes/tube4x4x2to2x2.mdl"
+--]]
 
 i = i + 1
 u = MelonWars.units[i]
@@ -324,20 +326,6 @@ u.offset        = Vector(0,0,5)
 u.description 	= [[Needs to be charged before it can detonate. Stuns and slows units for 10 seconds, and drains energy from units and buildings. If it detonates near part of an energy grid it'll disable every building in it for 15 seconds, and the part that was hit for 30. The effects stack, so you can use multiple to disable things longer.]]
 u.model 		= "models/maxofs2d/hover_classic.mdl"
 u.isBonusUnit   = true
-
-i = i + 1
-u = MelonWars.units[i]
-u.code 			= "admin"
-u.name 			= "Siege Gun"
-u.class 		= "ent_melon_siegegun"
-u.cost 			= 100
-u.welded_cost 	= 1
-u.population 	= 2
-u.spawn_time 	= 5
-u.offset        = Vector(0,0,32)
-u.description 	= [[explode.]]
-u.model 		= "models/props_trainstation/trashcan_indoor001b.mdl"
-
 
 i = i + 1
 u = MelonWars.units[i]
@@ -670,22 +658,6 @@ u.description 	= [[This is broken don't use it.]]
 u.model 		= "models/props_c17/substation_circuitbreaker01a.mdl"
 u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(0, 0, 0)
-u.button_color 	= button_energy_color
-u.energyRange	= defaultenergyrange
-
-i = i + 1
-u = MelonWars.units[i]
-u.code 			= "admin"
-u.name 			= "Siege Mortar"
-u.class 		= "ent_melon_supermortar"
-u.cost 			= 10000
-u.welded_cost 	= -1
-u.population 	= 5
-u.spawn_time 	= 60
-u.description 	= [[Big gun.]]
-u.model 		= "models/props_citizen_tech/steamengine001a.mdl"
-u.offset 		= Vector(0, 0, 100)
-u.angle 		= Angle(-90, 0, -90)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 
@@ -1337,6 +1309,13 @@ u.angle 		= Angle(90,90,90)
 u.angleSnap		= false
 u.contraptionPart = true
 u.spawnable_on_floor = false
+
+local uCID = {}
+MelonWars.classIDDict = uCID
+
+for j, unit in ipairs(MelonWars.units) do
+	uCID[unit.class] = j
+end
 
 
 

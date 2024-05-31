@@ -27,7 +27,7 @@ function ENT:Initialize()
 
 end
 
-function ENT:Think(ent)
+function ENT:Think(ent) --TODO: Rewrite. This was copied from other files initially and is really messy. A lot of its unnecessary.
 	if(self.spawned) then
 		local waterCost = 0
 		local energyGain = 250
