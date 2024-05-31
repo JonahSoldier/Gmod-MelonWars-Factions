@@ -36,7 +36,7 @@ function ENT:Initialize()
 	self:SetNWBool("Fired", false)
 end
 
-function ENT:SlowThink ( ent )
+function ENT:SlowThink ( ent ) --TODO: I think this is mostly standard behaviour for energy units that attack. So as much should be standardized as possible.
 
 	local pos = (ent:GetPos()+Vector(0,0,200))
 	local energyCost = 5000
@@ -53,7 +53,6 @@ function ENT:SlowThink ( ent )
 					end
 				end
 			end
-
 
 			if (ent.nextShot < CurTime()) then
 

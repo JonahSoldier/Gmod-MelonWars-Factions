@@ -1,45 +1,7 @@
 if engine.ActiveGamemode() ~= "sandbox" then return end
 
-hook.Add( "Initialize", "MelonWars_StartPlyData", function()
-	-- 90% of this code does nothing because this hook is called before the player is initialized lol
-	CreateClientConVar( "mw_buildalpha_multiplier", "1", true, false, "Makes the sphere around outposts more/less transparent", 0, 10 )
-	CreateClientConVar( "mw_player_ready", "0", false, true, "Is the player ready or not", 0, 1 )
-	LocalPlayer().mw_selecting = false
-	LocalPlayer().mw_selectionStartingPoint = Vector(0,0,0)
-	LocalPlayer().mw_selectionEndingPoint = Vector(0,0,0)
-
-	LocalPlayer().mw_toolCost = -1
-	LocalPlayer().mw_hudColor = Color(10,10,10,20)
-
-	LocalPlayer().mw_hover = 0
-	LocalPlayer().mw_menu = 0
-	LocalPlayer().mw_selectTimer = 0
-	LocalPlayer().mw_selectionID = 0
-	LocalPlayer().mw_spawnTimer = 0
-	LocalPlayer().mw_cooldown = 0
-	LocalPlayer().mw_frame = nil
-
-	--LocalPlayer().MelonWars.units = 0
-	LocalPlayer().mw_units = 0
-	LocalPlayer().mw_credits = 0
-
-	LocalPlayer().foundMelons = {}
-	LocalPlayer().controlTrace = {}
-end )
-
 hook.Add( "InitPostEntity", "MelonWars_InitPlyVariables", function()
 	LocalPlayer().spawnTimeMult = 1
-end )
-
-hook.Add( "Think", "MelonWars_SelectingUpdate", function()
-	local tr = LocalPlayer():GetEyeTrace()
-	local ent = tr.Entity
-
-	if not IsValid( ent ) then return end
-
-	if ent:GetNWString( "message", "nope" ) ~= "nope" then
-		AddWorldTip( nil, ent:GetNWString( "message", "nope" ), nil, Vector( 0, 0, 0 ), ent )
-	end
 end )
 
 hook.Add("OnTextEntryGetFocus", "MelonWars_DisableKeyboard", function (panel)
@@ -286,7 +248,7 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 	end
 end )
 
-local function MyCalcView( ply, pos, angles, fov )
+hook.Add( "CalcView", "MelonWars_UnitControl_CalcView", function( ply, pos, angles, fov )
 	if not IsValid(ply.controllingUnit) then return end
 	local cUnit = ply.controllingUnit
 	local view = {}
@@ -299,8 +261,7 @@ local function MyCalcView( ply, pos, angles, fov )
 	local targetPos = util.QuickTrace( view.origin, angles:Forward() * 50000, cUnit ).HitPos
 	LocalPlayer().controlTrace = util.QuickTrace( cUnit:GetPos(), (targetPos - cUnit:GetPos()):GetNormalized() * cUnit:GetNWFloat("range", 1000), cUnit )
 	return view
-end
-hook.Add( "CalcView", "MelonWars_MyCalcView", MyCalcView )
+end )
 
 hook.Add( "RenderScreenspaceEffects", "MelonWars_ColourMod", function()
 	if not LocalPlayer().MWhasColourModifier then return end

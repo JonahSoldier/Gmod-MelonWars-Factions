@@ -79,28 +79,10 @@ function ENT:Shoot ( ent, forceTargetPos )
 			local axis = right:Cross(baseDir):GetNormalized()
 			local bulletCount = 5
 			local baseAngle = baseDir:Angle()
-			for i=0, bulletCount do
+			for i = 1, bulletCount do
 				local rotatedDir = Angle(baseAngle.p, baseAngle.y, baseAngle.r)
 				rotatedDir:RotateAroundAxis(axis, (i-math.Round(bulletCount/2))*self.shotAngle/bulletCount)
 				local dir = rotatedDir:Forward()
-				/*local bullet = {}
-				bullet.Num=1
-				bullet.Src=pos
-				bullet.Dir=dir
-				bullet.Spread=Vector(0,0,0)
-				bullet.Tracer=1
-				bullet.TracerName=ent.tracer
-				bullet.Force=2
-
-				bullet.Damage=ent.damageDeal
-
-				bullet.Distance=ent.range*1.1
-
-				ent.fired = true
-
-				ent.nextShot = CurTime()+2
-
-				ent:FireBullets(bullet)*/
 
 				MelonWars.bullet(ent, pos, dir, ent.range*1.1, ent, nil, 0)
 			end

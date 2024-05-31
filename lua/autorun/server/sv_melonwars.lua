@@ -123,6 +123,9 @@ MelonWars.teamColors = {
 	Color(255,100,150,255)
 }
 
+--TODO: Finish what Marum started and give Doorsday his damned door props.
+--Drago earned one but never actually said what he wanted, so I don't know what to do about that.
+
 --[[
 mw_special_steam_decoration = {}
 --  Doorsday
