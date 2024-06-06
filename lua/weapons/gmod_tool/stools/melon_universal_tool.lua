@@ -2,22 +2,7 @@ TOOL.Category = "MelonWars: RTS"
 TOOL.Name = "Player Tool"
 TOOL.Command = nil
 TOOL.ConfigName = "" -- Setting this means that you do not have to create external configuration files to define the layout of the tool config-hud
---[[
-TOOL.Information = {
-	{ name = "reload" },
 
-	{ name = "left_op0", op = 0 },
-	{ name = "left_double_op0", icon2 = "gui/lmb.png", op = 0 },
-	{ name = "left_shift_op0", icon2 = "gui/info.png", op = 0 },
-	{ name = "right_op0", op = 0 },
-	{ name = "right_alt_op0", icon2 = "gui/info.png", op = 0 },
-	{ name = "right_shift_op0", icon2 = "gui/info.png", op = 0 },
-	{ name = "right_ctrl_op0", icon2 = "gui/info.png", op = 0 },
-
-	{ name = "left_op2", op = 2 },
-	{ name = "right_op2", op = 2 }
-}
-]]
 -- Convars (Start)
 
 CreateClientConVar( "mw_chosen_unit", "1", 0, false )
@@ -85,9 +70,6 @@ TOOL.ClientConVar[ "mw_action" ] = 0
 
 -- Convars (End)
 
--- MelonWars.teamColors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
---local button_energy_color = Color(255, 255, 80)
---local button_barrack_color = Color(200, 255, 255)
 local orangeColor = Color( 255, 100, 0, 255 )
 local color_white = color_white
 local color_black = color_black
@@ -1530,6 +1512,7 @@ function TOOL:MW_SelectionThink() --This might be a little jank because I wrote 
 
 	if input.IsMouseDown( MOUSE_LEFT ) then return true end
 
+	--This should probably be put into finishSelection
 	self:DoSelection( ply.mw_selectionStartingPoint, finalPosition )
 	MW_FinishSelection()
 	ply.mw_selecting = false
@@ -1742,9 +1725,10 @@ function TOOL:LeftClick( tr )
 			net.WriteEntity( cUnit )
 			net.WriteVector( pl.controlTrace.HitPos )
 		net.SendToServer()
+		return
 	end
 
-	if IsValid( self:GetOwner().controllingUnit ) then return end
+	--if IsValid( self:GetOwner().controllingUnit ) then return end
 	if pl.mw_cooldown >= CurTime() - 0.1 then return end
 
 	local trace = self:GetOwner():GetEyeTrace( {
@@ -1820,7 +1804,6 @@ function TOOL:LeftClick( tr )
 		if pl.mw_spawnTimer >= CurTime() - 0.1 then return end
 		local prop_index = pl:GetInfoNum("mw_chosen_prop", 0)
 		local cost = MelonWars.baseProps[prop_index].cost
-		--if not cvars.Bool("mw_admin_playing") then return end
 		if not mw_admin_playing_cv:GetBool() then return end
 		if not (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.isInRange(trace.HitPos, mw_melonTeam)) then return end
 		if not (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.noEnemyNear(trace.HitPos, mw_melonTeam)) then return end
@@ -1930,72 +1913,79 @@ local function MW_UpdateGhostEntity(model, pos, offset, angle, newColor, ghostSp
 	if not CLIENT then return end
 	local locPly = LocalPlayer()
 
-	if newColor == nil then
-		newColor = Color(100,100,100)
-	end
-	if tostring( locPly.GhostEntity ) == "[NULL Entity]" or not IsValid( locPly.GhostEntity ) then
-		locPly.GhostEntity = ents.CreateClientProp( model )
-		locPly.GhostEntity:SetSolid( SOLID_VPHYSICS )
-		locPly.GhostEntity:SetMoveType( MOVETYPE_NONE )
-		locPly.GhostEntity:SetNotSolid( true )
-		locPly.GhostEntity:SetRenderMode( RENDERMODE_TRANSALPHA )
-		locPly.GhostEntity:SetRenderFX( kRenderFxPulseFast )
-		locPly.GhostEntity:SetMaterial( "models/debug/debugwhite" )
-		locPly.GhostEntity:SetColor( Color( newColor.r * 1.5, newColor.g * 1.5, newColor.b * 1.5, 150 ) )
-		locPly.GhostEntity:SetModel( model )
-		locPly.GhostEntity:SetPos( pos + offset )
-		locPly.GhostEntity:SetAngles( angle )
-		locPly.GhostEntity:Spawn()
+	newColor = newColor or Color(100,100,100)
+
+	local ghostEntity = locPly.GhostEntity
+	if not IsValid( ghostEntity ) then
+		ghostEntity = ents.CreateClientProp( model )
+		ghostEntity:SetSolid( SOLID_VPHYSICS )
+		ghostEntity:SetMoveType( MOVETYPE_NONE )
+		ghostEntity:SetNotSolid( true )
+		ghostEntity:SetRenderMode( RENDERMODE_TRANSALPHA )
+		ghostEntity:SetRenderFX( kRenderFxPulseFast )
+		ghostEntity:SetMaterial( "models/debug/debugwhite" )
+		ghostEntity:SetColor( Color( newColor.r * 1.5, newColor.g * 1.5, newColor.b * 1.5, 150 ) )
+		ghostEntity:SetModel( model )
+		ghostEntity:SetPos( pos + offset )
+		ghostEntity:SetAngles( angle )
+		ghostEntity:Spawn()
+		locPly.GhostEntity = ghostEntity
 	else
-		locPly.GhostEntity:SetModel( model )
-		locPly.GhostEntity:SetPos( pos + offset )
-		locPly.GhostEntity:SetAngles( angle )
-		local obbmins = locPly.GhostEntity:OBBMins()
-		local obbmaxs = locPly.GhostEntity:OBBMaxs()
+		ghostEntity:SetModel( model )
+		ghostEntity:SetPos( pos + offset )
+		ghostEntity:SetAngles( angle )
+
+		local obbmins = ghostEntity:OBBMins()
+		local obbmaxs = ghostEntity:OBBMaxs()
 		obbmins:Rotate( angle )
 		obbmaxs:Rotate( angle )
-		local mins = Vector( locPly.GhostEntity:GetPos().x + obbmins.x, locPly.GhostEntity:GetPos().y + obbmins.y, pos.z + 5 )
-		local maxs = Vector( locPly.GhostEntity:GetPos().x + obbmaxs.x, locPly.GhostEntity:GetPos().y + obbmaxs.y, pos.z + 20 )
+
+		local gEntPos = ghostEntity:GetPos()
+		local mins = Vector( gEntPos.x + obbmins.x, gEntPos.y + obbmins.y, pos.z + 5 )
+		local maxs = Vector( gEntPos.x + obbmaxs.x, gEntPos.y + obbmaxs.y, pos.z + 20 )
 		local overlappingEntities = ents.FindInBox( mins, maxs )
 
 		locPly.canPlace = true
 		if locPly.mw_action == 1 and not MelonWars.units[locPly:GetInfoNum( "mw_chosen_unit", 0 )].canOverlap then
-			for _, v in pairs( overlappingEntities ) do
+			for _, v in ipairs( overlappingEntities ) do
 				if v.Base ~= nil and string.StartWith( v.Base, "ent_melon_" ) then
 					locPly.canPlace = false
+					break
 				end
 			end
 		end
 		if locPly.canPlace then
-			locPly.GhostEntity:SetColor( Color(newColor.r, newColor.g, newColor.b, 150 ))
-			locPly.GhostEntity:SetRenderFX( kRenderFxPulseSlow )
+			ghostEntity:SetColor( Color(newColor.r, newColor.g, newColor.b, 150 ))
+			ghostEntity:SetRenderFX( kRenderFxPulseSlow )
 		else
-			locPly.GhostEntity:SetColor( Color(150, 0, 0, 150 ))
-			locPly.GhostEntity:SetRenderFX( kRenderFxDistort )
+			ghostEntity:SetColor( Color(150, 0, 0, 150 ))
+			ghostEntity:SetRenderFX( kRenderFxDistort )
 		end
 	end
 
-	if tostring( locPly.GhostSphere ) == "[NULL Entity]" or not IsValid( locPly.GhostSphere ) then
+	local ghostSphere = locPly.ghostSphere
+	if not IsValid( ghostSphere ) then
 		if locPly.mw_action == 1 and ghostSphereRange > 0 then
-			locPly.GhostSphere = ents.CreateClientProp( "models/hunter/tubes/circle2x2.mdl" )
-			locPly.GhostSphere:SetSolid( SOLID_VPHYSICS )
-			locPly.GhostSphere:SetMoveType( MOVETYPE_NONE )
-			locPly.GhostSphere:SetNotSolid( true )
-			locPly.GhostSphere:SetRenderMode( RENDERMODE_TRANSALPHA )
-			locPly.GhostSphere:SetRenderFX( kRenderFxPulseSlow )
-			locPly.GhostSphere:SetMaterial("models/debug/debugwhite")
-			locPly.GhostSphere:SetColor( Color( newColor.r * 1.5, newColor.g * 1.5, newColor.b * 1.5, 50 ) )
-			locPly.GhostSphere:SetModelScale( 0.021 * ghostSphereRange )
-			locPly.GhostSphere:Spawn()
+			ghostSphere = ents.CreateClientProp( "models/hunter/tubes/circle2x2.mdl" )
+			ghostSphere:SetSolid( SOLID_VPHYSICS )
+			ghostSphere:SetMoveType( MOVETYPE_NONE )
+			ghostSphere:SetNotSolid( true )
+			ghostSphere:SetRenderMode( RENDERMODE_TRANSALPHA )
+			ghostSphere:SetRenderFX( kRenderFxPulseSlow )
+			ghostSphere:SetMaterial("models/debug/debugwhite")
+			ghostSphere:SetColor( Color( newColor.r * 1.5, newColor.g * 1.5, newColor.b * 1.5, 50 ) )
+			ghostSphere:SetModelScale( 0.021 * ghostSphereRange )
+			ghostSphere:Spawn()
+			locPly.GhostSphere = ghostSphere
 		end
 	else
 		if locPly.mw_action == 1 and ghostSphereRange > 0 then
-			local color = locPly.GhostSphere:GetColor()
-			locPly.GhostSphere:SetColor( Color(color.r, color.g, color.b, 50) )
-			locPly.GhostSphere:SetPos( Vector(pos.x, pos.y, ghostSpherePos.z ) )
-			locPly.GhostSphere:SetModelScale( 0.021 * ghostSphereRange )
+			local color = ghostSphere:GetColor()
+			ghostSphere:SetColor( Color(color.r, color.g, color.b, 50) )
+			ghostSphere:SetPos( Vector(pos.x, pos.y, ghostSpherePos.z ) )
+			ghostSphere:SetModelScale( 0.021 * ghostSphereRange )
 		else
-			locPly.GhostSphere:Remove()
+			ghostSphere:Remove()
 		end
 	end
 end
@@ -2012,15 +2002,7 @@ function TOOL:Think()
 		return
 	end
 
-	if plyTbl.chatTimer == nil then
-		plyTbl.chatTimer = 0
-	end
-	if self.canPlace == nil then
-		self.canPlace = false
-	end
-	if plyTbl.chatTimer > 0 then
-		plyTbl.chatTimer = plyTbl.chatTimer - 1
-	end
+	self.canPlace = self.canPlace or false
 
 	if plyTbl.mw_action == 1 then
 		plyTbl.propAngle = Vector( vector.x, vector.y, 0 ):Angle()
@@ -2038,7 +2020,6 @@ function TOOL:Think()
 	end
 
 	local newTeam = mw_team_cv:GetInt() --cvars.Number( "mw_team" )
-	local newColor = Color( 200, 200, 200, 255 )
 
 	if not plyTbl.disableKeyboard then
 		if input.IsKeyDown( KEY_R ) then
@@ -2057,97 +2038,51 @@ function TOOL:Think()
 		end
 
 		if plyTbl.mw_action == 0 then
-			if input.IsKeyDown( KEY_E ) then
-				if self.ePressed == nil then
-					self.ePressed = false
-				end
+			if input.IsKeyDown( KEY_E ) then --TODO: Do we need ePressed? it might make more sense to just use locPly:KeyPressed
+				self.ePresed = self.ePressed or false
 				if not self.ePressed then
 					self.ePressed = true
-					local tr = ply:GetEyeTrace()
+					local tr = ply:GetEyeTrace() --TODO: We already do a trace in this function.
 					local correctTeam = (tr.Entity:GetNWInt("mw_melonTeam", 0) == newTeam or tr.Entity:GetNWInt("capTeam", 0) == newTeam or cvars.Bool("mw_admin_move_any_team", false))
 
-					if (string.StartWith( tr.Entity:GetClass(), "ent_melon_barracks" ) or tr.Entity:GetClass() == "ent_melon_overclocker" ) then
-						-- if (correctTeam) then
-							net.Start("ToggleBarracks")
-							 	net.WriteEntity(tr.Entity)
-							 	net.WriteInt(newTeam,8)
-							net.SendToServer()
-						-- end
-					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_gate" ) or string.StartWith( tr.Entity:GetClass(), "ent_melon_energy_switch" )) then
-						-- if (correctTeam) then
-							net.Start("MW_Activate")
-								net.WriteEntity(tr.Entity)
-							 	net.WriteInt(newTeam,8)
-							net.SendToServer()
-						-- end
-					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_propeller" ) or string.StartWith( tr.Entity:GetClass(), "ent_melon_hover" )) then
-						-- if (correctTeam) then
-							net.Start("PropellerReady")
-							 	net.WriteEntity(tr.Entity)
-							 	net.WriteInt(newTeam,8)
-							net.SendToServer()
-						-- end
-					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_unit_transport" )) then
-						-- if (correctTeam) then
-							net.Start("MW_Activate")
-							 	net.WriteEntity(tr.Entity)
-							 	net.WriteInt(newTeam,8)
-							net.SendToServer()
-						-- end
-					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_water_tank" )) then
-						-- if (correctTeam) then
-							net.Start("MW_UseWaterTank")
-							 	net.WriteEntity(tr.Entity)
-							 	net.WriteInt(newTeam,8)
-							net.SendToServer()
-						-- end
-					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_energy_steam_plant" )) then
-						-- if (correctTeam) then
-							net.Start("MW_Activate")
-							 	net.WriteEntity(tr.Entity)
-							 	net.WriteInt(newTeam,8)
-							net.SendToServer()
-						-- end
-					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_energy_nuclear_plant" )) then
-						-- if (correctTeam) then
-							net.Start("MW_Activate")
-							 	net.WriteEntity(tr.Entity)
-							 	net.WriteInt(newTeam,8)
-							net.SendToServer()
-						-- end
-					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_contraption_assembler" )) then
-						if (correctTeam) then
-							plyTbl.selectedAssembler = tr.Entity
-							self:MakeContraptionMenu()
-						end
-					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_energy_water_pump" )) then
-						-- if (correctTeam) then
-							net.Start("MW_Activate")
-							 	net.WriteEntity(tr.Entity)
-							 	net.WriteInt(newTeam,8)
-							net.SendToServer()
-						-- end
-					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_longboy" )) then
-						-- if (correctTeam) then
-							net.Start("MW_Activate")
-							 	net.WriteEntity(tr.Entity)
-							 	net.WriteInt(newTeam,8)
-							net.SendToServer()
-						-- end
-					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_unit_launcher" )) then
-						-- if (correctTeam) then
-							net.Start("MW_Activate")
-							 	net.WriteEntity(tr.Entity)
-							 	net.WriteInt(newTeam,8)
-							net.SendToServer()
-						-- end
-					elseif (string.StartWith( tr.Entity:GetClass(), "ent_melon_powerupgrader" )) then
-						-- if (correctTeam) then
-							net.Start("MW_Activate")
-							 	net.WriteEntity(tr.Entity)
-							 	net.WriteInt(newTeam,8)
-							net.SendToServer()
-						-- end
+					--TODO: Shouldn't be hardcoded.
+					local canActivate = {
+						["ent_melon_gate"] = true,
+						["ent_melon_energy_switch"] = true,
+						["ent_melon_unit_transport"] = true,
+						["ent_melon_energy_steam_plant"] = true,
+						["ent_melon_energy_nuclear_plant"] = true,
+						["ent_melon_energy_water_pump"] = true,
+						["ent_melon_longboy"] = true,
+						["ent_melon_unit_launcher"] = true,
+						["ent_melon_powerupgrader"] = true
+					}
+
+					local entClass = tr.Entity:GetClass()
+
+					if canActivate[entClass] then
+						net.Start("MW_Activate")
+							net.WriteEntity(tr.Entity)
+							net.WriteInt(newTeam,8) --TODO: UInt 4 bit
+						net.SendToServer()
+					elseif string.StartsWith( entClass, "ent_melon_barracks") or entClass == "ent_melon_overclocker" then
+						net.Start("ToggleBarracks") --TODO: This could probably be rewritten to just use activate
+							net.WriteEntity(tr.Entity)
+							net.WriteInt(newTeam,8)
+						net.SendToServer()
+					elseif entClass == "ent_melon_propeller" or entClass == "ent_melon_hover" then
+						net.Start("PropellerReady") --TODO: This could probably be rewritten to just use activate
+							net.WriteEntity(tr.Entity)
+							net.WriteInt(newTeam,8)
+						net.SendToServer()
+					elseif entClass == "ent_melon_water_tank" then
+						net.Start("MW_UseWaterTank") --TODO: This could probably be rewritten to just use activate
+							net.WriteEntity(tr.Entity)
+							net.WriteInt(newTeam,8)
+						net.SendToServer()
+					elseif entClass == "ent_melon_contraption_assembler" and correctTeam then --TODO: Team checks here unreliable.
+						plyTbl.selectedAssembler = tr.Entity
+						self:MakeContraptionMenu()
 					end
 				end
 			else
@@ -2156,6 +2091,7 @@ function TOOL:Think()
 		end
 	end
 
+	local newColor
 	if (newTeam ~= 0) then
 		newColor = MelonWars.teamColors[newTeam]
 	else
@@ -2181,9 +2117,7 @@ function TOOL:Think()
 	end
 
 	if (input.IsKeyDown( KEY_LCONTROL )) then
-		if (self.ctrlPressed == nil) then
-			self.ctrlPressed = false
-		end
+		self.ctrlPressed = self.ctrlPressed or false
 		if not self.ctrlPressed then
 			self.ctrlPressed = true
 
@@ -2202,28 +2136,13 @@ function TOOL:Think()
 		self.ctrlPressed = false
 	end
 
-	if (plyTbl.mw_spawnTimer == nil) then
-		plyTbl.mw_spawnTimer = CurTime()
-	end
-	if (plyTbl.mw_selectTimer == nil) then
-		plyTbl.mw_selectTimer = CurTime()
-	end
-	if (plyTbl.mw_cooldown == nil) then
-		plyTbl.mw_cooldown = CurTime()
-	end
-
-	if (plyTbl.mw_units == nil) then
-		plyTbl.mw_units = 0
-	end
-	if (plyTbl.mw_credits == nil) then
-		plyTbl.mw_credits = 0
-	end
-	if (plyTbl.mw_sell == nil) then
-		plyTbl.mw_sell = 0
-	end
-	if (plyTbl.mw_spawntime == nil) then
-		plyTbl.mw_spawntime = CurTime()
-	end
+	plyTbl.mw_spawnTimer = plyTbl.mw_spawnTimer or CurTime()
+	plyTbl.mw_selectTimer = plyTbl.mw_selectTimer or CurTime()
+	plyTbl.mw_cooldown = plyTbl.mw_cooldown or CurTime()
+	plyTbl.mw_units = plyTbl.mw_units or 0
+	plyTbl.mw_credits = plyTbl.mw_credits or 0
+	plyTbl.mw_sell = plyTbl.mw_sell or 0
+	plyTbl.mw_spawntime = plyTbl.mw_spawntime or CurTime()
 
 	if (plyTbl.mw_action == 1) then
 		local newColor = MelonWars.teamColors[ply:GetInfoNum("mw_team", 0)]
@@ -2242,12 +2161,10 @@ function TOOL:Think()
 		end
 	elseif (plyTbl.mw_action == 3) then
 		local newColor = MelonWars.teamColors[ply:GetInfoNum("mw_team", 0)]
-		-- local modeltable = list.Get( "WallModels" )
 		local prop_index = ply:GetInfoNum("mw_chosen_prop", 0)
 		local offset
 		if (cvars.Bool("mw_prop_offset") == true) then
 			offset = MelonWars.baseProps[prop_index].offset
-			--offset:Rotate( ply.propAngle )
 			local xoffset = Vector(offset.x * (math.cos(plyTbl.propAngle.y / 180 * math.pi)), offset.x * (math.sin(plyTbl.propAngle.y / 180 * math.pi)),0)
 			local yoffset = Vector(offset.y * (-math.sin(plyTbl.propAngle.y / 180 * math.pi)), offset.y * (math.cos(plyTbl.propAngle.y / 180 * math.pi)),0)
 			offset = xoffset + yoffset + Vector(0,0,offset.z)
@@ -2345,7 +2262,6 @@ function TOOL:Deploy()
 	self.disableKeyboard = false
 	self.ctrlPressed = false
 	self.canPlace = true
-	owner.chatTimer = 0
 	local _team = owner:GetInfoNum( "mw_team", 0 )
 	if not SERVER then return end
 	if _team ~= 0 then

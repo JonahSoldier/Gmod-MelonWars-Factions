@@ -216,7 +216,8 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 		for _, v in RandomPairs( points ) do
 			if IsValid(v) and (ply:GetPos() - v:GetPos()):LengthSqr() < 800000 then
 				for i = 1, 8 do
-					if v:GetNWInt( "captured" .. tostring( i ), 0 ) > 0 then
+					local capture = v:GetNWInt( "captured" .. tostring( i ), 0 )
+					if capture > 0 then
 						local vpos = v:WorldSpaceCenter() + Vector( 0, 0, 100 )
 						local pos = vpos:ToScreen()
 						surface.SetDrawColor( 0, 0, 0, 255 )
@@ -224,7 +225,6 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 						surface.SetDrawColor( 255, 255, 255, 255 )
 						surface.DrawRect( pos.x - 5 , pos.y - 120, 10, 100 )
 						surface.SetDrawColor( MelonWars.teamColors[i] )
-						local capture = v:GetNWInt( "captured" .. tostring( i ), 0 )
 						surface.DrawRect( pos.x - 5 , pos.y - 20 - capture, 10 , capture )
 					end
 				end
