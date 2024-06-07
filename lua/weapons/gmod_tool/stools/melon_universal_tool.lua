@@ -172,54 +172,6 @@ local function _MakeCheckbox (x, y, parent, textstr, command, labelstr, inverted
 	return checkbox
 end
 
-local function DefaultInfo()
-	if not CLIENT then return end
-	local pl = LocalPlayer()
-
-	pl.info = vgui.Create("DLabel", pl.panel)
-	pl.info:SetPos(190, 190)
-	pl.info:SetSize(370,200)
-	pl.info:SetWrap(true)
-	pl.info:SetFontInternal( "Trebuchet24" )
-	pl.info:SetText("Hover over a button to see more info about the units")
-	pl.mw_hover = 0
-
-	pl.info_name = vgui.Create("DLabel", pl.panel)
-	pl.info_name:SetPos(190, 50)
-	pl.info_name:SetSize(370,100)
-	pl.info_name:SetWrap(true)
-	pl.info_name:SetFontInternal( "DermaLarge" )
-	pl.info_name:SetText("-")
-
-	pl.info_cost = vgui.Create("DLabel", pl.panel)
-	pl.info_cost:SetPos(190, 110)
-	pl.info_cost:SetSize(370,100)
-	pl.info_cost:SetWrap(true)
-	pl.info_cost:SetFontInternal( "DermaLarge" )
-	pl.info_cost:SetText("Cost: ")
-
-	pl.info_turret_cost = vgui.Create("DLabel", pl.panel)
-	pl.info_turret_cost:SetPos(190, 140)
-	pl.info_turret_cost:SetSize(370,100)
-	pl.info_turret_cost:SetWrap(true)
-	pl.info_turret_cost:SetFontInternal( "Trebuchet24" )
-	pl.info_turret_cost:SetText("")
-
-	pl.info_power = vgui.Create("DLabel", pl.panel)
-	pl.info_power:SetPos(400, 110)
-	pl.info_power:SetSize(370,100)
-	pl.info_power:SetWrap(true)
-	pl.info_power:SetFontInternal( "DermaLarge" )
-	pl.info_power:SetText("Power")
-
-	pl.info_time = vgui.Create("DLabel", pl.panel)
-	pl.info_time:SetPos(400, 140)
-	pl.info_time:SetSize(370,100)
-	pl.info_time:SetWrap(true)
-	pl.info_time:SetFontInternal( "Trebuchet24" )
-	pl.info_time:SetText("")
-end
-
 local function _MakeButton(number, posnumber, parent) -- Make Button
 	if not CLIENT then return end
 	local pl = LocalPlayer()
@@ -237,11 +189,11 @@ local function _MakeButton(number, posnumber, parent) -- Make Button
 	end
 	local color = MelonWars.units[number].button_color
 	button.Paint = function(s, w, h)
-		draw.RoundedBox( 6, 0, 0, w, h, Color(color.r-40,color.g-40,color.b-40) )
-		draw.RoundedBox( 3, 5, 5, w-10, h-10, color )
+		local darken = (button:IsHovered() and 25) or 0
+		draw.RoundedBox( 6, 0, 0, w, h, Color(color.r-40-darken,color.g-40-darken,color.b-40-darken) )
+		draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(color.r-darken, color.g-darken, color.b-darken) )
 	end
 	function button:OnCursorEntered()
-		pl.mw_hover = number
 		pl.info:SetText(MelonWars.units[number].description)
 		if (cvars.Number("mw_admin_credit_cost") == 1) then
 			pl.info_cost:SetText( "Cost: " .. MelonWars.units[number].cost )
@@ -288,7 +240,72 @@ local function _MakeHelpButton(name, number, info, text1, text2, text3, text4, t
 	end
 end
 
-local function _CreatePanel()
+local function DefaultInfo()
+	if not CLIENT then return end
+	local pl = LocalPlayer()
+
+	pl.info = vgui.Create("DLabel", pl.panel)
+	pl.info:SetPos(190, 190)
+	pl.info:SetSize(370,200)
+	pl.info:SetWrap(true)
+	pl.info:SetFontInternal( "Trebuchet24" )
+	pl.info:SetText("Hover over a button to see more info about the units")
+	--pl.mw_hover = 0
+
+	pl.info_name = vgui.Create("DLabel", pl.panel)
+	pl.info_name:SetPos(190, 50)
+	pl.info_name:SetSize(370,100)
+	pl.info_name:SetWrap(true)
+	pl.info_name:SetFontInternal( "DermaLarge" )
+	pl.info_name:SetText("-")
+
+	pl.info_cost = vgui.Create("DLabel", pl.panel)
+	pl.info_cost:SetPos(190, 110)
+	pl.info_cost:SetSize(370,100)
+	pl.info_cost:SetWrap(true)
+	pl.info_cost:SetFontInternal( "DermaLarge" )
+	pl.info_cost:SetText("Cost: ")
+
+	pl.info_turret_cost = vgui.Create("DLabel", pl.panel)
+	pl.info_turret_cost:SetPos(190, 140)
+	pl.info_turret_cost:SetSize(370,100)
+	pl.info_turret_cost:SetWrap(true)
+	pl.info_turret_cost:SetFontInternal( "Trebuchet24" )
+	pl.info_turret_cost:SetText("")
+
+	pl.info_power = vgui.Create("DLabel", pl.panel)
+	pl.info_power:SetPos(400, 110)
+	pl.info_power:SetSize(370,100)
+	pl.info_power:SetWrap(true)
+	pl.info_power:SetFontInternal( "DermaLarge" )
+	pl.info_power:SetText("Power")
+
+	pl.info_time = vgui.Create("DLabel", pl.panel)
+	pl.info_time:SetPos(400, 140)
+	pl.info_time:SetSize(370,100)
+	pl.info_time:SetWrap(true)
+	pl.info_time:SetFontInternal( "Trebuchet24" )
+	pl.info_time:SetText("")
+end
+
+local function unitScroller( lStart, lEnd, unitCheck)
+	local pl = LocalPlayer()
+	local scroll = vgui.Create( "DScrollPanel", pl.panel ) -- Create the Scroll panel
+	scroll:SetSize( 175, h-30)
+	scroll:SetPos( 0, 0 )
+
+	local ipos = 1
+	for i = lStart, lEnd - 1, 1 do
+		if isfunction(unitCheck) and unitCheck(MelonWars.units[i]) then
+			_MakeButton(i, ipos, scroll)
+			ipos = ipos + 1
+		end
+	end
+
+	return scroll
+end
+
+local function _CreatePanel() --TODO: This is like 75% of the file. I should probably refactor/reorganize it. 
 	if not CLIENT then return end
 	local pl = LocalPlayer()
 
@@ -298,32 +315,18 @@ local function _CreatePanel()
 	pl.panel.Paint = function(s, w, h)
 		draw.RoundedBox( 4, 0, 0, w, h, Color(30,30,30) )
 	end
+
 	if (pl.mw_menu == 0) then																	--units menu
-		-- { units MENU
-		local scroll = vgui.Create( "DScrollPanel", pl.panel ) -- Create the Scroll panel
-		scroll:SetSize( 175, h-30)
-		scroll:SetPos( 0, 0 )
-		local lines = vgui.Create("DPanel", scroll)
-		lines:SetSize(w-120, h-30)
-		lines:SetPos(0,0)
-		lines.Paint = function(s, w, h)
-			surface.SetDrawColor( color_white )
-			if (pl.mw_hover ~= 0) then
-				local a = pl.mw_hover * 45 - 25
-				surface.DrawRect( 135, a, 20, 20 )
-			end
-		end
-		local ipos = 1
-		for i = 1, firstBuilding-1 do
-			if (cvars.Bool("mw_admin_allow_manual_placing") or MelonWars.units[i].welded_cost ~= -1) then
-				if ((MelonWars.units[i].code == nil or pl:GetInfo("mw_code") == MelonWars.units[i].code) and (MelonWars.units[i].isBonusUnit ~= true or GetConVar( "mw_admin_bonusunits" ):GetInt() == 1)) then
-					_MakeButton(i, ipos, scroll)
-					ipos = ipos + 1
-				end
-			end
+		local allowManualPlace = cvars.Bool("mw_admin_allow_manual_placing")
+		local plCode = pl:GetInfo("mw_code")
+		local bonusUnits = GetConVar( "mw_admin_bonusunits" ):GetBool()
+		local function check(unit)
+			return (allowManualPlace or unit.welded_cost ~= -1) and (not unit.code or plCode == unit.code) and (not unit.isBonusUnit or bonusUnits)
 		end
 
-		if not cvars.Bool("mw_admin_allow_manual_placing") then
+		unitScroller(1, firstBuilding, check)
+
+		if not allowManualPlace then
 			pl:ConCommand("mw_unit_option_welded 1")
 			local label = vgui.Create("DLabel", pl.panel)
 			label:SetPos(170, 15)
@@ -340,7 +343,7 @@ local function _CreatePanel()
 		else
 			local checkbox = _MakeCheckbox( 180, 15, pl.panel, "Spawn as turret", "mw_unit_option_welded")
 			function checkbox:OnCursorEntered()
-				pl.mw_hover = 0
+				--pl.mw_hover = 0
 				pl.info_name:SetText("Spawn as turret")
 				pl.info_cost:SetText("")
 				pl.info_turret_cost:SetText("")
@@ -351,33 +354,16 @@ local function _CreatePanel()
 		end
 
 		DefaultInfo()
-		-- }
 	elseif (pl.mw_menu == 1) then																--Buildings menu
-		-- { BUILDINGS MENU
-		local scroll = vgui.Create( "DScrollPanel", pl.panel ) -- Create the Scroll panel
-		scroll:SetSize( 175, h-25)
-		scroll:SetPos( 0, 0 )
-		local lines = vgui.Create("DPanel", scroll)
-		lines:SetSize(w-120, 900)
-		lines:SetPos(0,0)
-		lines.Paint = function(s, w, h)
-			local a = ( pl.mw_hover - firstBuilding + 1 ) * 45 - 18
-			surface.SetDrawColor(color_white)
-			surface.DrawRect( 135, a-5, 20, 20 )
+		local bonusUnits = GetConVar( "mw_admin_bonusunits" ):GetBool()
+		local plCode = pl:GetInfo("mw_code")
+		local function check(unit)
+			return (not unit.code or plCode == unit.code) and (not unit.isBonusUnit or bonusUnits)
 		end
 
-		local ipos = 1
-		for i = firstBuilding, firstEnergy - 1 do
-			if (MelonWars.units[i].code == nil or pl:GetInfo("mw_code") == MelonWars.units[i].code) and (MelonWars.units[i].isBonusUnit ~= true or GetConVar( "mw_admin_bonusunits" ):GetInt() == 1) then
-				if MelonWars.units[i].name ~= "Contraption Assembler" or cvars.Number("mw_admin_ban_contraptions") == 0 then
-					_MakeButton(i, ipos, scroll)
-					ipos = ipos + 1
-				end
-			end
-		end
+		unitScroller(firstBuilding, firstEnergy, check)
 
 		DefaultInfo()
-		-- }
 	elseif (pl.mw_menu == 2) then																-- Base menu
 		-- { BASE MENU
 
@@ -444,22 +430,7 @@ local function _CreatePanel()
 			draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
 		end
 	elseif (pl.mw_menu == 3) then																--Energy menu
-		-- { BUILDINGS MENU
-		local scroll = vgui.Create( "DScrollPanel", pl.panel ) -- Create the Scroll panel
-		scroll:SetSize( 175, h-25)
-		scroll:SetPos( 0, 0 )
-		local lines = vgui.Create("DPanel", scroll)
-		lines:SetSize(w-120, 450)
-		lines:SetPos(0,0)
-		lines.Paint = function(s, w, h)
-			local a = ( pl.mw_hover - firstEnergy + 1 ) * 45 - 18
-			surface.SetDrawColor(color_white)
-			surface.DrawRect( 135, a - 5, 20, 20 )
-		end
-
-		for i = firstEnergy, firstContraption - 1 do
-			_MakeButton( i, i - firstEnergy + 1, scroll )
-		end
+		unitScroller(firstEnergy, firstContraption, function() return true end)
 
 		DefaultInfo()
 	elseif (pl.mw_menu == 4) then																--Contraption menu
@@ -488,14 +459,6 @@ local function _CreatePanel()
 		local scroll = vgui.Create( "DScrollPanel", pl.panel ) -- Create the Scroll panel
 		scroll:SetSize( 175, h-105)
 		scroll:SetPos( 0, 80 )
-		local lines = vgui.Create("DPanel", scroll)
-		lines:SetSize(w-120, 550)
-		lines:SetPos(0,0)
-		lines.Paint = function(s, w, h)
-			local a = ( pl.mw_hover - firstContraption + 1 ) * 45 - 18
-			surface.SetDrawColor(color_white)
-			surface.DrawRect( 135, a - 5, 20, 20 )
-		end
 
 		for i = firstContraption, unitCount do
 			_MakeButton(i, i - firstContraption + 1, scroll)
@@ -620,7 +583,7 @@ local function _CreatePanel()
 
 		local selection = vgui.Create("DPanel", pl.panel)
 		local mwTeam = mw_team_cv:GetInt()
-		if not mwTeam == 0 then
+		if not(mwTeam == 0) then
 			selection:SetPos( 135 + mwTeam * 45, 145 )
 		else
 			selection:SetPos( 180, 210 )
@@ -679,7 +642,7 @@ local function _CreatePanel()
 		end
 
 		if code == "full" then
-			factionSelection:SetPos( 225, 320 )
+			factionSelection:SetPos( 225, 270 )
 		end
 		local button = vgui.Create("DButton", pl.panel)
 		button:SetSize(40,40)
@@ -1452,6 +1415,7 @@ local function _CreatePanel()
 	end
 end
 
+
 -- SELECTION CODE: ----------------------------------
 
 local function MW_BeginSelection() -- Previously concommand.Add( "+mw_select", function( ply )
@@ -1728,12 +1692,11 @@ function TOOL:LeftClick( tr )
 		return
 	end
 
-	--if IsValid( self:GetOwner().controllingUnit ) then return end
 	if pl.mw_cooldown >= CurTime() - 0.1 then return end
 
 	local trace = self:GetOwner():GetEyeTrace( {
 		mask = MASK_SOLID + MASK_WATER
-	} )
+	} ) --TODO: We can probably use the "tr" value passed in instead.
 
 	pl.mw_cooldown = CurTime()
 	mw_melonTeam = pl:GetInfoNum("mw_team", 0)
@@ -1833,7 +1796,7 @@ function TOOL:LeftClick( tr )
 			net.WriteInt(mw_melonTeam ,8)
 			net.WriteInt(pl.mw_credits ,32)
 		net.SendToServer()
-	elseif (action == 4) then  --Contraption Save
+	elseif action == 4 then  --Contraption Save
 		if (CLIENT) then
 			net.Start("ContraptionSave")
 				net.WriteString(pl.contraption_name)
@@ -1842,7 +1805,7 @@ function TOOL:LeftClick( tr )
 		end
 		self:GetOwner():ConCommand("mw_action 0")
 	-- elseif (action == 5) then  --Sell Tool
-	elseif (action == 6) then  --Contraption Load
+	elseif action == 6 then  --Contraption Load
 		local text = file.Read(pl.selectedFile)
 		local compressed_text = util.Compress( text )
 		if not compressed_text then compressed_text = text end
@@ -1865,28 +1828,28 @@ function TOOL:LeftClick( tr )
 
 			start = endbyte
 		end
-	elseif (action == 7) then
+	elseif action == 7 then
 		net.Start("SpawnBaseGrandWar")
 			net.WriteTable(trace)
 			net.WriteInt(mw_melonTeam, 8)
 		net.SendToServer()
 		self:GetOwner():ConCommand("mw_action 0")
-	elseif (action == 8) then
+	elseif action == 8 then
 		net.Start("SpawnCapturePoint")
 			net.WriteTable(trace)
 		net.SendToServer()
 		self:GetOwner():ConCommand("mw_action 0")
-	elseif (action == 9) then
+	elseif action == 9 then
 		net.Start("SpawnOutpost")
 			net.WriteTable(trace)
 		net.SendToServer()
 		self:GetOwner():ConCommand("mw_action 0")
-	elseif (action == 10) then
+	elseif action == 10 then
 		net.Start("MW_SpawnWaterTank")
 			net.WriteTable(trace)
 		net.SendToServer()
 		self:GetOwner():ConCommand("mw_action 0")
-	elseif (action == 25) then
+	elseif action == 25 then
 		net.Start("SpawnBaseUnit")
 			net.WriteTable(trace)
 			net.WriteInt(mw_melonTeam, 8)
@@ -1963,7 +1926,7 @@ local function MW_UpdateGhostEntity(model, pos, offset, angle, newColor, ghostSp
 		end
 	end
 
-	local ghostSphere = locPly.ghostSphere
+	local ghostSphere = locPly.GhostSphere
 	if not IsValid( ghostSphere ) then
 		if locPly.mw_action == 1 and ghostSphereRange > 0 then
 			ghostSphere = ents.CreateClientProp( "models/hunter/tubes/circle2x2.mdl" )
@@ -1976,6 +1939,7 @@ local function MW_UpdateGhostEntity(model, pos, offset, angle, newColor, ghostSp
 			ghostSphere:SetColor( Color( newColor.r * 1.5, newColor.g * 1.5, newColor.b * 1.5, 50 ) )
 			ghostSphere:SetModelScale( 0.021 * ghostSphereRange )
 			ghostSphere:Spawn()
+			ghostSphere:SetPos( Vector(pos.x, pos.y, ghostSpherePos.z ) )
 			locPly.GhostSphere = ghostSphere
 		end
 	else
