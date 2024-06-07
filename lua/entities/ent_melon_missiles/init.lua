@@ -27,7 +27,7 @@ function ENT:Initialize()
 
 	self.shotOffset = Vector(0,0,10)
 
-	self.population = 3
+	self.population = 2
 
 	self.shotSound = "weapons/ar2/ar2_altfire.wav"
 	self.tracer = "AR2Tracer"

@@ -11,7 +11,7 @@ function ENT:Initialize()
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
 
-	self.maxHP = 80
+	self.maxHP = 60
 	self.speed = 80
 	self.range = 250
 	self.shotAngle = 100
@@ -29,7 +29,7 @@ function ENT:Initialize()
 
 	self.nextShot = CurTime()+3
 
-	self.population = 2
+	self.population = 3
 	self.useBBoxPhys = true
 
 	self:Setup()

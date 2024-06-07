@@ -226,10 +226,10 @@ local function _MakeHelpButton(name, number, info, text1, text2, text3, text4, t
 	function button:DoClick()
 		info:SetFontInternal("Trebuchet24")
 		info:SetText(text1)
-		if (text2 ~= nil) then info:AppendText(text2) end
-		if (text3 ~= nil) then info:AppendText(text3) end
-		if (text4 ~= nil) then info:AppendText(text4) end
-		if (text5 ~= nil) then info:AppendText(text5) end
+		if text2 then info:AppendText(text2) end
+		if text3 then info:AppendText(text3) end
+		if text4 then info:AppendText(text4) end
+		if text5 then info:AppendText(text5) end
 		timer.Simple( 0.001, function() info:GotoTextStart() end )
 
 		if name ~= "About" then return end
@@ -724,19 +724,20 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 		timer.Simple( 0.001, function() info:SetFontInternal( "Trebuchet24" ) end )
 		info:SetText( "Thanks for downloading and using the MelonWars:RTS addon. I hope you enjoy it.\n\nChoose a category on the left to see info about a certain topic!" )
 
-		_MakeHelpButton( "About", 0, info, "What is this mod?\n\n" ..
-			"This is a remake of a 2006 addon called WarMelons:RTS by Lap and MegaJohnny. It's a strategy game that is played in sandbox, allowing you to build contraptions and your own maps with the familiar controls of standard Garry's Mod.\n\n" ..
-			"The original addon was discontinued and broke when Gmod 13 came out, and I never heard of the developer again. " ..
-			"I missed the addon so much that I looked for it everywhere. After more than a year without success, I decided to learn Lua and make my own version.\n\n" ..
-			"This addon isn't quite the same as the original, but I hope it will fill the void that WarMelons left.\n- Marum\n\n" ..
-			"Credits:\n\nFaction Mod creator:\nJonahSoldier\n\nFaction Mod contributors:\nthecraftianman\n\n" ..
-			"The creator of this addon:\nMarum\n\nThe creators of the original:\nLap and MegaJohnny\n\n" ..
-			"Testers and supporters:\nX marks it\n(Xen)SunnY\nBOOM! The_Rusty_Geek\nDagren\nFush\nBroh\nJwanito\nMr. Thompson\nArheisel\nHipnox\n\n" ..
-			"Suggestions:\nSquid-Inked (Tesla Tower)\nDurendal5150 (Radar)\n\n",
-			"Thanks to:\nMembers of the MelonWars:RTS Discord, and you, for subscribing!\n\nShoutout to Ludsoe, who is also making a WarMelons remake!" )
+		--TODO: I really fucking suck at being concise.
+		_MakeHelpButton( "About", 0, info, "What is MelonWars:Factions?\n\n" ..
+			"This is a heavily modified version of MelonWars:RTS, which is itself a re-make of a Gmod 12 addon known as WarMelons:RTS.\n\n" ..
+			"MelonWars:Factions is my own expansion of/continuation of Melon Wars. It includes new units and buildings, as well as substantial improvements to performance, security, and a LOT of bug-fixes.\n\n" ..
+			"Every faction has been substantially reworked, with each one getting 2 new buildings, and almost every faction unit being rebalanced, reworked, or entirely replaced." ..
+			"The new versions are no-longer horrendously overpowered, and all of them are useful in some way, whilst still sticking to and reinforcing their factions' theme.\n\n"..
+			"A few of the non-faction units/buildings have been tweaked a little, but none as substantially as the faction units. They're now a bit better-balanced for competititve play," ..
+			"but they should still be familiar to anyone who's played the original.\n\n" ,
+			"A few units have been removed that either overlapped too heavily in purpose with others, or whose concepts just didn't work well with the rest of the game." ..
+			"If you feel the addon's missing something without them, though, you can re-enable them through the admin menu (game-balance-be-damned)"
+		)
 		info:SetFontInternal("Trebuchet24")
 
-		_MakeHelpButton( "Help", 1, info, "Introduction:\n\nThis addon is a tool that allows you and your friends to play a Real Time Strategy game, much like StarCraft or Age of Empires, but much simpler.\n\n" ..
+		_MakeHelpButton( "Help", 1, info, "Introduction:\n\nThis addon is a tool that allows you and your friends to play a Real Time Strategy game, similar to StarCraft or Age of Empires, but much simpler.\n\n" ..
 			"Getting Started:\n\nIf you are seeing this, you probably know how to equip this tool already, but just in case you forget, I'll explain how to equip it.\n\n" ..
 			"Hold Q (or your spawn menu key), and go to the Tools tab, on the upper right.\n\nUnder the category 'MelonWars: RTS', there's the Player Tool. This is pretty much all you need to play.\n\n" ..
 			"Select the Player Tool. With this tool equipped, you can now press your Reload key (R by default) to open up the Melon Wars menu. You are going to be using this menu a lot.\n" ..
@@ -759,55 +760,44 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 			"Water is the game's main resource, and it will be depleted when spawning units unless the admin option 'Free Water' is set to true (which it is by default). Power usage increases the more units you have, and you can't spawn units if your power has reached its max.\n\n" ..
 			"From the Units menu, you can also select an option to spawn units as Turrets, which reduces their cost but spawns them welded to what you are looking at. Some units can't be spawned as turrets, such as Nukes and Jetpacks." )
 
-		_MakeHelpButton( "Units", 4, info, "What does each unit do?\n\n" ..
-			"Marines:\nThe Marines are the generic soldier. They have accurate rifles, but they aren't very long range. Marines are usually used as cannon fodder to push against slow firing units, but don't underestimate the strength of Marines in big numbers.\n\n" ..
-			"Medic:\nThe Medic doesn't like to fight, but he likes seeing others fight. It cannot deal damage in any way. Its only goal is to keep all of its nearby friends healthy and ready for the next battle. " ..
-			"Having multiple medics in a squad can drastically increase the squad's durability, and they can keep important units alive. They hurt themselves while healing, and can't heal each other.\n\n" ..
-			"Bomb:\nThe Bomb is willing to die for its team. It will explode if it gets killed or if there are enemy units in range. A well placed bomb can take down an entire squad in no time, but they are fragile, so protect them until they get to the target. ",
-			"A Bomb spawned as turret will become a Mine and bury into the ground. Be careful about having bombs in your midst, as an enemy sniper can make it explode and take a chunk of your army with it.\n\n" ..
-			"Jetpack:\nThe Jetpack is a promoted marine that takes to the skies with a rocket pack. " ..
-			"He flies a few meters off the ground at all times, and he specializes in going over walls, transiting harsh terrain, flanking from outside the map, and flying over squads to take down valuable defended targets.\n\n" ..
-			"Gunner:\nThe Gunner is a tough and slow unit that carries a minigun. Its gun will spin faster as the battle goes on, so it will deal a lot more damage if it manages to survive 18 seconds of continuous firing.\n\n" ..
-			"Missiles:\nThe Missiles is the brother of the Gunner, but it was given a bazooka instead of a machinegun. It fires homing missiles that deal low area damage. It's useful for taking down crowds of weak enemies, taking down a squad's medics, and shooting down flocks of Jetpacks.\n\n" ..
-			"Sniper:\nThe Sniper is one of the most damaging units in the game. It shoots very slowly, but it makes every shot count. They are useful for taking down valuable targets, like a bomb in the middle of the enemy army, or quickly taking down a mortar. " ..
-			"It's taller than most units to be able to shoot over its allies heads, but its gun is so unwieldy that it cannot shoot while running, making it easily killable on its own. Be sure to escort and protect it, as its shots can be heard from anywhere on the map, and it is sure to become a target.\n\n" ..
-			"Mortar:\nThe Mortar is a powerful armored unit that can quickly take down enemy squads. It shoots mortar shells in an arc, which might not be ideal if the enemy is swift to move out of the way, but if that bomb hits a crowd, it will hurt a lot. The mortar is the only unit that can fire over walls, making it a good siege unit.\n\n" ..
-			"Nuke:\nThe Nuke is the ultimate breaching weapon. It's slow, but it carries a powerful blast. When it spawns, it informs every player of the imminent danger. " ..
-			"It takes 1.5 seconds to explode after it gets to the enemy wall, but it doesn't explode as big if it gets killed before it detonates, so take good care of it until it does. Additionally, it will only automatically target enemy walls in order to avoid enemy kamikazes from triggering it." )
-
-		_MakeHelpButton( "Buildings", 5, info, "What does each building do?\n\n" ..
-			"Barracks:\nThe Barracks are a building that produces Marines at one third of the rate they can be spawned with the toolgun, but they spawn ready for battle and half the price. " ..
-			"It will produce up to 10 Marines at any given time. The Barracks can be turned on or off by holding the Player Tool, looking at it and pressing the E key.\nEach unit has its own barracks!\n\n" ..
-			"Turret:\nThe Turret is your go-to static defense. It has a good damage output, and the longest range in the game. It can't move, even if it's spawned onto a contraption.\n\n" ..
-			"Shredder:\nThe Shredder is used to recycle melons and get 90% of their value back. It's good for getting rid of your army if you want to replace your low tier units with higher tier ones.\n\n" ..
-			"Elevator Pad:\nThe Elevator Pad is used as an elevator. Every unit on top of it will be levitated upwards up to a certain height. ",
-			"Because you can't spawn mobile units onto base props, if you want to, say, make a bomb ambush tower to drop bombs onto your attackers, those bombs can't be spawned directly on the tower. Just use a Pad to get them up there.\n\n" ..
-			"Gate:\nThe Gate is useful for making entrances and exits to your base. You can open and close it by looking at it and pressing E with the Player Tool equipped.\n\n" ..
-			"Large Gate:\nThe Large Gate can be operated the same way as the small gate, but it requires energy to open and close. It's wider and taller, allowing for bigger armies or contraptions to go through.\n\n" ..
-			"Contraption Assembler:\nThis workshop can build any contraption that you've previously saved with the Contraption Manager. Use it to produce tanks, ships, or any vehicle you can imagine and build!\n\n" ..
-			"Tesla Tower:\nThis building requires energy to function, but it's a powerful AOE static defense that will zap the 5 closest enemies in a big range. It can get overwhelmed by big squads, and it will consume a LOT of energy while firing.\n\n" ..
-			"Over-Clocker:\nSpawn this bad boy right next to a barracks of any kind and watch it increase its production rate! (And consume all of your Energy.) You can't turn it on and off with E.\n\n" ..
-			"Radar:\nThe Radar constantly consumes energy, equivalent to one Solar Panel, and cannot be turned off. If the Radar detects an enemy unit, an exclamation mark will pop up on the player's HUD showing the place of the detection.\n\n" ..
-			"Medical Bay:\nUses a lot of energy, but has the healing capabilities of 10 Medics in a way bigger radius. It's meant to keep all the units in your base at full health. Be careful though, as having to heal a lot of units at once can really drain your Energy supply." )
-
-		_MakeHelpButton( "Energy", 6, info, "What is Energy for?\n\n" ..
+		_MakeHelpButton( "Energy", 4, info, "What is Energy for?\n\n" ..
 			"Energy is used to power certain buildings that need it to operate. Buildings that interact with Energy appear with Yellow buttons on the spawn menu.\n" ..
 			"Buildings use a lot more power than what a player usually generates, so it's a good idea to store it in Batteries in order to have enough when you need it.\n\n" ..
 			"How do I connect buildings?\n\nTo connect Energy buildings, use the Relay located in the Energy submenu. For buildings to work, you will need to connect some sort of battery to the network." )
 
-		_MakeHelpButton( "Contrap.", 7, info, "What is a contraption?\n\nA contraption is a machine built by the player that can be used in melon combat as a vehicle. It can be used for ramming, as a tank, as transport, or anything you can imagine.\n\n" ..
+		_MakeHelpButton( "Contrap.", 5, info, "What is a contraption?\n\nA contraption is a machine built by the player that can be used in melon combat as a vehicle. It can be used for ramming, as a tank, as transport, or anything you can imagine.\n\n" ..
 			"How do I build them?\n\nBuild a contraption just like you would in Sandbox. Beware that parts like thrusters, hoverballs, and wheels will get removed when you 'legalize' the contraption.\n\n" ..
 			"What is legalizing?\n\nIn order to make your contraption legal inside the MelonWars battle, you have to save it using the Contraption Manager, located under the Contrap. menu, and spawn it using a Contraption Assembler.\n\n" ..
 			"How do I make my contraption move?\n\nUnder the Contrap. submenu, you have Thrusters, Wheels, Propellers and Hover Pads. " ..
 			"The Thruster is a powerful melon that cannot shoot, but it is very strong and can move even if attached to a contraption. The Wheel can be used to help your contraption roll across the ground. The Propeller and Hover Pad can be used to make your contraption hover above ground." )
 
-		_MakeHelpButton("Setup", 8, info, "How do I set up a game?\n\n" ..
+		_MakeHelpButton("Setup", 6, info, "How do I set up a game?\n\n" ..
 			"In order to set up a game, you should build an arena out of props or go to a MelonWars map. The admin should ask the players what colors they want to be, then spawn a Base (or Grand War Base) from the Admin menu for each player at different locations.\n\n" ..
 			"Be sure to ask every player to set their team in the Teams tab in this menu.\n\nSpawn a few outposts and capture points around the arena as objectives, and once everything is set up, press the Start Match button.\n\n" ..
 			"The admin can also set alliances from the Admin tab.\n\nOnce the match starts, it's a battle to destroy the enemies' bases. Last team standing wins!\n\n" ..
 			"Remember, this is as much a gamemode as it is a toy, so there is no actual 'end' to the match other than whatever you make it. " ..
 			"You can play until the last base is destroyed, until only one player has units, or any other condition you can imagine. Just be sure to be clear about it with all players before starting." )
 
+		_MakeHelpButton("Factions", 7, info, "How do I set up a game?\n\n" ..
+			"If you're reading this, JonahSoldier forgot to write anything here!" )
+
+		_MakeHelpButton("Credits", 8, info, "All the cool people who helped make this mod a reality:\n\n" ..
+			"Melon Wars:Factions\n" ..
+			"	Creator: JonahSoldier\n" ..
+			"	Contributor(s):\n" ..
+			"		thecraftianman\n\n" ..
+			"	Playtesters:\n" ..
+			"		MerekiDor\n" ..
+			"		D-Boi-9341\n" ..
+			"		Andrew\n".. --idk what to put here, his names aren't exactly recognisable. Maybe Commander Kettle?
+			"		Kazzigum\n\n" .. --TODO: Ask everyone if they want to be included here.
+			"If You're from my private server and want to be added to this list, dm me!\n\n\n" ..
+			"The Original Melon Wars:\n"..
+			"	Creator: Marum\n" ..
+			"	Testers and supporters:\n		X marks it\n		(Xen)SunnY\n		BOOM! The_Rusty_Geek\n		Dagren\n		Fush\n		Broh\n		Jwanito\n		Mr. Thompson\n		Arheisel\n		Hipnox\n\n" ..
+			"	Suggestions:\n		Squid-Inked (Tesla Tower)\n		Durendal5150 (Radar)"
+		)
+				
 		-- }
 	elseif (pl.mw_menu == 7) then																--Admin menu
 		-- { ADMIN MENU
