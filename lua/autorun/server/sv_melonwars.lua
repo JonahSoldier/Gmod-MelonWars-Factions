@@ -18,9 +18,6 @@ util.AddNetworkString( "MW_UnitDecoration" )
 util.AddNetworkString( "SpawnBase" )
 util.AddNetworkString( "SpawnBaseGrandWar" )
 util.AddNetworkString( "SpawnBaseUnit" )
-util.AddNetworkString( "SpawnCapturePoint" )
-util.AddNetworkString( "SpawnOutpost" )
-util.AddNetworkString( "MW_SpawnWaterTank" )
 util.AddNetworkString( "MW_SpawnProp" )
 util.AddNetworkString( "StartGame" )
 util.AddNetworkString( "SandboxMode" )
@@ -75,42 +72,6 @@ net.Receive( "SetMWConvar", function( _, pl ) --TODO: See if there's a better wa
 	GetConVar( convar ):SetBool( newValue )
 end )
 
-net.Receive( "MWReadyUp", function()
-	local ReadyCount = 0
-	for _, v in ipairs( player.GetAll() ) do
-		ReadyCount = ReadyCount + v:GetInfoNum( "mw_player_ready", 0 ) -- Adds all values of mw_player_ready to the readycount
-	end
-
-	if ReadyCount / #player.GetAll() <= GetConVar( "mw_admin_readyup_percentage" ):GetFloat() then return end
-	-- This really isn't a good way to do this, but I'm not sure if there's any way to directly call the code without having to do something else fucky like
-	-- Sending more signals between the client and server to trigger the network function meant to do this.
-
-	for i = 0, 4 do
-		timer.Simple( i, function()
-			for _, v in ipairs( player.GetAll() ) do
-				v:PrintMessage( HUD_PRINTCENTER, "Match starts in " .. ( 5 - i ) )
-			end
-		end )
-	end
-
-	timer.Simple( 5, function ()
-		RunConsoleCommand( "mw_admin_playing", 1 )
-		RunConsoleCommand( "mw_admin_move_any_team", 0 )
-		RunConsoleCommand( "mw_admin_credit_cost", 1 )
-		RunConsoleCommand( "mw_admin_allow_free_placing", 0 )
-		RunConsoleCommand( "mw_admin_spawn_time", 1 )
-		RunConsoleCommand( "mw_admin_immortality", 0 )
-		RunConsoleCommand( "mw_reset_credits" )
-		net.Start( "RestartQueue" )
-		net.Broadcast()
-
-		for _, v in ipairs( player.GetAll() ) do
-			sound.Play( "garrysmod/content_downloaded.wav", v:GetPos() + Vector( 0, 0, 45 ), 100, 40, 1 )
-			v:PrintMessage( HUD_PRINTCENTER, "The MelonWars match has begun!" )
-			v:PrintMessage( HUD_PRINTTALK, "== The MelonWars match has begun! ==" )
-		end
-	end )
-end )
 
 MelonWars.teamColors = {
 	Color(255,50,50,255),
@@ -720,31 +681,6 @@ net.Receive( "SpawnBaseUnit", function( _, pl )
 	MW_SpawnBaseAtPos(_team, trace.HitPos, pl, false, true)
 end )
 
-net.Receive( "SpawnCapturePoint", function()
-	local trace = net.ReadTable()
-	if IsValid( trace.Entity ) and trace.Entity.Base == "ent_melon_base" then return end
-	local e = ents.Create("ent_melon_cap_point")
-	e:SetPos(trace.HitPos)
-	e:Spawn()
-end )
-
-net.Receive( "SpawnOutpost", function()
-	local trace = net.ReadTable()
-	if IsValid( trace.Entity ) and trace.Entity.Base == "ent_melon_base" then return end
-	local e = ents.Create("ent_melon_outpost_point")
-	e:SetPos(trace.HitPos)
-	e:Spawn()
-end )
-
-net.Receive( "MW_SpawnWaterTank", function( _, pl )
-	local trace = net.ReadTable()
-	if IsValid( trace.Entity ) and trace.Entity.Base == "ent_melon_base" then return end
-	local e = ents.Create( "ent_melon_water_tank" )
-	e:SetPos( trace.HitPos )
-	e:Spawn()
-	e.waterVal = pl:GetInfoNum( "mw_water_tank_value", 1000 )
-end )
-
 net.Receive( "SellEntity", function( _, pl )
 	local entity = net.ReadEntity()
 	local playerTeam = net.ReadInt(4)
@@ -821,7 +757,7 @@ concommand.Add( "mw_reset_power", function(ply)
 	end
 end )
 
-net.Receive( "StartGame", function()
+local function startMatch()
 	for i = 0, 4 do
 		timer.Simple(i, function()
 			for _, v in ipairs( player.GetAll() ) do
@@ -845,7 +781,24 @@ net.Receive( "StartGame", function()
 			v:PrintMessage( HUD_PRINTTALK, "== The MelonWars match has begun! ==" )
 		end
 	end)
+end
+
+net.Receive( "StartGame", function()
+	startMatch()
 end)
+
+net.Receive( "MWReadyUp", function()
+	timer.Simple(1, function()
+		local ReadyCount = 0
+		for _, v in ipairs( player.GetAll() ) do
+			ReadyCount = ReadyCount + ((tobool(v:GetInfo( "mw_player_ready")) and 1) or 0)
+		end
+
+		if ReadyCount / player.GetCount() <= GetConVar( "mw_admin_readyup_percentage" ):GetFloat() then return end
+
+		startMatch()
+	end)
+end )
 
 net.Receive( "SandboxMode", function()
 	for _, v in ipairs( player.GetAll() ) do

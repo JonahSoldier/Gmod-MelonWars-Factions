@@ -343,7 +343,6 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 		else
 			local checkbox = _MakeCheckbox( 180, 15, pl.panel, "Spawn as turret", "mw_unit_option_welded")
 			function checkbox:OnCursorEntered()
-				--pl.mw_hover = 0
 				pl.info_name:SetText("Spawn as turret")
 				pl.info_cost:SetText("")
 				pl.info_turret_cost:SetText("")
@@ -797,7 +796,7 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 			"	Testers and supporters:\n		X marks it\n		(Xen)SunnY\n		BOOM! The_Rusty_Geek\n		Dagren\n		Fush\n		Broh\n		Jwanito\n		Mr. Thompson\n		Arheisel\n		Hipnox\n\n" ..
 			"	Suggestions:\n		Squid-Inked (Tesla Tower)\n		Durendal5150 (Radar)"
 		)
-				
+
 		-- }
 	elseif (pl.mw_menu == 7) then																--Admin menu
 		-- { ADMIN MENU
@@ -920,40 +919,6 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 		baseSpawner("Spawn\nOrnament", 25)
 		y = y + 80
 
-		--TODO: Move this to be with the other sliders, use the same function
-		local labelTankVal = vgui.Create( "DLabel", scroll )
-		labelTankVal:SetPos( 20, y - 20 )
-		labelTankVal:SetSize( 200, 80 )
-		labelTankVal:SetFontInternal( "DermaLarge" )
-		labelTankVal:SetText( "Water Tank\nValue: " .. GetConVar( "mw_water_tank_value" ):GetInt() )
-		local default = vgui.Create( "DPanel", scroll )
-		default:SetSize( 360, 60 )
-		default:SetPos( 200, y - 10 )
-		default.Paint = function( s, w, h )
-			draw.RoundedBox( 0, 108, 0, 12, h, Color( 10, 150, 10 ) )
-			draw.RoundedBox( 0, 0, 0, 72, h, Color( 10, 40, 80 ) )
-			draw.RoundedBox( 0, 180, 0, 180, h, Color( 80, 10, 10 ) )
-		end
-		local sliderTankVal = vgui.Create( "DPanel", scroll )
-		sliderTankVal:SetSize( GetConVar( "mw_water_tank_value" ):GetInt() * 0.012, 40 )
-		sliderTankVal:SetPos( 200, y )
-		for i = 1, 30 do
-			local buttonTankVal = vgui.Create( "DButton", scroll )
-			buttonTankVal:SetSize( 15, 40 )
-			buttonTankVal:SetPos( 185 + i * 12, y )
-			buttonTankVal:SetText( "" )
-			function buttonTankVal:DoClick()
-				pl:ConCommand( "mw_water_tank_value " .. i * 1000 )
-				sliderTankVal:SetSize( i * 12, 40 )
-				labelTankVal:SetText( "Water Tank\nValue: " .. i * 1000 )
-			end
-			buttonTankVal.Paint = function( s, w, h )
-				draw.RoundedBox( 0, w - 1, 0, 1, h, Color( 100, 100, 100 ) )
-			end
-		end
-
-		y = y + 80
-
 		local label = vgui.Create("DLabel", scroll)
 		label:SetPos(20, y)
 		label:SetSize(400,40)
@@ -1024,7 +989,7 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 		label:SetFontInternal( "Trebuchet18" )
 		label:SetText("[Set all Power back to the default]")
 		y = y + 70
-		-----------------------------------------------------------  Power
+		-----------------------------------------------------------  Resource Sliders
 		local function resourceSlider(text, convar, lenMul, valMul)
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(20, y-20)
@@ -1053,13 +1018,14 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 			end
 			return default
 		end
-		local default = resourceSlider("Power: \n", "mw_admin_max_units", 1.2, 10)
-		default.Paint = function(s, w, h)
+
+		local default1 = resourceSlider("Power: \n", "mw_admin_max_units", 1.2, 10)
+		default1.Paint = function(s, w, h)
 			draw.RoundedBox( 0, 108, 0, 12, h, Color(10,150,10) )
 			draw.RoundedBox( 0, 0, 0, 12*6, h, Color(10,40,80) )
 			draw.RoundedBox( 0, 12*15, 0, 12*15, h, Color(80,10,10) )
 		end
-		----------------------------------------------------------- Starting Credits
+
 		y = y + 70
 		local default2 = resourceSlider("Starting Water:\n", "mw_admin_starting_credits", 12 / 200, 200)
 		default2.Paint = function(s, w, h)
@@ -1074,6 +1040,14 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 			draw.RoundedBox( 0, 48, 0, 12, h, Color(10,150,10) )
 			draw.RoundedBox( 0, 0, 0, 12*2, h, Color(10,40,80) )
 			draw.RoundedBox( 0, 12*8, 0, 12*22, h, Color(80,10,10) )
+		end
+
+		y = y + 70
+		local default4 = resourceSlider("Water Tank\nValue:", "mw_water_tank_value", 0.012, 1000)
+		default4.Paint = function( s, w, h )
+			draw.RoundedBox( 0, 108, 0, 12, h, Color( 10, 150, 10 ) )
+			draw.RoundedBox( 0, 0, 0, 72, h, Color( 10, 40, 80 ) )
+			draw.RoundedBox( 0, 180, 0, 180, h, Color( 80, 10, 10 ) )
 		end
 
 		y = y + 120
@@ -1157,6 +1131,7 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 		end
 		-- }
 	elseif (pl.mw_menu == 8) then -- Player menu
+		--TODO: See if I can re-use the slider function
 		local y = 20
 		local scroll = vgui.Create("DScrollPanel", pl.panel)
 		local px, py = pl.panel:GetSize()
@@ -1198,57 +1173,7 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 		y = y + 120
 
 		-- Player readyup
-
-		local labelstr = "Allows players to start matches if a certain percentage are ready"
-		local textstr = "[Ready Up]"
-		local checkbox = vgui.Create( "DButton", scroll ) -- Create the checkbox
-		checkbox:SetPos( 20, y ) -- Set the position
-		checkbox:SetSize(60,30)
-		checkbox:SetText("")
-		local checked = GetConVar( "mw_player_ready" ):GetInt() ~= 1
-		if (inverted) then checked = not checked end
-		checkbox.Paint = function(s, w, h)
-			draw.RoundedBox( 8, 0, 0, w, h, color_white )
-			draw.RoundedBox( 6, 2, 2, w-4, h-4, Color(0,0,0) )
-			if not checked then
-				draw.RoundedBox( 4, 4, 4, w-8, h-8, color_white )
-			end
-		end
-		function checkbox:DoClick()
-			local commandstring = "mw_player_ready " .. tostring( 1 - GetConVar( "mw_player_ready" ):GetInt() )
-
-			pl:ConCommand(commandstring)
-
-			local checked = GetConVar( "mw_player_ready" ):GetInt() ~= 1
-			if (inverted) then checked = not checked end
-			checkbox.Paint = function(s, w, h)
-				draw.RoundedBox( 8, 0, 0, w, h, color_white )
-				draw.RoundedBox( 6, 2, 2, w-4, h-4, Color(0,0,0) )
-				if (checked) then
-					draw.RoundedBox( 4, 4, 4, w-8, h-8, color_white )
-				end
-			end
-
-			-- I have to add an artificial delay or the serverside code runs before the convar is changed
-			timer.Simple(0.1, function()
-				net.Start("MWReadyUp")
-				net.SendToServer()
-			end)
-		end
-		if (textstr ~= nil) then
-			local label = vgui.Create("DLabel", scroll)
-			label:SetPos( 90, y)
-			label:SetSize(370,30)
-			label:SetFontInternal( "Trebuchet24" )
-			label:SetText(textstr)
-		end
-		if (labelstr ~= nil) then
-			local label = vgui.Create("DLabel", scroll)
-			label:SetPos( 190, y)
-			label:SetSize(370,30)
-			label:SetFontInternal( "Trebuchet18" )
-			label:SetText(labelstr)
-		end
+		_MakeCheckbox(20, y, scroll, "[Ready Up]", "mw_player_ready")
 	end
 end
 
@@ -1669,21 +1594,6 @@ function TOOL:LeftClick( tr )
 		net.Start("SpawnBaseGrandWar")
 			net.WriteTable(trace)
 			net.WriteInt(mw_melonTeam, 8)
-		net.SendToServer()
-		self:GetOwner():ConCommand("mw_action 0")
-	elseif action == 8 then
-		net.Start("SpawnCapturePoint")
-			net.WriteTable(trace)
-		net.SendToServer()
-		self:GetOwner():ConCommand("mw_action 0")
-	elseif action == 9 then
-		net.Start("SpawnOutpost")
-			net.WriteTable(trace)
-		net.SendToServer()
-		self:GetOwner():ConCommand("mw_action 0")
-	elseif action == 10 then
-		net.Start("MW_SpawnWaterTank")
-			net.WriteTable(trace)
 		net.SendToServer()
 		self:GetOwner():ConCommand("mw_action 0")
 	elseif action == 25 then

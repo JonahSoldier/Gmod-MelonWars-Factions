@@ -17,6 +17,11 @@ MelonWars.messageReceivingEntity = nil
 MelonWars.messageReceivingState = "idle"
 MelonWars.networkBuffer = ""
 
+cvars.AddChangeCallback("mw_player_ready", function()
+	net.Start("MWReadyUp")
+	net.SendToServer()
+end)
+
 net.Receive( "MW_ReturnSelection", function()
 	local returnedSelectionID = net.ReadUInt(8)
 
