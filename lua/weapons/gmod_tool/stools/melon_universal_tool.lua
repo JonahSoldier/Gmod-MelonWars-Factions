@@ -729,7 +729,7 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 			"This is a heavily modified version of MelonWars:RTS, which is itself a re-make of a Gmod 12 addon known as WarMelons:RTS.\n\n" ..
 			"MelonWars:Factions is my own expansion of/continuation of Melon Wars. It includes new units and buildings, as well as substantial improvements to performance, security, and a LOT of bug-fixes.\n\n" ..
 			"Every faction has been substantially reworked, with each one getting 2 new buildings, and almost every faction unit being rebalanced, reworked, or entirely replaced." ..
-			"The new versions are no-longer horrendously overpowered, and all of them are useful in some way, whilst still sticking to and reinforcing their factions' theme.\n\n"..
+			"The new versions are no-longer horrendously overpowered, and all of them are useful in some way, whilst still sticking to and reinforcing their factions' theme.\n\n" ..
 			"A few of the non-faction units/buildings have been tweaked a little, but none as substantially as the faction units. They're now a bit better-balanced for competititve play," ..
 			"but they should still be familiar to anyone who's played the original.\n\n" ,
 			"A few units have been removed that either overlapped too heavily in purpose with others, or whose concepts just didn't work well with the rest of the game." ..
@@ -801,85 +801,94 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 		-- }
 	elseif (pl.mw_menu == 7) then																--Admin menu
 		-- { ADMIN MENU
-		if (pl:IsAdmin() or cvars.Number("mw_admin_open_permits") == 1) then
-			local y = 20
-			local scroll = vgui.Create("DScrollPanel", pl.panel)
-			local px, py = pl.panel:GetSize()
-			scroll:SetPos(0,0)
-			scroll:SetSize(px, py)
-
-			local button = vgui.Create("DButton", scroll)
-			button:SetSize(200,40)
-			button:SetPos(20,y)
-			button:SetFont("CloseCaption_Normal")
-			button:SetText("Start Match")
-			function button:DoClick()
-				net.Start("StartGame")
-				net.SendToServer()
-				pl.mw_frame:Remove()
-				pl.mw_frame = nil
-			end
-			button.Paint = function(s, w, h)
-				draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
-				draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
-			end
-			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(270, y)
-			label:SetSize(370,40)
-			label:SetFontInternal( "Trebuchet18" )
-			label:SetText("[Set preferences for a match of MelonWars]")
-			y = y + 50
-			local button = vgui.Create("DButton", scroll)
-			button:SetSize(200,40)
-			button:SetPos(20,y)
-			button:SetFont("CloseCaption_Normal")
-			button:SetText("Sandbox Mode")
-			function button:DoClick()
-				pl:ConCommand("mw_admin_playing 1")
-				pl:ConCommand("mw_admin_locked_teams 0")
-				pl:ConCommand("mw_admin_move_any_team 1")
-				pl:ConCommand("mw_admin_credit_cost 0")
-				pl:ConCommand("mw_admin_allow_free_placing 1")
-				pl:ConCommand("mw_admin_spawn_time 0")
-				pl:ConCommand("mw_admin_allow_manual_placing 1")
-				net.Start("SandboxMode")
-				net.SendToServer()
-				pl.mw_frame:Remove()
-				pl.mw_frame = nil
-			end
-			button.Paint = function(s, w, h)
-				draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
-				draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
-			end
-			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(270, y)
-			label:SetSize(370,40)
-			label:SetFontInternal( "Trebuchet18" )
-			label:SetText("[Set preferences for messing around]")
-			y = y + 80
-
-			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(20, y)
-			label:SetSize(300,40)
+		if not(pl:IsAdmin() or cvars.Number("mw_admin_open_permits") == 1) then
+			local label = vgui.Create("DLabel", pl.panel)
+			label:SetPos(120, 210)
+			label:SetSize(370,30)
 			label:SetFontInternal( "DermaLarge" )
-			label:SetText("Game Control Options")
+			label:SetText("This menu is for admins only")
+			return
+		end
 
-			y = y + 40
-			_MakeCheckbox( 20, y, scroll, "Pause", "mw_admin_playing", "[Stops units, income and controls]", true )
+		local y = 20
+		local scroll = vgui.Create("DScrollPanel", pl.panel)
+		local px, py = pl.panel:GetSize()
+		scroll:SetPos(0,0)
+		scroll:SetSize(px, py)
 
-			y = y + 40
-			_MakeCheckbox( 20, y, scroll, "Lock Teams", "mw_admin_locked_teams", "[Prevent players from changing team or faction]", false )
+		local button = vgui.Create("DButton", scroll)
+		button:SetSize(200,40)
+		button:SetPos(20,y)
+		button:SetFont("CloseCaption_Normal")
+		button:SetText("Start Match")
+		function button:DoClick()
+			net.Start("StartGame")
+			net.SendToServer()
+			pl.mw_frame:Remove()
+			pl.mw_frame = nil
+		end
+		button.Paint = function(s, w, h)
+			draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
+			draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
+		end
+		local label = vgui.Create("DLabel", scroll)
+		label:SetPos(270, y)
+		label:SetSize(370,40)
+		label:SetFontInternal( "Trebuchet18" )
+		label:SetText("[Set preferences for a match of MelonWars]")
+		y = y + 50
+		local button = vgui.Create("DButton", scroll)
+		button:SetSize(200,40)
+		button:SetPos(20,y)
+		button:SetFont("CloseCaption_Normal")
+		button:SetText("Sandbox Mode")
+		function button:DoClick()
+			pl:ConCommand("mw_admin_playing 1")
+			pl:ConCommand("mw_admin_locked_teams 0")
+			pl:ConCommand("mw_admin_move_any_team 1")
+			pl:ConCommand("mw_admin_credit_cost 0")
+			pl:ConCommand("mw_admin_allow_free_placing 1")
+			pl:ConCommand("mw_admin_spawn_time 0")
+			pl:ConCommand("mw_admin_allow_manual_placing 1")
+			net.Start("SandboxMode")
+			net.SendToServer()
+			pl.mw_frame:Remove()
+			pl.mw_frame = nil
+		end
+		button.Paint = function(s, w, h)
+			draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
+			draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
+		end
+		local label = vgui.Create("DLabel", scroll)
+		label:SetPos(270, y)
+		label:SetSize(370,40)
+		label:SetFontInternal( "Trebuchet18" )
+		label:SetText("[Set preferences for messing around]")
+		y = y + 80
 
-			y = y + 40
-			_MakeCheckbox( 20, y, scroll, "Extra Unit Options", "mw_admin_bonusunits", "[Balance not guaranteed]", false )
+		local label = vgui.Create("DLabel", scroll)
+		label:SetPos(20, y)
+		label:SetSize(300,40)
+		label:SetFontInternal( "DermaLarge" )
+		label:SetText("Game Control Options")
 
-			y = y + 80
+		y = y + 40
+		_MakeCheckbox( 20, y, scroll, "Pause", "mw_admin_playing", "[Stops units, income and controls]", true )
 
+		y = y + 40
+		_MakeCheckbox( 20, y, scroll, "Lock Teams", "mw_admin_locked_teams", "[Prevent players from changing team or faction]", false )
+
+		y = y + 40
+		_MakeCheckbox( 20, y, scroll, "Extra Unit Options", "mw_admin_bonusunits", "[Balance not guaranteed]", false )
+
+		y = y + 80
+
+		local function baseSpawner(text, action)
 			local label = vgui.Create("DLabel", scroll)
 			label:SetPos(15, y)
 			label:SetSize(200,60)
 			label:SetFontInternal( "DermaLarge" )
-			label:SetText( "Spawn\nNormal Base" )
+			label:SetText( text )
 			for i = 1, 8 do
 				local button = vgui.Create("DButton", scroll)
 				button:SetSize(40,40)
@@ -887,7 +896,7 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 				button:SetText("")
 				function button:DoClick()
 					pl:ConCommand("mw_team " .. tostring(i))
-					pl:ConCommand("mw_action 2")
+					pl:ConCommand("mw_action " .. tostring(action))
 					pl.mw_frame:Remove()
 					pl.mw_frame = nil
 
@@ -900,247 +909,133 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 					draw.RoundedBox( 4, 2, 2, w-4, h-4, MelonWars.teamColors[i] )
 				end
 			end
+		end
 
-			y = y + 80
+		baseSpawner("Spawn\nNormal Base", 2)
+		y = y + 80
 
+		baseSpawner("Spawn Grand\nWar Base", 7)
+		y = y + 80
+
+		baseSpawner("Spawn\nOrnament", 25)
+		y = y + 80
+
+		--TODO: Move this to be with the other sliders, use the same function
+		local labelTankVal = vgui.Create( "DLabel", scroll )
+		labelTankVal:SetPos( 20, y - 20 )
+		labelTankVal:SetSize( 200, 80 )
+		labelTankVal:SetFontInternal( "DermaLarge" )
+		labelTankVal:SetText( "Water Tank\nValue: " .. GetConVar( "mw_water_tank_value" ):GetInt() )
+		local default = vgui.Create( "DPanel", scroll )
+		default:SetSize( 360, 60 )
+		default:SetPos( 200, y - 10 )
+		default.Paint = function( s, w, h )
+			draw.RoundedBox( 0, 108, 0, 12, h, Color( 10, 150, 10 ) )
+			draw.RoundedBox( 0, 0, 0, 72, h, Color( 10, 40, 80 ) )
+			draw.RoundedBox( 0, 180, 0, 180, h, Color( 80, 10, 10 ) )
+		end
+		local sliderTankVal = vgui.Create( "DPanel", scroll )
+		sliderTankVal:SetSize( GetConVar( "mw_water_tank_value" ):GetInt() * 0.012, 40 )
+		sliderTankVal:SetPos( 200, y )
+		for i = 1, 30 do
+			local buttonTankVal = vgui.Create( "DButton", scroll )
+			buttonTankVal:SetSize( 15, 40 )
+			buttonTankVal:SetPos( 185 + i * 12, y )
+			buttonTankVal:SetText( "" )
+			function buttonTankVal:DoClick()
+				pl:ConCommand( "mw_water_tank_value " .. i * 1000 )
+				sliderTankVal:SetSize( i * 12, 40 )
+				labelTankVal:SetText( "Water Tank\nValue: " .. i * 1000 )
+			end
+			buttonTankVal.Paint = function( s, w, h )
+				draw.RoundedBox( 0, w - 1, 0, 1, h, Color( 100, 100, 100 ) )
+			end
+		end
+
+		y = y + 80
+
+		local label = vgui.Create("DLabel", scroll)
+		label:SetPos(20, y)
+		label:SetSize(400,40)
+		label:SetFontInternal( "DermaLarge" )
+		label:SetText("Alternative Gameplay Options")
+
+		y = y + 40
+
+		_MakeCheckbox( 20, y, scroll, "No Manual Placing", "mw_admin_allow_manual_placing", "[Prevents spawning of mobile units]", true)
+
+		y = y + 40
+
+		_MakeCheckbox( 20, y, scroll, "Ban Contraptions", "mw_admin_ban_contraptions", "[Disable contraption assemblers]", false)
+
+		y = y + 60
+
+		local label = vgui.Create("DLabel", scroll)
+		label:SetPos(20, y)
+		label:SetSize(300,40)
+		label:SetFontInternal( "DermaLarge" )
+		label:SetText("Cheats")
+
+		y = y + 40
+		_MakeCheckbox( 20, y, scroll, "Instant Spawn", "mw_admin_spawn_time", "[Makes units spawn instantly]", true )
+		y = y + 40
+		_MakeCheckbox( 20, y, scroll, "Infinite Water", "mw_admin_credit_cost", "[Allows you to spawn units without cost]", true )
+		y = y + 40
+		_MakeCheckbox( 20, y, scroll, "Build Anywhere", "mw_admin_allow_free_placing", "[Allows you to spawn units anywhere]" )
+		y = y + 40
+		_MakeCheckbox( 20, y, scroll, "Control Any Team", "mw_admin_move_any_team", "[Allows you to control units regardless of team]" )
+		y = y + 40
+		_MakeCheckbox( 20, y, scroll, "Immortal Units", "mw_admin_immortality", "[Units can't die. Useful for photography]" )
+
+		y = y + 60
+		local button = vgui.Create("DButton", scroll)
+		button:SetSize(200,40)
+		button:SetPos(20,y)
+		button:SetFont("CloseCaption_Normal")
+		button:SetText("Reset Credits")
+		function button:DoClick()
+			pl:ConCommand("mw_reset_credits")
+		end
+		button.Paint = function(s, w, h)
+			draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
+			draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
+		end
+		local label = vgui.Create("DLabel", scroll)
+		label:SetPos(270, y)
+		label:SetSize(370,40)
+		label:SetFontInternal( "Trebuchet18" )
+		label:SetText("[Set all credits back to the default]")
+		y = y + 45
+		local button = vgui.Create("DButton", scroll)
+		button:SetSize(200,40)
+		button:SetPos(20,y)
+		button:SetFont("CloseCaption_Normal")
+		button:SetText("Reset Power")
+		function button:DoClick()
+			pl:ConCommand("mw_reset_power")
+		end
+		button.Paint = function(s, w, h)
+			draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
+			draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
+		end
+		local label = vgui.Create("DLabel", scroll)
+		label:SetPos(270, y)
+		label:SetSize(370,40)
+		label:SetFontInternal( "Trebuchet18" )
+		label:SetText("[Set all Power back to the default]")
+		y = y + 70
+		-----------------------------------------------------------  Power
+		local function resourceSlider(text, convar, lenMul, valMul)
 			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(15, y)
-			label:SetSize(200,60)
+			label:SetPos(20, y-20)
+			label:SetSize(200,80)
 			label:SetFontInternal( "DermaLarge" )
-			label:SetText( "Spawn Grand\nWar Base" )
-			for i = 1, 8 do
-				local button = vgui.Create("DButton", scroll)
-				button:SetSize(40,40)
-				button:SetPos( 145 + i * 45, y )
-				button:SetText("")
-				function button:DoClick()
-					pl:ConCommand("mw_team " .. tostring(i))
-					pl:ConCommand("mw_action 7")
-					pl.mw_frame:Remove()
-					pl.mw_frame = nil
-
-					net.Start("MW_UpdateClientInfo")
-						net.WriteInt(i, 8)
-					net.SendToServer()
-				end
-				button.Paint = function(s, w, h)
-					draw.RoundedBox( 6, 0, 0, w, h, Color(100,100,100,255) )
-					draw.RoundedBox( 4, 2, 2, w-4, h-4, MelonWars.teamColors[i] )
-				end
-			end
-
-			y = y + 80
-
-			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(15, y)
-			label:SetSize(200,60)
-			label:SetFontInternal( "DermaLarge" )
-			label:SetText( "Spawn\nOrnament" )
-			for i = 1, 8 do
-				local button = vgui.Create("DButton", scroll)
-				button:SetSize(40,40)
-				button:SetPos( 145 + i * 45, y )
-				button:SetText("")
-				function button:DoClick()
-					pl:ConCommand( "mw_team " .. tostring( i ) )
-					pl:ConCommand( "mw_action 25" )
-					pl.mw_frame:Remove()
-					pl.mw_frame = nil
-
-					net.Start("MW_UpdateClientInfo")
-						net.WriteInt(i, 8)
-					net.SendToServer()
-				end
-				button.Paint = function(s, w, h)
-					draw.RoundedBox( 6, 0, 0, w, h, Color(100,100,100,255) )
-					draw.RoundedBox( 4, 2, 2, w-4, h-4, MelonWars.teamColors[i] )
-				end
-			end
-
-			y = y + 80
-
-			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(20, y)
-			label:SetSize(300,60)
-			label:SetFontInternal( "Trebuchet24" )
-			label:SetText( "Spawn Cap Point" )
-			local button = vgui.Create("DButton", scroll)
-			button:SetSize(40,40)
-			button:SetPos(200,y)
-			button:SetText("")
-			function button:DoClick()
-				pl:ConCommand("mw_action 8")
-				pl.mw_frame:Remove()
-				pl.mw_frame = nil
-			end
-			button.Paint = function(s, w, h)
-				draw.RoundedBox( 6, 0, 0, w, h, Color(100,100,100,255) )
-				draw.RoundedBox( 4, 2, 2, w-4, h-4, Color(255, 255, 255, 255) )
-			end
-
-			y = y + 60
-
-			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(20, y)
-			label:SetSize(300,60)
-			label:SetFontInternal( "Trebuchet24" )
-			label:SetText( "Spawn Outpost" )
-			local button = vgui.Create("DButton", scroll)
-			button:SetSize(40,40)
-			button:SetPos(200,y)
-			button:SetText("")
-			function button:DoClick()
-				pl:ConCommand("mw_action 9")
-				pl.mw_frame:Remove()
-				pl.mw_frame = nil
-			end
-			button.Paint = function(s, w, h)
-				draw.RoundedBox( 6, 0, 0, w, h, Color(100,100,100,255) )
-				draw.RoundedBox( 4, 2, 2, w-4, h-4, Color(255, 255, 255, 255) )
-			end
-
-			y = y + 60
-
-			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(20, y)
-			label:SetSize(300,60)
-			label:SetFontInternal( "Trebuchet24" )
-			label:SetText( "Spawn Water Tank" )
-			local button = vgui.Create("DButton", scroll)
-			button:SetSize(40,40)
-			button:SetPos(200,y)
-			button:SetText("")
-			function button:DoClick()
-				pl:ConCommand("mw_action 10")
-				pl.mw_frame:Remove()
-				pl.mw_frame = nil
-			end
-			button.Paint = function(s, w, h)
-				draw.RoundedBox( 6, 0, 0, w, h, Color(100,100,100,255) )
-				draw.RoundedBox( 4, 2, 2, w-4, h-4, Color(255, 255, 255, 255) )
-			end
-
-			y = y + 80
-
-			local labelTankVal = vgui.Create( "DLabel", scroll )
-			labelTankVal:SetPos( 20, y - 20 )
-			labelTankVal:SetSize( 200, 80 )
-			labelTankVal:SetFontInternal( "DermaLarge" )
-			labelTankVal:SetText( "Water Tank\nValue: " .. GetConVar( "mw_water_tank_value" ):GetInt() )
-			local default = vgui.Create( "DPanel", scroll )
-			default:SetSize( 360, 60 )
-			default:SetPos( 200, y - 10 )
-			default.Paint = function( s, w, h )
-				draw.RoundedBox( 0, 108, 0, 12, h, Color( 10, 150, 10 ) )
-				draw.RoundedBox( 0, 0, 0, 72, h, Color( 10, 40, 80 ) )
-				draw.RoundedBox( 0, 180, 0, 180, h, Color( 80, 10, 10 ) )
-			end
-			local sliderTankVal = vgui.Create( "DPanel", scroll )
-			sliderTankVal:SetSize( GetConVar( "mw_water_tank_value" ):GetInt() * 0.012, 40 )
-			sliderTankVal:SetPos( 200, y )
-			for i = 1, 30 do
-				local buttonTankVal = vgui.Create( "DButton", scroll )
-				buttonTankVal:SetSize( 15, 40 )
-				buttonTankVal:SetPos( 185 + i * 12, y )
-				buttonTankVal:SetText( "" )
-				function buttonTankVal:DoClick()
-					pl:ConCommand( "mw_water_tank_value " .. i * 1000 )
-					sliderTankVal:SetSize( i * 12, 40 )
-					labelTankVal:SetText( "Water Tank\nValue: " .. i * 1000 )
-				end
-				buttonTankVal.Paint = function( s, w, h )
-					draw.RoundedBox( 0, w - 1, 0, 1, h, Color( 100, 100, 100 ) )
-				end
-			end
-
-			y = y + 80
-
-			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(20, y)
-			label:SetSize(400,40)
-			label:SetFontInternal( "DermaLarge" )
-			label:SetText("Alternative Gameplay Options")
-
-			y = y + 40
-
-			_MakeCheckbox( 20, y, scroll, "No Manual Placing", "mw_admin_allow_manual_placing", "[Prevents spawning of mobile units]", true)
-
-			y = y + 40
-
-			_MakeCheckbox( 20, y, scroll, "Ban Contraptions", "mw_admin_ban_contraptions", "[Disable contraption assemblers]", false)
-
-			y = y + 60
-
-			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(20, y)
-			label:SetSize(300,40)
-			label:SetFontInternal( "DermaLarge" )
-			label:SetText("Cheats")
-
-			y = y + 40
-			_MakeCheckbox( 20, y, scroll, "Instant Spawn", "mw_admin_spawn_time", "[Makes units spawn instantly]", true )
-			y = y + 40
-			_MakeCheckbox( 20, y, scroll, "Infinite Water", "mw_admin_credit_cost", "[Allows you to spawn units without cost]", true )
-			y = y + 40
-			_MakeCheckbox( 20, y, scroll, "Build Anywhere", "mw_admin_allow_free_placing", "[Allows you to spawn units anywhere]" )
-			y = y + 40
-			_MakeCheckbox( 20, y, scroll, "Control Any Team", "mw_admin_move_any_team", "[Allows you to control units regardless of team]" )
-			y = y + 40
-			_MakeCheckbox( 20, y, scroll, "Immortal Units", "mw_admin_immortality", "[Units can't die. Useful for photography]" )
-
-			y = y + 60
-			local button = vgui.Create("DButton", scroll)
-			button:SetSize(200,40)
-			button:SetPos(20,y)
-			button:SetFont("CloseCaption_Normal")
-			button:SetText("Reset Credits")
-			function button:DoClick()
-				pl:ConCommand("mw_reset_credits")
-			end
-			button.Paint = function(s, w, h)
-				draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
-				draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
-			end
-			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(270, y)
-			label:SetSize(370,40)
-			label:SetFontInternal( "Trebuchet18" )
-			label:SetText("[Set all credits back to the default]")
-			y = y + 45
-			local button = vgui.Create("DButton", scroll)
-			button:SetSize(200,40)
-			button:SetPos(20,y)
-			button:SetFont("CloseCaption_Normal")
-			button:SetText("Reset Power")
-			function button:DoClick()
-				pl:ConCommand("mw_reset_power")
-			end
-			button.Paint = function(s, w, h)
-				draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
-				draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
-			end
-			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(270, y)
-			label:SetSize(370,40)
-			label:SetFontInternal( "Trebuchet18" )
-			label:SetText("[Set all Power back to the default]")
-			y = y + 70
-			-----------------------------------------------------------  Power
-			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(20, y)
-			label:SetSize(200,40)
-			label:SetFontInternal( "DermaLarge" )
-			label:SetText( "Power: " .. tostring( cvars.Number( "mw_admin_max_units" ) ) )
+			label:SetText( text .. tostring( cvars.Number( convar ) ) )
 			local default = vgui.Create("DPanel", scroll)
 			default:SetSize(360,60)
 			default:SetPos( 200, y - 10 )
-			default.Paint = function(s, w, h)
-				draw.RoundedBox( 0, 108, 0, 12, h, Color(10,150,10) )
-				draw.RoundedBox( 0, 0, 0, 12*6, h, Color(10,40,80) )
-				draw.RoundedBox( 0, 12*15, 0, 12*15, h, Color(80,10,10) )
-			end
 			local slider = vgui.Create("DPanel", scroll)
-			slider:SetSize( cvars.Number( "mw_admin_max_units" ) * 1.2, 40 )
+			slider:SetSize( cvars.Number( convar ) * lenMul, 40 )
 			slider:SetPos(200,y)
 			for i = 1, 30 do
 				local button = vgui.Create( "DButton", scroll )
@@ -1148,165 +1043,117 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 				button:SetPos( 185 + i * 12, y )
 				button:SetText( "" )
 				function button:DoClick()
-					pl:ConCommand( "mw_admin_max_units " .. tostring( i * 10 ) )
+					pl:ConCommand( convar .. " " .. tostring( i * valMul ) )
 					slider:SetSize( i * 12, 40 )
-					label:SetText( "Power: " .. tostring( i * 10 ) )
+					label:SetText( text .. tostring( i * valMul ) )
 				end
 				button.Paint = function(s, w, h)
 					draw.RoundedBox( 0, w-1, 0, 1, h, Color(100,100,100) )
 				end
 			end
-			----------------------------------------------------------- Starting Credits
-			y = y + 70
-			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(20, y-20)
-			label:SetSize(200,80)
-			label:SetFontInternal( "DermaLarge" )
-			label:SetText("Starting Water:\n" .. tostring(cvars.Number("mw_admin_starting_credits")))
-			local default = vgui.Create("DPanel", scroll)
-			default:SetSize(360,60)
-			default:SetPos(200,y-10)
-			default.Paint = function(s, w, h)
-					draw.RoundedBox( 0, 108, 0, 12, h, Color(10,150,10) )
-					draw.RoundedBox( 0, 0, 0, 12*6, h, Color(10,40,80) )
-					draw.RoundedBox( 0, 12*15, 0, 12*15, h, Color(80,10,10) )
-				end
-			local slider = vgui.Create("DPanel", scroll)
-			slider:SetSize(cvars.Number("mw_admin_starting_credits") * 12 / 200,40)
-			slider:SetPos(200,y)
-			for i = 1, 30 do
-				local button = vgui.Create("DButton", scroll)
-				button:SetSize(15,40)
-				button:SetPos(185 + i * 12, y)
-				button:SetText("")
-				function button:DoClick()
-					pl:ConCommand("mw_admin_starting_credits " .. tostring(i * 200))
-					slider:SetSize(i * 12, 40)
-					label:SetText("Starting Water:\n" .. tostring(i * 200))
-				end
-				button.Paint = function()
-					draw.RoundedBox( 0, w - 1, 0, 1, h, Color(100,100,100) )
-				end
-			end
+			return default
+		end
+		local default = resourceSlider("Power: \n", "mw_admin_max_units", 1.2, 10)
+		default.Paint = function(s, w, h)
+			draw.RoundedBox( 0, 108, 0, 12, h, Color(10,150,10) )
+			draw.RoundedBox( 0, 0, 0, 12*6, h, Color(10,40,80) )
+			draw.RoundedBox( 0, 12*15, 0, 12*15, h, Color(80,10,10) )
+		end
+		----------------------------------------------------------- Starting Credits
+		y = y + 70
+		local default2 = resourceSlider("Starting Water:\n", "mw_admin_starting_credits", 12 / 200, 200)
+		default2.Paint = function(s, w, h)
+			draw.RoundedBox( 0, 108, 0, 12, h, Color(10,150,10) )
+			draw.RoundedBox( 0, 0, 0, 12*6, h, Color(10,40,80) )
+			draw.RoundedBox( 0, 12*15, 0, 12*15, h, Color(80,10,10) )
+		end
 
-			y = y + 70
-			local label = vgui.Create("DLabel", scroll)
-			label:SetPos(20, y-20)
-			label:SetSize(200,80)
-			label:SetFontInternal( "DermaLarge" )
-			label:SetText("Water Income:\n" .. tostring(cvars.Number("mw_admin_base_income")))
-			local default = vgui.Create("DPanel", scroll)
-			default:SetSize(360,60)
-			default:SetPos(200,y-10)
-			default.Paint = function(s, w, h)
-					draw.RoundedBox( 0, 48, 0, 12, h, Color(10,150,10) )
-					draw.RoundedBox( 0, 0, 0, 12*2, h, Color(10,40,80) )
-					draw.RoundedBox( 0, 12*8, 0, 12*22, h, Color(80,10,10) )
-				end
-			local slider = vgui.Create("DPanel", scroll)
-			slider:SetSize(cvars.Number("mw_admin_base_income") * 12/5,40)
-			slider:SetPos(200,y)
-			for i = 1, 30 do
-				local button = vgui.Create("DButton", scroll)
-				button:SetSize(15,40)
-				button:SetPos( 185 + i * 12, y )
-				button:SetText("")
-				function button:DoClick()
-					pl:ConCommand( "mw_admin_base_income " .. tostring( i * 5 ) )
-					slider:SetSize( i * 12, 40 )
-					label:SetText( "Water Income:\n" .. tostring( i * 5 ) )
-				end
-				button.Paint = function(s, w, h)
-					draw.RoundedBox( 0, w - 1, 0, 1, h, Color(100,100,100) )
-				end
-			end
+		y = y + 70
+		local default3 = resourceSlider("Water Income:\n", "mw_admin_base_income", 12 / 5, 5)
+		default3.Paint = function(s, w, h)
+			draw.RoundedBox( 0, 48, 0, 12, h, Color(10,150,10) )
+			draw.RoundedBox( 0, 0, 0, 12*2, h, Color(10,40,80) )
+			draw.RoundedBox( 0, 12*8, 0, 12*22, h, Color(80,10,10) )
+		end
 
-			y = y + 120
-			-------------------------------------------------------- TEAMS
-			local label = vgui.Create("DLabel", scroll)
-			label:SetPos( 20, y - 45 )
-			label:SetSize(370,40)
-			label:SetFontInternal( "DermaLarge" )
-			label:SetText("Alliances")
-			local grid = vgui.Create( "DGrid", scroll )
-			grid:SetPos( 160, y )
-			grid:SetCols( 8 )
-			grid:SetColWide( 30 )
-			for i = 1, 8 do
-				for j=1, 8 do
-					local checkbox = vgui.Create( "DButton" ) -- Create the checkbox
-					checkbox:SetPos( 20, y ) -- Set the position
-					-- checkbox:SetValue( MelonWars.teamGrid[i][j] )
-					checkbox:SetSize(30,30)
-					checkbox:SetText("")
+		y = y + 120
+		-------------------------------------------------------- TEAMS
+		local label = vgui.Create("DLabel", scroll)
+		label:SetPos( 20, y - 45 )
+		label:SetSize(370,40)
+		label:SetFontInternal( "DermaLarge" )
+		label:SetText("Alliances")
+		local grid = vgui.Create( "DGrid", scroll )
+		grid:SetPos( 160, y )
+		grid:SetCols( 8 )
+		grid:SetColWide( 30 )
+		for i = 1, 8 do
+			for j=1, 8 do
+				local checkbox = vgui.Create( "DButton" ) -- Create the checkbox
+				checkbox:SetPos( 20, y ) -- Set the position
+				checkbox:SetSize(30,30)
+				checkbox:SetText("")
 
-					if (9-i ~= j) then
-						function checkbox:DoClick()
-							MelonWars.teamGrid[9-i][j] = not MelonWars.teamGrid[9-i][j]
-							MelonWars.teamGrid[j][9-i] = MelonWars.teamGrid[9-i][j]
-							net.Start("UpdateServerTeams")
-								net.WriteTable(MelonWars.teamGrid)
-							net.SendToServer()
-						end
-						if (i+j < 9) then
-							checkbox.Paint = function(s, w, h)
-								draw.RoundedBox( 4, 0, 0, w, h, Color(150,150,150) )
-								draw.RoundedBox( 2, 2, 2, w-4, h-4, Color(0,0,0) )
-								if (MelonWars.teamGrid[9-i][j]) then
-									draw.RoundedBox( 0, 4, 4, w / 2-4, h-8, MelonWars.teamColors[9-i] )
-									draw.RoundedBox( 0, 4+w / 2-4, 4, w / 2-4, h-8, MelonWars.teamColors[j] )
-								end
-							end
-						else
-							checkbox.Paint = function(s, w, h)
-								draw.RoundedBox( 8, 0, 0, w, h, Color(30,30,30) )
-								draw.RoundedBox( 6, 2, 2, w-4, h-4, Color(20,20,20) )
-								if (MelonWars.teamGrid[9-i][j]) then
-									draw.RoundedBox( 4, 4, 4, w-8, h-8, Color(30,30,30) )
-								end
+				if (9-i ~= j) then
+					function checkbox:DoClick()
+						MelonWars.teamGrid[9-i][j] = not MelonWars.teamGrid[9-i][j]
+						MelonWars.teamGrid[j][9-i] = MelonWars.teamGrid[9-i][j]
+						net.Start("UpdateServerTeams")
+							net.WriteTable(MelonWars.teamGrid)
+						net.SendToServer()
+					end
+					if (i+j < 9) then
+						checkbox.Paint = function(s, w, h)
+							draw.RoundedBox( 4, 0, 0, w, h, Color(150,150,150) )
+							draw.RoundedBox( 2, 2, 2, w-4, h-4, Color(0,0,0) )
+							if (MelonWars.teamGrid[9-i][j]) then
+								draw.RoundedBox( 0, 4, 4, w / 2-4, h-8, MelonWars.teamColors[9-i] )
+								draw.RoundedBox( 0, 4+w / 2-4, 4, w / 2-4, h-8, MelonWars.teamColors[j] )
 							end
 						end
 					else
 						checkbox.Paint = function(s, w, h)
+							draw.RoundedBox( 8, 0, 0, w, h, Color(30,30,30) )
+							draw.RoundedBox( 6, 2, 2, w-4, h-4, Color(20,20,20) )
+							if (MelonWars.teamGrid[9-i][j]) then
+								draw.RoundedBox( 4, 4, 4, w-8, h-8, Color(30,30,30) )
+							end
 						end
 					end
-					grid:AddItem(checkbox)
+				else
+					checkbox.Paint = function(s, w, h)
+					end
 				end
+				grid:AddItem(checkbox)
 			end
-			-- Horizontal teams
-			grid = vgui.Create( "DGrid", scroll )
-			grid:SetPos( 160, y-35 )
-			grid:SetCols( 8 )
-			grid:SetColWide( 30 )
-			for i = 1, 8 do
-				local DPanel = vgui.Create( "DPanel" )
+		end
+		-- Horizontal teams
+		grid = vgui.Create( "DGrid", scroll )
+		grid:SetPos( 160, y-35 )
+		grid:SetCols( 8 )
+		grid:SetColWide( 30 )
+		for i = 1, 8 do
+			local DPanel = vgui.Create( "DPanel" )
+			DPanel:SetSize( 30, 30 ) -- Set the size of the panel
+			DPanel.Paint = function(s, w, h)
+				draw.RoundedBox( 8, 0, 0, w, h, Color(150,150,150) )
+				draw.RoundedBox( 6, 2, 2, w-4, h-4, MelonWars.teamColors[i] )
+			end
+			grid:AddItem(DPanel)
+		end
+		-- Vertical teams
+		grid = vgui.Create( "DGrid", scroll )
+		grid:SetPos( 160-35, y )
+		grid:SetCols( 1 )
+		grid:SetColWide( 30 )
+		for i = 8, 1, -1 do
+			local DPanel = vgui.Create( "DPanel" )
 				DPanel:SetSize( 30, 30 ) -- Set the size of the panel
-				DPanel.Paint = function(s, w, h)
-					draw.RoundedBox( 8, 0, 0, w, h, Color(150,150,150) )
-					draw.RoundedBox( 6, 2, 2, w-4, h-4, MelonWars.teamColors[i] )
-				end
-				grid:AddItem(DPanel)
+			DPanel.Paint = function(s, w, h)
+				draw.RoundedBox( 8, 0, 0, w, h, Color(150,150,150) )
+				draw.RoundedBox( 6, 2, 2, w-4, h-4, MelonWars.teamColors[i] )
 			end
-			-- Vertical teams
-			grid = vgui.Create( "DGrid", scroll )
-			grid:SetPos( 160-35, y )
-			grid:SetCols( 1 )
-			grid:SetColWide( 30 )
-			for i = 8, 1, -1 do
-				local DPanel = vgui.Create( "DPanel" )
-					DPanel:SetSize( 30, 30 ) -- Set the size of the panel
-				DPanel.Paint = function(s, w, h)
-					draw.RoundedBox( 8, 0, 0, w, h, Color(150,150,150) )
-					draw.RoundedBox( 6, 2, 2, w-4, h-4, MelonWars.teamColors[i] )
-				end
-				grid:AddItem(DPanel)
-			end
-		else
-			local label = vgui.Create("DLabel", pl.panel)
-			label:SetPos(120, 210)
-			label:SetSize(370,30)
-			label:SetFontInternal( "DermaLarge" )
-			label:SetText("This menu is for admins only")
+			grid:AddItem(DPanel)
 		end
 		-- }
 	elseif (pl.mw_menu == 8) then -- Player menu
