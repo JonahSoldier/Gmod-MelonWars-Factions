@@ -47,7 +47,7 @@ function ENT:SlowThink ( ent )
 end
 
 function ENT:PhysicsUpdate()
-	local inclination = self:Align(self:GetAngles():Up(), Vector(0,0,1), 1000)
+	local inclination = self:Align(self:GetAngles():Up(), vector_up, 1000)
 	self.phys:ApplyForceCenter( Vector(0,0,inclination*100))
 
 	self:DefaultPhysicsUpdate()

@@ -6,14 +6,9 @@ include("shared.lua")
 local unit_colors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
 local mw_admin_playing_cv = GetConVar( "mw_admin_playing" )
 
--- Possible tesla unit models/props_c17/utilityconnecter006c.mdl
--- Charging Station models/props_c17/substation_transformer01d.mdl
-
 function MelonWars.defaults( ent )
-	--ent:NextThink(CurTime() + 0.1)
 	ent.maxHP = 20
 	ent.HP = 1
-	--ent:SetNWFloat( "health", 1 )
 	ent:SetNWFloat( "healthFrac" , 1)
 	ent.speed = 100
 	ent.range = 250
@@ -71,8 +66,6 @@ function MelonWars.defaults( ent )
 
 	ent.deathEffect = "cball_explode"
 
-	--ent:SetNWInt("mw_melonTeam", 0)
-	--ent.mw_melonTeam = 0
 	ent.canShoot = true
 
 	ent.slowThinkTimer = 2
@@ -83,7 +76,6 @@ function MelonWars.defaults( ent )
 	if (ent.Angles == nil) then ent.Angles = Angle(0,0,0) end
 	ent:SetMaterial( "Models/effects/comball_sphere" )
 
-	--ent:SetColor( mw_melonTeam ) --Doing this breaks the game now apparently????
 	ent:SetColor( unit_colors[mw_melonTeam] )
 
 	ent.damping = 1.5
@@ -104,11 +96,6 @@ function MelonWars.defaults( ent )
 	----------------
 
 	ent.posOffset = Vector(0,0,0)
-
-	--[[
-	timer.Simple(5, function()
-		PrintTable(ent:GetNWVarTable())
-	end)--]]
 end
 
 function ENT:Ini( teamnumber, affectPopulation )
@@ -150,11 +137,7 @@ end
 
 function ENT:ModifyColor() -- Meant to be overridden by certain units if necessary
 end
---[[
-function ENT:OnDuplicated( entTable )
-	self:SetPos(self:GetPos()-self.posOffset)
-end
-]]
+
 local function MW_Spawn( ent )
 	if not SERVER then return end
 	ent:SetMoveType( ent.moveType )   -- after all, gmod is a physics
@@ -306,17 +289,7 @@ function ENT:Think()
 		selfTbl.damage = 5
 	end
 end
---[[
-function ENT:SpawnDoot()
-	if self.dootChance <= math.random() then return end
-	local vPoint = self:GetPos()
-	local effectdata = EffectData()
-	effectdata:SetOrigin( vPoint )
-	util.Effect( "AntlionGib", effectdata )
-	sound.Play("npc/zombie/zombie_voice_idle7.wav", self:GetPos(), 75, 240)
-	MelonWars.spawnUnitAtPos("ent_melon_doot", 0, self:GetPos(), self:GetAngles(), 0, 0, 0, false, nil, nil)
-end
-]]
+
 function ENT:Update()
 	if not mw_admin_playing_cv:GetBool() then return end
 	local selfTbl = self:GetTable()
@@ -483,7 +456,7 @@ end
 
 function ENT:Align( reference, target, multiplier )
 	local cross = reference:Cross(target)
-	local torque = cross*multiplier
+	local torque = cross * multiplier
 
 	self:ApplyTorque(torque)
 
@@ -491,7 +464,8 @@ function ENT:Align( reference, target, multiplier )
 end
 
 function ENT:StopAngularVelocity( percent )
-	self.phys:AddAngleVelocity( -self.phys:GetAngleVelocity()*percent )
+	local phys = self.phys
+	phys:AddAngleVelocity( -phys:GetAngleVelocity() * percent )
 end
 
 function ENT:ApplyTorque( torque )
@@ -502,7 +476,9 @@ function ENT:ApplyTorque( torque )
 	local pos = self:GetPos()
 
 	phys:ApplyForceOffset( forceDirection, pos + forceOffset )
-	phys:ApplyForceOffset( -forceDirection, pos - forceOffset )
+	pos:Sub(forceOffset) --vector optimization
+	forceDirection:Negate()
+	phys:ApplyForceOffset( forceDirection, pos )
 end
 
 function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
