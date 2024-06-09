@@ -37,11 +37,13 @@ util.AddNetworkString( "UpdateServerTeams" )
 util.AddNetworkString( "ContraptionSave" )
 util.AddNetworkString( "BeginContraptionSaveClient" )
 util.AddNetworkString( "ContraptionSaveClient" )
+
 util.AddNetworkString( "BeginContraptionLoad" )
 util.AddNetworkString( "ContraptionLoad" )
-util.AddNetworkString( "RequestContraptionLoadToAssembler" )
-util.AddNetworkString( "RequestContraptionLoadToClient" )
+util.AddNetworkString( "ContraptionSpawn" )
+util.AddNetworkString( "ContraptionLoadToAssembler" )
 
+--Super Secret first person mode of secretness
 util.AddNetworkString( "MW_ServerControlUnit" )
 util.AddNetworkString( "MW_ClientControlUnit" )
 util.AddNetworkString( "MWControlShoot" )
@@ -450,55 +452,57 @@ net.Receive( "ContraptionSave", function( _, pl )
 	end
 end )
 
-MelonWars.messageReceivingEntity = nil
 MelonWars.messageReceivingState = "idle"
 MelonWars.networkBuffer = ""
 
 net.Receive( "BeginContraptionLoad", function()
 	if MelonWars.messageReceivingState ~= "idle" then return end
-	local pl = net.ReadEntity()
-	MelonWars.messageReceivingEntity = pl
 	MelonWars.messageReceivingState = tostring( pl )
 	MelonWars.networkBuffer = ""
 end )
 
-net.Receive( "ContraptionLoad", function( _, pl )
-	undo.Create("Melon Contraption")
-
+net.Receive( "ContraptionLoad", function( _, pl)
 	local last = net.ReadBool()
 	local size = net.ReadUInt(16)
 	local data = net.ReadData(size)
 
-	-- local text = util.Decompress(data)
 	MelonWars.networkBuffer = MelonWars.networkBuffer .. data
-
 	if not last then return end
 	local text = util.Decompress(MelonWars.networkBuffer)
-	local dupetable = util.JSONToTable( text )
-	local ent = MelonWars.messageReceivingEntity
-	local pos
-	if (ent:GetClass() == "player") then
-		pos = ent:GetEyeTrace().HitPos
+	local dupeTable = util.JSONToTable( text )
+	pl.loadedContraption = dupeTable
+
+	MelonWars.messageReceivingState = "idle"
+	MelonWars.networkBuffer = ""
+end)
+
+function MelonWars.contraptionSpawn( spawnerEnt )
+	undo.Create("Melon Contraption")
+	local dupeTable = spawnerEnt.loadedContraption
+	local pos, entTeam, owner
+	if spawnerEnt:GetClass() == "player" then
+		pos = spawnerEnt:GetEyeTrace().HitPos
+		entTeam = spawnerEnt:GetInfoNum("mw_team", 0)
+		owner = spawnerEnt
 	else
-		pos = ent:GetPos()
+		pos = spawnerEnt:GetPos()
+		entTeam = spawnerEnt:GetNWInt("mw_melonTeam")
+		owner = spawnerEnt.player --TODO: IMPLEMENT THIS
 	end
 
-	-- local constraints
-	local localpos = pos - Vector( ( dupetable.Maxs.x + dupetable.Mins.x ) / 2, ( dupetable.Maxs.y + dupetable.Mins.y ) / 2, dupetable.Mins.z - 10 )
+	local localpos = pos - Vector( ( dupeTable.Maxs.x + dupeTable.Mins.x ) / 2, ( dupeTable.Maxs.y + dupeTable.Mins.y ) / 2, dupeTable.Mins.z - 10 )
 
 	duplicator.SetLocalPos( localpos )
-	local paste = duplicator.Paste( player.GetByID( 0 ), dupetable.Entities, dupetable.Constraints )
-	duplicator.SetLocalPos( Vector(0,0,0) )
+	local paste = duplicator.Paste( player.GetByID( 0 ), dupeTable.Entities, dupeTable.Constraints )
+	duplicator.SetLocalPos( vector_origin )
 
-	local mw_melonTeam = pl:GetInfoNum("mw_team", 0)
-	for _, v in pairs(paste) do
+	for _, v in pairs(paste) do --paste is discontinuous for some reason
 		if (v.Base == "ent_melon_base") then
-			-- v:Initialize()     -- (This deletes constraints)
-			v:Ini(mw_melonTeam)
+			v:Ini(entTeam)
 			v:SetCollisionGroup(2)
 
-			if (pl:GetInfo( "mw_enable_skin" ) == "1") then
-				local _skin = MelonWars.specialSteamSkins[pl:SteamID()]
+			if (owner:GetInfo( "mw_enable_skin" ) == "1") then
+				local _skin = MelonWars.specialSteamSkins[owner:SteamID()]
 				if _skin ~= nil and _skin.material ~= nil then
 					v:SkinMaterial( _skin.material )
 					-- if (_skin.trail ~= nil) then
@@ -508,52 +512,61 @@ net.Receive( "ContraptionLoad", function( _, pl )
 				end
 			end
 		end
-		if (v:GetClass() == "ent_melon_propeller" or v:GetClass() == "ent_melon_hover") then
+		if (v:GetClass() == "ent_melon_propeller" or v:GetClass() == "ent_melon_hover") then --TODO: Shouldn't be hardcoded.
 			v:SetNWBool("done",true)
 		end
 		if not string.StartWith( v:GetClass(), "ent_melon") then
-			v:SetColor(MelonWars.teamColors[mw_melonTeam])
+			v:SetColor(MelonWars.teamColors[entTeam])
 			v:SetMaterial("")
 			v:SetRenderFX(kRenderFxNone)
-			v:SetNWInt("mw_melonTeam", mw_melonTeam)
+			v:SetNWInt("mw_melonTeam", entTeam)
 			v:SetNWInt("propHP", math.min(1000,v:GetPhysicsObject():GetMass())) --max 1000 de vida
 			v.realvalue = v:GetPhysicsObject():GetMass()
-			-- hook.Run("MelonWars_EntitySpawned", v)
 		end
-		if (ent:GetClass() == "player") then
+		if (spawnerEnt:GetClass() == "player") then
 			v:SetVar("targetPos", pos)
 			v:SetNWVector("targetPos", pos)
 		else
-			v:SetVar( "targetPos", ent.targetPos + Vector( 0, 0, 1 ) )
-			v:SetNWVector( "targetPos", ent.targetPos + Vector( 0, 0, 1 ) )
+			v:SetVar( "targetPos", spawnerEnt.targetPos + vector_up )
+			v:SetNWVector( "targetPos", spawnerEnt.targetPos + vector_up )
 			v:SetVar( "moving", true )
 		end
 
 		undo.AddEntity( v )
 	end
 
-	undo.SetPlayer( pl)
+	undo.SetPlayer( owner )
 	undo.Finish()
 
 	for _, v in pairs(paste) do
 		v:GetPhysicsObject():EnableMotion(true)
 	end
+end
 
-	MelonWars.messageReceivingEntity = nil
-	MelonWars.messageReceivingState = "idle"
-	MelonWars.networkBuffer = ""
-end )
+net.Receive( "ContraptionSpawn", function( _, pl )
+	if not pl.loadedContraption then return end
+	--TODO: Make sure this is allowed!
+	MelonWars.contraptionSpawn( pl )
+	pl.loadedContraption = nil
+end)
 
-net.Receive( "RequestContraptionLoadToAssembler", function( _, pl )
+net.Receive( "ContraptionLoadToAssembler", function( _, pl )
 	local ent = net.ReadEntity()
-	local powerCost = net.ReadUInt(16)
-	local _file = net.ReadString()
-	local time = net.ReadFloat()
-	ent.file = _file
+	if not( ent:GetNWInt("mw_melonTeam") == pl:GetInfoNum("mw_team", 0) ) then return end
+
+	ent.loadedContraption = pl.loadedContraption
+	pl.loadedContraption = nil
+
 	ent.player = pl
-	ent.powerCost = powerCost
+
+	local cost, spawntime, power = MelonWars.calculateContraptionValues( ent.loadedContraption.Entities )
+
+	--TODO: Check that this player has the resources to do this.
+
+	ent.powerCost = power
+
 	ent:SetNWBool( "active", true )
-	ent:SetNWFloat( "nextSlowThink", CurTime() + time )
+	ent:SetNWFloat( "nextSlowThink", CurTime() + spawntime )
 	ent:SetNWFloat( "slowThinkTimer", time )
 end )
 

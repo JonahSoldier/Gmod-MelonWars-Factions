@@ -497,7 +497,7 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 				if (entTbl.careForWalls) then
 					local tr = util.TraceLine( {
 						start = pos,
-						endpos = v:GetPos() + v:GetVar("shotOffset",vector_origin),
+						endpos = v:GetPos() + (vTbl.shotOffset or vector_origin),
 						filter = function( foundEnt )
 							if foundEnt:GetClass() == "prop_physics" then--si hay un prop en el medio
 								return true
@@ -573,17 +573,17 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 		end
 		----------------------------------------porque está lejos (o muy cerca)
 		local targetDist = entTbl.targetEntity:GetPos():Distance(pos)
-		if (IsValid(entTbl.targetEntity) and (targetDist > entTbl.range+entTbl.targetEntity:GetNWFloat( "baseSize", 0) or targetDist < entTbl.minRange)) then
+		if (IsValid(entTbl.targetEntity) and (targetDist > entTbl.range + entTbl.targetEntity:GetNWFloat( "baseSize", 0) or targetDist < entTbl.minRange)) then
 			if (entTbl.chaseStance and entTbl.ai_chases) then
 				if (not entTbl.chasing) then
 					entTbl.holdGroundPosition = pos
 					entTbl.chasing = true
 				end
 				local tepos = entTbl.targetEntity:GetPos()
-				ent:SetVar("targetPos", tepos)
+				entTbl.targetPos = tepos
 				ent:SetNWVector("targetPos", tepos)
-				ent:SetVar("moving", true)
-				ent:SetVar("followEntity", ent)
+				entTbl.moving = true
+				entTbl.followEntity = ent
 				ent:SetNWEntity("followEntity", ent)
 				if ((tepos-entTbl.holdGroundPosition):LengthSqr() > entTbl.maxChaseDistance*entTbl.maxChaseDistance) then
 					ent:LoseTarget()

@@ -23,31 +23,18 @@ function ENT:Initialize()
 	self:Setup()
 
 	self:SetNWBool("active", false)
-	--InciteConnections(self)
-	--MelonWars.calculateConnections(self)
-	--self:SetNWBool("canGive", false)
 end
 
 function ENT:Think(ent)
-	--local energy = math.Round(self:GetNWInt("energy", 0))
-	--local max = self:GetNWInt("maxenergy", 0)
-	--self:SetNWString("message", "OverClock: "..energy.." / "..max)
-	--MW_PullEnergy(self)
 	local NST = self:GetNWFloat("nextSlowThink", 0)
 	if (self:GetNWBool("active", false)) then
-		--if (energy > 20) then
-		--	self:SetNWFloat("overdrive", self:GetNWFloat("overdrive", 0)+0.125)
-		--	self:SetNWInt("energy", self:GetNWInt("energy", 0)-20)
-		--end
 		if (NST < CurTime()+self:GetNWFloat("overdrive", 0)*3) then
 			if (self.powerCost+MelonWars.teamUnits[self:GetNWInt("mw_melonTeam", 0)] <= cvars.Number("mw_admin_max_units")) then
 				self:SetNWFloat("overdrive", 0)
 				self:SetNWFloat("nextSlowThink", CurTime())
 				self:SetNWBool("active", false)
-				net.Start("RequestContraptionLoadToClient")
-					net.WriteString(self.file)
-					net.WriteEntity(self)
-				net.Send(self.player)
+				
+				MelonWars.contraptionSpawn( self )
 			else
 				self:SetNWFloat("nextSlowThink", CurTime()+1)
 			end

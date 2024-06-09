@@ -1303,8 +1303,9 @@ local function StartBuildingContraption( assembler, _file, cost, power )
 	if assembler:GetNWBool( "active" ) then return end
 	local locPly = LocalPlayer()
 	if locPly.mw_units >= cvars.Number( "mw_admin_max_units" ) then return end
-	if locPly.mw_credits < locPly.contrapCost or cvars.Bool( "mw_admin_credit_cost" ) then return end
+	if locPly.mw_credits < locPly.contrapCost and cvars.Bool( "mw_admin_credit_cost" ) then return end
 	if locPly.contrapPower ~= 0 and locPly.mw_units + locPly.contrapPower > cvars.Number( "mw_admin_max_units" ) then return end
+
 
 	--Most of this should be server-only.
 	assembler.nextSlowThink = CurTime() + assembler:GetNWFloat("slowThinkTimer", 0)
@@ -1316,11 +1317,9 @@ local function StartBuildingContraption( assembler, _file, cost, power )
 	assembler.contrapCost = cost
 	assembler.contrapPower = power
 
-	net.Start("RequestContraptionLoadToAssembler")
+	MelonWars.sendContraptionToServer(_file)
+	net.Start("ContraptionLoadToAssembler")
 		net.WriteEntity(assembler)
-		net.WriteUInt(locPly.contrapPower, 10)
-		net.WriteString(_file)
-		net.WriteFloat(assembler:GetNWFloat("slowThinkTimer", 0))
 	net.SendToServer()
 
 	if cvars.Bool("mw_admin_credit_cost") then --TODO: This shouldn't be on client 
@@ -1559,37 +1558,16 @@ function TOOL:LeftClick( tr )
 			net.WriteInt(pl.mw_credits ,32)
 		net.SendToServer()
 	elseif action == 4 then  --Contraption Save
-		if (CLIENT) then
-			net.Start("ContraptionSave")
-				net.WriteString(pl.contraption_name)
-				net.WriteEntity(pl:GetEyeTrace().Entity)
-			net.SendToServer()
-		end
+		net.Start("ContraptionSave")
+			net.WriteString(pl.contraption_name)
+			net.WriteEntity(pl:GetEyeTrace().Entity)
+		net.SendToServer()
 		self:GetOwner():ConCommand("mw_action 0")
 	-- elseif (action == 5) then  --Sell Tool
 	elseif action == 6 then  --Contraption Load
-		local text = file.Read(pl.selectedFile)
-		local compressed_text = util.Compress( text )
-		if not compressed_text then compressed_text = text end
-		local len = string.len( compressed_text )
-		local send_size = 60000
-		local parts = math.ceil( len / send_size )
-		local start = 0
-		net.Start( "BeginContraptionLoad" )
-			net.WriteEntity(pl)
+		MelonWars.sendContraptionToServer(pl.selectedFile)
+		net.Start("ContraptionSpawn")
 		net.SendToServer()
-		for i = 1, parts do
-			local endbyte = math.min( start + send_size, len )
-			local size = endbyte - start
-			local data = compressed_text:sub( start + 1, endbyte + 1 )
-			net.Start( "ContraptionLoad" )
-				net.WriteBool( i == parts )
-				net.WriteUInt( size, 16 )
-				net.WriteData( data, size )
-			net.SendToServer()
-
-			start = endbyte
-		end
 	elseif action == 7 then
 		net.Start("SpawnBaseGrandWar")
 			net.WriteTable(trace)

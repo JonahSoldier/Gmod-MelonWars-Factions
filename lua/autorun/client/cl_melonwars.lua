@@ -22,6 +22,32 @@ cvars.AddChangeCallback("mw_player_ready", function()
 	net.SendToServer()
 end)
 
+function MelonWars.sendContraptionToServer(_file)
+	local text = file.Read(_file)
+	local compressed_text = util.Compress( text )
+	if not compressed_text then compressed_text = text end
+	local len = string.len( compressed_text )
+	local send_size = 60000
+	local parts = math.ceil( len / send_size )
+	local start = 0
+
+	net.Start( "BeginContraptionLoad" )
+	net.SendToServer()
+
+	for i = 1, parts do
+		local endbyte = math.min( start + send_size, len )
+		local size = endbyte - start
+		local data = compressed_text:sub( start + 1, endbyte + 1 )
+		net.Start( "ContraptionLoad" )
+			net.WriteBool( i == parts )
+			net.WriteUInt( size, 16 )
+			net.WriteData( data, size )
+		net.SendToServer()
+
+		start = endbyte
+	end
+end
+
 net.Receive( "MW_ReturnSelection", function()
 	local returnedSelectionID = net.ReadUInt(8)
 
@@ -99,33 +125,6 @@ end )
 net.Receive( "MW_TeamUnits", function()
 	--LocalPlayer().MelonWars.units = net.ReadInt(16)
 	LocalPlayer().mw_units = net.ReadInt(16)
-end )
-
-net.Receive( "RequestContraptionLoadToClient", function()
-	local _file = net.ReadString()
-	local ent = net.ReadEntity()
-
-	local text = file.Read(_file)
-	local compressed_text = util.Compress( text )
-	if not compressed_text then compressed_text = text end
-	local len = string.len( compressed_text )
-	local send_size = 60000
-	local parts = math.ceil( len / send_size )
-	local start = 0
-	net.Start( "BeginContraptionLoad" )
-		net.WriteEntity(ent)
-	net.SendToServer()
-	for i = 1, parts do
-		local endbyte = math.min( start + send_size, len )
-		local size = endbyte - start
-		local data = compressed_text:sub( start + 1, endbyte + 1 )
-		net.Start( "ContraptionLoad" )
-			net.WriteBool( i == parts )
-			net.WriteUInt( size, 16 )
-			net.WriteData( data, size )
-		net.SendToServer()
-		start = endbyte
-	end
 end )
 
 net.Receive( "MW_ClientControlUnit", function()
