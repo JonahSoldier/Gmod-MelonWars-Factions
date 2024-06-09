@@ -28,11 +28,11 @@ function ENT:Initialize()
 	timer.Simple(0.1, function () self:Siphon_Connect(self, true) end)
 
 	self.targetConnections = {}
-
 end
 
 function ENT:Think(ent)
 
+	--TODO: Possibly re-connect to any newly built energy 
 	for k, v in pairs(self.targetConnections) do
 		if(IsValid(v)) then
 			if((MelonWars.electricNetwork[self.network].capacity - MelonWars.electricNetwork[self.network].energy >= 5)) then
@@ -52,7 +52,7 @@ function ENT:Think(ent)
 end
 
 
-function ENT:ConnectToBarrack()
+function ENT:ConnectToBarrack() --TODO: This sucks and it's used in a few places. Rewrite and separate into standard function.
 	local connected = false
 	local entities = ents.FindInSphere( self:GetPos(), self.range )
 		--------------------------------------------------------Disparar

@@ -568,6 +568,11 @@ net.Receive( "ContraptionLoadToAssembler", function( _, pl )
 	ent:SetNWBool( "active", true )
 	ent:SetNWFloat( "nextSlowThink", CurTime() + spawntime )
 	ent:SetNWFloat( "slowThinkTimer", time )
+
+	local plTeam = pl:GetInfoNum("mw_team", 0)
+	if cvars.Bool("mw_admin_credit_cost") then
+		MW_Server_UpdateWater(plTeam, MelonWars.teamCredits[plTeam]-cost)
+	end
 end )
 
 local function MW_SpawnProp( model, pos, ang, _team, parent, health, cost, pl, spawntime, offset )

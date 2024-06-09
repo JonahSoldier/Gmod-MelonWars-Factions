@@ -37,7 +37,7 @@ function ENT:SlowThink ( ent )
 	local entities = ents.FindInSphere( ent:GetPos(), ent.range )
 	--------------------------------------------------------Disparar
 	local targets = 0
-	local maxtargets = 15
+	local maxtargets = 15 --TODO: Just un-cap this. It doesn't really matter how many are going through it should always damage them all.
 
 	local foundEntities = {}
 	for k, v in pairs(entities) do
@@ -75,12 +75,6 @@ function ENT:SlowThink ( ent )
 	for k, v in pairs(closestEntities) do
 		----------------------------------------------------------Encontró target
 		v.damage = v.damage+self.damageDeal
-		/*local effectdata = EffectData()
-		effectdata:SetScale(3000)
-		effectdata:SetMagnitude(3000)
-		effectdata:SetStart( self:GetPos() + Vector(0,0,45))
-		effectdata:SetOrigin( v:GetPos() )
-		util.Effect( "AirboatGunTracer", effectdata )*/
 		sound.Play( ent.shotSound, ent:GetPos() )
 		self:DischargeEffect()
 	end

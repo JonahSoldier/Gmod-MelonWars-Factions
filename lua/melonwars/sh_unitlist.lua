@@ -35,7 +35,7 @@ local function Unit() -- Code is an optional argument.
 end
 
 --local unitCount = 88
-local unitCount = 85
+local unitCount = 84
 MelonWars.units = {}
 MelonWars.unitCount = unitCount
 local u = nil
@@ -48,6 +48,10 @@ local function BarracksText( number, max )
 end
 local button_energy_color = Color(255, 255, 80)
 local button_barrack_color = Color(200, 255, 255)
+
+local indicator_attack_colour = Color(255, 0, 0, 100)
+local indicator_utility_colour = Color(0, 0, 255, 100)
+local indicator_unitsRequired_colour = Color(0, 255, 0, 100)
 
 local i = 0
 
@@ -398,6 +402,8 @@ u.description 	= [[A ground-station for the refueling of fighters. Essential, pr
 u.model 		= "models/xqm/jetenginepropellerlarge.mdl"
 u.offset 		= Vector(0,0,-2)
 u.angle 		= Angle(90, 0, 0)
+u.indRingRadius = 150
+u.indRingColour = indicator_utility_colour
 
 i = i + 1
 u = MelonWars.units[i]
@@ -411,7 +417,9 @@ u.description 	= [[Static defense, a heavy machinegun with good health and firep
 u.model 		= "models/combine_turrets/ground_turret.mdl"
 u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(180, 180, 0)
-u.energyRange		= 500
+--u.energyRange		= 500
+u.indRingRadius = 500
+u.indRingColour = indicator_attack_colour
 
 i = i + 1
 u = MelonWars.units[i]
@@ -424,6 +432,8 @@ u.spawn_time 	= 5
 u.description 	= [[A set of spinning blades, used to recycle melons, get resources back, and sometimes make smoothies. It has low health, so use as defense at your own risk. (It doesn't give credits for friendly free units)]]
 u.model 		= "models/props_c17/TrapPropeller_Blade.mdl"
 u.offset 		= Vector(0,0,0)
+u.indRingRadius = 60
+u.indRingColour = indicator_attack_colour
 
 i = i + 1
 u = MelonWars.units[i]
@@ -438,6 +448,8 @@ u.description 	= [[A haphazard spread of metal rods connected to an underground 
 u.model 		= "models/props_rooftop/antennaclusters01a.mdl"
 u.offset 		= Vector(0,0,60)
 u.angle 		= Angle(0, 0, 0)
+u.indRingRadius = 80
+u.indRingColour = indicator_attack_colour
 
 i = i + 1
 u = MelonWars.units[i]
@@ -489,7 +501,8 @@ u.buildAnywere  = true
 u.description 	= [[A void teleportation platform designed to receive incoming units from a transmitter. Does not need to be built near an outpost/HQ, but does require friendly units to be nearby.]]
 u.model 		= "models/props_lab/teleplatform.mdl"
 u.offset 		= Vector(0,0,-5)
-
+u.indRingRadius = 250
+u.indRingColour = indicator_unitsRequired_colour
 
 i = i + 1
 u = MelonWars.units[i]
@@ -517,6 +530,8 @@ u.model 		= "models/props_rooftop/roof_vent004.mdl"
 u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(0,0,0)
 u.code			= "admin"
+u.indRingRadius = 250
+u.indRingColour = indicator_utility_colour
 
 i = i + 1
 u = MelonWars.units[i]
@@ -533,6 +548,8 @@ u.offset 		= Vector(0,0,60)
 u.button_color 	= button_energy_color
 u.buildAnywere  = true
 u.energyRange	= 750
+u.indRingRadius = 250
+u.indRingColour = indicator_unitsRequired_colour
 
 i = i + 1
 u = MelonWars.units[i]
@@ -563,6 +580,8 @@ u.offset 		= Vector(0,0,40)
 u.angle 		= Angle(0, 0, 0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
+u.indRingRadius = 400
+u.indRingColour = indicator_attack_colour
 
 i = i + 1
 u = MelonWars.units[i]
@@ -579,6 +598,8 @@ u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(0, 0, 0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
+u.indRingRadius = 1600
+u.indRingColour = indicator_attack_colour
 
 i = i + 1
 u = MelonWars.units[i]
@@ -647,22 +668,6 @@ u.energyRange	= defaultenergyrange
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "--banned--"
-u.name 			= "Universal Overclocker"
-u.class 		= "ent_melon_energy_superoverclocker"
-u.cost 			= 2250
-u.welded_cost 	= -1
-u.population 	= 1
-u.spawn_time 	= 60
-u.description 	= [[This is broken don't use it.]]
-u.model 		= "models/props_c17/substation_circuitbreaker01a.mdl"
-u.offset 		= Vector(0,0,0)
-u.angle 		= Angle(0, 0, 0)
-u.button_color 	= button_energy_color
-u.energyRange	= defaultenergyrange
-
-i = i + 1
-u = MelonWars.units[i]
 u.name 			= "Over-Clocker"
 u.class 		= "ent_melon_overclocker"
 u.cost 			= 200
@@ -675,6 +680,8 @@ u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(0, 0, 0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
+u.indRingRadius = 50
+u.indRingColour = indicator_utility_colour
 
 i = i + 1
 u = MelonWars.units[i]
@@ -690,6 +697,8 @@ u.offset 		= Vector(0,0,-5)
 u.angle 		= Angle(0, 0, 0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
+u.indRingRadius = 750
+u.indRingColour = indicator_utility_colour
 
 i = i + 1
 u = MelonWars.units[i]
@@ -705,6 +714,8 @@ u.offset 		= Vector(0,0,24)
 u.angle 		= Angle(0, 0, 0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
+u.indRingRadius = 250
+u.indRingColour = indicator_utility_colour
 
 i = i + 1
 u = MelonWars.units[i]
@@ -720,6 +731,8 @@ u.offset 		= Vector(0,0,-5)
 u.angle 		= Angle(0, 0, 0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
+u.indRingRadius = 1000
+u.indRingColour = indicator_utility_colour
 
 i = i + 1
 u = MelonWars.units[i]
@@ -736,6 +749,8 @@ u.angle 		= Angle(0, 0, 0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 u.isBonusUnit   = true
+u.indRingRadius = 100
+u.indRingColour = indicator_utility_colour
 
 i = i + 1
 u = MelonWars.units[i]
@@ -752,6 +767,8 @@ u.offset 		= Vector(0,0,23.5)
 u.angle 		= Angle(0, 0, 0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
+u.indRingRadius = 300
+u.indRingColour = indicator_utility_colour
 
 i = i + 1
 u = MelonWars.units[i]

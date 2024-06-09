@@ -1306,31 +1306,13 @@ local function StartBuildingContraption( assembler, _file, cost, power )
 	if locPly.mw_credits < locPly.contrapCost and cvars.Bool( "mw_admin_credit_cost" ) then return end
 	if locPly.contrapPower ~= 0 and locPly.mw_units + locPly.contrapPower > cvars.Number( "mw_admin_max_units" ) then return end
 
-
-	--Most of this should be server-only.
-	assembler.nextSlowThink = CurTime() + assembler:GetNWFloat("slowThinkTimer", 0)
-	assembler:SetNWFloat("nextSlowThink", CurTime() + assembler:GetNWFloat("slowThinkTimer", 0))
-	assembler.unitspawned = false
-	assembler:SetNWBool("active", true)
-	assembler.player = locPly
-	assembler.file = _file
-	assembler.contrapCost = cost
-	assembler.contrapPower = power
-
 	MelonWars.sendContraptionToServer(_file)
 	net.Start("ContraptionLoadToAssembler")
 		net.WriteEntity(assembler)
 	net.SendToServer()
 
-	if cvars.Bool("mw_admin_credit_cost") then --TODO: This shouldn't be on client 
-		local newCredits = locPly.mw_credits-locPly.contrapCost
-		net.Start("MW_UpdateServerInfo")
-			net.WriteInt(mw_team_cv:GetInt(), 8)
-			net.WriteInt(newCredits, 32)
-		net.SendToServer()
-		net.Start("MW_UpdateClientInfo")
-			net.WriteInt(mw_team_cv:GetInt(), 8)
-		net.SendToServer()
+	if cvars.Bool("mw_admin_credit_cost") then
+		locPly.mw_credits = locPly.mw_credits-locPly.contrapCost
 	end
 
 	locPly.cmenuframe:Remove()
@@ -1595,6 +1577,103 @@ end
 function TOOL.BuildCPanel( CPanel )
 	if not CLIENT then return end
 	CPanel:AddControl("Label", { Text = "Reload to open the menu" })
+end
+
+function TOOL:Reload()
+	if not CLIENT then return end
+	local pl = LocalPlayer()
+	if pl.mw_frame ~= nil then return end
+	--	CREATE FRAME
+	pl.mw_frame = vgui.Create("DFrame")
+	pl.mw_frame:SetSize(w, h)
+	pl.mw_frame:SetPos(ScrW() / 2 - w / 2 + 150, ScrH() / 2 - h / 3)
+	pl.mw_frame:SetTitle("Melon Wars")
+	pl.mw_frame:MakePopup()
+	pl.mw_frame:ShowCloseButton()
+	local button = vgui.Create("DButton", pl.mw_frame)
+	button:SetSize(90, 18)
+	button:SetPos(w - 93, 3)
+	button:SetText("Press R to close")
+	function button:DoClick()
+		pl.mw_frame:Remove()
+		pl.mw_frame = nil
+	end
+
+	_CreatePanel()
+
+	local h = 70
+	self:MenuButton(pl, 30 + h * 0, h, "Units", 0)
+	self:MenuButton(pl, 30 + h * 1, h, "Buildings", 1)
+	self:MenuButton(pl, 30 + h * 2, h, "Base", 2)
+	self:MenuButton(pl, 30 + h * 3, h, "Energy", 3)
+	self:MenuButton(pl, 30 + h * 4, h, "Contrap.", 4)
+
+	self:MenuButton(pl, 390, 25, "Help", 6)
+	self:MenuButton(pl, 415, 25, "Team", 5)
+	self:MenuButton(pl, 440, 25, "Admin", 7)
+	self:MenuButton(pl, 470, 25, "Player", 8)
+end
+
+function TOOL:Deploy()
+	local owner = self:GetOwner()
+
+	self.pressed = false
+	self.rPressed = false
+	self.disableKeyboard = false
+	self.ctrlPressed = false
+	self.canPlace = true
+	local _team = owner:GetInfoNum( "mw_team", 0 )
+	if not SERVER then return end
+	if _team ~= 0 then
+		net.Start( "MW_TeamCredits" )
+			net.WriteInt( MelonWars.teamCredits[_team], 32 )
+		net.Send( owner )
+
+		net.Start( "MW_TeamUnits" )
+			net.WriteInt( MelonWars.teamUnits[_team], 16 )
+		net.Send( owner )
+	end
+	owner:PrintMessage( HUD_PRINTCENTER, "Press R to open the menu" )
+end
+
+function TOOL:Holster()
+	if IsValid( self.GhostEntity ) then
+		self.GhostEntity:Remove()
+	end
+	if IsValid( self.GhostSphere ) then
+		self.GhostSphere:Remove()
+	end
+end
+
+function TOOL:RightClick( tr )
+	local owner = self:GetOwner()
+	if IsValid( owner.controllingUnit ) then
+		owner.controllingUnit = nil
+	end
+
+	if not CLIENT then return end
+
+	local locPly = LocalPlayer()
+	if locPly.mw_cooldown >= ( CurTime() - 0.05 ) then return end
+
+	if cvars.Number( "mw_chosen_unit" ) == 0 then
+		if istable( locPly.foundMelons ) then
+			net.Start( "MW_Order" )
+				net.WriteBool( locPly:KeyDown(IN_SPEED) )
+				net.WriteBool( locPly:KeyDown(IN_WALK) )
+				for _, v in pairs( locPly.foundMelons ) do
+					if not v:IsWorld() and v:IsValid() and v ~= nil then
+						net.WriteEntity( v )
+					end
+				end
+			net.SendToServer()
+		end
+	else
+		owner:ConCommand( "mw_chosen_unit 0" ) -- Stop spawning
+	end
+
+	locPly:ConCommand("mw_action 0")
+	locPly.mw_cooldown = CurTime()
 end
 
 local function MW_UpdateGhostEntity(model, pos, offset, angle, newColor, ghostSphereRange, ghostSpherePos)
@@ -1871,6 +1950,8 @@ function TOOL:Think()
 	end
 end
 
+-- DRAWING: ----------------------------------
+
 function TOOL:IndicateIncome(amount)
 	local indicator = incomeIndicators[currentIncomeIndicator]
 	currentIncomeIndicator = (currentIncomeIndicator+1)%(#incomeIndicators) + 1
@@ -1891,41 +1972,6 @@ function TOOL:MenuButton( pl, y, h, text, number )
 	end
 end
 
-function TOOL:Reload()
-	if not CLIENT then return end
-	local pl = LocalPlayer()
-	if pl.mw_frame ~= nil then return end
-	--	CREATE FRAME
-	pl.mw_frame = vgui.Create("DFrame")
-	pl.mw_frame:SetSize(w, h)
-	pl.mw_frame:SetPos(ScrW() / 2 - w / 2 + 150, ScrH() / 2 - h / 3)
-	pl.mw_frame:SetTitle("Melon Wars")
-	pl.mw_frame:MakePopup()
-	pl.mw_frame:ShowCloseButton()
-	local button = vgui.Create("DButton", pl.mw_frame)
-	button:SetSize(90, 18)
-	button:SetPos(w - 93, 3)
-	button:SetText("Press R to close")
-	function button:DoClick()
-		pl.mw_frame:Remove()
-		pl.mw_frame = nil
-	end
-
-	_CreatePanel()
-
-	local h = 70
-	self:MenuButton(pl, 30 + h * 0, h, "Units", 0)
-	self:MenuButton(pl, 30 + h * 1, h, "Buildings", 1)
-	self:MenuButton(pl, 30 + h * 2, h, "Base", 2)
-	self:MenuButton(pl, 30 + h * 3, h, "Energy", 3)
-	self:MenuButton(pl, 30 + h * 4, h, "Contrap.", 4)
-
-	self:MenuButton(pl, 390, 25, "Help", 6)
-	self:MenuButton(pl, 415, 25, "Team", 5)
-	self:MenuButton(pl, 440, 25, "Admin", 7)
-	self:MenuButton(pl, 470, 25, "Player", 8)
-end
-
 local toolScreenTextCol =  Color( 200, 200, 200 )
 function TOOL:DrawToolScreen( width, height )
 
@@ -1941,68 +1987,6 @@ function TOOL:DrawToolScreen( width, height )
 	local txtStr = textStrings[action + 1] or "Unknown Action"
 
 	draw.SimpleText( txtStr, "DermaLarge", width / 2, height / 2, toolScreenTextCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-end
-
-function TOOL:Deploy()
-	local owner = self:GetOwner()
-
-	self.pressed = false
-	self.rPressed = false
-	self.disableKeyboard = false
-	self.ctrlPressed = false
-	self.canPlace = true
-	local _team = owner:GetInfoNum( "mw_team", 0 )
-	if not SERVER then return end
-	if _team ~= 0 then
-		net.Start( "MW_TeamCredits" )
-			net.WriteInt( MelonWars.teamCredits[_team], 32 )
-		net.Send( owner )
-
-		net.Start( "MW_TeamUnits" )
-			net.WriteInt( MelonWars.teamUnits[_team], 16 )
-		net.Send( owner )
-	end
-	owner:PrintMessage( HUD_PRINTCENTER, "Press R to open the menu" )
-end
-
-function TOOL:Holster()
-	if IsValid( self.GhostEntity ) then
-		self.GhostEntity:Remove()
-	end
-	if IsValid( self.GhostSphere ) then
-		self.GhostSphere:Remove()
-	end
-end
-
-function TOOL:RightClick( tr )
-	local owner = self:GetOwner()
-	if IsValid( owner.controllingUnit ) then
-		owner.controllingUnit = nil
-	end
-
-	if not CLIENT then return end
-
-	local locPly = LocalPlayer()
-	if locPly.mw_cooldown >= ( CurTime() - 0.05 ) then return end
-
-	if cvars.Number( "mw_chosen_unit" ) == 0 then
-		if istable( locPly.foundMelons ) then
-			net.Start( "MW_Order" )
-				net.WriteBool( locPly:KeyDown(IN_SPEED) )
-				net.WriteBool( locPly:KeyDown(IN_WALK) )
-				for _, v in pairs( locPly.foundMelons ) do
-					if not v:IsWorld() and v:IsValid() and v ~= nil then
-						net.WriteEntity( v )
-					end
-				end
-			net.SendToServer()
-		end
-	else
-		owner:ConCommand( "mw_chosen_unit 0" ) -- Stop spawning
-	end
-
-	locPly:ConCommand("mw_action 0")
-	locPly.mw_cooldown = CurTime()
 end
 
 function TOOL:DrawHUD() --TODO: Refactor. This needs to be split up/reorganized at least a little bit, since it's a giant 400 line function
@@ -2317,11 +2301,32 @@ function TOOL:DrawHUD() --TODO: Refactor. This needs to be split up/reorganized 
 	end
 end
 
-net.Receive( "UpdateClientTeams", function()
-	MelonWars.teamGrid = net.ReadTable()
-end )
-
 if CLIENT then
+	local mw_buildalpha_multiplier_cv = GetConVar("mw_buildalpha_multiplier")
+	hook.Add("PostDrawTranslucentRenderables", "MelonWars_DrawToolIndicatorRanges", function(depth, skybox)
+		local locPly = LocalPlayer()
+		local activeWeapon = locPly:GetActiveWeapon()
+		if not IsValid(activeWeapon) or activeWeapon:GetClass() ~= "gmod_tool" then return end
+		local tool = locPly:GetTool()
+		if not tool or tool.Mode ~= "melon_universal_tool" then return end
+
+		local unit = MelonWars.units[locPly:GetInfoNum("mw_chosen_unit", 0)]
+		if not unit or not unit.indRingRadius or not unit.indRingColour then return end
+
+		local tr = locPly:GetEyeTrace() --This doesn't create a new trace on client so it's fine.
+
+		render.StartWorldRings()
+
+		render.AddWorldRing(tr.HitPos, unit.indRingRadius, 5, 20)
+
+		--unit.indRingColour.a = math.Clamp(50 * mw_buildalpha_multiplier_cv:GetFloat(), 0, 255) --not sure if this is worth it
+		render.FinishWorldRings( unit.indRingColour ) --outpostRingCol)
+	end)
+
+	net.Receive( "UpdateClientTeams", function()
+		MelonWars.teamGrid = net.ReadTable()
+	end )
+
 	language.Add( "tool.melon_universal_tool.name", "MelonWars: RTS" )
 	language.Add( "tool.melon_universal_tool.desc", "Sandbox strategy game" )
 	language.Add( "tool.melon_universal_tool.0", "" )
