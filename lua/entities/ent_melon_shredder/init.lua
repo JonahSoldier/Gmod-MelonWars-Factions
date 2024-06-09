@@ -48,14 +48,11 @@ function ENT:SlowThink(ent)
 		if (v:GetClass() ~= "ent_melon_shredder") then
 			if (v.Base == "ent_melon_base") then
 				if(v.isShredding ~= true) then
-					if (v:GetNWFloat("health", 100) <= self.damageDeal) then
+					if v.HP <= self.damageDeal then
 						local gain = v:GetVar("value")*0.75
 						if (v.spawned and v:GetClass() == "ent_melon_voidling") then
 							gain = v:GetVar("value")+1
 						end
-						--if (v:GetVar("mw_melonTeam") ~= self:GetNWInt("mw_melonTeam", 0)) then
-						--	gain = math.max(15, gain)
-						--end
 						MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] = MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)]+gain
 						for k, v in pairs( player.GetAll() ) do
 							if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
@@ -70,11 +67,7 @@ function ENT:SlowThink(ent)
 				end
 
 				v.damage = v.damage+self.damageDeal
-				--v:SetNWFloat("health", v:GetNWFloat("health", 1)-self.damageDeal)
 				v.gotHit = true
-				/*if (v:GetNWFloat("health", 1) <= 0) then
-					MelonWars.die(v)
-				end*/
 			end
 		end
 	end

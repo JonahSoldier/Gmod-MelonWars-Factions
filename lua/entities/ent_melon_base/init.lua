@@ -13,7 +13,8 @@ function MelonWars.defaults( ent )
 	--ent:NextThink(CurTime() + 0.1)
 	ent.maxHP = 20
 	ent.HP = 1
-	ent:SetNWFloat( "health", 1 )
+	--ent:SetNWFloat( "health", 1 )
+	ent:SetNWFloat( "healthFrac" , 1)
 	ent.speed = 100
 	ent.range = 250
 	ent.spread = 1
@@ -103,6 +104,11 @@ function MelonWars.defaults( ent )
 	----------------
 
 	ent.posOffset = Vector(0,0,0)
+
+	--[[
+	timer.Simple(5, function()
+		PrintTable(ent:GetNWVarTable())
+	end)--]]
 end
 
 function ENT:Ini( teamnumber, affectPopulation )
@@ -156,8 +162,9 @@ local function MW_Spawn( ent )
 	ent.spawned = true
 
 	ent.HP = ent.maxHP
-	ent:SetNWFloat( "maxhealth", ent.maxHP )
-	ent:SetNWFloat( "health", ent.HP )
+	--ent:SetNWFloat( "maxhealth", ent.maxHP )
+	--ent:SetNWFloat( "health", ent.HP )
+	ent:SetNWFloat( "healthFrac", ent.HP / ent.maxHP )
 
 	local baseSize
 	if (ent.sphereRadius ~= 0) then
@@ -166,7 +173,7 @@ local function MW_Spawn( ent )
 		local mins = ent.phys:GetAABB()
 		baseSize = (-mins.x-mins.y) * 0.6
 	end
-	ent:SetNWFloat( "baseSize", baseSize + 5 )
+	ent:SetNWFloat( "baseSize", baseSize + 5 ) --TODO: See if this can be done without networking
 
 	hook.Run("MelonWarsEntitySpawned", ent)
 end
@@ -178,7 +185,7 @@ function ENT:Setup()
 	self:SetNWEntity( "targetEntity", self.targetEntity )
 	self:SetNWEntity( "followEntity", self.followEntity )
 	self:SetNWBool( "moving", false )
-	self:SetNWFloat( "range", self.range )
+	--self:SetNWFloat( "range", self.range )
 
 	self.moving = false
 	self.damage = 0
@@ -321,7 +328,8 @@ function ENT:Update()
 	if selfTbl.damage > 0 then -- Apply damage
 		selfTbl.gotHit = true
 		selfTbl.HP = selfTbl.HP - selfTbl.damage
-		self:SetNWFloat( "health", selfTbl.HP )
+		--self:SetNWFloat( "health", selfTbl.HP )
+		self:SetNWFloat( "health", selfTbl.HP / selfTbl.maxHP )
 		selfTbl.damage = 0
 		if selfTbl.HP <= 0 then
 			MelonWars.die( self )
@@ -721,8 +729,7 @@ function MelonWars.bullet(ent, startingPos, direction, distance, ignore, callbac
 	ent.fired = true
 	local effectdata = EffectData()
 	local angle = direction:Angle()
-	local hitpos = startingPos+direction*distance
-	local hitNormal = -direction
+	local hitpos = startingPos + direction * distance
 	---------------------------------------------------------------------Esto va hacer que se aplique el daño le pegue o no
 	if (forceTargetPos == nil and ent.targetEntity.Base == "ent_melon_prop_base") then
 		ent.targetEntity:SetNWFloat( "health", ent.targetEntity:GetNWFloat( "health", 1)-ent.damageDeal)
@@ -736,7 +743,6 @@ function MelonWars.bullet(ent, startingPos, direction, distance, ignore, callbac
 			ent:SetNWInt("propHP", php-ent.damageDeal)
 		end
 	else
-
 		-- New Laser shooting
 		direction:Rotate(spread)
 		local tr = util.QuickTrace( startingPos, direction*distance, function(hitEnt)
@@ -752,7 +758,7 @@ function MelonWars.bullet(ent, startingPos, direction, distance, ignore, callbac
 
 		hitpos = tr.HitPos
 
-		local angle = (tr.HitPos-startingPos):Angle()
+		--local angle = (tr.HitPos-startingPos):Angle()
 
 		local effectdata = EffectData()
 		if ((tr.HitPos-startingPos):LengthSqr() < 130*130) then
@@ -777,27 +783,6 @@ function MelonWars.bullet(ent, startingPos, direction, distance, ignore, callbac
 	effectdata:SetNormal(direction)
 	util.Effect( "AR2Impact", effectdata )
 	------------
-
-	-- Can shoot through friends
-	/*bullet.Distance=distance
-	bullet.IgnoreEntity = ignore
-	bullet.Dir = direction
-	if (depth < 5) then
-		bullet.Callback = function(attacker, tr, dmgInfo)
-			if (tr.Hit) then
-				if (callback ~= nil) then
-					callback(attacker,tr,dmginfo)
-				end
-				local cl = tr.Entity:GetClass()
-				if (tr.Entity.canMove and ent:SameTeam(tr.Entity) and cl ~= "ent_melon_wheel" and cl ~= "ent_melon_propeller" and cl ~= "ent_melon_hover") then
-					MelonWars.bullet(ent, tr.HitPos+direction*5, direction, (distance-5)*(1-tr.Fraction), tr.Entity, callback, depth+1)
-				end
-			end
-		end
-	end
-
-	ent.fired = true
-	ent:FireBullets(bullet)*/
 end
 
 function MelonWars.defaultDeathEffect( ent )
@@ -870,7 +855,8 @@ function ENT:OnTakeDamage( damage )
 		if (damageDone > 0) then
 			selfTbl.gotHit = true
 		end
-		self:SetNWFloat( "health", selfTbl.HP )
+		--self:SetNWFloat( "health", selfTbl.HP )
+		self:SetNWFloat( "healthFrac", selfTbl.HP / selfTbl.maxHP )
 		if (selfTbl.HP <= 0) then
 			MelonWars.die (self)
 		end
@@ -980,7 +966,8 @@ function ENT:BarrackSlowThink() --TODO: Optimize
 	if (not (IsValid(self.parent) or self.parent == nil or self.parent:IsWorld())) then
 		self.gotHit = true
 		self.HP = self.HP-50
-		self:SetNWFloat( "health", self.HP )
+		--self:SetNWFloat( "health", self.HP )
+		self:SetNWFloat( "healthFrac", selfTbl.HP / selfTbl.maxHP )
 		self.damage = 0
 		if (self.HP <= 0) then
 			MelonWars.die( self )

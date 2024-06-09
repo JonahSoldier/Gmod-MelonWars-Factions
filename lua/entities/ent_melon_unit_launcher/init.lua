@@ -66,7 +66,8 @@ function ENT:AbsorbUnit(unit)
 				local index = self:GetNWInt("count", 0)
 				self:SetNWInt("count", index+unit.population)
 				self:SetNWString("class"..index, unit:GetClass())
-				self:SetNWFloat("hp"..index, unit:GetNWFloat("health", 0))
+				--self:SetNWFloat("hp"..index, unit:GetNWFloat("health", 0))
+				self:SetNWFloat("hp"..index, unit.HP)
 				self:SetNWInt("value"..index, unit.value)
 				self:SetNWInt("energy"..index, unit:GetNWInt("mw_charge", 0))
 				self:SetNWInt("entindex"..index, unit:EntIndex())
@@ -127,7 +128,8 @@ function ENT:FreeUnits()
 				newMarine:SetOwner(pl)
 
 				newMarine.value = value
-				newMarine:SetNWFloat("Health", hp)
+				--newMarine:SetNWFloat("Health", hp)
+				newMarine.HP = hp
 
 				if (energy > 0) then
 					newMarine:SetNWInt("mw_charge", energy)

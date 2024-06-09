@@ -74,9 +74,10 @@ function ENT:PhysicsCollide( data, phys )
 						local mostHealth = 0
 						for k, v in pairs(foundBases) do
 							if (not self:AlliedTeams(self.launchingTeam, v:GetNWInt("mw_melonTeam", 0))) then
-								if (healthiest == nil or v:GetNWFloat("health", 0) > mostHealth) then
+								--if (healthiest == nil or v:GetNWFloat("health", 0) > mostHealth) then
+								if (v.HP or 0) > mostHealth then
 									healthiest = v
-									mostHealth = v:GetNWFloat("health", 0)
+									mostHealth = v.HP --v:GetNWFloat("health", 0)
 								end
 							end
 						end

@@ -48,8 +48,9 @@ hook.Add( "PostDrawTranslucentRenderables", "MelonWars_UnitSelectionCircles", fu
 		if IsValid( v ) then
 			local floorTrace = v.floorTrace
 			if floorTrace ~= nil and floorTrace.Hit then
-				local hp = v:GetNWFloat("health", 0)
-				local maxhp = v:GetNWFloat("maxhealth", 1)
+				--local hp = v:GetNWFloat("health", 0)
+				--local maxhp = v:GetNWFloat("maxhealth", 1)
+				local healthFrac = v:GetNWFloat("healthFrac", 1)
 				local pos = v:GetPos() + v:OBBCenter()
 				if v.circleSize ~= nil then
 					local polySize = v.circleSize
@@ -63,8 +64,10 @@ hook.Add( "PostDrawTranslucentRenderables", "MelonWars_UnitSelectionCircles", fu
 						{ x = 0, y = -polySize },
 						{ x = polySize * 0.72, y = -polySize * 0.72 }
 					}
-					surface.SetDrawColor( 255 * math.min( ( 1 - hp / maxhp ) * 2, 1 ), 255 * math.min( hp / maxhp * 2, 1 ), 0, 255 )
-					if hp <= 0 then
+					--surface.SetDrawColor( 255 * math.min( ( 1 - hp / maxhp ) * 2, 1 ), 255 * math.min( hp / maxhp * 2, 1 ), 0, 255 )
+					surface.SetDrawColor( 255 * math.min( ( 1 - healthFrac ) * 2, 1 ), 255 * math.min( healthFrac * 2, 1 ), 0, 255 )
+					--if hp <= 0 then
+					if healthFrac <= 0 then
 						surface.SetDrawColor( 255, 255, 255 )
 					end
 					cam.Start3D2D( Vector( pos.x, pos.y, floorTrace.HitPos.z + 1 ), floorTrace.HitNormal:Angle() + Angle( 90, 0, 0 ), 1 )
@@ -177,7 +180,8 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 		    local pos = (v:GetPos() + Vector(0,0,v:OBBMaxs().z)):ToScreen()
 			pos = Vector(pos.x, pos.y-100)
 
-			local percent = v:GetNWInt("health", 3) / v:GetNWInt("maxhealth", 10)
+			--local percent = v:GetNWInt("health", 3) / v:GetNWInt("maxhealth", 10)
+			local percent = v:GetNWInt( "healthFrac", 1)
 			surface.SetDrawColor( 0, 0, 0, 255 )
 		  	surface.DrawRect( pos.x - 15, pos.y - 55, 30, 160 )
 			surface.SetDrawColor( 255, 0, 0, 255 )
@@ -233,6 +237,7 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 	end
 
 	if not IsValid( ply.controllingUnit ) then return end
+	--[[
 	local pos = ply.controlTrace.HitPos
 	local spos = pos:ToScreen()
 	local hit = ply.controlTrace.Hit
@@ -246,8 +251,13 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 	else
 		DrawMelonCross( spos, Color( 255, 0, 0, 255 ) )
 	end
+	--]]
 end )
 
+--TODO: Bring back unit control (what this is)
+--I removed it to reduce the number of networked variables per entity, as range is only used for this.
+--We can probably bring it back without any downsides if I make it only set range when a unit is controlled.
+--[[
 hook.Add( "CalcView", "MelonWars_UnitControl_CalcView", function( ply, pos, angles, fov )
 	if not IsValid(ply.controllingUnit) then return end
 	local cUnit = ply.controllingUnit
@@ -259,9 +269,11 @@ hook.Add( "CalcView", "MelonWars_UnitControl_CalcView", function( ply, pos, angl
 	view.drawviewer = true
 
 	local targetPos = util.QuickTrace( view.origin, angles:Forward() * 50000, cUnit ).HitPos
+	--cUnit:GetNWFloat("range", 1000)  --This has been removed
 	LocalPlayer().controlTrace = util.QuickTrace( cUnit:GetPos(), (targetPos - cUnit:GetPos()):GetNormalized() * cUnit:GetNWFloat("range", 1000), cUnit )
 	return view
 end )
+--]]
 
 hook.Add( "RenderScreenspaceEffects", "MelonWars_ColourMod", function()
 	if not LocalPlayer().MWhasColourModifier then return end
