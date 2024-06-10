@@ -1,28 +1,30 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 
-include('shared.lua')
+include( "shared.lua" )
 
 function ENT:Initialize()
 
 	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_rooftop/antennaclusters01a.mdl"
-	self.spread = 10
 	self.damageDeal = 2
 	self.maxHP = 35
 	self.range = 80
 	self.sphereRadius = 0
 	self.shotSound = "weapons/stunstick/stunstick_impact1.wav"
-	self.shotOffset = Vector(0,0,50.25) --Originally 30, increased to spite mortars.
+	self.shotOffset = Vector(0,0,50.25) --Originally 30, increased to spite mortars. --TODO: This is a bad solution.
+	--TODO: See if we can move the hitbox around to make it more vulnerable to bombs, and increase HP
 
 	self.canMove = false
-	self.canBeSelected = false
+	self.canBeSelected = false --TODO: Does this do anything?
 	self.moveType = MOVETYPE_NONE
 
 	self.population = 0
 
 	self.slowThinkTimer = 0.75
+
+	self.AOETargetableOnly = true --TODO: Implement.
 
 	self:Setup()
 
@@ -33,62 +35,24 @@ end
 
 
 function ENT:SlowThink ( ent )
-
-	local entities = ents.FindInSphere( ent:GetPos(), ent.range )
-	--------------------------------------------------------Disparar
-	local targets = 0
-	local maxtargets = 15 --TODO: Just un-cap this. It doesn't really matter how many are going through it should always damage them all.
-
-	local foundEntities = {}
-	for k, v in pairs(entities) do
-		local tr = util.TraceLine( {
-			start = self:GetPos()+self:GetVar("shotOffset", Vector(0,0,0)),
-			endpos = v:GetPos()+v:GetVar("shotOffset", Vector(0,0,0)),
-			filter = function( foundEnt )
-				if ( foundEnt == self ) then return false end
-				if ( foundEnt.Base == "ent_melon_base" or foundEnt:GetClass() == "prop_physics") then--si hay un prop en el medio
-					return false
-				end
-				return true
-			end
-		})
-		if (tostring(tr.Entity) == '[NULL Entity]') then
-			if (v.Base == "ent_melon_base" and not ent:SameTeam(v)) then -- si no es un aliado
-				table.insert(foundEntities, v)
-			end
+	local dmg = self.damageDeal
+	for k, v in ipairs(ents.FindInSphere( ent:GetPos(), ent.range )) do
+		if (v.Base == "ent_melon_base" and not ent:SameTeam(v)) then
+			local vTbl = v:GetTable()
+			vTbl.damage = vTbl.damage + dmg
+			sound.Play( ent.shotSound, ent:GetPos() )
+			self:DischargeEffect()
 		end
-	end
-
-	local closestEntities = {}
-	for i=1, maxtargets do
-		local closestDistance = 0
-		local closestEntity = nil
-		for k, v in pairs(foundEntities) do
-			if (closestEntity == nil or ent:GetPos():DistToSqr( v:GetPos() ) < closestDistance) then
-				closestEntity = v
-				closestDistance = ent:GetPos():DistToSqr( v:GetPos() )
-			end
-		end
-		table.RemoveByValue(foundEntities, closestEntity)
-		table.insert(closestEntities, closestEntity)
-	end
-	for k, v in pairs(closestEntities) do
-		----------------------------------------------------------Encontró target
-		v.damage = v.damage+self.damageDeal
-		sound.Play( ent.shotSound, ent:GetPos() )
-		self:DischargeEffect()
 	end
 end
 
 function ENT:DischargeEffect()
-	--print("test")
-
 	local discharge = ents.Create("point_tesla")
 
 	discharge:SetPos(self:GetPos() + Vector(math.Rand( -25, 25 ), math.Rand( -25, 25 ), math.Rand( -10, 10 )))
 	discharge:SetKeyValue("texture", "trails/laser.vmt")
 	discharge:SetKeyValue("m_Color", "255 255 255")
-	discharge:SetKeyValue("m_flRadius", tostring(self.range*1.2))
+	discharge:SetKeyValue("m_flRadius", tostring(self.range * 1.2))
 	discharge:SetKeyValue("interval_min", tostring(0))
 	discharge:SetKeyValue("interval_max", tostring(1))
 	discharge:SetKeyValue("beamcount_min", tostring(1))
@@ -107,13 +71,9 @@ function ENT:DischargeEffect()
 	timer.Simple(0.1, function() discharge:Remove()  end)
 end
 
-
 function ENT:Shoot ( ent )
 end
---[[
-function MW_CleanUp_Network() --This unit is still being counted as an energy unit for some reason so I have to do this for it to reduce power/not cause script errors when removed
-end
-]]
+
 function ENT:DeathEffect ( ent )
 	MelonWars.defaultDeathEffect ( ent )
 end

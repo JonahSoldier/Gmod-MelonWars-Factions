@@ -302,7 +302,7 @@ function ENT:Update()
 		selfTbl.gotHit = true
 		selfTbl.HP = selfTbl.HP - selfTbl.damage
 		--self:SetNWFloat( "health", selfTbl.HP )
-		self:SetNWFloat( "health", selfTbl.HP / selfTbl.maxHP )
+		self:SetNWFloat( "healthFrac", selfTbl.HP / selfTbl.maxHP )
 		selfTbl.damage = 0
 		if selfTbl.HP <= 0 then
 			MelonWars.die( self )
@@ -493,7 +493,7 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 		local ourTeam = ent:GetNWInt("mw_melonTeam", 0)
 		for _, v in ipairs( foundEnts ) do
 			local vTbl = v:GetTable()
-			if vTbl.Base == "ent_melon_base" and vTbl.targetable and not MelonWars.sameTeam(ourTeam, v:GetNWInt("mw_melonTeam", 0)) then
+			if vTbl.Base == "ent_melon_base" and vTbl.targetable and not MelonWars.sameTeam(ourTeam, v:GetNWInt("mw_melonTeam", 0)) and ( not vTbl.AOETargetableOnly or entTbl.isAOE) then
 				if (entTbl.careForWalls) then
 					local tr = util.TraceLine( {
 						start = pos,
@@ -520,12 +520,12 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 			end
 		end
 		-------------------------------------------------Si aun asi no encontró target
-		--not 100% sure what the point of having this second loop here is.
+		--not 100% sure what the point of having this second loop here is. -j
 		if (entTbl.targetEntity == nil) then
 			for _, v in ipairs( foundEnts ) do
 				local vClass = v:GetClass()
 				local vTeam = v:GetNWInt("mw_melonTeam", ourTeam)
-				if not( ourTeam == vTeam or MelonWars.sameTeam(ourTeam, vTeam) or string.StartWith( vClass, "ent_melonbullet_" ) ) then --si es de otro equipo
+				if not( ourTeam == vTeam or MelonWars.sameTeam(ourTeam, vTeam) or string.StartWith( vClass, "ent_melonbullet_" )) and (not v.AOETargetableOnly or entTbl.isAOE) then --si es de otro equipo
 					if (entTbl.chaseStance) then
 						if (vClass == "ent_melon_wall") then
 							if (entTbl.stuck > 15) then

@@ -34,6 +34,8 @@ function ENT:Initialize()
 
 	self.slowThinkTimer = 1
 
+	self.isAOE = true
+
 	self:SetNWInt("mw_charge", 0)
 	self:SetNWInt("maxCharge", 2500)
 	self:SetNWBool("mw_active", true)

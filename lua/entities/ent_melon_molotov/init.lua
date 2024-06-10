@@ -30,6 +30,8 @@ function ENT:Initialize()
 
 	self.dootChance = 0
 
+	self.isAOE = true
+
 	self:Setup()
 end
 

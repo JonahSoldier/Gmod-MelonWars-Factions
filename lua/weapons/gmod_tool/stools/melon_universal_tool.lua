@@ -1574,6 +1574,37 @@ function TOOL:LeftClick( tr )
 	end
 end
 
+function TOOL:RightClick( tr )
+	local owner = self:GetOwner()
+	if IsValid( owner.controllingUnit ) then
+		owner.controllingUnit = nil
+	end
+
+	if not CLIENT then return end
+
+	local locPly = LocalPlayer()
+	if locPly.mw_cooldown >= ( CurTime() - 0.05 ) then return end
+
+	if cvars.Number( "mw_chosen_unit" ) == 0 then
+		if istable( locPly.foundMelons ) then
+			net.Start( "MW_Order" )
+				net.WriteBool( locPly:KeyDown(IN_SPEED) )
+				net.WriteBool( locPly:KeyDown(IN_WALK) )
+				for _, v in pairs( locPly.foundMelons ) do
+					if not v:IsWorld() and v:IsValid() and v ~= nil then
+						net.WriteEntity( v )
+					end
+				end
+			net.SendToServer()
+		end
+	else
+		owner:ConCommand( "mw_chosen_unit 0" ) -- Stop spawning
+	end
+
+	locPly:ConCommand("mw_action 0")
+	locPly.mw_cooldown = CurTime()
+end
+
 function TOOL.BuildCPanel( CPanel )
 	if not CLIENT then return end
 	CPanel:AddControl("Label", { Text = "Reload to open the menu" })
@@ -1643,37 +1674,6 @@ function TOOL:Holster()
 	if IsValid( self.GhostSphere ) then
 		self.GhostSphere:Remove()
 	end
-end
-
-function TOOL:RightClick( tr )
-	local owner = self:GetOwner()
-	if IsValid( owner.controllingUnit ) then
-		owner.controllingUnit = nil
-	end
-
-	if not CLIENT then return end
-
-	local locPly = LocalPlayer()
-	if locPly.mw_cooldown >= ( CurTime() - 0.05 ) then return end
-
-	if cvars.Number( "mw_chosen_unit" ) == 0 then
-		if istable( locPly.foundMelons ) then
-			net.Start( "MW_Order" )
-				net.WriteBool( locPly:KeyDown(IN_SPEED) )
-				net.WriteBool( locPly:KeyDown(IN_WALK) )
-				for _, v in pairs( locPly.foundMelons ) do
-					if not v:IsWorld() and v:IsValid() and v ~= nil then
-						net.WriteEntity( v )
-					end
-				end
-			net.SendToServer()
-		end
-	else
-		owner:ConCommand( "mw_chosen_unit 0" ) -- Stop spawning
-	end
-
-	locPly:ConCommand("mw_action 0")
-	locPly.mw_cooldown = CurTime()
 end
 
 local function MW_UpdateGhostEntity(model, pos, offset, angle, newColor, ghostSphereRange, ghostSpherePos)

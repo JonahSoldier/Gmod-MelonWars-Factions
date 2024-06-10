@@ -34,6 +34,8 @@ function ENT:Initialize()
 
 	self.slowThinkTimer = 1
 
+	self.isAOE = true
+
 	self:Setup()
 end
 
