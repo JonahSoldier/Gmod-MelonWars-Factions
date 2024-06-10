@@ -454,11 +454,17 @@ function ENT:SameTeam(ent)
 	return MelonWars.teamGrid[myTeam][otherTeam];
 end
 
+function ENT:AlignUpright( strength, incMult )
+	local selfTbl = self:GetTable()
+	local inclination = selfTbl.Align(self, self:GetAngles():Up(), vector_up, strength)
+	selfTbl.phys:ApplyForceCenter( Vector(0,0,inclination * incMult))
+end
+
 function ENT:Align( reference, target, multiplier )
 	local cross = reference:Cross(target)
 	local torque = cross * multiplier
 
-	self:ApplyTorque(torque)
+	self:GetTable().ApplyTorque(self, torque)
 
 	return cross:LengthSqr()
 end
@@ -472,7 +478,7 @@ function ENT:ApplyTorque( torque )
 	local forceOffset = torque:Angle():Right()
 	local forceDirection = torque:Cross(forceOffset)
 
-	local phys = self.phys
+	local phys = self:GetTable().phys
 	local pos = self:GetPos()
 
 	phys:ApplyForceOffset( forceDirection, pos + forceOffset )

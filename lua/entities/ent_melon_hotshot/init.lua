@@ -44,17 +44,12 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-	--local vel = ent.phys:GetVelocity()
-	--ent.phys:SetAngles( ent.Angles )
-	--ent.phys:SetVelocity(vel)
 	MelonWars.unitDefaultThink ( ent )
 
 end
 
 function ENT:PhysicsUpdate()
-
-	local inclination = self:Align(self:GetAngles():Up(), Vector(0,0,1), 3000)
-	self.phys:ApplyForceCenter( Vector(0,0,inclination*100))
+	self:AlignUpright( 3000, 100 )
 
 	self:DefaultPhysicsUpdate()
 end

@@ -17,9 +17,6 @@ function ENT:Initialize()
 	self.minRange = 200
 
 	self.ai_chases = false
-	--self:SetPos(self:GetPos()+Vector(0,0,18))
-
-	--self.Angles = Angle(0,0,0)
 
 	self.careForFriendlyFire = false
 	self.careForWalls = false
@@ -31,7 +28,7 @@ function ENT:Initialize()
 
 	self.population = 3
 
-	self.nextShot = CurTime()+3
+	self.nextShot = CurTime() + 3
 
 	self.shotSound = "weapons/ar2/npc_ar2_altfire.wav"
 	self.tracer = "AR2Tracer"
@@ -53,9 +50,7 @@ function ENT:SlowThink ( ent )
 end
 
 function ENT:PhysicsUpdate()
-
-	local inclination = self:Align(self:GetAngles():Up(), Vector(0,0,1), 10000)
-	self.phys:ApplyForceCenter( Vector(0,0,inclination*100))
+	self:AlignUpright( 10000, 100 )
 
 	self:DefaultPhysicsUpdate()
 end

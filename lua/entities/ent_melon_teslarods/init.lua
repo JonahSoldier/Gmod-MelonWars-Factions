@@ -9,28 +9,28 @@ function ENT:Initialize()
 
 	self.modelString = "models/props_rooftop/antennaclusters01a.mdl"
 	self.damageDeal = 2
-	self.maxHP = 35
+	self.maxHP = 65
 	self.range = 80
 	self.sphereRadius = 0
 	self.shotSound = "weapons/stunstick/stunstick_impact1.wav"
-	self.shotOffset = Vector(0,0,50.25) --Originally 30, increased to spite mortars. --TODO: This is a bad solution.
-	--TODO: See if we can move the hitbox around to make it more vulnerable to bombs, and increase HP
+	self.shotOffset = Vector(0,0,65)
 
 	self.canMove = false
-	self.canBeSelected = false --TODO: Does this do anything?
+	--self.canBeSelected = false --TODO: Does this do anything?
 	self.moveType = MOVETYPE_NONE
 
 	self.population = 0
 
 	self.slowThinkTimer = 0.75
 
-	self.AOETargetableOnly = true --TODO: Implement.
+	self.AOETargetableOnly = true
 
 	self:Setup()
 
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 	self:GetPhysicsObject():EnableMotion(false)
 	self:SetNotSolid(true)
+	self:SetPos(self:GetPos() - Vector(0,0, 20)) --Offset relative to client display pos. This isn't a great solution but I'm not sure how else to move the serverside origin around.
 end
 
 

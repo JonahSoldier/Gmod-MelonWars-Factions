@@ -1,3 +1,4 @@
+--TODO: This file needs a lot of work
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 
@@ -51,6 +52,7 @@ end
 
 function ENT:SlowThink ( ent )
 	if (cvars.Bool("mw_admin_playing") ) then
+		self:SpecificThink()
 		MelonWars.unitDefaultThink ( ent )
 		if ((ent:GetPos():Distance(ent.targetPos)) < 160) then
 			self:FinishMovement()

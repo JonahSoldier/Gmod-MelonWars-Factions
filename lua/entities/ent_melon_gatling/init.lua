@@ -7,7 +7,6 @@ function ENT:Initialize()
 
 	MelonWars.defaults ( self )
 
-	--self.modelString = "models/props_phx/wheels/magnetic_large_base.mdl" --Physical model, doesn't get shown in this case
 	self.modelString = "models/Mechanics/gears/gear12x24.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
 	self.speed = 100
@@ -15,25 +14,6 @@ function ENT:Initialize()
 	self.damageDeal = 2
 	self.maxHP = 45
 	self.range = 250
-
-	--[[
-	--showing the actual model part
-	self.visualmodel = ents.Create( "prop_physics" )
-
-	self.visualmodel:SetModel("models/Mechanics/gears/gear12x24.mdl")
-	self.visualmodel:SetMaterial(self.materialString)
-	self.visualmodel:SetParent(self)
-
-	self.visualmodel:SetLocalAngles(Angle(0,0,0))
-	self.visualmodel:SetLocalPos( vector_origin )
-	self.visualmodel:SetColor( self.color )
-	self.visualmodel:Spawn()
-
-	self.visualmodel:SetCollisionGroup( COLLISION_GROUP_IN_VEHICLE )
-
-	--]]
-
-	--self:SetNoDraw( 1 ) -- Makes the actual *real* model invisible, so it just shows the gear thingy
 
 	self.weight = 25
 	self.shotOffset = Vector(0,0,5)
@@ -62,16 +42,15 @@ function ENT:ModifyColor()
 	self:SetColor(Color(self:GetColor().r/1.5, self:GetColor().g/1.5, self:GetColor().b/1.5, 255))
 end
 
-function ENT:SlowThink ( ent )
+function ENT:SlowThink ( ent ) --TODO: Look at this
 
 	if self:GetNWInt("mw_charge", 0)==0 then
 		self.slowThinkTimer = 1
 	else
-		--self.shotDelay = math.sqrt(((self:GetNWInt("mw_charge", 0)*-1)+200)/35)
 		self.slowThinkTimer = math.sqrt(((self:GetNWInt("mw_charge", 0)*-1)+200)/35)
 	end
 
-	if(self.nextRecharge < CurTime()) then --This is slightly dumb but I can't be bothered to re-organize the code around here. It's set to 2.5 because that's higher than the max slowthinktimer given by the other equation. - Jonah
+	if(self.nextRecharge < CurTime()) then
 		if( self:GetNWInt("mw_charge", 0) + 5 < 200) then
 			self:SetNWInt("mw_charge", self:GetNWInt("mw_charge", 0)+5)
 		else
@@ -98,9 +77,7 @@ function ENT:Shoot ( ent, forcedTargetPos )
 end
 
 function ENT:PhysicsUpdate()
-
-	local inclination = self:Align(self:GetAngles():Up(), Vector(0,0,1), 10000)
-	self.phys:ApplyForceCenter( Vector(0,0,inclination*100))
+	self:AlignUpright( 10000, 100 )
 
 	self:DefaultPhysicsUpdate()
 end

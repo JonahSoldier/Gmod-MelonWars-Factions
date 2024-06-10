@@ -119,9 +119,7 @@ function ENT:DeathEffect ( ent )
 end
 
 function ENT:PhysicsUpdate()
-
-	local inclination = self:Align(self:GetAngles():Up(), Vector(0,0,1), 2000000)
-	self.phys:ApplyForceCenter( Vector(0,0,inclination*300))
+	self:AlignUpright( 2000000, 300 )
 
 	self:DefaultPhysicsUpdate()
 end
