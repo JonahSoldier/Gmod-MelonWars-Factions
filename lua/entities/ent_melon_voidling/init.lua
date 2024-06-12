@@ -51,12 +51,6 @@ function ENT:SlowThink ( ent )
 		ent:SetNWEntity("followEntity", ent)
 		ent.damage = 0.1
 	end
-
-	if(self.targetEntity ~= nil ) then
-		if(self.targetEntity:GetClass() == "ent_melon_teslarods") then
-			self:LoseTarget()
-		end
-	end
 end
 
 function ENT:ModifyColor()
@@ -68,44 +62,42 @@ function ENT:SkinMaterial()
 end
 
 function ENT:Shoot ( ent, forceTargetPos )
-	if(self.targetEntity:GetClass() ~= "ent_melon_teslarods") then
-		print(self.targetEntity:GetClass())
-		self.phys:SetDamping(0, 0)
-		self:SetVelocity(Vector(0,0,0))
-		self.phys:ApplyForceCenter(Vector(0,0,115)+(self.targetEntity:GetPos()-self:GetPos())*3/self.phys:GetMass())
-		self.fired = true
-		timer.Simple(0.4, function()
-			if (IsValid(self.targetEntity)) then
-				self:Explode()
-			end
-		end)
-	end
+	local selfTbl = self:GetTable()
+	local phys = selfTbl.phys
+	phys:SetDamping(0, 0)
+	self:SetVelocity(vector_origin)
+	phys:ApplyForceCenter( Vector(0,0,115) + (selfTbl.targetEntity:GetPos() - self:GetPos() ) * 3 / phys:GetMass())
+	selfTbl.fired = true
+	timer.Simple(0.4, function()
+		if (IsValid(selfTbl.targetEntity)) then
+			self:Explode()
+		end
+	end)
 end
 
 function ENT:Explode()
 	timer.Simple( 0.1, function()
-		if (IsValid(self)) then
-			if not self.forceExplode and not IsValid(self.targetEntity) then
-				self.targetEntity = nil
-				self.nextSlowThink = CurTime()+0.1
-				return false
-			else
-				if (self.forceExplode or tostring( self.targetEntity ) ~= "[NULL Entity]") then
-					--allows this to damage base props, self.damageDeal is divided by 2 so it does half damage to them.
-					if (self.targetEntity.Base == "ent_melon_prop_base") then
-						self.targetEntity:SetNWFloat( "health", self.targetEntity:GetNWFloat( "health", 1)-self.damageDeal/2)
-						if (self.targetEntity:GetNWFloat( "health", 1) <= 0) then
-							self.targetEntity:PropDie()
-						end
-						sound.Play( self.shotSound, self:GetPos(), 75, 145 )
-						MelonWars.die ( self )
-					else
-						--self.targetEntity.damage = self.damageDeal --Doesn't work on static entities for some reason
-						self.targetEntity:TakeDamage( self.damageDeal, self, self )
-						sound.Play( self.shotSound, self:GetPos(), 75, 145 )
-						MelonWars.die ( self )
-					end
+		if not IsValid(self) then return end
+		local selfTbl = self:GetTable()
+		if not selfTbl.forceExplode and not IsValid(selfTbl.targetEntity) then
+			selfTbl.targetEntity = nil
+			selfTbl.nextSlowThink = CurTime()+0.1
+			return false
+		end
+
+		if selfTbl.forceExplode or selfTbl.targetEntity:IsValid() then
+			--allows this to damage base props, self.damageDeal is divided by 2 so it does half damage to them.
+			if (selfTbl.targetEntity.Base == "ent_melon_prop_base") then
+				selfTbl.targetEntity:SetNWFloat( "health", selfTbl.targetEntity:GetNWFloat( "health", 1) - selfTbl.damageDeal / 2)
+				if (selfTbl.targetEntity:GetNWFloat( "health", 1) <= 0) then
+					selfTbl.targetEntity:PropDie()
 				end
+				sound.Play( selfTbl.shotSound, self:GetPos(), 75, 145 )
+				MelonWars.die ( self )
+			else
+				selfTbl.targetEntity:TakeDamage( selfTbl.damageDeal, self, self )
+				sound.Play( selfTbl.shotSound, self:GetPos(), 75, 145 )
+				MelonWars.die ( self )
 			end
 		end
 	end )
@@ -118,20 +110,3 @@ function ENT:DeathEffect( ent )
 	sound.Play( ent.deathSound, ent:GetPos(), 20, 145 )
 	ent:Remove()
 end
-
-/*
-
-	if (forceTargetPos == nil and ent.targetEntity.Base == "ent_melon_prop_base") then
-		ent.targetEntity:SetNWFloat( "health", ent.targetEntity:GetNWFloat( "health", 1)-ent.damageDeal)
-		if (ent.targetEntity:GetNWFloat( "health", 1) <= 0) then
-			ent.targetEntity:PropDie()
-		end
-	elseif (forceTargetPos == nil and ent.targetEntity:GetClass() == "prop_physics") then
-		ent.targetEntity:TakeDamage( ent.damageDeal, ent, ent )
-		local php = ent:GetNWInt("propHP", -1)
-		if (php ~= -1) then
-			ent:SetNWInt("propHP", php-ent.damageDeal)
-		end
-	else
-
-*/

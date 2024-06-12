@@ -54,6 +54,10 @@ util.AddNetworkString( "SetMWConvar" )
 util.AddNetworkString( "MWReadyUp" )
 util.AddNetworkString( "MW_ClientModifySpawnTime" ) --TODO: This needs to be handled on both client and server
 
+-- Energy Networks
+util.AddNetworkString( "MW_UpdateNetwork" )
+
+
 MelonWars = MelonWars or {}
 
 include("melonwars/sh_unitlist.lua")
@@ -63,6 +67,7 @@ AddCSLuaFile("melonwars/cl_worldrings.lua")
 
 net.Receive( "SetMWConvar", function( _, pl ) --TODO: See if there's a better way to do this.
 	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
+	--TODO: Just make a table of valid convars for this to take as input.
 
 	if not pl:IsAdmin() or openPerms then return end
 

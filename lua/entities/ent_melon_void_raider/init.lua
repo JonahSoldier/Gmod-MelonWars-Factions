@@ -20,8 +20,6 @@ function ENT:Initialize()
 
 	self.angularDamping = 10
 
-	--self:SetPos(self:GetPos()+Vector(0,0,12))
-
 	self.nextShot = CurTime()+0.5
 
 	self.population = 2
@@ -57,11 +55,11 @@ end
 function ENT:SlowThink ( ent )
 	MelonWars.unitDefaultThink ( ent )
 
-	if(self.targetEntity ~= nil) then
-		if(self.targetEntity.moveType ~= MOVETYPE_NONE) then
+	if self.targetEntity ~= nil then
+		if self.targetEntity.moveType ~= MOVETYPE_NONE then
 			ent:LoseTarget()
 		else
-			if(self.targetEntity:GetClass() == "ent_melon_main_building" or self.targetEntity:GetClass() == "ent_melon_main_building_grand_war") then
+			if self.targetEntity:GetClass() == "ent_melon_main_building" or self.targetEntity:GetClass() == "ent_melon_main_building_grand_war" then
 				ent:LoseTarget()
 			end
 		end
@@ -79,29 +77,27 @@ function ENT:PhysicsUpdate()
 end
 
 function ENT:Shoot ( ent, forceTargetPos )
-	if (ent.ai or CurTime() > ent.nextControlShoot) then
-		if(ent.targetEntity.moveType == MOVETYPE_NONE) then
-			if(self.targetEntity:GetClass() ~= "ent_melon_main_building" and self.targetEntity:GetClass() ~= "ent_melon_main_building_grand_war") then
+	local entTbl = ent:GetTable()
+	if not(entTbl.ai or CurTime() > entTbl.nextControlShoot) then return end
+	if self.targetEntity.moveType ~= MOVETYPE_NONE then return end --targetEntity.canMove would be a little less jank, but it lets you capture contraption components.
+	if self.targetEntity:GetClass() == "ent_melon_main_building" or self.targetEntity:GetClass() == "ent_melon_main_building_grand_war" then return end
 
-				MelonWars.updatePopulation(ent.targetEntity.population*-1, ent.targetEntity:GetNWInt("mw_melonTeam",-1))
-				MelonWars.updatePopulation(ent.targetEntity.population, self:GetNWInt("mw_melonTeam",-1))
+	MelonWars.updatePopulation(entTbl.targetEntity.population * - 1, entTbl.targetEntity:GetNWInt("mw_melonTeam",-1))
+	MelonWars.updatePopulation(entTbl.targetEntity.population, self:GetNWInt("mw_melonTeam",-1))
 
-				ent.targetEntity:SetNWInt("mw_melonTeam", self:GetNWInt("mw_melonTeam", 0))
-				ent.targetEntity:MelonSetColor( self:GetNWInt("mw_melonTeam", 0) )
+	entTbl.targetEntity:SetNWInt("mw_melonTeam", self:GetNWInt("mw_melonTeam", 0))
+	entTbl.targetEntity:MelonSetColor( self:GetNWInt("mw_melonTeam", 0) )
 
-				for k, v in pairs( player.GetAll() ) do
-					sound.Play("ItemBattery.Touch", v:GetPos(), 40, 90, 1)
-					sound.Play("AlyxEMP.Discharge", v:GetPos(), 40, 80, 1)
-				end
-
-				sound.Play("ItemBattery.Touch", ent:GetPos(), 100, 90, 1)
-				sound.Play("AlyxEMP.Discharge", ent:GetPos(), 100, 80, 1)
-
-				ent:Remove()
-			end
-		end
-
+	for i, v in ipairs( player.GetAll() ) do
+		local pos = v:GetPos()
+		sound.Play("ItemBattery.Touch", pos, 40, 90, 1)
+		sound.Play("AlyxEMP.Discharge", pos, 40, 80, 1)
 	end
+
+	sound.Play("ItemBattery.Touch", ent:GetPos(), 100, 90, 1)
+	sound.Play("AlyxEMP.Discharge", ent:GetPos(), 100, 80, 1)
+
+	ent:Remove()
 end
 
 function ENT:DeathEffect ( ent )

@@ -41,7 +41,7 @@ function ENT:SlowThink ( ent )
 			local vTbl = v:GetTable()
 			vTbl.damage = vTbl.damage + dmg
 			sound.Play( ent.shotSound, ent:GetPos() )
-			self:DischargeEffect()
+			self:DischargeEffect() --TODO: Limit the number of times this is called. Having like 30 discharges at once is a bit much.
 		end
 	end
 end

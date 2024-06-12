@@ -22,7 +22,7 @@ function ENT:Initialize()
 
 	self:SetCollisionGroup(COLLISION_GROUP_NONE)
 
-	timer.Simple(0.5, function () self:ConnectToBarrack() end)
+	timer.Simple(0.1, function () self:FriendlyUnitsNearby() end)
 end
 
 function ENT:ModifyColor()
@@ -41,42 +41,21 @@ function ENT:DeathEffect ( ent )
 	MelonWars.defaultDeathEffect ( ent )
 end
 
-function ENT:ConnectToBarrack()
-	local connected = false
-	local entities = ents.FindInSphere( self:GetPos(), self.range )
-	--------------------------------------------------------Disparar
-	local foundEntities = {}
-
-
-	for k, v in pairs(entities) do
-		if ((v.Base == "ent_melon_base") and v:GetNWInt("mw_melonTeam", 0) == self:GetNWInt("mw_melonTeam", 0)) then -- si no es un aliado
-			table.insert(foundEntities, v)
+function ENT:FriendlyUnitsNearby()
+	local selfTeam = self:GetNWInt("mw_melonTeam", 0)
+	for i, v in ipairs(ents.FindInSphere( self:GetPos(), self.range)) do
+		if v.Base == "ent_melon_base" and MelonWars.sameTeam(v:GetNWInt("mw_melonTeam", 0), selfTeam) then
+			return
 		end
 	end
 
-	local closestEntity = nil
-	local closestDistance = 0
-	for k, v in pairs(foundEntities) do
-		if ((closestEntity == nil or self:GetPos():DistToSqr( v:GetPos() ) < closestDistance) and v~=self) then
-			closestEntity = v
-			closestDistance = self:GetPos():DistToSqr( v:GetPos() )
+	for i, v in ipairs(player.GetAll()) do
+		if v:GetInfoNum("mw_team", 0) == selfTeam then
+			v:PrintMessage( HUD_PRINTTALK, "== Siphons require nearby units to build! ==" )
 		end
 	end
-
-	print(closestEntity)
-	if (closestEntity ~= nil) then
-		self.connection = closestEntity
-	else
-		for k, v in pairs(player.GetAll()) do
-			if (v:GetInfoNum("mw_team", 0) == self:GetNWInt("mw_melonTeam", 0)) then
-				v:PrintMessage( HUD_PRINTTALK, "== Receivers require nearby units to build! ==" )
-			end
-		end
-		self:Remove()
-	end
-
+	self:Remove()
 end
-
 
 function ENT:OnRemove()
 	MelonWars.updatePopulation(-self.population, self:GetNWInt("mw_melonTeam", 0))
