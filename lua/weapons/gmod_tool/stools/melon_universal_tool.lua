@@ -1813,47 +1813,20 @@ function TOOL:Think()
 					local tr = ply:GetEyeTrace() --TODO: We already do a trace in this function.
 					local correctTeam = (tr.Entity:GetNWInt("mw_melonTeam", 0) == newTeam or tr.Entity:GetNWInt("capTeam", 0) == newTeam or cvars.Bool("mw_admin_move_any_team", false))
 
-					--TODO: Shouldn't be hardcoded.
-					local canActivate = {
-						["ent_melon_gate"] = true,
-						["ent_melon_gate_big"] = true,
-						["ent_melon_energy_switch"] = true,
-						["ent_melon_unit_transport"] = true,
-						["ent_melon_energy_steam_plant"] = true,
-						["ent_melon_energy_nuclear_plant"] = true,
-						["ent_melon_energy_water_pump"] = true,
-						["ent_melon_longboy"] = true,
-						["ent_melon_unit_launcher"] = true,
-						["ent_melon_powerupgrader"] = true,
-						["ent_melon_particle_tower"] = true
-					}
-
-					local entClass = tr.Entity:GetClass()
-
-					if canActivate[entClass] then
-						net.Start("MW_Activate")
-							net.WriteEntity(tr.Entity)
-							net.WriteInt(newTeam,8) --TODO: UInt 4 bit
-						net.SendToServer()
-					elseif string.StartsWith( entClass, "ent_melon_barracks") or entClass == "ent_melon_overclocker" then
-						net.Start("ToggleBarracks") --TODO: This could probably be rewritten to just use activate
-							net.WriteEntity(tr.Entity)
-							net.WriteInt(newTeam,8)
-						net.SendToServer()
-					elseif entClass == "ent_melon_propeller" or entClass == "ent_melon_hover" then
-						net.Start("PropellerReady") --TODO: This could probably be rewritten to just use activate
-							net.WriteEntity(tr.Entity)
-							net.WriteInt(newTeam,8)
-						net.SendToServer()
-					elseif entClass == "ent_melon_water_tank" then
-						net.Start("MW_UseWaterTank") --TODO: This could probably be rewritten to just use activate
-							net.WriteEntity(tr.Entity)
-							net.WriteInt(newTeam,8)
-						net.SendToServer()
-					elseif entClass == "ent_melon_contraption_assembler" and correctTeam then --TODO: Team checks here unreliable.
+					if entClass == "ent_melon_contraption_assembler" and correctTeam then --TODO: Team checks here unreliable.
 						plyTbl.selectedAssembler = tr.Entity
 						self:MakeContraptionMenu()
+					elseif entClass == "ent_melon_water_tank" then
+						net.Start("MW_UseWaterTank") --TODO: This could probably be rewritten to just use activate
+						net.WriteEntity(tr.Entity)
+						net.WriteInt(newTeam,8)
+					net.SendToServer()
+					else
+						net.Start("MW_Activate")
+							net.WriteEntity(tr.Entity)
+						net.SendToServer()
 					end
+
 				end
 			else
 				self.ePressed = false

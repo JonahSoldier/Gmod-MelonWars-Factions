@@ -22,9 +22,7 @@ util.AddNetworkString( "MW_SpawnProp" )
 util.AddNetworkString( "StartGame" )
 util.AddNetworkString( "SandboxMode" )
 
-util.AddNetworkString( "ToggleBarracks" )
 util.AddNetworkString( "MW_Activate" )
-util.AddNetworkString( "PropellerReady" )
 util.AddNetworkString( "MW_UseWaterTank" )
 
 util.AddNetworkString( "RestartQueue" )
@@ -208,10 +206,12 @@ net.Receive( "MW_RequestSelection", function( _, pl )
 	net.Send(pl)
 end )
 
-net.Receive( "MW_Activate", function()
+net.Receive( "MW_Activate", function(_, pl)
 	local ent = net.ReadEntity()
-	local team = net.ReadInt(8)
-	if team == ent:GetNWInt( "mw_melonTeam", 0 ) then
+	--local plTeam = net.ReadInt(8)
+	local plTeam = pl:GetInfoNum("mw_team", -1)
+	if not plTeam == ent:GetNWInt( "mw_melonTeam", 0 ) then return end
+	if ent.Actuate then
 		ent:Actuate()
 	end
 end )
@@ -241,6 +241,7 @@ net.Receive( "MW_UpdateServerInfo", function()
 	MelonWars.teamCredits[a] = net.ReadInt(32)
 end )
 
+--[[
 net.Receive( "ToggleBarracks", function()
 	local ent = net.ReadEntity()
 	local on = ent:GetNWBool( "active", false )
@@ -261,6 +262,7 @@ net.Receive( "PropellerReady", function()
 		end
 	end
 end )
+--]]
 
 net.Receive( "MW_UseWaterTank", function( _, pl )
 	local ent = net.ReadEntity()

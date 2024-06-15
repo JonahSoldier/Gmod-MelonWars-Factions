@@ -920,6 +920,11 @@ function ENT:BarrackInitialize ()
 
 	self:SetNWFloat("slowThinkTimer", self.slowThinkTimer)
 	self:SetNWFloat("nextSlowThink", CurTime())
+
+	self.Actuate = function( ent )
+		local on = ent:GetNWBool("active", false)
+		ent:SetNWBool("active", not on)
+	end
 end
 
 local function EnoughPower(_team)
