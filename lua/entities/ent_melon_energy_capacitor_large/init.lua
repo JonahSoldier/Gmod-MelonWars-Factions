@@ -8,9 +8,6 @@ function ENT:Initialize()
 
 	self.modelString = "models/props_combine/combine_train02a.mdl"
 	self.maxHP = 500
-	--self.Angles = Angle(0,0,0)
-	--self:SetPos(self:GetPos()+Vector(0,0,100))
-	--self:SetPos(self:GetPos()+Vector(0,0,10))
 	self.moveType = MOVETYPE_NONE
 	self.connections = {}
 
@@ -24,11 +21,13 @@ function ENT:Initialize()
 	MelonWars.energySetup ( self )
 end
 
+--[[
 function ENT:Think(ent)
 	self:Energy_Set_State()
 	self:NextThink( CurTime()+1 )
 	return true
 end
+--]]
 
 function ENT:SlowThink(ent)
 

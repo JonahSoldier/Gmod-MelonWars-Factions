@@ -114,7 +114,7 @@ function MelonWars.calculateConnections(ent, all)
 			--find every energy entity
 		local pos = ent:OBBCenter()
 		table.sort( foundEntities, function( a, b ) return ((a:GetPos()-pos):LengthSqr() < (b:GetPos()-pos):LengthSqr()) end )
-		for k, v in pairs(foundEntities) do
+		for i, v in ipairs(foundEntities) do
 			if (count >= 3) then break end
 			if (v ~= ent) then
 				if ((all == true and v.Base == "ent_melon_energy_base") or (all == false and v.connectToMachines) or (ent.connectToRelaysOnly == true and string.StartWith(v:GetClass(), "ent_melon_energy_relay"))) then

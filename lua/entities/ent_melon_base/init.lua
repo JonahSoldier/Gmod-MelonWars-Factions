@@ -496,6 +496,7 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 	if ( not(IsValid(entTbl.targetEntity)) or entTbl.targetEntity.Base == "ent_melon_prop_base" or entTbl.targetEntity:GetNWInt("propHP",-1) ~= -1) then
 		----------------------------------------------------------------------Buscar target
 		local foundEnts = ents.FindInSphere(pos, entTbl.range )
+
 		local ourTeam = ent:GetNWInt("mw_melonTeam", 0)
 		for _, v in ipairs( foundEnts ) do
 			local vTbl = v:GetTable()
@@ -525,6 +526,7 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 				end
 			end
 		end
+
 		-------------------------------------------------Si aun asi no encontró target
 		--not 100% sure what the point of having this second loop here is. -j
 		if (entTbl.targetEntity == nil) then
@@ -599,7 +601,6 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 			end
 			return false
 		end
-
 		----------------------------------------------objetivo forzado
 		if (IsValid(entTbl.forcedTargetEntity)) then
 			entTbl.targetEntity = entTbl.forcedTargetEntity
@@ -612,7 +613,7 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 			start = pos,
 			endpos = entTbl.targetEntity:GetPos()+entTbl.targetEntity:GetVar("shotOffset", vector_origin),
 				filter = function( foundEntity ) 
-					if (foundEntity.Base ~= "ent_melon_base" and foundEntity:GetNWInt("mw_melonTeam", -1) == ourTeam or foundEntity:GetClass() == "prop_physics" and foundEntity ~= entTbl.targetEntity) then
+					if (foundEntity.Base ~= "ent_melon_base" and foundEntity.Base ~= "ent_melon_energy_base" and foundEntity:GetNWInt("mw_melonTeam", -1) == ourTeam or foundEntity:GetClass() == "prop_physics" and foundEntity ~= entTbl.targetEntity) then
 						 return true
 					end
 				end
@@ -685,7 +686,7 @@ function MelonWars.defaultShoot( ent, forceTargetPos ) --TODO: Optimize
 		if (IsValid(ent.targetEntity)) then
 			local targetPos = ent.targetEntity:GetPos()-ent.targetEntity:OBBCenter()
 			if (ent.targetEntity:GetVar("shotOffset") ~= nil) then
-				if (ent.targetEntity:GetVar("shotOffset") ~= Vector(0,0,0)) then
+				if ent.targetEntity:GetVar("shotOffset") ~= vector_origin then
 					targetPos = ent.targetEntity:GetPos()+ent.targetEntity:GetVar("shotOffset")
 				end
 			end
@@ -816,39 +817,33 @@ function ENT:OnTakeDamage( damage )
 	local attacker = damage:GetAttacker()
 	if (attacker:GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not attacker:GetVar('careForFriendlyFire')) and not attacker:IsPlayer() then
 		local selfTbl = self:GetTable()
-		local damageDone = 0
+		local damageDone = damage:GetDamage()
 
-		if (selfTbl.canMove == true) then
-			damageDone = damage:GetDamage()
-		else
+		if not selfTbl.canMove then
 			local mul = attacker.buildingDamageMultiplier
-			if (mul == nil) then
-				mul = 1
-			end
-			damageDone = damage:GetDamage()*mul
+			damageDone = damageDone * (mul or 1)
 		end
-		if (damage:GetDamageType() == DMG_BURN) then
+		if damage:GetDamageType() == DMG_BURN then
 			damageDone = damageDone * 0.5
 		end
-		if (attacker:GetNWInt("mw_melonTeam", 0) == self:GetNWInt("mw_melonTeam", 0)) then --TODO: Alliance check. I've accidentally wiped a teammate's squad with bombs on at least one occasion.
+		if self:SameTeam(attacker) then --TODO: Alliance check. I've accidentally wiped a teammate's squad with bombs on at least one occasion.
 			damageDone = damageDone / 10
 		end
+
 		selfTbl.HP = selfTbl.HP - damageDone
-		if (damageDone > 0) then
-			selfTbl.gotHit = true
-		end
-		--self:SetNWFloat( "health", selfTbl.HP )
+		selfTbl.gotHit = selfTbl.gotHit or damageDone > 0
 		self:SetNWFloat( "healthFrac", selfTbl.HP / selfTbl.maxHP )
-		if (selfTbl.HP <= 0) then
+
+		if selfTbl.HP <= 0 then
 			MelonWars.die (self)
 		end
 	end
 end
 
 function ENT:OnRemove()
-	if (self.carryingMelonium) then
+	if self:GetTable().carryingMelonium then
 		local melonium = ents.Create("ent_melonium")
-		melonium:SetPos(self:GetPos()+Vector(0,0,10))
+		melonium:SetPos(self:GetPos() + Vector(0,0,10))
 		melonium:Spawn()
 		melonium:GetPhysicsObject():ApplyForceCenter(Vector(0,0,100))
 	end
@@ -859,39 +854,34 @@ end
 function ENT:DefaultOnRemove()
 	if not SERVER then return end
 	if not IsValid(self) then return end
-	MelonWars.updatePopulation(-self.population, self:GetNWInt("mw_melonTeam", 0))
-	if not self.gotHit and CurTime()-self:GetCreationTime() < 30 and not self.fired then
-		if (MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] ~= nil) then
-			MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] = MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)]+self.value
+	local selfTbl = self:GetTable()
+	local selfTeam = self:GetNWInt("mw_melonTeam", 0)
+	MelonWars.updatePopulation(-selfTbl.population, selfTeam)
+	if not selfTbl.gotHit and CurTime() - self:GetCreationTime() < 30 and not selfTbl.fired then
+		if MelonWars.teamCredits[selfTeam] then
+			MelonWars.teamCredits[selfTeam] = MelonWars.teamCredits[selfTeam] + selfTbl.value
 		end
 		for _, v in ipairs( player.GetAll() ) do
-			if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
-				if (self:GetNWInt("mw_melonTeam", 0) ~= 0) then
-					net.Start("MW_TeamCredits")
-						net.WriteInt(MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
-					net.Send(v)
-					--v:PrintMessage( HUD_PRINTTALK, "== "..self.value.." Water Refunded" )
-				end
+			if v:GetInfoNum("mw_team", -1) == selfTeam and selfTeam ~= 0 then
+				net.Start("MW_TeamCredits")
+					net.WriteInt(MelonWars.teamCredits[selfTeam] ,32)
+				net.Send(v)
 			end
 		end
 	end
 end
 
 function MelonWars.updatePopulation( amount, teamID )
-	-- if not SERVER then return end
-	if amount ~= 0 and teamID ~= 0 and teamID ~= nil then
+	if amount ~= 0 and teamID and teamID ~= 0 then
 		MelonWars.teamUnits[teamID] = MelonWars.teamUnits[teamID] + amount
-		local ownerPlayers = player.GetAll()
-		local i = 0 --Parche horrible: cada vez que elimina a alguien de la lista, al remover a alguien mas busca un lugar antes, ya que la lista se acomodó para rellenar el espacio vacio
-		for k, v in ipairs( player.GetAll() ) do
-			if v:GetInfoNum( "mw_team", 0 ) ~= teamID then
-				table.remove( ownerPlayers, k - i )
-				i = i + 1
+
+		for i, v in ipairs(player.GetAll()) do
+			if v:GetInfoNum("mw_team", -1) == teamID then
+				net.Start( "MW_TeamUnits" )
+					net.WriteInt( MelonWars.teamUnits[teamID], 16 )
+				net.Send( v )
 			end
 		end
-		net.Start( "MW_TeamUnits" )
-			net.WriteInt( MelonWars.teamUnits[teamID], 16 )
-		net.Send( ownerPlayers )
 	end
 end
 
@@ -912,8 +902,8 @@ function ENT:BarrackInitialize ()
 
 	local rotatedSpawnOffset = Vector(150,0,0)
 	rotatedSpawnOffset:Rotate(self:GetAngles())
-	self:SetVar('targetPos', self:GetPos()+rotatedSpawnOffset)
-	self:SetNWVector('targetPos', self:GetPos()+rotatedSpawnOffset)
+	self:SetVar("targetPos", self:GetPos() + rotatedSpawnOffset)
+	self:SetNWVector("targetPos", self:GetPos() + rotatedSpawnOffset)
 
 	self.deathSound = "ambient/explosions/explode_9.wav"
 	self.deathEffect = "Explosion"
@@ -923,9 +913,9 @@ function ENT:BarrackInitialize ()
 	self.population = 5
 
 	if (self.unit ~= nil) then
-		self.slowThinkTimer = MelonWars.units[self.unit].spawn_time*3
+		self.slowThinkTimer = MelonWars.units[self.unit].spawn_time * 3
 		self.unit_class = MelonWars.units[self.unit].class
-		self.unit_cost = MelonWars.units[self.unit].cost/2
+		self.unit_cost = MelonWars.units[self.unit].cost / 2
 	end
 
 	self:SetNWFloat("slowThinkTimer", self.slowThinkTimer)
@@ -933,13 +923,10 @@ function ENT:BarrackInitialize ()
 end
 
 local function EnoughPower(_team)
-	local res = false
-	if (_team > 0) then
-		res = MelonWars.teamUnits[_team] < cvars.Number("mw_admin_max_units")
-	else
-		res = true
+	if _team > 0 then
+		return MelonWars.teamUnits[_team] < cvars.Number("mw_admin_max_units")
 	end
-	return res
+	return true
 end
 
 function ENT:BarrackSlowThink() --TODO: Optimize
@@ -948,7 +935,6 @@ function ENT:BarrackSlowThink() --TODO: Optimize
 	if (not (IsValid(self.parent) or self.parent == nil or self.parent:IsWorld())) then
 		self.gotHit = true
 		self.HP = self.HP-50
-		--self:SetNWFloat( "health", self.HP )
 		self:SetNWFloat( "healthFrac", selfTbl.HP / selfTbl.maxHP )
 		self.damage = 0
 		if (self.HP <= 0) then

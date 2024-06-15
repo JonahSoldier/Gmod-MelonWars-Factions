@@ -9,9 +9,6 @@ function ENT:Initialize()
 	self.modelString = "models/props_phx/wheels/drugster_back.mdl"
 	self.maxHP = 100
 	self.shotOffset = Vector(0,0,30)
-	--self.Angles = Angle(0,0,0)
-	--self:SetPos(self:GetPos()+Vector(0,0,-5))
-	--self:SetPos(self:GetPos()+Vector(0,0,10))
 	self.moveType = MOVETYPE_NONE
 	self.connections = {}
 
@@ -24,12 +21,12 @@ function ENT:Initialize()
 
 	MelonWars.energySetup ( self )
 end
-
+--[[
 function ENT:Think(ent)
 	self:Energy_Set_State()
 	self:NextThink( CurTime()+1 )
 	return true
-end
+end--]]
 
 function ENT:SlowThink(ent)
 

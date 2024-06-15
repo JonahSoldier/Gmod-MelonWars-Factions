@@ -1816,6 +1816,7 @@ function TOOL:Think()
 					--TODO: Shouldn't be hardcoded.
 					local canActivate = {
 						["ent_melon_gate"] = true,
+						["ent_melon_gate_big"] = true,
 						["ent_melon_energy_switch"] = true,
 						["ent_melon_unit_transport"] = true,
 						["ent_melon_energy_steam_plant"] = true,
@@ -1823,7 +1824,8 @@ function TOOL:Think()
 						["ent_melon_energy_water_pump"] = true,
 						["ent_melon_longboy"] = true,
 						["ent_melon_unit_launcher"] = true,
-						["ent_melon_powerupgrader"] = true
+						["ent_melon_powerupgrader"] = true,
+						["ent_melon_particle_tower"] = true
 					}
 
 					local entClass = tr.Entity:GetClass()

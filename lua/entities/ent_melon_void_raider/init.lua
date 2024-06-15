@@ -70,7 +70,7 @@ end
 function ENT:PhysicsUpdate()
 	local ang = self:GetAngles():Up()
 	ang:Negate()
-	local inclination = self:Align(ang, vector_up, 1000)
+	local inclination = self:Align(ang, vector_up, 5000)
 	self.phys:ApplyForceCenter( Vector(0,0,inclination * 100))
 
 	self:DefaultPhysicsUpdate()

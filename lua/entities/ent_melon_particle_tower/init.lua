@@ -7,9 +7,6 @@ function ENT:Initialize()
 	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_wasteland/lighthouse_fresnel_light_base.mdl"
-	--self.speed = 320
-	--self.spread = 0
-	--self.damageDeal = 0
 	self.maxHP = 200
 	self.minRange = 400
 	self.range = 1600
@@ -18,14 +15,12 @@ function ENT:Initialize()
 	self.shotOffset = Vector(0,0,30)
 
 	self.careForWalls = true
-	self.nextShot = CurTime()+2
 	self.fireDelay = 30
 	self.canMove = false
 	self.canBeSelected = true
 	self.moveType = MOVETYPE_NONE
 
-	self.slowThinkTimer = 0.2
-	--self.capacity = 0
+	self.slowThinkTimer = 1
 	self:SetNWVector("energyPos", Vector(0,0,20))
 
 	MelonWars.energySetup ( self )
@@ -34,66 +29,69 @@ function ENT:Initialize()
 	self:GetPhysicsObject():EnableMotion(false)
 
 	self:SetNWBool("Fired", false)
+	self:SetNWBool("active", false)
 end
 
-function ENT:SlowThink ( ent ) --TODO: I think this is mostly standard behaviour for energy units that attack. So as much should be standardized as possible.
+function ENT:Actuate()
+	local on = self:GetNWBool("active", false)
+	self:SetNWBool("active", not on)
+end
 
-	local pos = (ent:GetPos()+Vector(0,0,200))
+function ENT:SlowThink ( ent )
+	local pos = ( ent:GetPos() + Vector(0,0,200) )
 	local energyCost = 5000
-	if (MelonWars.electricNetwork[self.network].energy >= energyCost) then
-		if (ent.ai or CurTime() > ent.nextControlShoot) then
-			if (forcedTargetPos ~= nil) then
-				--The way mw does this is pretty weird
-				local targets = ents.FindInSphere( forcedTargetPos, 3 )
-				ent.targetEntity = nil
-				for k, v in pairs(targets) do
-					if (not ent:SameTeam(v)) then
-						ent.targetEntity = v
-						break;
-					end
-				end
-			end
+	if MelonWars.electricNetwork[self.network].energy < energyCost or CurTime() < ent.nextControlShoot then return end
 
-			if (ent.nextShot < CurTime()) then
-
-				if (IsValid(ent.targetEntity)and ent.targetEntity ~= ent) then
-					if ((ent.targetEntity:GetPos()-ent:GetPos()):LengthSqr() < ent.range*ent.range) then
-						local tr = util.TraceLine( {
-							start = pos,
-							endpos = ent.targetEntity:GetPos()+ent.targetEntity:GetVar("shotOffset", Vector(0,0,0)),
-							filter = function( foundEntity ) if (foundEntity.Base ~= "ent_melon_base" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1)or foundEntity:GetClass() == "prop_physics" and foundEntity ~= ent.targetEntity) then return true end end
-							})
-						if  (tr ~= nil and tostring(tr.Entity) == '[NULL Entity]') then
-							ent:Shoot( ent, forcedTargetPos)
-							self:DrainPower(energyCost)
-						end
-					end
-				end
+	local function validTarget( targetEnt )
+		if IsValid(targetEnt) and targetEnt ~= ent and (targetEnt:GetPos() - pos):LengthSqr() < ent.range ^ 2 then
+			local entTeam = ent:GetNWInt("mw_melonTeam", -1)
+			local tr = util.TraceLine( {
+				start = pos,
+				endpos = targetEnt:GetPos() + ent.shotOffset,
+				filter = function( foundEntity ) if (foundEntity.Base ~= "ent_melon_base" and foundEntity:GetNWInt("mw_melonTeam", 0) == entTeam or foundEntity:GetClass() == "prop_physics" and foundEntity ~= ent.targetEntity) then return true end end
+			})
+			if not IsValid(tr.Entity) then
+				return true
 			end
 		end
+		return false
 	end
-	self:Energy_Set_State()
+
+	if self:GetNWBool("active", false) then --This is a little jank
+		for i, v in ipairs(ents.FindInSphere(pos, self.range)) do
+			if (v.Base == "ent_melon_base" or v.Base == "ent_melon_energy_base") and (not v.canMove) and (not ent:SameTeam(v)) and validTarget( v )  then
+				ent.targetEntity = v
+				ent:Shoot( ent )
+				self:DrainPower(energyCost)
+				break
+			end
+		end
+	elseif validTarget( ent.targetEntity ) then
+		ent:Shoot( ent )
+		self:DrainPower(energyCost)
+	end
 end
 
 
-function ENT:Shoot(ent, forcedTargetPos)
+function ENT:Shoot(ent)
 	sound.Play( ent.shotSound, ent:GetPos() )
 
 	local targetPos = ent.targetEntity:GetPos()
 
-	if (ent.targetEntity:GetVar("shotOffset") ~= nil) then
-		targetPos = targetPos+ent.targetEntity:GetVar("shotOffset")
+	if ent.targetEntity.shotOffset ~= nil then
+		targetPos = targetPos + ent.targetEntity.shotOffset
 	end
 
 	local bullet = ents.Create( "ent_melonbullet_particlebeamtracer" )
-	if not IsValid( bullet ) then return end -- Check whether we successfully made an entity, if not - bail
 	bullet:SetPos( ent:GetPos() + Vector(0,0,200) )
 	bullet:SetNWInt("mw_melonTeam",self.mw_melonTeam)
 	bullet:Spawn()
 	bullet:SetNWEntity("target", ent.targetEntity)
 	bullet.owner = ent
 	ent.fired = true
-	ent.nextShot = CurTime()+ent.fireDelay
+
+	ent.nextControlShoot = CurTime() + ent.fireDelay
+	ent:LoseTarget()
 
 	self:SetNWBool("Fired", true)
 	timer.Simple(13, function() self:SetNWBool("Fired", false) end)
@@ -106,6 +104,5 @@ function ENT:Shoot(ent, forcedTargetPos)
 end
 
 function ENT:DeathEffect ( ent )
-	--ent:StopSound("d3_citadel.combine_ball_field_loop1")
 	MelonWars.defaultDeathEffect ( ent )
 end

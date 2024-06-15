@@ -13,8 +13,6 @@ function ENT:Initialize()
 	self.maxHP = 100
 	self.range = 400
 	self.shotSound = "weapons/stunstick/stunstick_impact1.wav"
-	--self.tracer = "AR2Tracer"
-	--self:SetPos(self:GetPos()+Vector(0,0,40))
 	self.shotOffset = Vector(0,0,30)
 
 	self.canMove = false
@@ -31,13 +29,11 @@ function ENT:Initialize()
 	self:GetPhysicsObject():EnableMotion(false)
 end
 
-function ENT:SlowThink ( ent )
-
+function ENT:SlowThink ( ent ) --TODO: Refactor
 	local energyCost = 15
 	if (MelonWars.electricNetwork[self.network].energy >= energyCost) then
 		local entities = ents.FindInSphere( ent:GetPos(), ent.range )
 		--------------------------------------------------------Disparar
-		local targets = 0
 		local maxtargets = 3
 
 		local foundEntities = {}
@@ -53,7 +49,7 @@ function ENT:SlowThink ( ent )
 					return true
 				end
 			})
-			if (tostring(tr.Entity) == '[NULL Entity]') then
+			if tostring(tr.Entity) == '[NULL Entity]' then
 				if ((v.Base == "ent_melon_base" or v.Base == "ent_melon_energy_base" or v.Base == "ent_melon_prop_base" or v:GetClass() == "prop_physics" )and not ent:SameTeam(v)) then -- si no es un aliado
 					table.insert(foundEntities, v)
 				end
@@ -97,7 +93,7 @@ function ENT:SlowThink ( ent )
 			end
 		end
 	end
-	self:Energy_Set_State()
+	--self:Energy_Set_State()
 end
 
 function ENT:Shoot ( ent )

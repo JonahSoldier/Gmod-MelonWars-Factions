@@ -1,46 +1,56 @@
-include('shared.lua')
+include("shared.lua")
 
-function ENT:Draw()
-    -- self.BaseClass.Draw(self) -- Overrides Draw
-    self:DrawModel() -- Draws Model Client Side
-
-	local state = self:GetNWInt("state", 0.5)/1000
-    local s = 9
-	cam.Start3D2D( self:GetPos()+Vector(0,0,40)+self:GetRight()*6+self:GetForward()*1, Angle(0,0,0), 1 )
-		surface.SetDrawColor( Color( 50, 50, 50, 255 ) )
-		surface.DrawRect( -s, -s, s*2, s*2 )
-		surface.SetDrawColor( Color( 0, state*255, state*255, 255 ) )
-		surface.DrawRect( -s+2, -s+2, s*2-4, s*2-4 )
-	cam.End3D2D()
+function ENT:Initialize()
+	self.lastAttack = 0
 end
 
 function ENT:AttackParticle()
-	local emitter = ParticleEmitter( self:GetPos() + Vector(0,0,200) )
+	local pos = self:GetPos() + Vector(0,0,200)
+	local emitter = ParticleEmitter( pos )
+	local part = emitter:Add( "effects/ar2_altfire1", pos  )
 
-	local part = emitter:Add( "effects/ar2_altfire1", self:GetPos() + Vector(0,0,200)  )
+	part:SetDieTime( 13 )
 
-	if ( part ) then
-		part:SetDieTime( 13 )
+	part:SetStartSize( 20 )
+	part:SetEndSize( 20 )
 
-		part:SetStartAlpha( 255 ) -- Starting alpha of the particle
-		part:SetEndAlpha( 255 ) -- Particle size at the end if its lifetime
-
-		part:SetStartSize( 20 ) -- Starting size
-		part:SetEndSize( 20 ) -- Size when removed
-
-		part:SetGravity( Vector( 0, 0, 0 ) ) -- Gravity of the particle
-		part:SetVelocity(  Vector( 0, 0, 0 ) ) -- Initial velocity of the particle
-	end
+	emitter:Finish()
 end
 
 function ENT:Think()
-
-	if(self:GetNWBool("Fired", false)) then
-
+	if self:GetNWBool("Fired", false) then
+		self.lastAttack = CurTime()
 		self:SetNWBool("Fired", false)
 		self:AttackParticle()
 	end
+end
 
-	--self:NextThink(CurTime() + 0.2)
-	--return true
+function ENT:GetMessage()
+	local energyNetwork = MelonWars.electricNetwork[self:GetNWInt("network", nil)]
+	if not energyNetwork then return "" end
+
+	local addText = ""
+	local energy = energyNetwork.energy
+	local max = energyNetwork.capacity
+	if max == 0 then
+		addText = "No energy capacity.\nConnect batteries!"
+	else
+		addText = "Energy: " .. energy .. " / " .. max
+	end
+
+	local autoFireText
+	if self:GetNWBool("active", false) then
+		autoFireText = "<AutoFire Enabled>\n"
+	else
+		autoFireText = "<AutoFire Disabled>\n"
+	end
+
+	if energy < 5000 then
+		return "Not Enough Energy\n" .. autoFireText .. addText
+	end
+	if CurTime() - self.lastAttack < 30 then
+		return "Cooling Down...\n" .. autoFireText .. addText
+	end
+
+	return "Ready To Fire\n" .. autoFireText .. addText --TODO: "Ready To Fire" and "Cooling Down"
 end

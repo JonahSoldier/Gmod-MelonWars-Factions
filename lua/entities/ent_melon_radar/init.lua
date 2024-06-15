@@ -56,7 +56,6 @@ function ENT:Shoot ( ent )
 	self:CreateAlert (ent.targetEntity:GetPos(), ent:GetNWInt("mw_melonTeam", 0))
 	self.nextSlowThink = CurTime()+5
 	self:SetNWInt("energy", 0)
-	self:SetNWString("message", "ALERT")
 end
 
 function ENT:DeathEffect ( ent )

@@ -10,7 +10,7 @@ function ENT:Initialize()
 
 	self.moveType = MOVETYPE_NONE
 
-	self.slowThinkTimer = 5
+	self.slowThinkTimer = 2.5
 
 	self.canMove = false
 	self.canShoot = false
@@ -25,7 +25,6 @@ function ENT:Initialize()
 	self.careForFriendlyFire = false
 	self.careForWalls = false
 
-	--self:SetPos(self:GetPos()+Vector(0,0,-5))
 	self:SetNWVector("energyPos", Vector(0,0,20))
 
 	self.shotOffset = Vector(0,0,15)
@@ -38,185 +37,80 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-
-	if (ent.HP < ent.maxHP) then
-		ent.HP = ent.HP+1
-		if (ent.HP > ent.maxHP) then
-			ent.HP = ent.maxHP
-		end
-		ent:SetNWFloat( "health", ent.HP )
+	local selfTbl = self:GetTable()
+	if selfTbl.HP < selfTbl.maxHP then
+		selfTbl.HP = math.min(selfTbl.HP + 1, selfTbl.maxHP)
+		ent:SetNWFloat( "healthFrac", selfTbl.HP / selfTbl.maxHP )
 	end
 
 	local energyCost = 10
 
-	if (MelonWars.electricNetwork[self.network].energy >= energyCost) then
-		local entities = ents.FindInSphere( ent:GetPos(), ent.range )
-		--------------------------------------------------------Disparar
-		local targets = 0
-		local maxtargets = 10
+	if MelonWars.electricNetwork[selfTbl.network].energy < energyCost then return end
 
-		local foundEntities = {}
-		for k, v in pairs(entities) do
+	local maxtargets = 10
+
+	local foundEntities = {}
+	local entPos = ent:GetPos()
+	for i, v in ipairs(ents.FindInSphere( entPos, selfTbl.range )) do
+		if v.Base == "ent_melon_base" and v.spawned and v.HP < v.maxHP and ent:SameTeam(v) then
 			local tr = util.TraceLine( {
-				start = self:GetPos()+self:GetVar("shotOffset", Vector(0,0,0)),
-				endpos = v:GetPos()+v:GetVar("shotOffset", Vector(0,0,0)),
+				start = entPos + selfTbl.shotOffset,
+				endpos = v:GetPos() + selfTbl.shotOffset,
 				filter = function( foundEnt )
-					if ( foundEnt == self) then--si hay un prop en el medio
-						return false
-					end
-					if ( foundEnt.Base == "ent_melon_base" or foundEnt:GetClass() == "prop_physics") then--si hay un prop en el medio
-						return false
-					end
-					return true
+					return not(foundEnt.Base == "ent_melon_base" or foundEnt.Base == "ent_melon_energy_base" or foundEnt:GetClass() == "prop_physics")
 				end
 			})
-			if (tostring(tr.Entity) == '[NULL Entity]') then
-				if (v.Base == "ent_melon_base" and (ent:SameTeam(v) or v:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 0))) then -- si no es un aliado
-					if (v.spawned) then
-						if (v:GetVar("HP") < v:GetVar("maxHP")) then
-							table.insert(foundEntities, v)
-						end
-					end
-				end
-			end
-		end
-
-		local closestEntities = {}
-		for i=1, maxtargets do
-			local closestDistance = 0
-			local closestEntity = nil
-			for k, v in pairs(foundEntities) do
-				if (closestEntity == nil or ent:GetPos():DistToSqr( v:GetPos() ) < closestDistance) then
-					closestEntity = v
-					closestDistance = ent:GetPos():DistToSqr( v:GetPos() )
-				end
-			end
-			table.RemoveByValue(foundEntities, closestEntity)
-			table.insert(closestEntities, closestEntity)
-		end
-
-		for k, v in pairs(closestEntities) do
-			if (self:DrainPower(energyCost)) then
-			----------------------------------------------------------Encontró target
-				--[[v.damage = v.damage+self.damageDeal
-				local effectdata = EffectData()
-				effectdata:SetScale(1)
-				effectdata:SetMagnitude(1)
-				effectdata:SetStart( ent:GetPos() + Vector(0,0,45))
-				effectdata:SetOrigin( v:GetPos() )
-				util.Effect( "ToolTracer", effectdata )
-				sound.Play( ent.shotSound, ent:GetPos() )
-				]]
-				ent.targetEntity = v
-				ent:Shoot(ent)
+			if not tr.Entity:IsValid() then
+				table.insert(foundEntities, v)
 			end
 		end
 	end
 
-	self:Energy_Set_State()
+	table.sort(foundEntities, function(a, b)
+		return entPos:DistToSqr(a:GetPos()) < entPos:DistToSqr(b:GetPos())
+	end)
 
-	--[[local energy = math.Round(self:GetNWInt("energy", 0))
-	local max = self:GetNWInt("maxenergy", 0)
-	self:SetNWString("message", "Energy: "..energy.." / "..max)]]
-
-	--[[
-	local pos = ent:GetPos()
-	if (ent.targetEntity == nil) then
-		----------------------------------------------------------------------Buscar target
-		local foundEnts = ents.FindInSphere(pos, ent.range )
-		for k, v in RandomPairs( foundEnts ) do
-			if (v.Base == "ent_melon_base") then
-				if (v:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 0) or ent:SameTeam(v)) then
-					if(v ~= ent) then
-						if (v.spawned) then
-							local tr = util.TraceLine( {
-							start = pos,
-							endpos = v:GetPos(),
-							filter = function( foundEnt )
-								if ( foundEnt:GetClass() == "prop_physics" ) then
-									return true
-								end
-							end
-							})
-							if (tostring(tr.Entity) == '[NULL Entity]') then
-							----------------------------------------------------------Encontró target
-								if (v:GetVar("HP") < v:GetVar("maxHP")) then
-									ent.targetEntity = v
-								end
-							end
-						end
-					end
-				end
-			end
+	for i = 1, maxtargets, 1 do
+		if foundEntities[i] and self:DrainPower(energyCost) then
+			selfTbl.targetEntity = foundEntities[i]
+			ent:Shoot(ent)
 		end
 	end
-
-	--if (IsValid(ent.forcedTargetEntity)) then
-	--	ent.targetEntity = ent.forcedTargetEntity
-	--else
-	--	ent.forcedTargetEntity = nil
-	--end
-
-	if (ent.targetEntity ~= nil) then
-		----------------------------------------------------------------------Perder target
-		----------------------------------------por que no existe
-		if (not IsValid(ent.targetEntity)) then
-			ent.targetEntity = nil
-			ent.nextSlowThink = CurTime()+0.1
-			return false
-		end
-		----------------------------------------por que está lejos
-		if (IsValid(ent.targetEntity) and ent.targetEntity:GetPos():Distance(pos) > ent.range) then
-			ent.targetEntity = nil
-			ent.nextSlowThink = CurTime()+0.1
-			return false
-		end
-		----------------------------------------por que hay algo en el medio
-		local tr = util.TraceLine( {
-		start = pos,
-		endpos = ent.targetEntity:GetPos(),
-		filter = function( foundEntity ) if ( foundEntity:GetClass() == "prop_physics" and foundEntity ~= ent.targetEntity  and not string.StartWith( ent.targetEntity:GetClass(), "ent_melonbullet_" )) then return true end end
-		})
-		if (tostring(tr.Entity) ~= '[NULL Entity]') then
-			ent.targetEntity = nil
-			ent.nextSlowThink = CurTime()+0.1
-			return false
-		end
-		ent:Shoot( ent )
-	end]]
 end
 
+local effectOffset = Vector(0,0,10)
 function ENT:Shoot ( ent )
-	--------------------------------------------------------Disparar
-	if (ent.targetEntity == ent) then ent.targetEntity = nil end
-	if (IsValid(ent.targetEntity)) then
-		if (ent.targetEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 0) or ent:SameTeam(ent.targetEntity)) then
-			local pos = ent:GetPos()+ent.shotOffset
-			local targetPos = ent.targetEntity:GetPos()
-			if (ent.targetEntity:GetVar("shotOffset") ~= nil) then
-				targetPos = targetPos+ent.targetEntity:GetVar("shotOffset")
-			end
-			--ent:FireBullets(bullet)
-			local effectdata = EffectData()
-			effectdata:SetOrigin( targetPos + Vector(0,0,10) )
-			util.Effect( "inflator_magic", effectdata )
-			util.Effect( "inflator_magic", effectdata )
-			util.Effect( "inflator_magic", effectdata )
-			util.Effect( "inflator_magic", effectdata )
-			util.Effect( "inflator_magic", effectdata )
-			effectdata:SetOrigin( pos + Vector(0,0,10) )
-			util.Effect( "inflator_magic", effectdata )
-			sound.Play( ent.shotSound, pos )
-			local heal = ent.targetEntity:GetVar("HP")+math.min(ent.damageDeal, ent.targetEntity:GetVar("maxHP")-ent.targetEntity:GetVar("HP"))
-			ent.targetEntity:SetVar("HP", heal)
-			ent.targetEntity:SetNWFloat("health", heal)
-			ent.fired = true
-			if (ent.targetEntity:GetVar("HP") == ent.targetEntity:GetVar("maxHP")) then
-				ent.targetEntity = nil
-			end
-		else
-			ent.targetentity = nil
-		end
+	local targetEnt = ent.targetEntity
+	if targetEnt == ent then targetEnt = nil end
+	if not IsValid(targetEnt) then return end
+
+	if not ent:SameTeam(targetEnt) then
+		targetEnt = nil
+		return
+	end
+
+	local pos = ent:GetPos() + ent.shotOffset
+	local targetPos = targetEnt:GetPos()
+	if targetEnt.shotOffset then
+		targetPos = targetPos + targetEnt.shotOffset
+	end
+
+	local effectdata = EffectData()
+	effectdata:SetOrigin( targetPos + effectOffset )
+	for i = 1, 5, 1 do
+		util.Effect( "inflator_magic", effectdata )
+	end
+	effectdata:SetOrigin( pos + effectOffset )
+	util.Effect( "inflator_magic", effectdata )
+	sound.Play( ent.shotSound, pos )
+
+	--TODO: Check if there's any reason this can't use normal TakeDamage functions
+	local heal = math.min(targetEnt.HP + ent.damageDeal, targetEnt.maxHP)
+	targetEnt.HP = heal
+	targetEnt:SetNWFloat("healthFrac", heal / targetEnt.maxHP)
+	ent.fired = true
+	if targetEnt.HP == targetEnt.maxHP then
+		targetEnt = nil
 	end
 end
 

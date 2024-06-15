@@ -7,17 +7,12 @@ function ENT:Initialize()
 
 	MelonWars.defaults ( self )
 
-	self.modelString = "models/props_phx/construct/metal_plate1x2.mdl"--"models/props_c17/TrapPropeller_Engine.mdl"
+	self.modelString = "models/props_phx/construct/metal_plate1x2.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
 	self.canShoot = true
 	self.speed = 200
 	self.force = 100
-
-	--self:SetAngles(self:GetAngles()+Angle(90,0,0))
-
-	--local offset = Vector(0,0,18.5)
-	--self:SetPos(self:GetPos()+offset)
 
 	self.closedpos = self:GetPos()
 	self.openedpos = self:GetPos()+Vector(0,0,80)
@@ -40,7 +35,6 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-	--MelonWars.unitDefaultThink ( ent )
 end
 
 function ENT:Actuate ()
