@@ -793,11 +793,11 @@ function ENT:PhysicsUpdate()
 end
 
 function ENT:DefaultPhysicsUpdate()
-	if mw_admin_playing_cv:GetBool() then
-		local selfTbl = self:GetTable()
-		if (selfTbl.moving) then
+	local selfTbl = self:GetTable()
+	if mw_admin_playing_cv:GetBool() and selfTbl.canMove then
+		if selfTbl.moving then
 			local vel = self:GetVelocity()
-			if (vel:LengthSqr() < selfTbl.speed ^ 2) then
+			if vel:LengthSqr() < selfTbl.speed ^ 2 then
 				local phys = selfTbl.phys
 				phys:ApplyForceCenter (selfTbl.moveForce * phys:GetMass())
 			else

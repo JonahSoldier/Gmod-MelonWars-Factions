@@ -68,6 +68,7 @@ function ENT:SlowThink ( ent )
 end
 
 function ENT:PhysicsUpdate()
+	if not self:GetTable().canMove then return end
 	local ang = self:GetAngles():Up()
 	ang:Negate()
 	local inclination = self:Align(ang, vector_up, 5000)

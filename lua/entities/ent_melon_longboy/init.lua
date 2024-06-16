@@ -119,6 +119,7 @@ function ENT:DeathEffect ( ent )
 end
 
 function ENT:PhysicsUpdate()
+	if not self:GetTable().canMove then return end
 	self:AlignUpright( 2000000, 300 )
 
 	self:DefaultPhysicsUpdate()

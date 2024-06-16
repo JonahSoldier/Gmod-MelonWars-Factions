@@ -77,6 +77,7 @@ function ENT:Shoot ( ent, forcedTargetPos )
 end
 
 function ENT:PhysicsUpdate()
+	if not self:GetTable().canMove then return end
 	self:AlignUpright( 10000, 100 )
 
 	self:DefaultPhysicsUpdate()
