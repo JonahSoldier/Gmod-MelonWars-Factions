@@ -39,20 +39,10 @@ end
 function ENT:Update (ent)
 end
 
-function ENT:Think () --TODO: Shouldn't we be using update here?
-	local selfTbl = self:GetTable()
-	if selfTbl.damage > 0 then
-		selfTbl.HP = selfTbl.HP-selfTbl.damage
-		self:SetNWFloat( "healthFrac", selfTbl.HP / selfTbl.maxHP )
-		selfTbl.damage = 0
-		if selfTbl.HP <= 0 then
-			MelonWars.die( self )
-		end
-	end
-
+function ENT:Think ()
 	local const = constraint.FindConstraints( self, "Weld" )
 	if table.Count(const) == 0 then
-		selfTbl.damage = 5
+		self:TakeDamage(5)
 	end
 end
 

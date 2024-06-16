@@ -14,12 +14,6 @@ function ENT:Initialize()
 	self.speed = 60
 	self.thrustforce = 1
 
-	/*self:SetAngles(self:GetAngles()+Angle(90,180,0))
-
-	local offset = Vector(0,-0.8,0)
-	offset:Rotate(self:GetAngles())
-	self:SetPos(self:GetPos()+offset)*/
-
 	self.maxHP = 200
 
 	self.captureSpeed = 0
@@ -54,60 +48,50 @@ function ENT:Welded( ent, parent )
 	MelonWars.updatePopulation(ent.population, mw_melonTeam)
 end
 
-function ENT:Update( ent )
+function ENT:Update( ent ) --TODO: Refactor
 	----[[
 	if (cvars.Bool("mw_admin_playing") ) then
 
-		--Aplicar daño
-		if (ent.damage > 0) then
-			ent.HP = ent.HP-ent.damage
-			ent:SetNWFloat( "health", ent.HP )
-			ent.damage = 0
-			if (ent.HP <= 0) then
-				MelonWars.die( ent )
-			end
+		local const = constraint.FindConstraints( self, "Weld" )
+		if table.Count(const) == 0 then
+			self:TakeDamage(5)
 		end
 
-		ent:SetNWVector( "targetPos", ent.targetPos )
+		self:SetNWVector( "targetPos", self.targetPos )
 
-		ent:SetNWEntity( "followEntity", ent.followEntity )
+		self:SetNWEntity( "followEntity", self.followEntity )
 
-		if (ent.canMove) then
+		if (self.canMove) then
 			local phys = self.phys
-
-			local const = constraint.FindConstraints( self, "Weld" )
-			if (table.Count(const) == 0) then
-				self.damage = 5
-			end
 
 			if (IsValid(phys)) then
 				---------------------------------------------------------------------------Movimiento
-				if (ent.moving) then
-					local moveVector = (ent.targetPos-ent:GetPos()):GetNormalized()*self.speed-self:GetVelocity()
+				if (self.moving) then
+					local moveVector = (self.targetPos-self:GetPos()):GetNormalized()*self.speed-self:GetVelocity()
 					local force = Vector(moveVector.x, moveVector.y, 0)
 					--Takes the average between the prev moveforce and the desired new moveforce, prevents it from shaking violently without any noticeable effect on its ability to move
-					ent.moveForce = (ent.moveForce + force*self.thrustforce)/2
+					self.moveForce = (self.moveForce + force*self.thrustforce)/2
 
 				else
-					local moveVector = -ent:GetVelocity()*0.2
+					local moveVector = -self:GetVelocity()*0.2
 					local force = Vector(moveVector.x, moveVector.y, 0)
-					ent.moveForce = force
+					self.moveForce = force
 				end
 			end
 
-			if (Vector(ent:GetPos().x, ent:GetPos().y, 0):Distance(Vector(ent.targetPos.x, ent.targetPos.y, 0)) < 100) then
-				ent:FinishMovement()
+			if (Vector(self:GetPos().x, self:GetPos().y, 0):Distance(Vector(self.targetPos.x, self.targetPos.y, 0)) < 100) then
+				self:FinishMovement()
 				for k, v in pairs(constraint.GetAllConstrainedEntities( self )) do
 					if (v.Base == "ent_melon_base") then
-						if (v ~= ent) then
+						if (v ~= self) then
 							v:FinishMovement()
 						end
 					end
 				end
 			end
 
-			ent:SetNWBool("moving", ent.moving)
-			ent:NextThink(CurTime() + 0.01)
+			self:SetNWBool("moving", self.moving)
+			self:NextThink(CurTime() + 0.01)
 			return true
 		end
 	end
@@ -128,7 +112,6 @@ function ENT:PhysicsUpdate()
 end
 
 function ENT:Shoot ( ent )
-	--MelonWars.defaultShoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )

@@ -9,13 +9,10 @@ function ENT:Initialize()
 	self.modelString = "models/props_lab/teleplatform.mdl"
 	self.maxHP = 75
 	self.range = 250
-	--self.Angles = Angle(0,0,0)
-	--self:SetPos(self:GetPos()+Vector(0,0,10))
 	self.shotOffset = Vector(0,0,10)
-	--self.sphereRadius = 50
 
 	self.moveType = MOVETYPE_NONE
-	--self.canMove = false
+	self.canMove = false
 	self.population = 1
 
 	self:Setup()
@@ -30,11 +27,9 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink(ent)
-	--PrintTable(self.rallyPoints)
 end
 
 function ENT:Shoot ( ent )
-	--MelonWars.defaultShoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
@@ -44,7 +39,7 @@ end
 function ENT:FriendlyUnitsNearby()
 	local selfTeam = self:GetNWInt("mw_melonTeam", 0)
 	for i, v in ipairs(ents.FindInSphere( self:GetPos(), self.range)) do
-		if v.Base == "ent_melon_base" and MelonWars.sameTeam(v:GetNWInt("mw_melonTeam", 0), selfTeam) then
+		if not v:GetClass() == "ent_melon_teleporter_receiver" and v.Base == "ent_melon_base" and MelonWars.sameTeam(v:GetNWInt("mw_melonTeam", 0), selfTeam) then
 			return
 		end
 	end

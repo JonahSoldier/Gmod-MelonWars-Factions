@@ -6,7 +6,7 @@ include( "shared.lua" )
 function ENT:Initialize()
 	MelonWars.defaults ( self )
 
-	self.modelString = "models/XQM/airplanewheel1.mdl"--"models/props_c17/TrapPropeller_Engine.mdl"
+	self.modelString = "models/XQM/airplanewheel1.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = false
 	self.canShoot = false
@@ -16,12 +16,6 @@ function ENT:Initialize()
 	self.population = 0
 
 	self.materialString = ""
-
-	--self:SetAngles(self:GetAngles()+Angle(0,0,0))
-
-	--local offset = Vector(0,-0.8,0)
-	--offset:Rotate(self:GetAngles())
-	--self:SetPos(self:GetPos()+offset)
 
 	self.captureSpeed = 0
 
@@ -34,106 +28,57 @@ function ENT:Initialize()
 
 	self:GetPhysicsObject():SetMass(30)
 
-	self.moving = false;
-
-	--self.weld = nil
+	self.moving = false
 end
 
 function ENT:SlowThink ( ent )
-	--MelonWars.unitDefaultThink ( ent )
 end
 
 function ENT:Welded( ent, parent )
-	--local weld = constraint.Weld( ent, parent, 0, 0, 0, true , false )
-
-	--ent.canMove = false
-
-	--ent.parent = parent
 	ent.phys:SetMaterial("rubber")
 
-	local LPos1 = Vector(0,0,0)
+	local LPos1 = vector_origin
 	local LVector = Vector(1,0,0)
-	local axis = constraint.Axis(self, parent, 0, 0, LPos1, LPos1, 0, 0, 0, 1, LVector, false)
-	--self.parent = parent
+	constraint.Axis(self, parent, 0, 0, LPos1, LPos1, 0, 0, 0, 1, LVector, false)
 
-	--self.weld = constraint.Weld( self, parent, 0, 0, 0, true , false )
-	--Resta su poblacion para luego sumar la nueva
-	MelonWars.updatePopulation(-ent.population, mw_melonTeam)
-	ent.population = math.ceil(ent.population/2)
-	MelonWars.updatePopulation(ent.population, mw_melonTeam)
+	self.parent = parent
+end
 
-	/*
-	self.axisConstraint = constraint.FindConstraint( self, "Axis" )
-	for k, v in pairs(self.axisConstraint) do
-		if (istable(v)) then
-			for k, i in pairs(v) do
-				if(istable(i)) then
-					if (i.Entity.Type ~= "anim") then
-						self.parent = i.Entity
-						self:SetNWBool("wheel_set_parent_once", false)
-					end
-				end
-			end
-		end
-	end
-	if (self.weld == nil or self.weld == false) then
-		self.phys:SetMaterial("rubber")
-		self.weld = constraint.Weld( self, self.parent, 0, 0, 0, true , false )
-	end*/
-
+function ENT:PostEntityPaste( ply, ent, dupeEnts )
+	timer.Simple(0, function()
+		local axis = constraint.FindConstraint( self, "Axis" )
+		if not axis then return end
+		self.parent = (axis.Ent1 ~= self and axis.Ent1) or axis.Ent2
+	end)
 end
 
 function ENT:OnFinishMovement(parent)
-	self.axisConstraint = constraint.FindConstraint( self, "Axis" )
-
-	--PrintTable(self.axisConstraint)
-
-	if (self:GetNWBool("wheel_set_parent_once", true)) then --Prevents this from running constantly to hopefully help lag, uses a NWInt because as a normal variable it saves to the contrap file
-		for k, v in pairs(self.axisConstraint) do
-			if (istable(v)) then
-				for k, i in pairs(v) do
-					if(istable(i)) then
-						if (i.Entity.Type ~= "anim") then
-							self.parent = i.Entity
-							self:SetNWBool("wheel_set_parent_once", false)
-						end
-					end
-				end
-			end
-		end
-	end
-
-	if (self.weld == nil or self.weld == false) then
-		self.phys:SetMaterial("rubber")
-		self.weld = constraint.Weld( self, self.parent, 0, 0, 0, true , false )
+	local selfTbl = self:GetTable()
+	if not selfTbl.weld then
+		selfTbl.phys:SetMaterial("rubber")
+		selfTbl.weld = constraint.Weld( self, selfTbl.parent, 0, 0, 0, true , false )
 	end
 end
 
 function ENT:Shoot ( ent )
-	--MelonWars.defaultShoot ( ent )
 end
 
-function ENT:PhysicsUpdate()
-	local vel = self.phys:GetVelocity()
+function ENT:PhysicsUpdate() --TODO: Wheel behaviour is generally kinda fucked even with welds working correctly.
+	--[[
+	local phys = self:GetTable().phys
+	local vel = phys:GetVelocity()
 	local forward = self:GetAngles():Forward()
 	local dot = vel:GetNormalized():Dot(forward)
-	self.phys:ApplyForceCenter(-forward*dot*self.phys:GetMass()*vel:Length()*0.1)
+	phys:ApplyForceCenter(-forward * dot * phys:GetMass() * vel:Length() * 0.1)
+	--]]
 end
 
 function ENT:Update (ent)
-	if (self.moving == true) then
-		if (self.parent == nil) then
-			local constr = constraint.FindConstraint( self, "Axis" )
-			if (IsValid(constr)) then
-				self.parent = constr.Ent2
-			end
-		end
-
-		if (self.weld ~= nil or self.weld == false) then
-			constraint.RemoveConstraints( self, "Weld" )
-			self.weld = nil
-			ent.phys:SetMaterial("ice")
-		end
+	local selfTbl = self:GetTable()
+	if selfTbl.moving and selfTbl.weld ~= nil then
+		constraint.RemoveConstraints( self, "Weld" )
+		selfTbl.weld = nil
+		selfTbl.phys:SetMaterial("slime")
 	end
 end
 

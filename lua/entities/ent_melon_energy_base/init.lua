@@ -293,9 +293,12 @@ function ENT:Energy_Add_State() --TODO: This function might not be needed any mo
 end
 
 function ENT:OnRemove()
-	if (istable(self.connections)) then
-		for k, v in pairs(self.connections) do
-			table.RemoveByValue(v.connections, self)
+	local selfTbl = self:GetTable()
+	if istable(selfTbl.connections) then
+		for k, v in pairs(selfTbl.connections) do
+			if istable(v.connections) then
+				table.RemoveByValue(v.connections, self)
+			end
 		end
 	end
 	MelonWars.energyNetworkRemoveElement(self)
