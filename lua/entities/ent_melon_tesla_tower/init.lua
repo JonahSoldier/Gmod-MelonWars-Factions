@@ -29,58 +29,31 @@ function ENT:Initialize()
 	self:GetPhysicsObject():EnableMotion(false)
 end
 
-function ENT:SlowThink ( ent ) --TODO: Refactor
+function ENT:SlowThink ( ent )
 	local energyCost = 15
-	if (MelonWars.electricNetwork[self.network].energy >= energyCost) then
-		local entities = ents.FindInSphere( ent:GetPos(), ent.range )
-		--------------------------------------------------------Disparar
+	local selfTbl = self:GetTable()
+	if (MelonWars.electricNetwork[selfTbl.network].energy >= energyCost) then
 		local maxtargets = 3
 
-		local foundEntities = {}
-		for k, v in pairs(entities) do
-			local tr = util.TraceLine( {
-				start = self:GetPos()+self:GetVar("shotOffset", Vector(0,0,0)),
-				endpos = v:GetPos()+v:GetVar("shotOffset", Vector(0,0,0)),
-				filter = function( foundEnt )
-					if ( foundEnt == self ) then return false end
-					if ( foundEnt.Base == "ent_melon_base" or v.Base == "ent_melon_energy_base" or v.Base == "ent_melon_prop_base" or foundEnt:GetClass() == "prop_physics") then--si hay un prop en el medio
-						return false
-					end
-					return true
-				end
-			})
-			if tostring(tr.Entity) == '[NULL Entity]' then
-				if ((v.Base == "ent_melon_base" or v.Base == "ent_melon_energy_base" or v.Base == "ent_melon_prop_base" or v:GetClass() == "prop_physics" )and not ent:SameTeam(v)) then -- si no es un aliado
-					table.insert(foundEntities, v)
-				end
-			end
-		end
+		local foundEntities = MelonWars.FindTargets( self, false )
 
-		local closestEntities = {}
-		for i=1, maxtargets do
-			local closestDistance = 0
-			local closestEntity = nil
-			for k, v in pairs(foundEntities) do
-				if (closestEntity == nil or ent:GetPos():DistToSqr( v:GetPos() ) < closestDistance) then
-					closestEntity = v
-					closestDistance = ent:GetPos():DistToSqr( v:GetPos() )
-				end
-			end
-			table.RemoveByValue(foundEntities, closestEntity)
-			table.insert(closestEntities, closestEntity)
-		end
-		for k, v in pairs(closestEntities) do
-			if (self:DrainPower(energyCost)) then
-			----------------------------------------------------------Encontró target
+		local selfPos = self:GetPos()
+		table.sort(foundEntities, function(a, b)
+			return selfPos:DistToSqr(a:GetPos()) < selfPos:DistToSqr(b:GetPos())
+		end)
 
-				if (v:GetClass() == "prop_physics" or v.Base == "ent_melon_prop_base") then
-					v:TakeDamage( self.damageDeal, self, self )
+		for i = 1, maxtargets, 1 do
+			local v = foundEntities[i]
+			if v and self:DrainPower(energyCost) then --TODO: Refactor
+				local vTbl = v:GetTable()
+				if v:GetClass() == "prop_physics" or vTbl.Base == "ent_melon_prop_base" then
+					v:TakeDamage( selfTbl.damageDeal, self, self )
 					local php = v:GetNWInt("propHP", -1)
-					if (php ~= -1) then
-						v:SetNWInt("propHP", php-self.damageDeal)
+					if php ~= -1 then
+						v:SetNWInt("propHP", php-selfTbl.damageDeal)
 					end
 				else
-					v.damage = v.damage+self.damageDeal
+					vTbl.damage = vTbl.damage + selfTbl.damageDeal
 				end
 				local effectdata = EffectData()
 				effectdata:SetScale(3000)
@@ -89,11 +62,10 @@ function ENT:SlowThink ( ent ) --TODO: Refactor
 				effectdata:SetOrigin( v:GetPos() )
 				util.Effect( "AirboatGunTracer", effectdata )
 				sound.Play( ent.shotSound, ent:GetPos() )
-				v:TakeDamage( self.damageDeal, self, self)
+				v:TakeDamage( selfTbl.damageDeal, self, self)
 			end
 		end
 	end
-	--self:Energy_Set_State()
 end
 
 function ENT:Shoot ( ent )

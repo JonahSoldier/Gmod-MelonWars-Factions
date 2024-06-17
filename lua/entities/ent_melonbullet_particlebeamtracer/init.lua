@@ -23,6 +23,8 @@ function ENT:Initialize()
 
 	self:SetColor(Color(100,100,100, 255))
 	local trail = util.SpriteTrail(self, 0, Color(255,255,255), true, 10, 1, 2000, 1/(15+1)*0.5, "sprites/tp_beam001")
+
+	self.mwBulletIndestructible = true
 end
 
 /*function ENT:PhysicsCollide( colData, collider )

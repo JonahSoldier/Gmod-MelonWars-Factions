@@ -44,11 +44,9 @@ function ENT:Initialize()
 	timer.Simple( 5, function()
 		self.incomingSoundPlayed = false
 	end)
-end
 
-/*function ENT:PhysicsCollide( colData, collider )
-	self:Explode()
-end*/
+	self.mwBulletIndestructible = true
+end
 
 function ENT:Think()
 

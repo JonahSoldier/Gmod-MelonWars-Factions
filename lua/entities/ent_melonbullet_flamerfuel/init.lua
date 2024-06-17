@@ -34,6 +34,7 @@ function ENT:Initialize()
 			self.targetPos = target:GetPos()
 		end
 	end)
+	self.mwBulletIndestructible = true
 end
 
 function ENT:PhysicsCollide( colData, collider )

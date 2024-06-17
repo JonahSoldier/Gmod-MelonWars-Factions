@@ -5,7 +5,7 @@ local function isClassInRange(pos, teamIndex, entClass, range)
 	for _, v in ipairs( ents.FindByClass( entClass ) ) do
 		if pos:DistToSqr( v:GetPos() ) < rngSqr then
 			local vTeam = v:GetNWInt( "mw_melonTeam", 0 )
-			if vTeam == teamIndex or MelonWars.teamGrid[vTeam][teamIndex] then
+			if MelonWars.sameTeam(vTeam, teamIndex) then
 				return true
 			end
 		end
@@ -33,8 +33,7 @@ function MelonWars.isInRange( pos, teamIndex )
 	for _, v in ipairs( foundPoints ) do
 		if pos:DistToSqr( v:GetPos() ) < rngSqr then
 			local vTeam =  v:GetNWInt( "capTeam", 0 )
-			local teamGridTeam = MelonWars.teamGrid[vTeam]
-			if vTeam == teamIndex or (teamGridTeam and teamGridTeam[teamIndex]) then
+			if MelonWars.sameTeam(vTeam, teamIndex) then
 				return true
 			end
 		end
@@ -150,14 +149,18 @@ function MelonWars.canSpawn( unitIndex, attach, mwTeam, position, pl, attachEnt 
 	return true
 end
 
-function MelonWars.sameTeam(team1, team2)
-	if (team1 == team2) then
+function MelonWars.sameTeam(team1, team2) --TODO: This can be a single return / boolean expression. Worth doing as this is called a lot.
+	--[[
+	if team1 == team2 then
 		return true
 	end
-	if (team1 == 0 or team2 == 0) then
+	if team1 == 0 or team2 == 0 or team1 == -1 or team2 == -1 then
 		return false
 	end
 	return MelonWars.teamGrid[team1][team2]
+	--]]
+	--Not an invalid / neutral team, and either same team or allied.
+	return not(team1 == 0 or team2 == 0 or team1 == -1 or team2 == -1) and (team1 == team2 or MelonWars.teamGrid[team1][team2])
 end
 
 local vec2000 = Vector(0,0,2000)

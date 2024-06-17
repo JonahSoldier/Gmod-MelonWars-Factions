@@ -59,7 +59,7 @@ util.AddNetworkString( "MW_UpdateNetwork" )
 MelonWars = MelonWars or {}
 
 include("melonwars/sh_unitlist.lua")
-include("melonwars/sh_miscfunctions.lua")
+include("melonwars/sh_functions.lua")
 
 AddCSLuaFile("melonwars/cl_worldrings.lua")
 
@@ -208,7 +208,6 @@ end )
 
 net.Receive( "MW_Activate", function(_, pl)
 	local ent = net.ReadEntity()
-	--local plTeam = net.ReadInt(8)
 	local plTeam = pl:GetInfoNum("mw_team", -1)
 	if not plTeam == ent:GetNWInt( "mw_melonTeam", 0 ) then return end
 	if ent.Actuate then
@@ -240,29 +239,6 @@ net.Receive( "MW_UpdateServerInfo", function()
 	local a = net.ReadInt(8)
 	MelonWars.teamCredits[a] = net.ReadInt(32)
 end )
-
---[[
-net.Receive( "ToggleBarracks", function()
-	local ent = net.ReadEntity()
-	local on = ent:GetNWBool( "active", false )
-	if on then
-		ent:SetNWBool( "active", false )
-	else
-		ent:SetNWBool( "active", true )
-	end
-end )
-
-net.Receive( "PropellerReady", function()
-	local ent = net.ReadEntity()
-	ent:SetNWBool("done",true)
-	local foundEnts = ents.FindInSphere(ent:GetPos(), 600 )
-	for _, v in pairs( foundEnts ) do
-		if v:GetClass() == "ent_melon_propeller" or v:GetClass() == "ent_melon_hover" then
-			v:SetNWBool("done",true)
-		end
-	end
-end )
---]]
 
 net.Receive( "MW_UseWaterTank", function( _, pl )
 	local ent = net.ReadEntity()

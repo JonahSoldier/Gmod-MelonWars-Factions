@@ -29,6 +29,7 @@ function ENT:Initialize()
 	self:SetColor(Color(100,100,100, 255))
 	local trail = util.SpriteTrail(self, 0, Color(255,255,255), false, 10, 1, 2, 1/(15+1)*0.5, "effects/beam_generic01.vmt")
 
+	--[[
 	for i=0, 9 do
 		self:SetNWString("class"..i, "")
 		self:SetNWFloat("hp"..i, 0)
@@ -36,6 +37,7 @@ function ENT:Initialize()
 		self:SetNWInt("value"..i, 0)
 		self:SetNWInt("entindex"..i, 0)
 	end
+	--]]
 
 	self.launchTime = CurTime()
 	self.incomingSoundPlayed = true
@@ -44,11 +46,9 @@ function ENT:Initialize()
 	timer.Simple( 5, function()
 		self.incomingSoundPlayed = false
 	end)
-end
 
-/*function ENT:PhysicsCollide( colData, collider )
-	self:Explode()
-end*/
+	self.mwBulletIndestructible = true
+end
 
 function ENT:Think()
 

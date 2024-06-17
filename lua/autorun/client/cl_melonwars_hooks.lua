@@ -12,9 +12,8 @@ hook.Add("OnTextEntryLoseFocus", "MelonWars_EnableKeyboard", function (panel)
 	LocalPlayer().disableKeyboard = false
 end)
 
---TODO: Zone Alpha. Check what impact this has on performance.
---GetConVar("mw_buildalpha_multiplier"):GetFloat()
 local mw_buildalpha_multiplier_cv = GetConVar("mw_buildalpha_multiplier")
+local mw_oldZones_cv = GetConVar("mw_oldbuildzones")
 local outpostRingCol = Color(255, 255, 255, 50)
 hook.Add("PostDrawTranslucentRenderables", "MelonWars_DrawOutpostZones", function(depth, skybox)
 	local locPly = LocalPlayer()
@@ -24,18 +23,31 @@ hook.Add("PostDrawTranslucentRenderables", "MelonWars_DrawOutpostZones", functio
 	if not tool or tool.Mode ~= "melon_universal_tool" then return end
 
 	local pTeam = locPly:GetInfoNum("mw_team", 0)
-	local teamRels = MelonWars.teamGrid[pTeam]
+	local zoneAlpha = mw_buildalpha_multiplier_cv:GetFloat()
 
-	render.StartWorldRings()
-	for i, v in ipairs(ents.FindByClass("ent_melon_zone")) do
-		local zoneTeam = v:GetNWInt("zoneTeam", 0)
-		if (pTeam == zoneTeam) or (teamRels and teamRels[pTeam]) then
-			render.AddWorldRing(v:GetPos(), v:GetNWInt( "scale" , 0 ), 5, 20)
+	if mw_oldZones_cv:GetBool() then
+		outpostRingCol.a = math.Clamp(10 * zoneAlpha, 0, 255)
+		for i, v in ipairs(ents.FindByClass("ent_melon_zone")) do
+			local zoneTeam = v:GetNWInt("zoneTeam", 0)
+			if MelonWars.sameTeam(pTeam, zoneTeam) then
+				local zoneRadius = v:GetNWInt( "scale" , 0 )
+				local vPos = v:GetPos()
+				render.DrawSphere(vPos, zoneRadius, 35, 12, outpostRingCol)
+				render.DrawSphere(vPos, -zoneRadius, 35, 12, outpostRingCol)
+			end
 		end
-	end
+	else
+		render.StartWorldRings()
+		for i, v in ipairs(ents.FindByClass("ent_melon_zone")) do
+			local zoneTeam = v:GetNWInt("zoneTeam", 0)
+			if MelonWars.sameTeam(pTeam, zoneTeam) then
+				render.AddWorldRing(v:GetPos(), v:GetNWInt( "scale" , 0 ), 5, 20)
+			end
+		end
 
-	outpostRingCol.a = math.Clamp(50 * mw_buildalpha_multiplier_cv:GetFloat(), 0, 255)
-	render.FinishWorldRings(outpostRingCol)
+		outpostRingCol.a = math.Clamp(50 * zoneAlpha, 0, 255)
+		render.FinishWorldRings(outpostRingCol)
+	end
 end)
 
 hook.Add( "PostDrawTranslucentRenderables", "MelonWars_UnitSelectionCircles", function()

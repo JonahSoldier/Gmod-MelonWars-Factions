@@ -23,6 +23,7 @@ function ENT:Initialize()
 	self.climb = 5
 
 	self:SetColor(Color(150,255,100, 255))
+	self.mwBulletIndestructible = true
 end
 
 function ENT:PhysicsCollide( colData, collider )

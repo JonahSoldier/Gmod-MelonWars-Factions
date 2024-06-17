@@ -32,27 +32,15 @@ function ENT:SlowThink ( ent )
 
 	if MelonWars.electricNetwork[selfTbl.network].energy < energyCost then return end
 
-
-	local selfPos = self:GetPos()
-	local targetEnt
-	local closestDist = math.huge
-
-	for i, v in ipairs(ents.FindInSphere( ent:GetPos() + Vector(0,0,200), ent.range )) do
-		local vClass = v:GetClass()
-		if string.StartWith(vClass, "ent_melonbullet") and not( vClass == "ent_melonbullet_unit_shell" or vClass == "ent_melonbullet_particlebeamtracer" or vClass == "ent_melonbullet_flamerfuel" ) and v:GetPos():DistToSqr(selfPos) < closestDist then
-			local tr = util.TraceLine( {
-				start = self:GetPos() + selfTbl.shotOffset,
-				endpos = v:GetPos() + selfTbl.shotOffset,
-				filter = function( foundEnt )
-					local foundClass = foundEnt:GetClass()
-					return not(foundEnt.Base == "ent_melon_base" or foundEnt.Base == "ent_melon_energy_base" or foundClass == "prop_physics" or string.StartWith(foundClass, "ent_melonbullet"))
-				end
-			})
-			if not tr.Entity:IsValid() then
-				targetEnt = v
-			end
-		end
+	local selfTeam = self:GetNWInt("mw_melonTeam", -1)
+	local function validCheck(thisEnt, tEnt)
+		local tEntTbl = tEnt:GetTable()
+		local tEntClass = tEnt:GetClass()
+		return string.StartWith(tEntClass, "ent_melonbullet") and not tEntTbl.mwBulletIndestructible and not MelonWars.sameTeam(selfTeam, tEnt:GetNWInt("mw_melonTeam", -1))
 	end
+
+	local foundEntities = MelonWars.FindTargets( self, false, validCheck )
+	local targetEnt = foundEntities[1]
 
 	if IsValid(targetEnt) and self:DrainPower(energyCost) then
 		selfTbl.targetEntity = targetEnt

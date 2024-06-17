@@ -26,7 +26,6 @@ function ENT:Initialize()
 	self.careForFriendlyFire = false
 	self.careForWalls = false
 
-	--self:SetPos(self:GetPos()+Vector(0,0,-5))
 	self:SetNWVector("energyPos", Vector(0,0,20))
 
 	self.shotOffset = Vector(0,0,15)
@@ -35,73 +34,38 @@ function ENT:Initialize()
 end
 
 function ENT:ModifyColor()
-	--self:SetColor(Color(self:GetColor().r+120, self:GetColor().g+120, self:GetColor().b+120, 255))
 end
 
 function ENT:SlowThink ( ent )
 	local chargeAmount = 50
 
-	if (MelonWars.electricNetwork[self.network].energy >= chargeAmount) then
-		local entities = ents.FindInSphere( ent:GetPos(), ent.range )
-		--------------------------------------------------------Disparar
-		local targets = 0
+	if MelonWars.electricNetwork[self.network].energy >= chargeAmount then
 		local maxtargets = 5
 
-		local foundEntities = {}
-		for k, v in pairs(entities) do
-			local tr = util.TraceLine( {
-				start = self:GetPos()+self:GetVar("shotOffset", Vector(0,0,0)),
-				endpos = v:GetPos()+v:GetVar("shotOffset", Vector(0,0,0)),
-				filter = function( foundEnt )
-					if ( foundEnt == self) then--si hay un prop en el medio
-						return false
-					end
-					if ( foundEnt.Base == "ent_melon_base" or foundEnt:GetClass() == "prop_physics") then--si hay un prop en el medio
-						return false
-					end
-					return true
-				end
-			})
-			if (tostring(tr.Entity) == '[NULL Entity]') then
-				if ((v.Base == "ent_melon_base") and (ent:SameTeam(v) or v:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 0))) then -- si no es un aliado
-					if (v.spawned) then
-						if (v:GetNWInt("mw_charge", -1) > -1) then
-							if (v:GetNWInt("mw_charge", 0) < v:GetNWInt("maxCharge", 0)) then
-								table.insert(foundEntities, v)
-							end
-						end
-					end
-				end
-			end
+		local selfTeam = self:GetNWInt("mw_melonTeam", -1)
+		local function validCheck(thisEnt, tEnt)
+			local tEntTbl = tEnt:GetTable()
+			return (tEntTbl.Base == "ent_melon_base" or tEntTbl.Base == "ent_melon_energy_base") and tEntTbl.spawned and MelonWars.sameTeam(selfTeam, tEnt:GetNWInt("mw_melonTeam", -1)) and tEnt:GetNWInt("mw_charge", -1) < tEnt:GetNWInt("maxCharge", -1)
 		end
 
-		local closestEntities = {}
-		for i=1, maxtargets do
-			local closestDistance = 0
-			local closestEntity = nil
-			for k, v in pairs(foundEntities) do
-				if (closestEntity == nil or ent:GetPos():DistToSqr( v:GetPos() ) < closestDistance) then
-					closestEntity = v
-					closestDistance = ent:GetPos():DistToSqr( v:GetPos() )
-				end
-			end
-			table.RemoveByValue(foundEntities, closestEntity)
-			table.insert(closestEntities, closestEntity)
-		end
+		local foundEntities = MelonWars.FindTargets( self, false, validCheck )
 
-		for k, v in pairs(closestEntities) do
-			if (self:DrainPower(chargeAmount)) then
-				ent.targetEntity = v
-				ent:Shoot(ent)
+		local selfPos = self:GetPos()
+		table.sort(foundEntities, function(a, b)
+			return selfPos:DistToSqr(a:GetPos()) < selfPos:DistToSqr(b:GetPos())
+		end)
+
+		for i = 1, maxtargets, 1 do
+			local v = foundEntities[i]
+			if v and self:DrainPower(chargeAmount) then --TODO: Wastes energy. Fix that. It makes low-energy units like gatlings difficult to use effectively.
+				self.targetEntity = v
+				self:Shoot( self )
 			end
 		end
 	end
-
-	self:Energy_Set_State()
 end
 
-function ENT:Shoot ( ent )
-	--------------------------------------------------------Disparar
+function ENT:Shoot ( ent ) --TODO: Refactor
 	if (ent.targetEntity == ent) then ent.targetEntity = nil end
 	if (IsValid(ent.targetEntity)) then
 		if (ent.targetEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 0) or ent:SameTeam(ent.targetEntity)) then

@@ -35,14 +35,22 @@ end
 
 
 function ENT:SlowThink ( ent )
-	local dmg = self.damageDeal
-	for k, v in ipairs(ents.FindInSphere( ent:GetPos(), ent.range )) do
-		if (v.Base == "ent_melon_base" and not ent:SameTeam(v)) then
-			local vTbl = v:GetTable()
+	local selfTbl = self:GetTable()
+	local selfPos = self:GetPos()
+	local selfTeam = self:GetNWInt("mw_melonTeam", -1)
+
+	local dmg = selfTbl.damageDeal
+	local count = 0
+	for i, v in ipairs(ents.FindInSphere( selfPos, selfTbl.range )) do
+		local vTbl = v:GetTable()
+		if vTbl.Base == "ent_melon_base" and not MelonWars.sameTeam(selfTeam, v:GetNWInt("mw_melonTeam", -1)) then
 			vTbl.damage = vTbl.damage + dmg
-			sound.Play( ent.shotSound, ent:GetPos() )
-			self:DischargeEffect() --TODO: Limit the number of times this is called. Having like 30 discharges at once is a bit much.
+			sound.Play( selfTbl.shotSound, selfPos )
+			count = count + 1
 		end
+	end
+	for i = 1, math.min(count, 10), 1 do
+		selfTbl.DischargeEffect(self)
 	end
 end
 

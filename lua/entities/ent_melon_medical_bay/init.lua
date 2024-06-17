@@ -49,23 +49,15 @@ function ENT:SlowThink ( ent )
 
 	local maxtargets = 10
 
-	local foundEntities = {}
-	local entPos = ent:GetPos()
-	for i, v in ipairs(ents.FindInSphere( entPos, selfTbl.range )) do
-		if v.Base == "ent_melon_base" and v.spawned and v.HP < v.maxHP and ent:SameTeam(v) then
-			local tr = util.TraceLine( {
-				start = entPos + selfTbl.shotOffset,
-				endpos = v:GetPos() + selfTbl.shotOffset,
-				filter = function( foundEnt )
-					return not(foundEnt.Base == "ent_melon_base" or foundEnt.Base == "ent_melon_energy_base" or foundEnt:GetClass() == "prop_physics")
-				end
-			})
-			if not tr.Entity:IsValid() then
-				table.insert(foundEntities, v)
-			end
-		end
+	local selfTeam = self:GetNWInt("mw_melonTeam", -1)
+	local function validCheck(thisEnt, targEnt)
+		local targEntTbl = targEnt:GetTable()
+		return (targEntTbl.Base == "ent_melon_base" or targEntTbl.Base == "ent_melon_energy_base") and targEntTbl.spawned and targEntTbl.HP < targEntTbl.maxHP and MelonWars.sameTeam(selfTeam, targEnt:GetNWInt("mw_melonTeam", -1))
 	end
 
+	local foundEntities = MelonWars.FindTargets( self, false, validCheck )
+
+	local entPos = ent:GetPos()
 	table.sort(foundEntities, function(a, b)
 		return entPos:DistToSqr(a:GetPos()) < entPos:DistToSqr(b:GetPos())
 	end)

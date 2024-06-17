@@ -145,8 +145,6 @@ local function MW_Spawn( ent )
 	ent.spawned = true
 
 	ent.HP = ent.maxHP
-	--ent:SetNWFloat( "maxhealth", ent.maxHP )
-	--ent:SetNWFloat( "health", ent.HP )
 	ent:SetNWFloat( "healthFrac", ent.HP / ent.maxHP )
 
 	local baseSize
@@ -174,8 +172,6 @@ function ENT:Setup()
 	self.damage = 0
 
 	self.moveForce = Vector( 0, 0, 0 )
-
-	--self:SetPos(self:GetPos()+self.posOffset)
 
 	if self.changeModel then
 		self:SetModel( self.modelString )
@@ -301,7 +297,6 @@ function ENT:Update()
 	if selfTbl.damage > 0 then -- Apply damage
 		selfTbl.gotHit = true
 		selfTbl.HP = selfTbl.HP - selfTbl.damage
-		--self:SetNWFloat( "health", selfTbl.HP )
 		self:SetNWFloat( "healthFrac", selfTbl.HP / selfTbl.maxHP )
 		selfTbl.damage = 0
 		if selfTbl.HP <= 0 then
@@ -639,6 +634,38 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 			end
 		end
 	end
+end
+
+local function defaultValidCheck( ent, targEnt )
+	local targEntTbl = targEnt:GetTable()
+	return (targEntTbl.Base == "ent_melon_base" or targEntTbl.Base == "ent_melon_energy_base" or targEntTbl.Base == "ent_melon_prop_base") and not ent:SameTeam(targEnt)
+end
+
+function MelonWars.FindTargets( ent, careForWalls, validCheck )
+	local entTbl = ent:GetTable()
+	if not isfunction(validCheck) then
+		validCheck = defaultValidCheck
+	end
+
+	local pos = ent:GetPos() + (entTbl.shotOffset or vector_origin)
+
+	local foundEnts = {}
+	for i, v in ipairs( ents.FindInSphere(pos, entTbl.range) ) do
+		if not(v == ent) and validCheck( ent, v ) then
+			local tr = util.TraceLine( {
+				start = pos,
+				endpos = v:GetPos() + (v.shotOffset or vector_origin),
+				filter = function( foundEnt )
+					local foundTbl = foundEnt:GetTable()
+					return not( foundEnt == ent or foundTbl.Base == "ent_melon_base" or foundTbl.Base == "ent_melon_energy_base" or (not careForWalls and (foundEnt:GetClass() == "prop_physics" or foundTbl.Base == "ent_melon_prop_base")))
+				end
+			})
+			if not tr.Entity:IsValid() and not(careForWalls and tr.Entity:IsWorld()) then
+				table.insert(foundEnts, v)
+			end
+		end
+	end
+	return foundEnts
 end
 
 function ENT:LoseTarget()

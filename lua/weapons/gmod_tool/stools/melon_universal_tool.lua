@@ -1137,14 +1137,14 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 		local px, py = pl.panel:GetSize()
 		scroll:SetPos(0,0)
 		scroll:SetSize(px, py)
-		-------------------------------------------------------- Start
+
 		--Build sphere alpha
 		y = y + 70
 		local label = vgui.Create("DLabel", scroll)
 		label:SetPos(20, y-20)
 		label:SetSize(250,80)
 		label:SetFontInternal( "DermaLarge" )
-		label:SetText("BuildSphere Alpha:\n" .. tostring(math.Round(GetConVar("mw_buildalpha_multiplier"):GetFloat(),1)))
+		label:SetText("Build Zone Alpha:\n" .. tostring(math.Round(GetConVar("mw_buildalpha_multiplier"):GetFloat(),1)))
 
 		local slider = vgui.Create("DPanel", scroll)
 		slider:SetSize(GetConVar("mw_buildalpha_multiplier"):GetFloat() * 120,40)
@@ -1152,27 +1152,29 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 		for i = 1, 35 do
 			local button = vgui.Create("DButton", scroll)
 			button:SetSize(15,40)
-			button:SetPos(50+i*12,y + 20)
+			button:SetPos(50 + i * 12,y + 20)
 			button:SetText("")
 			function button:DoClick()
 				pl:ConCommand("mw_buildalpha_multiplier " .. tostring(math.Round(i/10,1)))
 				slider:SetSize(i*12, 40)
-				label:SetText("BuildSphere Alpha:\n" .. tostring(math.Round(i/10,1)))
+				label:SetText("Build Zone Alpha:\n" .. tostring(math.Round(i/10,1)))
 			end
 			button.Paint = function(s, w, h)
 				draw.RoundedBox( 0, w-1, 0, 1, h, Color(100,100,100) )
 			end
 		end
 
-		local label = vgui.Create("DLabel", scroll)
-		label:SetPos( 20, y + 40 )
-		label:SetSize( 450, 80 )
-		label:SetFontInternal( "Trebuchet24" )
-		label:SetText("The transparency of HQ build range bubbles")
+		local label2 = vgui.Create("DLabel", scroll)
+		label2:SetPos( 20, y + 40 )
+		label2:SetSize( 450, 80 )
+		label2:SetFontInternal( "Trebuchet24" )
+		label2:SetText("The transparency of HQ build range bubbles")
 
 		y = y + 120
+		_MakeCheckbox(20, y, scroll, "Spherical Build Zones", "mw_oldbuildzones")
 
 		-- Player readyup
+		y = y + 40
 		_MakeCheckbox(20, y, scroll, "[Ready Up]", "mw_player_ready")
 	end
 end
