@@ -705,78 +705,84 @@ function ENT:PhysicsCollide( colData, physObject )
 	end
 end
 
-function MelonWars.defaultShoot( ent, forceTargetPos ) --TODO: Optimize
-	local pos = ent:GetPos()+ent.shotOffset
-	--------------------------------------------------------Disparar
-	if (forceTargetPos ~= nil or IsValid(ent.targetEntity)) then
-		local dir = nil
-		if (IsValid(ent.targetEntity)) then
-			local targetPos = ent.targetEntity:GetPos()-ent.targetEntity:OBBCenter()
-			if (ent.targetEntity:GetVar("shotOffset") ~= nil) then
-				if ent.targetEntity:GetVar("shotOffset") ~= vector_origin then
-					targetPos = ent.targetEntity:GetPos()+ent.targetEntity:GetVar("shotOffset")
-				end
+function MelonWars.defaultShoot( ent, forceTargetPos )
+	local entTbl = ent:GetTable()
+	local validTarget = IsValid(entTbl.targetEntity)
+
+	if validTarget or forceTargetPos then
+		local pos = ent:GetPos() + entTbl.shotOffset
+
+		local dir
+		if validTarget then
+			local targetPos = entTbl.targetEntity:GetPos() - entTbl.targetEntity:OBBCenter()
+
+			local shotOffset = entTbl.targetEntity:GetTable().shotOffset
+			if shotOffset and shotOffset ~= vector_origin then
+				targetPos:Add(shotOffset)
+			else
+				targetPos:Sub(entTbl.targetEntity:OBBCenter())
 			end
 			dir = (targetPos-pos):GetNormalized()
 		else
 			dir = (forceTargetPos-pos):GetNormalized()
 		end
 
-		MelonWars.bullet(ent, pos, dir, ent.range, ent, nil, 0)
+		MelonWars.bullet(ent, pos, dir, entTbl.range, ent, nil, 0)
 
 		local effectdata = EffectData()
 		effectdata:SetScale(1)
 		effectdata:SetAngles( dir:Angle())
 		effectdata:SetOrigin( pos + dir:GetNormalized() * 10 )
 		util.Effect( "MuzzleEffect", effectdata )
-		sound.Play( ent.shotSound, pos )
+		sound.Play( entTbl.shotSound, pos )
 	end
 end
 
 function MelonWars.bullet(ent, startingPos, direction, distance, ignore, callback, depth)
-	local damage = ent.damageDeal
-	local spread = Angle(math.random(-ent.spread/4, ent.spread/4),math.random(-ent.spread/4, ent.spread/4),0)
-	ent.fired = true
+	local entTbl = ent:GetTable()
+
+	local spr = entTbl.spread / 4
+	local spread = Angle(math.random(-spr, spr),math.random(-spr, spr),0)
+
+	entTbl.fired = true
+
 	local effectdata = EffectData()
+	effectdata:SetOrigin(startingPos + direction * 130)
+
 	local angle = direction:Angle()
 	local hitpos = startingPos + direction * distance
-	---------------------------------------------------------------------Esto va hacer que se aplique el daño le pegue o no
-	if (forceTargetPos == nil and ent.targetEntity.Base == "ent_melon_prop_base") then
-		ent.targetEntity:TakeDamage( ent.damageDeal, ent, ent )
-	elseif (forceTargetPos == nil and ent.targetEntity:GetClass() == "prop_physics") then
-		ent.targetEntity:TakeDamage( ent.damageDeal, ent, ent )
+
+	if forceTargetPos == nil and entTbl.targetEntity.Base == "ent_melon_prop_base" then --Always hit baseprops/contraption props to prevent props with bad hitboxes/origins being abused.
+		entTbl.targetEntity:TakeDamage( entTbl.damageDeal, ent, ent )
+	elseif forceTargetPos == nil and entTbl.targetEntity:GetClass() == "prop_physics" then
+		entTbl.targetEntity:TakeDamage( entTbl.damageDeal, ent, ent )
 		local php = ent:GetNWInt("propHP", -1)
 		if (php ~= -1) then
-			ent:SetNWInt("propHP", php-ent.damageDeal)
+			ent:SetNWInt("propHP", php-entTbl.damageDeal)
 		end
 	else
-		-- New Laser shooting
 		direction:Rotate(spread)
-		local tr = util.QuickTrace( startingPos, direction*distance, function(hitEnt)
+
+		local blockTraces = { --TODO: This should be a value on the entity, not hard-coded.
+			["ent_melon_wheel"] = true,
+			["ent_melon_propeller"] = true,
+			["ent_melon_hover"] = true
+		}
+		local entTeam = ent:GetNWInt("mw_melonTeam", -1)
+
+		local tr = util.QuickTrace( startingPos, direction * distance, function(hitEnt)
 			local cl = hitEnt:GetClass()
-			if (cl == "ent_melon_wheel" or cl == "ent_melon_propeller" or cl == "ent_melon_hover") then
-				return true
-			end
-			if (hitEnt == ent or ent:SameTeam(hitEnt)) then
-				return false
-			end
-			return true
+			return blockTraces[cl] or not(MelonWars.sameTeam(entTeam, hitEnt:GetNWInt("mw_melonTeam", -1) or hitEnt == ent))
 		end)
 
 		hitpos = tr.HitPos
-
-		--local angle = (tr.HitPos-startingPos):Angle()
-
-		local effectdata = EffectData()
-		if ((tr.HitPos-startingPos):LengthSqr() < 130*130) then
-			effectdata:SetOrigin(startingPos+direction*130)
-		else
-			effectdata:SetOrigin(tr.HitPos)
+		if hitpos:DistToSqr(startingPos) >= 130^2 then
+			effectdata:SetOrigin(hitpos)
 		end
 
 		if IsValid(tr.Entity) then
-			tr.Entity:TakeDamage( damage, ent, ent )
-			if (callback ~= nil) then
+			tr.Entity:TakeDamage( entTbl.damageDeal, ent, ent )
+			if isfunction(callback) then
 				callback(ent,tr.Entity)
 			end
 		end
@@ -789,7 +795,6 @@ function MelonWars.bullet(ent, startingPos, direction, distance, ignore, callbac
 	effectdata:SetScale(3)
 	effectdata:SetNormal(direction)
 	util.Effect( "AR2Impact", effectdata )
-	------------
 end
 
 function MelonWars.defaultDeathEffect( ent )
