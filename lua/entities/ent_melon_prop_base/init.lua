@@ -1,13 +1,18 @@
+ --[[
+	Logic for base props is split between this File and ent_melon_wall. 
+ 	This isn't great but I can't be bothered to change it. Blame Marum if you don't like it.
+
+	There used to be a lot of extra logic spread out for them in hooks and other entities as well, but I've removed all of the instances of this that I could find.
+--]]
+
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 
-include('shared.lua')
+include("shared.lua")
 
 function ENT:PropDefaults( ent )
 
-	ent.hp = 1
-	ent:SetNWFloat( "maxhealth", 1 )
-	ent:SetNWFloat( "health", 1 )
+	ent.HP = 1
 
 	ent.shotOffset = Vector(0,0,0)
 	ent.modelString = "models/props_junk/watermelon01.mdl"
@@ -36,35 +41,51 @@ function ENT:PropDie()
 	if cvars.Bool( "mw_admin_immortality" ) then return end
 	self:PropDefaultDeathEffect()
 end
---[[
+
 function ENT:OnTakeDamage( damage )
-	if (damage:GetDamage() > 0) then
-		if ((damage:GetAttacker():GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not damage:GetAttacker():GetVar('careForFriendlyFire')) and not damage:GetAttacker():IsPlayer()) then
-			local HP = self:GetNWFloat("health", 1) - damage:GetDamage()
-			self:SetNWFloat( "health", HP )
-			if (HP <= 0) then
-				self:PropDie()
-			end
-		end
+	local damageDone = damage:GetDamage()
+
+	if damageDone <= 0 then return end
+
+	local attacker = damage:GetAttacker()
+	local isFriendly = MelonWars.sameTeam( attacker:GetNWInt("mw_melonTeam", -1), self:GetNWInt("mw_melonTeam", -1) )
+	if not ( (not isFriendly or not attacker.careForFriendlyFire) and not attacker:IsPlayer() ) then return end
+
+	local selfTbl = self:GetTable()
+	local mul = attacker.buildingDamageMultiplier
+	damageDone = damageDone * (mul or 1)
+
+	if damage:GetDamageType() == DMG_BURN then
+		damageDone = damageDone * 0.5
 	end
-end]]
+	if isFriendly then
+		damageDone = damageDone / 10
+	end
+
+	selfTbl.HP = selfTbl.HP - damageDone
+
+	if selfTbl.HP <= 0 then
+		self:PropDie()
+	end
+end
 
 function ENT:OnRemove()
-	if (SERVER) then
-		if (self:GetNWFloat("health", 1) == self:GetNWFloat("maxhealth", 1) and CurTime()-self:GetCreationTime() < 30) then
-			if (MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] ~= nil) then
-				MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] = MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)]+self.value
-			end
-			for k, v in pairs( player.GetAll() ) do
-				if (self:GetNWInt("mw_melonTeam", 0) ~= 0) then
-					if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
-						net.Start("MW_TeamCredits")
-							net.WriteInt(MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
-						net.Send(v)
-						v:PrintMessage( HUD_PRINTTALK, "== "..self.value.." Water Refunded ==" )
-					end
-				end
-			end
+	if not SERVER then return end
+	if not(self.HP == self.maxHP and CurTime() - self:GetCreationTime() < 30) then return end
+
+	local selfTeam = self:GetNWInt("mw_melonTeam", -1)
+	if selfTeam == -1 then return end
+
+	if MelonWars.teamCredits[selfTeam] ~= nil then
+		MelonWars.teamCredits[selfTeam] = MelonWars.teamCredits[selfTeam] + self.value
+	end
+
+	for i, v in ipairs( player.GetAll() ) do
+		if v:GetInfoNum("mw_team", -1) == selfTeam then
+			net.Start("MW_TeamCredits")
+				net.WriteInt(MelonWars.teamCredits[selfTeam] ,32)
+			net.Send(v)
+			v:PrintMessage( HUD_PRINTTALK, "== " .. self.value .. " Water Refunded ==" )
 		end
 	end
 end

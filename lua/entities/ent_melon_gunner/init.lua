@@ -58,10 +58,10 @@ function ENT:Shoot ( ent, forcedTargetPos )
 			end)
 		end
 		local target = ent.targetEntity
-		if (target.Base == "ent_melon_base" or target.Base == "ent_melon_energy_base" or target:GetClass() == "ent_melon_wall") then
-			if (self.spinup > self.minspinup) then
+		if (target.Base == "ent_melon_base" or target.Base == "ent_melon_energy_base" or target.Base == "ent_melon_prop_base") then
+			if self.spinup > self.minspinup then
 				self.spinup = self.spinup - 0.6
-				if (self.spinup < self.minspinup) then
+				if self.spinup < self.minspinup then
 					self.spinup = self.minspinup
 				end
 			end

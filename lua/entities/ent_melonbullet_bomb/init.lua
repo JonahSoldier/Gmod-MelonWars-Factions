@@ -7,7 +7,7 @@ function ENT:Initialize()
 	self:PhysicsInitSphere( 5, "default" )
 	self.rotation = AngleRand():Forward()
 	self:GetPhysicsObject():SetDamping(0,0)
-	local time = 3.8
+	local time = 3.7
 	self:Ignite( time, 0.1 )
 	timer.Simple( time, function()
 		if (self:IsValid()) then
@@ -29,18 +29,10 @@ end
 function ENT:PhysicsCollide( colData, collider )
 	local other = colData.HitEntity
 	if not self:IsValid() then return end
-	if not (not other.canMove or other.Base == "ent_melon_prop_base") then return end
+	if not(not other.canMove or other.Base == "ent_melon_prop_base") or not other:IsValid() then return end
 
-	if other.Base == "ent_melon_prop_base" then
-		local newHealth =  other:GetNWInt("health", 1) - 30
-		other:SetNWInt( newHealth )
-		if newHealth < 0 then
-			other:PropDie()
-		end
-	else
-		other.damage = 30
-	end
-	self:SetNWFloat( "health", HP )
+	other:TakeDamage(30, self, self)
+
 	local effectdata = EffectData()
 	effectdata:SetOrigin( self:GetPos() )
 	util.Effect( "Explosion", effectdata )

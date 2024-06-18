@@ -13,7 +13,7 @@ local mw_team_cv = CreateClientConVar( "mw_team", "1", 1, true )
 TOOL.ClientConVar[ "mw_team" ] = 1
 CreateClientConVar( "mw_contraption_name", "default", 0, false )
 TOOL.ClientConVar[ "mw_contraption_name" ] = "default"
-CreateClientConVar( "mw_water_tank_value", "10000", false, true, "Sets the value of a water tank upon its creation.", 0, 50000 )
+CreateClientConVar( "mw_water_tank_value", "1000", false, true, "Sets the value of a water tank upon its creation.", 0, 50000 )
 TOOL.ClientConVar[ "mw_water_tank_value" ] = 10000
 
 CreateConVar( "mw_enable_skin", "1", FCVAR_ARCHIVE + FCVAR_USERINFO, "Enable or disable your custom skin." )
@@ -877,9 +877,6 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 		y = y + 40
 		_MakeCheckbox( 20, y, scroll, "Lock Teams", "mw_admin_locked_teams", "[Prevent players from changing team or faction]", false )
 
-		y = y + 40
-		_MakeCheckbox( 20, y, scroll, "Extra Unit Options", "mw_admin_bonusunits", "[Balance not guaranteed]", false )
-
 		y = y + 80
 
 		local function baseSpawner(text, action)
@@ -926,11 +923,12 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 		label:SetText("Alternative Gameplay Options")
 
 		y = y + 40
+		_MakeCheckbox( 20, y, scroll, "Extra Unit Options", "mw_admin_bonusunits", "[Balance not guaranteed]", false )
 
+		y = y + 40
 		_MakeCheckbox( 20, y, scroll, "No Manual Placing", "mw_admin_allow_manual_placing", "[Prevents spawning of mobile units]", true)
 
 		y = y + 40
-
 		_MakeCheckbox( 20, y, scroll, "Ban Contraptions", "mw_admin_ban_contraptions", "[Disable contraption assemblers]", false)
 
 		y = y + 60
@@ -1045,9 +1043,9 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 		y = y + 70
 		local default4 = resourceSlider("Water Tank\nValue:", "mw_water_tank_value", 0.012, 1000)
 		default4.Paint = function( s, w, h )
-			draw.RoundedBox( 0, 108, 0, 12, h, Color( 10, 150, 10 ) )
-			draw.RoundedBox( 0, 0, 0, 72, h, Color( 10, 40, 80 ) )
-			draw.RoundedBox( 0, 180, 0, 180, h, Color( 80, 10, 10 ) )
+			draw.RoundedBox( 0, 0, 0, 12, h, Color( 10, 150, 10 ) ) --draw.RoundedBox( 0, 108, 0, 12, h, Color( 10, 150, 10 ) )
+			--draw.RoundedBox( 0, 0, 0, 72, h, Color( 10, 40, 80 ) )
+			draw.RoundedBox( 0, 120, 0, 240, h, Color( 80, 10, 10 ) )
 		end
 
 		y = y + 120
@@ -1508,7 +1506,7 @@ function TOOL:LeftClick( tr )
 			net.WriteInt(mw_melonTeam, 8)
 		net.SendToServer()
 		self:GetOwner():ConCommand("mw_action 0")
-	elseif action == 3 then
+	elseif action == 3 then --TODO: Refactor
 		if pl.mw_spawnTimer >= CurTime() - 0.1 then return end
 		local prop_index = pl:GetInfoNum("mw_chosen_prop", 0)
 		local cost = MelonWars.baseProps[prop_index].cost
@@ -1525,11 +1523,11 @@ function TOOL:LeftClick( tr )
 			end
 		end
 		net.Start("MW_SpawnProp")
-			net.WriteInt(prop_index, 16)
+			net.WriteUInt(prop_index, 8)
 			net.WriteTable(trace)
-			net.WriteInt(cost, 16)
+			--net.WriteInt(cost, 16)
 			net.WriteInt(mw_melonTeam, 8)
-			net.WriteInt(pl.mw_spawntime * cvars.Number("mw_admin_spawn_time"), 16)
+			--net.WriteInt(pl.mw_spawntime * cvars.Number("mw_admin_spawn_time"), 16)
 			net.WriteAngle(pl.propAngle)
 		net.SendToServer()
 		if (cvars.Bool("mw_admin_credit_cost")) then

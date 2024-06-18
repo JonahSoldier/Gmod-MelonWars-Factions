@@ -60,8 +60,6 @@ hook.Add( "PostDrawTranslucentRenderables", "MelonWars_UnitSelectionCircles", fu
 		if IsValid( v ) then
 			local floorTrace = v.floorTrace
 			if floorTrace ~= nil and floorTrace.Hit then
-				--local hp = v:GetNWFloat("health", 0)
-				--local maxhp = v:GetNWFloat("maxhealth", 1)
 				local healthFrac = v:GetNWFloat("healthFrac", 1)
 				local pos = v:GetPos() + v:OBBCenter()
 				if v.circleSize ~= nil then
@@ -192,7 +190,6 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 		    local pos = (v:GetPos() + Vector(0,0,v:OBBMaxs().z)):ToScreen()
 			pos = Vector(pos.x, pos.y-100)
 
-			--local percent = v:GetNWInt("health", 3) / v:GetNWInt("maxhealth", 10)
 			local percent = v:GetNWInt( "healthFrac", 1)
 			surface.SetDrawColor( 0, 0, 0, 255 )
 		  	surface.DrawRect( pos.x - 15, pos.y - 55, 30, 160 )

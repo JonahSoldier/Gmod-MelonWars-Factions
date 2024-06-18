@@ -46,8 +46,7 @@ function ENT:SlowThink ( ent )
 			local v = foundEntities[i]
 			if v and self:DrainPower(energyCost) then --TODO: Refactor
 				local vTbl = v:GetTable()
-				if v:GetClass() == "prop_physics" or vTbl.Base == "ent_melon_prop_base" then
-					v:TakeDamage( selfTbl.damageDeal, self, self )
+				if v:GetClass() == "prop_physics" then
 					local php = v:GetNWInt("propHP", -1)
 					if php ~= -1 then
 						v:SetNWInt("propHP", php-selfTbl.damageDeal)

@@ -742,10 +742,7 @@ function MelonWars.bullet(ent, startingPos, direction, distance, ignore, callbac
 	local hitpos = startingPos + direction * distance
 	---------------------------------------------------------------------Esto va hacer que se aplique el daño le pegue o no
 	if (forceTargetPos == nil and ent.targetEntity.Base == "ent_melon_prop_base") then
-		ent.targetEntity:SetNWFloat( "health", ent.targetEntity:GetNWFloat( "health", 1)-ent.damageDeal)
-		if (ent.targetEntity:GetNWFloat( "health", 1) <= 0) then
-			ent.targetEntity:PropDie()
-		end
+		ent.targetEntity:TakeDamage( ent.damageDeal, ent, ent )
 	elseif (forceTargetPos == nil and ent.targetEntity:GetClass() == "prop_physics") then
 		ent.targetEntity:TakeDamage( ent.damageDeal, ent, ent )
 		local php = ent:GetNWInt("propHP", -1)
@@ -777,7 +774,7 @@ function MelonWars.bullet(ent, startingPos, direction, distance, ignore, callbac
 			effectdata:SetOrigin(tr.HitPos)
 		end
 
-		if (IsValid(tr.Entity)) then
+		if IsValid(tr.Entity) then
 			tr.Entity:TakeDamage( damage, ent, ent )
 			if (callback ~= nil) then
 				callback(ent,tr.Entity)
@@ -853,7 +850,7 @@ function ENT:OnTakeDamage( damage )
 		if damage:GetDamageType() == DMG_BURN then
 			damageDone = damageDone * 0.5
 		end
-		if self:SameTeam(attacker) then --TODO: Alliance check. I've accidentally wiped a teammate's squad with bombs on at least one occasion.
+		if self:SameTeam(attacker) then
 			damageDone = damageDone / 10
 		end
 

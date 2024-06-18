@@ -29,22 +29,11 @@ local function spawn( ply )
 end
 hook.Add( "PlayerInitialSpawn", "MelonWars_InitSpawnData", spawn )
 
-local function takedmg( target, dmginfo )
+
+hook.Add( "EntityTakeDamage", "MelonWars_EntTakeDmg", function( target, dmginfo )
 	if not IsValid( target and dmginfo ) then return end
 	if dmginfo:GetAttacker():GetClass() == "player" then return end
-	if target.Base == "ent_melon_prop_base" then
-		local multiplier = dmginfo:GetAttacker().buildingDamageMultiplier or 1
-		local damage = dmginfo:GetDamage() * multiplier
-		if (dmginfo:GetDamageType() == DMG_BLAST) then
-			damage = damage * 2
-		elseif (dmginfo:GetDamageType() == DMG_BURN) then
-			damage = damage * 0.18
-		end
-		target:SetNWFloat( "health", target:GetNWFloat( "health", 1) - damage )
-		if target:GetNWFloat( "health", 1 ) <= 0 and not cvars.Bool("mw_admin_immortality") then
-			target:PropDefaultDeathEffect()
-		end
-	elseif (target:GetNWInt("propHP", -1) ~= -1) then
+	if target:GetNWInt("propHP", -1) ~= -1 then
 		target:SetNWInt( "propHP", target:GetNWInt( "propHP", 1 ) - dmginfo:GetDamage() )
 		if (target:GetNWInt( "propHP", 1) <= 0) then
 			local effectdata = EffectData()
@@ -53,15 +42,14 @@ local function takedmg( target, dmginfo )
 			target:Remove()
 		end
 	end
-	if target.chaseStance ~= nil and target.chaseStance == true then
+	if target.chaseStance then
 		target.chasing = true
 		target.targetEntity = dmginfo:GetAttacker()
-		if (target.targetEntity.owner ~= nil) then
+		if target.targetEntity.owner ~= nil then
 			target.targetEntity = target.targetEntity.owner
 		end
 	end
-end
-hook.Add( "EntityTakeDamage", "MelonWars_EntTakeDmg", takedmg )
+end )
 
 hook.Add( "InitPostEntity", "MelonWars_StartLoad", function()
 	MelonWars.teamGrid = {}          -- create the matrix

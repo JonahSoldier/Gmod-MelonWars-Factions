@@ -84,21 +84,10 @@ function ENT:Explode()
 			selfTbl.nextSlowThink = CurTime()+0.1
 			return false
 		end
-
 		if selfTbl.forceExplode or selfTbl.targetEntity:IsValid() then
-			--allows this to damage base props, self.damageDeal is divided by 2 so it does half damage to them.
-			if (selfTbl.targetEntity.Base == "ent_melon_prop_base") then
-				selfTbl.targetEntity:SetNWFloat( "health", selfTbl.targetEntity:GetNWFloat( "health", 1) - selfTbl.damageDeal / 2)
-				if (selfTbl.targetEntity:GetNWFloat( "health", 1) <= 0) then
-					selfTbl.targetEntity:PropDie()
-				end
-				sound.Play( selfTbl.shotSound, self:GetPos(), 75, 145 )
-				MelonWars.die ( self )
-			else
-				selfTbl.targetEntity:TakeDamage( selfTbl.damageDeal, self, self )
-				sound.Play( selfTbl.shotSound, self:GetPos(), 75, 145 )
-				MelonWars.die ( self )
-			end
+			selfTbl.targetEntity:TakeDamage( selfTbl.damageDeal, self, self )
+			sound.Play( selfTbl.shotSound, self:GetPos(), 75, 145 )
+			MelonWars.die ( self )
 		end
 	end )
 end

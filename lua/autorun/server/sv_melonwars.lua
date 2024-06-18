@@ -438,7 +438,7 @@ end )
 MelonWars.messageReceivingState = "idle"
 MelonWars.networkBuffer = ""
 
-net.Receive( "BeginContraptionLoad", function()
+net.Receive( "BeginContraptionLoad", function(_, pl)
 	if MelonWars.messageReceivingState ~= "idle" then return end
 	MelonWars.messageReceivingState = tostring( pl )
 	MelonWars.networkBuffer = ""
@@ -560,8 +560,7 @@ end )
 
 local function MW_SpawnProp( model, pos, ang, _team, parent, health, cost, pl, spawntime, offset )
 	local newMarine = ents.Create( "ent_melon_wall" )
-	if not IsValid( newMarine ) then return end -- Check whether we successfully made an entity, if not - bail
-	--if ( IsValid( trace.Entity ) and trace.Entity.Base == "ent_melon_base" ) then return end
+	if not IsValid( newMarine ) then return end
 
 	newMarine:SetPos(pos)
 	newMarine:SetAngles(ang)
@@ -576,27 +575,28 @@ local function MW_SpawnProp( model, pos, ang, _team, parent, health, cost, pl, s
 	newMarine:Spawn()
 	newMarine:SetNWFloat("spawnTime", spawntime)
 
-	if (parent ~= nil) then
-		local weld = constraint.Weld( newMarine, parent, 0, 0, 0, true , false )
+	if parent then
+		constraint.Weld( newMarine, parent, 0, 0, 0, true , false )
 	else
 		newMarine:SetMoveType(MOVETYPE_NONE)
-		local weld = constraint.Weld( newMarine, game.GetWorld(), 0, 0, 0, true , false )
+		constraint.Weld( newMarine, game.GetWorld(), 0, 0, 0, true , false )
 	end
 
 	newMarine:SetVar("shotOffset", offset) 	-- NOT WORKING!!!!!
+	--TODO: Check what Marum meant by that comment.
 
-	if (IsValid(pl)) then
+	if IsValid(pl) then
 		sound.Play( "garrysmod/content_downloaded.wav", pl:GetPos(), 60, 90, 1 )
 		pl.mw_melonTeam = _team
 		newMarine:SetOwner(pl)
-		undo.Create("Melon Marine")
+		undo.Create("Melon Base Prop")
 		 undo.AddEntity( newMarine )
 		 undo.SetPlayer( pl )
 		undo.Finish()
 	end
 
 	newMarine.realvalue = cost
-	if (cvars.Bool("mw_admin_credit_cost")) then
+	if cvars.Bool("mw_admin_credit_cost") then
 		newMarine.value = cost
 	else
 		newMarine.value = 0
@@ -610,21 +610,27 @@ local function MW_SpawnProp( model, pos, ang, _team, parent, health, cost, pl, s
 end
 
 net.Receive( "MW_SpawnProp", function( _, pl )
-	local index = net.ReadInt(16)
-	local trace = net.ReadTable()
-	local cost = net.ReadInt(16)
+	local index = net.ReadUInt(8)
+	local trace = net.ReadTable() --TODO: just send the entity and pos over the network, not the entire traceResult table.
 	local _team = net.ReadInt(8)
-	local spawntime = net.ReadInt(16)
 	local propAngle = net.ReadAngle()
 
-	local offset = Vector(0,0,MelonWars.baseProps[index].offset.z)
-	if (cvars.Bool("mw_prop_offset") == true) then
-		offset = MelonWars.baseProps[index].offset
+	local baseProp = MelonWars.baseProps[index]
+
+	local cost = baseProp.cost
+	local spawntime = baseProp.spawn_time * cvars.Number("mw_admin_spawn_time")
+	local offset
+	if cvars.Bool("mw_prop_offset") then
+		offset = baseProp.offset
+	else
+		offset = Vector(0,0,baseProp.offset.z)
 	end
+
 	local xoffset = Vector( offset.x * ( math.cos( propAngle.y / 180 * math.pi ) ), offset.x * ( math.sin( propAngle.y / 180 * math.pi ) ), 0 )
 	local yoffset = Vector( offset.y * ( -math.sin( propAngle.y / 180 * math.pi ) ), offset.y * ( math.cos( propAngle.y / 180 * math.pi ) ), 0 )
 	offset = xoffset + yoffset + Vector( 0, 0, offset.z )
-	MW_SpawnProp(MelonWars.baseProps[index].model, trace.HitPos + trace.HitNormal + offset, propAngle + MelonWars.baseProps[index].angle, _team, trace.Entity, MelonWars.baseProps[index].hp, cost, pl, spawntime, offset)
+
+	MW_SpawnProp(baseProp.model, trace.HitPos + trace.HitNormal + offset, propAngle + baseProp.angle, _team, trace.Entity, baseProp.hp, cost, pl, spawntime, offset)
 end )
 
 local function MW_SpawnBaseAtPos(_team, vector, pl, grandwar, unit)

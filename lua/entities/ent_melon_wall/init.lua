@@ -1,3 +1,10 @@
+ --[[
+	Logic for base props is split between this File and ent_melon_prop_base. 
+ 	This isn't great but I can't be bothered to change it. Blame Marum if you don't like it.
+
+	There used to be a lot of extra logic spread out for them in hooks and other entities as well, but I've removed all of the instances of this that I could find.
+--]]
+
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 
@@ -10,8 +17,6 @@ local function propSpawn( ent )
 		ent:SetMaterial(ent.materialString)
 		ent.spawned = true
 		ent.HP = ent.maxHP
-		ent:SetNWFloat( "maxhealth", ent.maxHP )
-		ent:SetNWFloat( "health", ent.HP )
 
 		hook.Run("MelonWarsEntitySpawned", ent)
 	end
@@ -19,31 +24,26 @@ end
 
 local function PropSetup( ent )
 	if SERVER then
-		ent:SetNWEntity( "targetEntity", ent.targetEntity )
+		ent:SetSolid( SOLID_VPHYSICS )
+		ent:PhysicsInit( SOLID_VPHYSICS )
 
-		--ent:SetModel( ent.modelString )
-
-		ent:SetSolid( SOLID_VPHYSICS )         -- Toolbox
-
-		ent:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
-
-		if (ent.moveType == 0) then
-			local weld = constraint.Weld( ent, game.GetWorld(), 0, 0, 0, true , false )
+		if ent.moveType == 0 then
+			constraint.Weld( ent, game.GetWorld(), 0, 0, 0, true , false )
 			ent.canMove = false
 		end
 
 		ent.phys = ent:GetPhysicsObject()
-		if (IsValid(ent.phys)) then
+		if IsValid(ent.phys) then
 			ent.phys:Wake()
 		end
 
-		if (ent.changeAngles) then
+		if ent.changeAngles then
 			ent:SetAngles( ent.Angles )
 		end
 
-		if (cvars.Number("mw_admin_spawn_time") == 1 and ent.mw_spawntime ~= nil) then
+		if cvars.Number("mw_admin_spawn_time") == 1 and ent.mw_spawntime ~= nil then
 			timer.Simple( ent.mw_spawntime-CurTime(), function()
-				if (IsValid(ent)) then
+				if IsValid(ent) then
 					propSpawn(ent)
 				end
 			end)
