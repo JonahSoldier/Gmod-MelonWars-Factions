@@ -420,8 +420,8 @@ function ENT:FinishMovement()
 		selfTbl.targetPos = selfTbl.rallyPoints[1]
 		self:SetNWVector("targetPos", selfTbl.rallyPoints[1])
 		selfTbl.moving = true
-		for i=1, 30 do
-			selfTbl.rallyPoints[i] = selfTbl.rallyPoints[i+1]
+		for i = 1, 30 do
+			selfTbl.rallyPoints[i] = selfTbl.rallyPoints[i + 1]
 		end
 		selfTbl.rallyPoints[30] = vector_origin
 	end

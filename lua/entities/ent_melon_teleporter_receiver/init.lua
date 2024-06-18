@@ -8,7 +8,6 @@ function ENT:Initialize()
 
 	self.modelString = "models/props_lab/teleplatform.mdl"
 	self.maxHP = 75
-	self.range = 250
 	self.shotOffset = Vector(0,0,10)
 
 	self.moveType = MOVETYPE_NONE
@@ -18,7 +17,6 @@ function ENT:Initialize()
 	self:Setup()
 
 	self:SetCollisionGroup(COLLISION_GROUP_NONE)
-
 	timer.Simple(0.1, function () self:FriendlyUnitsNearby() end)
 end
 
@@ -38,20 +36,16 @@ end
 
 function ENT:FriendlyUnitsNearby()
 	local selfTeam = self:GetNWInt("mw_melonTeam", 0)
-	for i, v in ipairs(ents.FindInSphere( self:GetPos(), self.range)) do
-		if not v:GetClass() == "ent_melon_teleporter_receiver" and v.Base == "ent_melon_base" and MelonWars.sameTeam(v:GetNWInt("mw_melonTeam", 0), selfTeam) then
+	for i, v in ipairs(ents.FindInSphere( self:GetPos(), 250)) do
+		if not(v:GetClass() == "ent_melon_teleporter_receiver") and v.Base == "ent_melon_base" and MelonWars.sameTeam(v:GetNWInt("mw_melonTeam", 0), selfTeam) then
 			return
 		end
 	end
 
 	for i, v in ipairs(player.GetAll()) do
 		if v:GetInfoNum("mw_team", 0) == selfTeam then
-			v:PrintMessage( HUD_PRINTTALK, "== Siphons require nearby units to build! ==" )
+			v:PrintMessage( HUD_PRINTTALK, "== Receivers require nearby units to build! ==" )
 		end
 	end
 	self:Remove()
-end
-
-function ENT:OnRemove()
-	MelonWars.updatePopulation(-self.population, self:GetNWInt("mw_melonTeam", 0))
 end

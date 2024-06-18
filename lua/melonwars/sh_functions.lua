@@ -1,5 +1,8 @@
 AddCSLuaFile()
 
+--TODO: Re-organize or rename. It doesn't make a lot of sense having particles set up in a file called "functions"
+game.AddParticles("particles/vortigaunt_charge_token.pcf")
+
 local function isClassInRange(pos, teamIndex, entClass, range)
 	local rngSqr = range^2
 	for _, v in ipairs( ents.FindByClass( entClass ) ) do
@@ -149,17 +152,7 @@ function MelonWars.canSpawn( unitIndex, attach, mwTeam, position, pl, attachEnt 
 	return true
 end
 
-function MelonWars.sameTeam(team1, team2) --TODO: This can be a single return / boolean expression. Worth doing as this is called a lot.
-	--[[
-	if team1 == team2 then
-		return true
-	end
-	if team1 == 0 or team2 == 0 or team1 == -1 or team2 == -1 then
-		return false
-	end
-	return MelonWars.teamGrid[team1][team2]
-	--]]
-	--Not an invalid / neutral team, and either same team or allied.
+function MelonWars.sameTeam(team1, team2)
 	return not(team1 == 0 or team2 == 0 or team1 == -1 or team2 == -1) and (team1 == team2 or MelonWars.teamGrid[team1][team2])
 end
 
