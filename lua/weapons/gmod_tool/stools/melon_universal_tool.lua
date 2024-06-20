@@ -1813,14 +1813,15 @@ function TOOL:Think()
 					local tr = ply:GetEyeTrace() --TODO: We already do a trace in this function.
 					local correctTeam = (tr.Entity:GetNWInt("mw_melonTeam", 0) == newTeam or tr.Entity:GetNWInt("capTeam", 0) == newTeam or cvars.Bool("mw_admin_move_any_team", false))
 
+					local entClass = tr.Entity:GetClass()
 					if entClass == "ent_melon_contraption_assembler" and correctTeam then --TODO: Team checks here unreliable.
 						plyTbl.selectedAssembler = tr.Entity
 						self:MakeContraptionMenu()
 					elseif entClass == "ent_melon_water_tank" then
 						net.Start("MW_UseWaterTank") --TODO: This could probably be rewritten to just use activate
-						net.WriteEntity(tr.Entity)
-						net.WriteInt(newTeam,8)
-					net.SendToServer()
+							net.WriteEntity(tr.Entity)
+							net.WriteInt(newTeam,8)
+						net.SendToServer()
 					else
 						net.Start("MW_Activate")
 							net.WriteEntity(tr.Entity)
@@ -2277,7 +2278,7 @@ function TOOL:DrawHUD() --TODO: Refactor. This needs to be split up/reorganized 
 end
 
 if CLIENT then
-	local mw_buildalpha_multiplier_cv = GetConVar("mw_buildalpha_multiplier")
+	--local mw_buildalpha_multiplier_cv = GetConVar("mw_buildalpha_multiplier")
 	hook.Add("PostDrawTranslucentRenderables", "MelonWars_DrawToolIndicatorRanges", function(depth, skybox)
 		local locPly = LocalPlayer()
 		local activeWeapon = locPly:GetActiveWeapon()
@@ -2294,6 +2295,7 @@ if CLIENT then
 
 		render.AddWorldRing(tr.HitPos, unit.indRingRadius, 5, 20)
 
+		unit.indRingColour.a = math.Clamp(unit.indRingRadius / 8, 100, 255) --It's really hard to see the ring for things like particle towers and launchers
 		--unit.indRingColour.a = math.Clamp(50 * mw_buildalpha_multiplier_cv:GetFloat(), 0, 255) --not sure if this is worth it
 		render.FinishWorldRings( unit.indRingColour ) --outpostRingCol)
 	end)

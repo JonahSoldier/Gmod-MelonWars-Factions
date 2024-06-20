@@ -77,7 +77,6 @@ net.Receive( "SetMWConvar", function( _, pl ) --TODO: See if there's a better wa
 	GetConVar( convar ):SetBool( newValue )
 end )
 
-
 MelonWars.teamColors = {
 	Color(255,50,50,255),
 	Color(50,50,255,255),
@@ -303,7 +302,7 @@ net.Receive( "MW_SpawnUnit", function( _, pl )
 	end
 	local spawntime = pl.mw_spawntime
 
-	local newMarine = MelonWars.spawnUnitAtPos(class, unit_index, position --[[trace.HitPos + trace.HitNormal * 5]], angle, cost, spawntime, _team, attach, trace.Entity, pl, spawndelay)
+	local newMarine = MelonWars.spawnUnitAtPos(class, unit_index, position, angle, cost, spawntime, _team, attach, trace.Entity, pl, spawndelay)
 
 	undo.Create("Melon " .. unit.name)
 		undo.AddEntity( newMarine )
@@ -317,12 +316,12 @@ end )
 
 function MelonWars.spawnUnitAtPos( class, unit_index, pos, ang, cost, spawntime, _team, attach, parent, pl, spawndelay )
 	local newMarine = ents.Create( class )
-	if not IsValid( newMarine ) then return end -- Check whether we successfully made an entity, if not - bail
+	if not IsValid( newMarine ) then return end
 
-	newMarine:SetPos( pos)
-	newMarine:SetAngles( ang)
+	newMarine:SetPos( pos )
+	newMarine:SetAngles( ang )
 
-	sound.Play( "garrysmod/content_downloaded.wav", pos, 60, 90, 1 )
+	sound.Play( "garrysmod/content_downloaded.wav", pos, 60, 90, 1 ) --TODO: Move sounds elsewhere
 
 	if (IsValid(pl)) then
 		sound.Play( "garrysmod/content_downloaded.wav", pl:GetPos(), 60, 90, 1 )
@@ -340,7 +339,7 @@ function MelonWars.spawnUnitAtPos( class, unit_index, pos, ang, cost, spawntime,
 
 	if (attach) then
 		newMarine:SetCollisionGroup( COLLISION_GROUP_DISSOLVING )
-		if (tostring(parent) ~= "[NULL Entity]") then
+		if IsValid(parent) then
 			newMarine:Welded(newMarine, parent)
 		else
 			newMarine:SetMoveType(MOVETYPE_NONE)
@@ -999,3 +998,12 @@ net.Receive( "MWControlShoot", function()
 	local pos = net.ReadVector()
 	u:Shoot( u, pos )
 end )
+
+function MelonWars.broadcastTeamMessage(_team, message, mode)
+	mode = mode or HUD_PRINTTALK
+	for i, v in ipairs(player.GetAll()) do
+		if v:GetInfoNum("mw_team", -1) == _team then
+			v:PrintMessage( mode, message )
+		end
+	end
+end

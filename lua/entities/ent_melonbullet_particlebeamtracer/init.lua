@@ -3,6 +3,8 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 
 include( "shared.lua" )
 
+PrecacheParticleSystem("explosion_huge_c")
+
 function ENT:Initialize()
 
 	self:SetModel("models/hunter/misc/sphere025x025.mdl")
@@ -15,7 +17,7 @@ function ENT:Initialize()
 
 	self.careForFriendlyFire = false
 	self.speed = 100
-	self.damageDeal = 100
+	self.damageDeal = 250
 	self.maxHP = 20
 	self.random = Vector(0.0, 0.0, 0.0)
 	self.targetPos = Vector(0,0,0)
@@ -26,10 +28,6 @@ function ENT:Initialize()
 
 	self.mwBulletIndestructible = true
 end
-
-/*function ENT:PhysicsCollide( colData, collider )
-	self:Explode()
-end*/
 
 function ENT:Think()
 	local foundEnts = ents.FindInSphere(self:GetPos(), 2 )
@@ -71,35 +69,13 @@ function ENT:Explode()
 			util.BlastDamage( self, self, self:GetPos(), 450, self.damageDeal )
 
 			local effectdata = EffectData()
-			effectdata:SetOrigin( self:GetPos() + Vector(0,0,150))
-			util.Effect( "Explosion", effectdata )
-			local effectdata = EffectData()
-			effectdata:SetOrigin( self:GetPos() + Vector(0,150,0))
-			util.Effect( "Explosion", effectdata )
-			local effectdata = EffectData()
-			effectdata:SetOrigin( self:GetPos() + Vector(150,0,0))
-			util.Effect( "Explosion", effectdata )
-			local effectdata = EffectData()
-			effectdata:SetOrigin( self:GetPos() + Vector(0,-150,0))
-			util.Effect( "Explosion", effectdata )
-			local effectdata = EffectData()
-			effectdata:SetOrigin( self:GetPos() + Vector(-150,0,0))
-			util.Effect( "Explosion", effectdata )
-			local effectdata = EffectData()
-			effectdata:SetOrigin( self:GetPos() + Vector(110,110,0))
-			util.Effect( "Explosion", effectdata )
-			local effectdata = EffectData()
-			effectdata:SetOrigin( self:GetPos() + Vector(-110,110,0))
-			util.Effect( "Explosion", effectdata )
-			local effectdata = EffectData()
-			effectdata:SetOrigin( self:GetPos() + Vector(110,-110,0))
-			util.Effect( "Explosion", effectdata )
-			local effectdata = EffectData()
-			effectdata:SetOrigin( self:GetPos() + Vector(-110,-110,0))
-			util.Effect( "Explosion", effectdata )
+			effectdata:SetOrigin(self:GetPos())
+			effectdata:SetRadius(450)
+			effectdata:SetNormal(vector_up)
+			util.Effect("AR2Explosion", effectdata) 
+			ParticleEffect( "explosion_huge_c", self:GetPos(), angle_zero )
 
-			local target = self:GetNWEntity("target", nil)
-			for k, v in pairs( player.GetAll() ) do
+			for i, v in ipairs( player.GetAll() ) do
 				sound.Play( "k_lab2.Barney_Explosion", v:GetPos(), 75, 100, 1 )
 			end
 			self:Remove()

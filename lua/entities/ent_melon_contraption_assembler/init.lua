@@ -12,6 +12,8 @@ function ENT:SetStats()
 	self.population = 1
 	self:BarrackInitialize()
 	self.population = 1
+
+	self.powerCost = 0
 end
 
 function ENT:Initialize()

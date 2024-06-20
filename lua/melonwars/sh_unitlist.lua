@@ -417,7 +417,6 @@ u.description 	= [[Static defense, a heavy machinegun with good health and firep
 u.model 		= "models/combine_turrets/ground_turret.mdl"
 u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(180, 180, 0)
---u.energyRange		= 500
 u.indRingRadius = 500
 u.indRingColour = indicator_attack_colour
 
@@ -633,6 +632,8 @@ u.angle 		= Angle(-90, 0, -90)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 u.isBonusUnit   = true
+u.indRingRadius = 5000
+u.indRingColour = indicator_attack_colour
 
 i = i + 1
 u = MelonWars.units[i]

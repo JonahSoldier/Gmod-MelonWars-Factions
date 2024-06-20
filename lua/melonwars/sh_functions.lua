@@ -2,6 +2,8 @@ AddCSLuaFile()
 
 --TODO: Re-organize or rename. It doesn't make a lot of sense having particles set up in a file called "functions"
 game.AddParticles("particles/vortigaunt_charge_token.pcf")
+game.AddParticles("particles/explosion_huge_c.pcf")
+
 
 local function isClassInRange(pos, teamIndex, entClass, range)
 	local rngSqr = range^2
@@ -241,9 +243,24 @@ function MelonWars.calculateContraptionValues( dupetable )
 			spawnTime = spawnTime + realUnit.spawn_time * 2
 			power = power + (realUnit.population or 0)
 		elseif ent.realvalue then --If it's any other entity (props)
-			--Ideally we want to be using prop mass here.
-			cost = cost + ent.realvalue
-			spawnTime = spawnTime + ent.realvalue / 25
+			if SERVER and ent.Model then --A bit jank, but I don't think this is an issue. MW Contraptions aren't typically very many props.
+				local value = 1000
+
+				local dummyProp = ents.Create("prop_physics")
+				dummyProp:SetModel(ent.Model)
+				dummyProp:PhysicsInitStatic(SOLID_VPHYSICS)
+				local physObj = dummyProp:GetPhysicsObject()
+				if IsValid(physObj) then
+					value = math.min(physObj:GetMass(), 1000)
+				end
+				dummyProp:Remove()
+
+				cost = cost + value
+				spawnTime = spawnTime + value / 25
+			else
+				cost = cost + ent.realvalue
+				spawnTime = spawnTime + ent.realvalue / 25
+			end
 		end
 
 		if ent.Pos then

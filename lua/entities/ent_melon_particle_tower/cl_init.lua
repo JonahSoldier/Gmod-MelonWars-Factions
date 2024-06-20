@@ -52,5 +52,5 @@ function ENT:GetMessage()
 		return "Cooling Down...\n" .. autoFireText .. addText
 	end
 
-	return "Ready To Fire\n" .. autoFireText .. addText --TODO: "Ready To Fire" and "Cooling Down"
+	return "Ready To Fire\n" .. autoFireText .. addText
 end

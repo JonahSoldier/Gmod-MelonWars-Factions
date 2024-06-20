@@ -72,7 +72,6 @@ function ENT:SlowThink ( ent )
 	end
 end
 
-
 function ENT:Shoot(ent)
 	sound.Play( ent.shotSound, ent:GetPos() )
 
