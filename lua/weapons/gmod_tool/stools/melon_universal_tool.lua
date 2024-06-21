@@ -177,7 +177,7 @@ local function _MakeButton(number, posnumber, parent) -- Make Button
 	local pl = LocalPlayer()
 
 	local button = vgui.Create("DButton", parent) -- Unit button
-	button:SetSize(120,40)
+	button:SetSize(140,40)
 	button:SetPos( 10, 10 + ( posnumber - 1 ) * 45 )
 	button:SetFont("CloseCaption_Normal")
 	button:SetText(MelonWars.units[number].name)

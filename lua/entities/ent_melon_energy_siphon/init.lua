@@ -57,11 +57,7 @@ function ENT:FriendlyUnitsNearby()
 		end
 	end
 
-	for i, v in ipairs(player.GetAll()) do
-		if v:GetInfoNum("mw_team", 0) == selfTeam then
-			v:PrintMessage( HUD_PRINTTALK, "== Siphons require nearby units to build! ==" )
-		end
-	end
+	MelonWars.broadcastTeamMessage(selfTeam, "== Siphons require nearby units to build! ==")
 	self:Remove()
 end
 

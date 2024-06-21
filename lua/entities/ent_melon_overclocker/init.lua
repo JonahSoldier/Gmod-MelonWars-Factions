@@ -56,11 +56,7 @@ function ENT:ConnectToBarrack()
 		self.slowThinkTimer = closestEntity.slowThinkTimer / 10
 		constraint.Rope( self, closestEntity, 0, 0, Vector(0,0,10), Vector(0,0,5), selfPos:Distance(closestEntity:GetPos()), 0, 0, 10, "cable/physbeam", false )
 	else
-		for i, v in ipairs(player.GetAll()) do
-			if v:GetInfoNum("mw_team", 0) == selfTeam then
-				v:PrintMessage( HUD_PRINTTALK, "== Over-Clockers must be spawned next to Barracks! ==" )
-			end
-		end
+		MelonWars.broadcastTeamMessage(selfTeam, "== Over-Clockers must be spawned next to Barracks! ==")
 		self:Remove()
 	end
 end

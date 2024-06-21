@@ -42,10 +42,6 @@ function ENT:FriendlyUnitsNearby()
 		end
 	end
 
-	for i, v in ipairs(player.GetAll()) do
-		if v:GetInfoNum("mw_team", 0) == selfTeam then
-			v:PrintMessage( HUD_PRINTTALK, "== Receivers require nearby units to build! ==" )
-		end
-	end
+	MelonWars.broadcastTeamMessage(selfTeam, "== Receivers require nearby units to build! ==")
 	self:Remove()
 end

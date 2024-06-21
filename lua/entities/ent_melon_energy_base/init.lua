@@ -159,6 +159,8 @@ function MelonWars.calculateConnections(ent, all)
 end
 
 local function MW_Energy_Network_Search(ent, targetEnt)
+	if not IsValid(ent) then return end
+
 	local openList = {}
 	local closedList = {}
 	local foundEnt = nil

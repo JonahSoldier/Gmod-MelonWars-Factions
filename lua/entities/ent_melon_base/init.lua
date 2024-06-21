@@ -1081,11 +1081,6 @@ function ENT:BarrackSlowThink() --TODO: Optimize
 			self.unitspawned = true
 			self:SetNWBool("spawned", self.unitspawned)
 		end
-	--else
-	--	self.nextSlowThink = CurTime()+1
-	--	self:SetNWFloat("nextSlowThink", self.nextSlowThink)
-	--	self.unitspawned = false
-	--	self:SetNWBool("spawned", self.unitspawned)
 	end
 end
 

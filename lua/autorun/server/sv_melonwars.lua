@@ -246,7 +246,7 @@ net.Receive( "MW_UseWaterTank", function( _, pl )
 
 	MelonWars.teamCredits[_team] = MelonWars.teamCredits[_team] + ent.waterVal
 	for _, v in ipairs( player.GetAll() ) do
-		if v:GetInfo( "mw_team" ) == tostring( _team ) then
+		if v:GetInfoNum( "mw_team", -1) == _team then
 			net.Start( "MW_TeamCredits" )
 				net.WriteInt( MelonWars.teamCredits[_team], 32 )
 			net.Send( v )
@@ -721,7 +721,7 @@ net.Receive( "SellEntity", function( _, pl )
 	if entity:GetClass() == "prop_physics" or entity.gotHit or CurTime() - entity:GetCreationTime() >= 30 or ( entity.Base == "ent_melon_base" and entity.fired ~= false ) then --pregunta si NO se va a recivir el dinero de refund NULL ENTITY
 		MelonWars.teamCredits[playerTeam] = MelonWars.teamCredits[playerTeam] + entity.value * 0.25
 		for _, v in ipairs( player.GetAll() ) do
-			if v:GetInfo( "mw_team" ) == tostring( entity:GetNWInt( "mw_melonTeam", 0 ) ) then
+			if v:GetInfoNum( "mw_team", -1 ) == entity:GetNWInt( "mw_melonTeam", 0 ) then
 				net.Start("MW_TeamCredits")
 					net.WriteInt(MelonWars.teamCredits[entity:GetNWInt("mw_melonTeam", 0)] ,32)
 				net.Send(v)
