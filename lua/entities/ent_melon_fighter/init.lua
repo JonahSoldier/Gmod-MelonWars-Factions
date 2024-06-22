@@ -44,6 +44,7 @@ function ENT:Initialize()
 	util.SpriteTrail( self, 0, Color(255,255,255), false, 20, 0, 4, 0, "trails/laser" )
 
 	self:SetNWInt("fuel", 100)
+	self:SetNWInt("maxFuel", 300)
 end
 
 function ENT:ModifyColor()

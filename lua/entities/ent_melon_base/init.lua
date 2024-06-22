@@ -866,7 +866,11 @@ function ENT:OnTakeDamage( damage )
 		if selfTbl.HP <= 0 then
 			MelonWars.die (self)
 		end
+		self:_OnTakeDamage( damage )
 	end
+end
+
+function ENT:_OnTakeDamage( damage )
 end
 
 function ENT:OnRemove()

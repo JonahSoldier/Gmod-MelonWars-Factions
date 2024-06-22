@@ -44,33 +44,32 @@ end
 
 function ENT:SlowThink ( ent ) --TODO: Look at this
 
-	if self:GetNWInt("mw_charge", 0)==0 then
+	local charge = self:GetNWInt("mw_charge", 0)
+	if self:GetNWInt("mw_charge", 0) == 0 then
 		self.slowThinkTimer = 1
 	else
-		self.slowThinkTimer = math.sqrt(((self:GetNWInt("mw_charge", 0)*-1)+200)/35)
+		self.slowThinkTimer = math.sqrt( (-1 * charge + 200 ) / 35 )
 	end
 
-	if(self.nextRecharge < CurTime()) then
-		if( self:GetNWInt("mw_charge", 0) + 5 < 200) then
-			self:SetNWInt("mw_charge", self:GetNWInt("mw_charge", 0)+5)
-		else
-			self:SetNWInt("mw_charge", 200)
-		end
+	if self.nextRecharge < CurTime() then
+		local maxCharge = self:GetNWInt("maxCharge", 0)
+
+		self:SetNWInt("mw_charge", math.min(charge + 5, maxCharge))
 
 		self.nextRecharge = self.nextRecharge + 5
 	end
-
 
 	MelonWars.unitDefaultThink ( ent )
 end
 
 function ENT:Shoot ( ent, forcedTargetPos )
-	if (ent.ai or CurTime() > ent.nextControlShoot) then
-		ent.nextControlShoot = CurTime()+ent.slowThinkTimer
-		if (IsValid(ent)) then
-			if ent:GetNWInt("mw_charge",0)>self.energyCost then
+	if ent.ai or CurTime() > ent.nextControlShoot then
+		ent.nextControlShoot = CurTime() + ent.slowThinkTimer
+		if IsValid(ent) then
+			local charge = ent:GetNWInt("mw_charge",0)
+			if charge > self.energyCost then
 				MelonWars.defaultShoot ( ent, forceTargetPos )
-				ent:SetNWInt("mw_charge",ent:GetNWInt("mw_charge",0)-self.energyCost)
+				ent:SetNWInt("mw_charge",charge - self.energyCost)
 			end
 		end
 	end
@@ -78,7 +77,7 @@ end
 
 function ENT:PhysicsUpdate()
 	if not self:GetTable().canMove then return end
-	self:AlignUpright( 10000, 100 )
+	self:AlignUpright( 20000, 100 )
 
 	self:DefaultPhysicsUpdate()
 end

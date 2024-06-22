@@ -4,22 +4,19 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-
 	MelonWars.defaults ( self )
 
 	self.slowThinkTimer = 1
 	self.nextSlowThink = 0
 	self.modelString = "models/props_combine/CombineThumper002.mdl"
-	--self.Angles = Angle(0,0,0)
-	self.shotOffset = Vector(0,-20,30)
-	--self:SetPos(self:GetPos()+Vector(0,0,1))
+	self.shotOffset = Vector(0,-40,250)
 	self.materialString = "models/shiny"
 	self.shotSound = "weapons/stunstick/stunstick_impact1.wav"
 
 	self.canMove = false
 	self.canBeSelected = false
 
-	self.maxHP = 500
+	self.maxHP = 1000
 	self.income = 1
 	self.dead = false
 	self.range = 500
@@ -30,12 +27,6 @@ function ENT:Initialize()
 	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
 	self:SetSolid( SOLID_VPHYSICS )         -- Toolbox
 	self.moveType = MOVETYPE_NONE
-	--local weld = constraint.Weld( self, game.GetWorld(), 0, 0, 0, true , false )
-
-	self:SetNWInt("energy", 0)
-	self:SetNWFloat("state", 0) --0 = neutral, 1 = dar, -1 = necesitar
-	self:SetNWInt("maxenergy", 100)
-	self:SetNWVector("energyPos", Vector(0,0,100))
 
 	self:Setup()
 
@@ -45,7 +36,7 @@ function ENT:Initialize()
 
 		self.zone:SetPos(self:GetPos())
 		self.zone:Spawn()
-		self.zone:SetPos(self:GetPos()+Vector(0,0,-12))
+		self.zone:SetPos(self:GetPos() + Vector(0,0,-12))
 		self.zone:SetMoveType( MOVETYPE_NONE )
 		self.zone:SetModelScale( 8.4, 0 )
 		self.zone:SetMaterial("models/ihvtest/eyeball_l")
@@ -56,7 +47,7 @@ function ENT:Initialize()
 end
 
 function ENT:DeathEffect ( ent )
-	if (ent.dead == false) then
+	if ent.dead == false then
 		sound.Play( "ambient/explosions/explode_2.wav", ent:GetPos() )
 		sound.Play( "ambient/explosions/citadel_end_explosion2.wav", ent:GetPos() )
 		for i = 1, 10 do
@@ -113,7 +104,6 @@ function ENT:SlowThink(ent)
 end
 
 function ENT:Shoot ( ent )
-
 	local pos = ent:GetPos()+ent.shotOffset
 	--------------------------------------------------------Disparar
 	if (IsValid(ent.targetEntity)) then
@@ -139,7 +129,7 @@ function ENT:Shoot ( ent )
 end
 
 function ENT:_OnTakeDamage( damage )
-	self:CreateAlert (self:GetPos()+Vector(0,0,150), self:GetNWInt("mw_melonTeam", 0))
+	self:CreateAlert (self:GetPos() + Vector(0,0,150), self:GetNWInt("mw_melonTeam", 0))
 	self:SetNWFloat("lastHit", CurTime())
 end
 

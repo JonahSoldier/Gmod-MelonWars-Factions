@@ -37,16 +37,14 @@ function ENT:Initialize()
 	self.slowThinkTimer = 1
 	self.nextSlowThink = 0
 	self.modelString = "models/props_combine/combinethumper001a.mdl"
-	--self.Angles = Angle(0,0,0)
-	self.shotOffset = Vector(0,-20,30)
-	--self:SetPos(self:GetPos()+Vector(0,0,1))
+	self.shotOffset = Vector(0,-40,450)
 	self.materialString = "models/shiny"
 	self.shotSound = "weapons/stunstick/stunstick_impact1.wav"
 
 	self.canMove = false
 	self.canBeSelected = false
 
-	self.maxHP = 500
+	self.maxHP = 2000
 	self.income = 2
 	self.dead = false
 	self.range = 500
@@ -57,7 +55,6 @@ function ENT:Initialize()
 	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
 	self:SetSolid( SOLID_VPHYSICS )         -- Toolbox
 	self.moveType = MOVETYPE_NONE
-	--local weld = constraint.Weld( self, game.GetWorld(), 0, 0, 0, true , false )
 
 	self:SetNWInt("energy", 0)
 	self:SetNWFloat("state", 0) --0 = neutral, 1 = dar, -1 = necesitar
@@ -98,7 +95,6 @@ function ENT:SlowThink(ent)
 end
 
 function ENT:Shoot ( ent )
-
 	local pos = ent:GetPos()+ent.shotOffset
 	--------------------------------------------------------Disparar
 	if (IsValid(ent.targetEntity)) then

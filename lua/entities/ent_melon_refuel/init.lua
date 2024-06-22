@@ -12,8 +12,6 @@ function ENT:Initialize()
 	self.canShoot = false
 	self.maxHP = 100
 
-	self.active = true
-
 	self.slowThinkTimer = 1
 
 	self.population = 1
@@ -24,11 +22,12 @@ function ENT:Initialize()
 	self:Setup()
 end
 
-
-function ENT:SlowThink(ent) --TODO: Rework, Currently overcharges fighters among other issues. I was actually surprised how bare-bones this file is compared to most of the other buildings I added.
+function ENT:SlowThink(ent)
 	for i, v in ipairs(ents.FindInSphere(self:GetPos(), 150)) do
-		if v:GetClass() == "ent_melon_fighter" then
-			v:SetNWInt("fuel", v:GetNWInt("fuel", 0) + 1)
+		local fuel = v:GetNWInt("fuel", -1)
+		if fuel > -1 then
+			local maxFuel = v:GetNWInt("maxFuel", -1)
+			v:SetNWInt("fuel", math.min(fuel + 1, maxFuel))
 		end
 	end
 end

@@ -4,7 +4,6 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-
 	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_c17/substation_transformer01d.mdl"
@@ -37,9 +36,8 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-	local chargeAmount = 50
-
-	if MelonWars.electricNetwork[self.network].energy >= chargeAmount then
+	local networkEnergy = MelonWars.electricNetwork[self.network].energy
+	if networkEnergy > 0 then
 		local maxtargets = 5
 
 		local selfTeam = self:GetNWInt("mw_melonTeam", -1)
@@ -57,43 +55,46 @@ function ENT:SlowThink ( ent )
 
 		for i = 1, maxtargets, 1 do
 			local v = foundEntities[i]
-			if v and self:DrainPower(chargeAmount) then --TODO: Wastes energy. Fix that. It makes low-energy units like gatlings difficult to use effectively.
-				self.targetEntity = v
-				self:Shoot( self )
+			if v then
+				local tMaxCharge = v:GetNWInt("maxCharge", -1)
+				local tCharge = v:GetNWInt("mw_charge", -1)
+
+				local chargeAmount = math.min( tMaxCharge - tCharge, 100, networkEnergy)
+
+				if self:DrainPower( math.ceil(chargeAmount / 2) ) then
+					self.targetEntity = v
+					self:Shoot( self, tCharge + chargeAmount )
+				end
 			end
 		end
 	end
 end
 
-function ENT:Shoot ( ent ) --TODO: Refactor
-	if (ent.targetEntity == ent) then ent.targetEntity = nil end
-	if (IsValid(ent.targetEntity)) then
-		if (ent.targetEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 0) or ent:SameTeam(ent.targetEntity)) then
-			local pos = ent:GetPos()+ent.shotOffset
-			local targetPos = ent.targetEntity:GetPos()
-			if (ent.targetEntity:GetVar("shotOffset") ~= nil) then
-				targetPos = targetPos+ent.targetEntity:GetVar("shotOffset")
-			end
-			--ent:FireBullets(bullet)
-			local effectdata = EffectData()
-			effectdata:SetScale(3000)
-			effectdata:SetMagnitude(3000)
-			effectdata:SetStart( self:GetPos() + Vector(0,0,45))
-			effectdata:SetOrigin( targetPos )
-			util.Effect( "AirboatGunTracer", effectdata )
-			sound.Play( ent.shotSound, ent:GetPos() )
+function ENT:Shoot ( ent, newCharge )
+	if self.targetEntity == self then self.targetEntity = nil end
 
-			local chargeAmount = 100
-			ent.targetEntity:SetNWInt("mw_charge",ent.targetEntity:GetNWInt("mw_charge",0)+chargeAmount)
-			ent.fired = true
-			if (ent.targetEntity:GetNWInt("mw_charge",0) >= ent.targetEntity:GetNWInt("maxCharge",0)) then
-				ent.targetEntity:SetNWInt("mw_charge",ent.targetEntity:GetNWInt("maxCharge",0))
-				ent.targetEntity = nil
-			end
-		else
-			ent.targetentity = nil
-		end
+	if not IsValid(self.targetEntity) then return end --ent.targetEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 0) or
+	if  not self:SameTeam(self.targetEntity) then
+		self.targetentity = nil
+		return
 	end
+
+	local pos = self:GetPos() + self.shotOffset
+	local targetPos = self.targetEntity:GetPos()
+	if self.targetEntity.shotOffset then
+		targetPos = targetPos + self.targetEntity.shotOffset
+	end
+
+	local effectdata = EffectData()
+	effectdata:SetScale( 3000 )
+	effectdata:SetMagnitude( 3000 )
+	effectdata:SetStart( pos )
+	effectdata:SetOrigin( targetPos )
+	util.Effect( "AirboatGunTracer", effectdata )
+	sound.Play( self.shotSound, pos )
+
+	self.fired = true
+	self.targetEntity:SetNWInt("mw_charge", newCharge)
 end
 
 function ENT:DeathEffect ( ent )

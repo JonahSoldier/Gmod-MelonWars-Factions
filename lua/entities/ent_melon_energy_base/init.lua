@@ -166,7 +166,7 @@ local function MW_Energy_Network_Search(ent, targetEnt)
 	local foundEnt = nil
 	local safety = 0
 	table.insert(openList, ent)
-	while(table.Count(openList) > 0 and foundEnt == nil and safety < 10000) do
+	while table.Count(openList) > 0 and foundEnt == nil and safety < 10000 do
 		local current = openList[1]
 
 		current.alreadySearched = true
