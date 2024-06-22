@@ -518,6 +518,21 @@ u.angle 		= Angle(90,0,0)
 
 i = i + 1
 u = MelonWars.units[i]
+u.name 			= "Radar"
+u.class 		= "ent_melon_radar"
+u.cost 			= 400
+u.welded_cost 	= -1
+u.population 	= 0
+u.spawn_time 	= 5
+u.description 	= [[Will alert your team of nearby units no matter where you are.]]
+u.model 		= "models/props_trainstation/trainstation_column001.mdl"
+u.offset 		= Vector(0,0,-5)
+u.angle 		= Angle(0, 0, 0)
+u.indRingRadius = 1000
+u.indRingColour = indicator_utility_colour
+
+i = i + 1
+u = MelonWars.units[i]
 u.name 			= "Station"
 u.class 		= "ent_melon_station"
 u.cost 			= 1250
@@ -716,23 +731,6 @@ u.angle 		= Angle(0, 0, 0)
 u.button_color 	= button_energy_color
 u.energyRange	= defaultenergyrange
 u.indRingRadius = 250
-u.indRingColour = indicator_utility_colour
-
-i = i + 1
-u = MelonWars.units[i]
-u.name 			= "Radar"
-u.class 		= "ent_melon_radar"
-u.cost 			= 100
-u.welded_cost 	= -1
-u.population 	= 0
-u.spawn_time 	= 5
-u.description 	= [[If energized, it will alert your team of nearby units no matter where you are. It passively consumes the power output of 2 solar panels]]
-u.model 		= "models/props_trainstation/trainstation_column001.mdl"
-u.offset 		= Vector(0,0,-5)
-u.angle 		= Angle(0, 0, 0)
-u.button_color 	= button_energy_color
-u.energyRange	= defaultenergyrange
-u.indRingRadius = 1000
 u.indRingColour = indicator_utility_colour
 
 i = i + 1
