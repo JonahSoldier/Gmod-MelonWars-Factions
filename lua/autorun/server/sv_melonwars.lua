@@ -813,49 +813,25 @@ net.Receive( "SandboxMode", function()
 	end
 end )
 
-net.Receive("MW_Stop", function( _, ply ) -- Previously concommand.Add( "mw_stop", function( ply )
-	local stopedMelons = false
-
+net.Receive("MW_Stop", function( _, ply )
 	local foundMelons = {}
-	local entity = net.ReadEntity();
-	while (not entity:IsWorld() and entity:IsValid() and entity ~= nil) do
-		if (string.StartWith(entity:GetClass(), "ent_melon_")) then
+	local entity = net.ReadEntity()
+	while IsValid(entity) do
+		if entity.Base == "ent_melon_base" or entity.Base == "ent_melon_energy_base" then
 			table.insert(foundMelons, entity)
 		end
-		entity = net.ReadEntity();
+		entity = net.ReadEntity()
 	end
 
-	-- local foundMelons = ply.foundMelons
-	if foundMelons == nil then return end
-	for _, v in ipairs( foundMelons ) do
-		if not IsValid(v) then
-			--Si murió, lo saco de la tabla
-			table.remove(foundMelons, k)
-		else
-			if v.Base == "ent_melon_base" then
-				--si sigue vivo, le doy la order
-				--si no, mueve
-				v:SetVar("targetPos", v:GetPos())
-				v:SetNWVector("targetPos", v:GetPos())
-				v:SetVar("moving", false)
-				v:SetNWBool("moving", false)
-				v:SetVar("chasing", false)
-				v:SetVar("followEntity", v)
-				v:SetNWEntity("followEntity", v)
-				for i = 1, 30 do
-					v.rallyPoints[i] = Vector(0,0,0)
-				end
-				stopedMelons = true
-			end
+	if #foundMelons > 0 then
+		for _, v in ipairs( foundMelons ) do
+			v:ClearOrders()
 		end
-	end
-
-	if stopedMelons then
 		sound.Play( "buttons/button16.wav", ply:GetPos(), 75, 100, 1 )
 	end
 end)
 
-net.Receive( "MW_Order", function( _, ply ) -- Previously concommand.Add( "mw_order", function( ply )
+net.Receive( "MW_Order", function( _, ply ) --TODO: Refactor this 
 	local trace = util.TraceLine( {
 		start = ply:EyePos(),
 		endpos = ply:EyePos() + ply:EyeAngles():Forward() * 10000,

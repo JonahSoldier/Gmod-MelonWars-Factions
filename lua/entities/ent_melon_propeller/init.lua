@@ -4,7 +4,6 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-
 	MelonWars.defaults ( self )
 
 	self.birth = CurTime()
@@ -27,21 +26,19 @@ function ENT:Initialize()
 	self.shotOffset = Vector(0,0,15)
 
 	self:Setup()
-
 end
 
 function ENT:ModifyColor()
 	self:SetColor(Color(self:GetColor().r/2, self:GetColor().g/2, self:GetColor().b/2, 255))
 end
 
-function ENT:SlowThink ( ent )
+function ENT:SlowThink( ent )
 end
 
-function ENT:Shoot ( ent )
+function ENT:Shoot( ent )
 end
 
-function ENT:Update (ent)
-
+function ENT:Update(ent)
 end
 
 function ENT:Think()
@@ -59,8 +56,8 @@ function ENT:Actuate()
 	end
 end
 
-function ENT:DeathEffect ( ent )
-	MelonWars.defaultDeathEffect ( ent )
+function ENT:DeathEffect( ent )
+	MelonWars.defaultDeathEffect( ent )
 end
 
 function ENT:PhysicsUpdate() --TODO: Jetpack-esque slowfall
@@ -88,7 +85,7 @@ function ENT:PhysicsUpdate() --TODO: Jetpack-esque slowfall
 	if (distance < hoverdistance) then
 		force = -(distance-hoverdistance) * hoverforce
 		local vel = phys:GetVelocity()
-		vel.x, vel.y, vel.z = 0, 0, -vel.z * 8
+		vel.x, vel.y, vel.z = 0, 0, -vel.z * 8 --TODO: Make this relative to contraption mass(?)
 		phys:ApplyForceCenter(vel)
 	else
 		force = 0

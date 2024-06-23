@@ -694,7 +694,7 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 		label:SetPos(20, 215)
 		label:SetSize(200,40)
 		label:SetFontInternal( "DermaLarge" )
-		label:SetText("Gray Team:")
+		label:SetText("Grey Team:")
 
 		local button = vgui.Create("DButton", pl.panel)
 		button:SetSize( 40, 40 )

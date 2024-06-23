@@ -411,9 +411,22 @@ function ENT:Unstuck()
 	self.nextJump = CurTime()+1
 end
 
+function ENT:ClearOrders()
+	local selfTbl = self:GetTable()
+	local selfPos = self:GetPos()
+	selfTbl.targetPos = selfPos
+	self:SetNWVector("targetPos", selfPos)
+	selfTbl.moving = false
+	self:SetNWBool("moving", false)
+	selfTbl.chasing = false
+	selfTbl.followEntity = v
+	self:SetNWEntity("followEntity", self)
+	self:RemoveRallyPoints()
+end
+
 function ENT:FinishMovement()
 	local selfTbl = self:GetTable()
-	if (selfTbl.rallyPoints[1] == vector_origin) then
+	if selfTbl.rallyPoints[1] == vector_origin then
 		selfTbl.moving = false
 		selfTbl.stuck = 0
 	else
@@ -432,8 +445,9 @@ function ENT:OnFinishMovement()
 end
 
 function ENT:RemoveRallyPoints()
-	for i=1, 30 do
-		self.rallyPoints[i] = vector_origin
+	local rallyPoints = self.rallyPoints
+	for i = 1, 30 do
+		rallyPoints[i] = vector_origin
 	end
 end
 

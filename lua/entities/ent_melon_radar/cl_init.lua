@@ -9,7 +9,7 @@ function ENT:Draw()
 	self:DrawModel() -- Draws Model Client Side
 
 	local s = 7
-	cam.Start3D2D( self:GetPos()+Vector(0,0,256), Angle(0,0,0), 1 )
+	cam.Start3D2D( self:GetPos() + Vector(0,0,256), angle_zero, 1 )
 		surface.SetDrawColor( color_black )
 		surface.DrawRect( -s, -s, s*2, s*2 )
 	cam.End3D2D()
