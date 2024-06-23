@@ -6,8 +6,6 @@ include( "shared.lua" )
 function ENT:Initialize()
 	MelonWars.defaults ( self )
 
-	self.birth = CurTime()
-
 	self.modelString = "models/maxofs2d/hover_propeller.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true

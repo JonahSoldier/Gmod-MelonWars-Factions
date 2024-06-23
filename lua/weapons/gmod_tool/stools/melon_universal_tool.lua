@@ -1588,10 +1588,12 @@ function TOOL:RightClick( tr )
 	if cvars.Number( "mw_chosen_unit" ) == 0 then
 		if istable( locPly.foundMelons ) then
 			net.Start( "MW_Order" )
+				net.WriteVector(tr.HitPos)
+				net.WriteEntity(tr.Entity)
 				net.WriteBool( locPly:KeyDown(IN_SPEED) )
 				net.WriteBool( locPly:KeyDown(IN_WALK) )
 				for _, v in pairs( locPly.foundMelons ) do
-					if not v:IsWorld() and v:IsValid() and v ~= nil then
+					if v:IsValid() then
 						net.WriteEntity( v )
 					end
 				end

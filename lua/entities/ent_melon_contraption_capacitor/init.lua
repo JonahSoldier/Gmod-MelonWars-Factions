@@ -4,10 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-
 	MelonWars.defaults ( self )
-
-	self.birth = CurTime()
 
 	self.modelString = "models/props_junk/TrashBin01a.mdl"
 	self.moveType = MOVETYPE_VPHYSICS

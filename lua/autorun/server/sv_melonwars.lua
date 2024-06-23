@@ -831,105 +831,77 @@ net.Receive("MW_Stop", function( _, ply )
 	end
 end)
 
-net.Receive( "MW_Order", function( _, ply ) --TODO: Refactor this 
-	local trace = util.TraceLine( {
-		start = ply:EyePos(),
-		endpos = ply:EyePos() + ply:EyeAngles():Forward() * 10000,
-		filter = function( ent ) if ent:GetClass() ~= "player" then return true end end,
-		mask = MASK_WATER + MASK_SOLID
-	} )
+net.Receive( "MW_Order", function( _, ply )
+	local hitPos = net.ReadVector()
+	local hitEnt = net.ReadEntity()
 
-	local foundMelons = {}
+	if hitEnt:IsPlayer() then
+		hitEnt = game.GetWorld()
+	end
+
 	local rally = net.ReadBool()
 	local alt = net.ReadBool()
+
+	local foundMelons = {}
 	local entity = net.ReadEntity()
-	while not entity:IsWorld() and entity:IsValid() and entity ~= nil do
-		if string.StartWith( entity:GetClass(), "ent_melon_" ) then
+	while IsValid(entity) do
+		if entity.Base == "ent_melon_base" or entity.Base == "ent_melon_energy_base" then
 			table.insert( foundMelons, entity )
 		end
 		entity = net.ReadEntity()
 	end
 
-	if foundMelons == nil then return end
-	for _, v in ipairs( foundMelons ) do
-		if not IsValid( v ) or not string.StartWith( v:GetClass(), "ent_melon_" ) then
-			--Si murió, lo saco de la tabla
-			table.remove(foundMelons, k)
-		end
-	end
-
 	local movedMelons
-
 	if rally then
 		for _, v in ipairs( foundMelons ) do
-			local i = 30
-			while i >= 0 do
-				if v.rallyPoints ~= nil then
-					if i == 0 then
-						v.rallyPoints[1] = trace.HitPos
-						v.moving = true
+			local vTbl = v:GetTable()
+			local rallyPoints = vTbl.rallyPoints
+			if rallyPoints then
+				for i = 29, 0, -1 do
+					if not(rallyPoints[i] == vector_origin) then
+						rallyPoints[i + 1] = hitPos
 						movedMelons = true
-						i = -1
-					elseif v.rallyPoints[i] ~= Vector( 0, 0, 0 ) then
-						if i < 30 and v.rallyPoints[i + 1] == Vector( 0, 0, 0 ) then
-							v.rallyPoints[i + 1] = trace.HitPos
-							movedMelons = true
-							i = -1
-						end
+						break
 					end
 				end
-				i = i - 1
 			end
+			vTbl.moving = true
 		end
 	elseif alt then
+		local hitValid = hitEnt:IsValid() --Not the world or an inValid entity
+		movedMelons = hitValid and #foundMelons > 0
 		for _, v in ipairs( foundMelons ) do
-			if (IsValid(v) and string.StartWith(v:GetClass(), "ent_melon_")) then
-				--si tenia apretado alt, dispara
-				if (tostring(trace.Entity) == "Entity [0][worldspawn]") then
-					--si se le apuntó al mundo, sacar objetivo
-					v:SetVar("forcedTargetEntity", v)
-					v:SetVar("targetEntity", v)
-					v:SetVar("followEntity", v)
-					v:SetNWEntity("followEntity", v)
-					v:SetNWEntity("targetEntity", v)
-					v:SetVar("chasing", false)
-				else
-					if (v:GetNWInt("mw_melonTeam", 0) == trace.Entity:GetNWInt("mw_melonTeam", 0)) then
-						--si se le apuntó a algo, darle eso como objetivo
-						v:SetVar("followEntity", trace.Entity)
-						v:SetNWEntity("followEntity", trace.Entity)
-						v:SetVar("forcedTargetEntity", v)
-						v:SetVar("targetEntity", v)
-						v:SetNWEntity("targetEntity", v)
-						v:SetVar("chasing", false)
-					else
-						v:SetVar("followEntity", v)
-						v:SetNWEntity("followEntity", v)
-						v:SetVar("forcedTargetEntity", trace.Entity)
-						v:SetVar("targetEntity", trace.Entity)
-						v:SetNWEntity("targetEntity", trace.Entity)
-						v:SetVar("chasing", true)
-					end
-				end
-				movedMelons = true
-			end
+			local vTbl = v:GetTable()
+
+			local sameTeam = v:SameTeam(hitEnt)
+			local forceTargetEnt = ( (not sameTeam and hitValid ) and hitEnt) or v
+			local followEnt = ( sameTeam and hitEnt ) or v
+
+			vTbl.forcedTargetEntity = forceTargetEnt
+			vTbl.targetEntity = forceTargetEnt
+			v:SetNWEntity("targetEntity", forceTargetEnt)
+
+			vTbl.followEntity = followEnt
+			v:SetNWEntity("followEntity", followEnt)
+
+			vTbl.chasing = not sameTeam and hitValid
 		end
 	else
+		movedMelons = #foundMelons > 0
 		for _, v in ipairs( foundMelons ) do
-			--si no, mueve
-			if (IsValid(v) and string.StartWith(v:GetClass(), "ent_melon_")) then
-				if (v.RemoveRallyPoints ~= nil) then
-					v:RemoveRallyPoints()
-				end
-				v:SetVar("targetPos", trace.HitPos)
-				v:SetNWVector("targetPos", trace.HitPos)
-				v:SetVar("moving", true)
-				v:SetNWBool("moving", true)
-				v:SetVar("chasing", false)
-				v:SetVar("followEntity", v)
-				v:SetNWEntity("followEntity", v)
-				movedMelons = true
+			local vTbl = v:GetTable()
+			if isfunction(vTbl.RemoveRallyPoints) then
+				v:RemoveRallyPoints()
 			end
+			vTbl.targetPos = hitPos
+			v:SetNWVector("targetPos", hitPos)
+
+			vTbl.moving = true
+			v:SetNWBool("moving", true)
+
+			vTbl.chasing = false
+			vTbl.followEntity = v
+			v:SetNWEntity("followEntity", v)
 		end
 	end
 

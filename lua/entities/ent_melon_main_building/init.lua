@@ -7,9 +7,8 @@ function ENT:Initialize()
 	MelonWars.defaults ( self )
 
 	self.slowThinkTimer = 1
-	self.nextSlowThink = 0
 	self.modelString = "models/props_combine/CombineThumper002.mdl"
-	self.shotOffset = Vector(0,-40,250)
+	self.shotOffset = Vector(0,-40,200)
 	self.materialString = "models/shiny"
 	self.shotSound = "weapons/stunstick/stunstick_impact1.wav"
 
@@ -47,45 +46,45 @@ function ENT:Initialize()
 end
 
 function ENT:DeathEffect ( ent )
-	if ent.dead == false then
-		sound.Play( "ambient/explosions/explode_2.wav", ent:GetPos() )
-		sound.Play( "ambient/explosions/citadel_end_explosion2.wav", ent:GetPos() )
-		for i = 1, 10 do
-			timer.Simple(i/4, function()
-				local randomVector = Vector(math.random(-100,100), math.random(-100,100), math.random(0,200))
-				local effectdata = EffectData()
-				effectdata:SetOrigin( ent:GetPos() + randomVector )
-				effectdata:SetScale( 100 )
-				util.Effect( "Explosion", effectdata )
-			end)
-		end
-		timer.Simple(11/4, function()
-			for i = 1, 10 do
-				local effectdata = EffectData()
-				effectdata:SetOrigin( ent:GetPos() + Vector(0,0,20*i) )
-				effectdata:SetScale( 100 )
-				util.Effect( "Explosion", effectdata )
-			end
+	if ent.dead then return end
 
-			local count = table.Count(MelonWars.debrisProps)
-
-			for i = 1, count do
-				local debris = ents.Create( "prop_physics" )
-				debris:SetModel(MelonWars.debrisProps[i])
-				debris:Ignite( 60 )
-				debris:SetPos(ent:GetPos() + Vector(math.random(-100,100), math.random(-100,100), math.random(-100,100)))
-				debris:Spawn()
-				local debrisPhys = debris:GetPhysicsObject()
-				debrisPhys:ApplyForceCenter(Vector(math.random(-10000,10000), math.random(-10000,10000), math.random(10000,70000)))
-			end
-
-			ent:Remove()
+	sound.Play( "ambient/explosions/explode_2.wav", ent:GetPos() )
+	sound.Play( "ambient/explosions/citadel_end_explosion2.wav", ent:GetPos() )
+	for i = 1, 10 do
+		timer.Simple(i/4, function()
+			local randomVector = Vector(math.random(-100,100), math.random(-100,100), math.random(0,200))
+			local effectdata = EffectData()
+			effectdata:SetOrigin( ent:GetPos() + randomVector )
+			effectdata:SetScale( 100 )
+			util.Effect( "Explosion", effectdata )
 		end)
-		------------------------
-		sound.Play( "ambient/explosions/explode_2.wav", ent:GetPos() )
-		sound.Play( "ambient/explosions/citadel_end_explosion2.wav", ent:GetPos() )
-		ent.dead = true
 	end
+	timer.Simple(11/4, function()
+		for i = 1, 10 do
+			local effectdata = EffectData()
+			effectdata:SetOrigin( ent:GetPos() + Vector(0,0,20*i) )
+			effectdata:SetScale( 100 )
+			util.Effect( "Explosion", effectdata )
+		end
+
+		local count = table.Count(MelonWars.debrisProps)
+
+		for i = 1, count do
+			local debris = ents.Create( "prop_physics" )
+			debris:SetModel(MelonWars.debrisProps[i])
+			debris:Ignite( 60 )
+			debris:SetPos(ent:GetPos() + Vector(math.random(-100,100), math.random(-100,100), math.random(-100,100)))
+			debris:Spawn()
+			local debrisPhys = debris:GetPhysicsObject()
+			debrisPhys:ApplyForceCenter(Vector(math.random(-10000,10000), math.random(-10000,10000), math.random(10000,70000)))
+		end
+
+		ent:Remove()
+	end)
+	------------------------
+	sound.Play( "ambient/explosions/explode_2.wav", ent:GetPos() )
+	sound.Play( "ambient/explosions/citadel_end_explosion2.wav", ent:GetPos() )
+	ent.dead = true
 end
 
 function ENT:SlowThink(ent)
@@ -104,28 +103,18 @@ function ENT:SlowThink(ent)
 end
 
 function ENT:Shoot ( ent )
-	local pos = ent:GetPos()+ent.shotOffset
-	--------------------------------------------------------Disparar
-	if (IsValid(ent.targetEntity)) then
-		local targetPos = ent.targetEntity:GetPos()+ent.targetEntity:OBBCenter()
-		if (ent.targetEntity:GetVar("shotOffset") ~= nil) then
-			if (ent.targetEntity:GetVar("shotOffset") ~= Vector(0,0,0)) then
-				targetPos = ent.targetEntity:GetPos()+ent.targetEntity:GetVar("shotOffset")
-			end
-		end
+	if not IsValid(ent.targetEntity) then return end
+	local pos = ent:GetPos() + ent.shotOffset
 
-		if (ent.targetEntity.damage ~= nil) then
-			ent.targetEntity.damage = ent.targetEntity.damage+self.damageDeal
-		end
-		local effectdata = EffectData()
-		effectdata:SetScale(1)
-		effectdata:SetMagnitude(1)
-		effectdata:SetStart( ent:GetPos() + Vector(0,0,200))
-		effectdata:SetOrigin( ent.targetEntity:GetPos() )
-		effectdata:SetEntity( ent )
-		util.Effect( "ToolTracer", effectdata )
-		sound.Play( ent.shotSound, ent:GetPos() )
-	end
+	ent.targetEntity:TakeDamage(self.damageDeal)
+	local effectdata = EffectData()
+	effectdata:SetScale(1)
+	effectdata:SetMagnitude(1)
+	effectdata:SetStart( pos )
+	effectdata:SetOrigin( ent.targetEntity:GetPos() )
+	effectdata:SetEntity( ent )
+	util.Effect( "ToolTracer", effectdata )
+	sound.Play( ent.shotSound, pos )
 end
 
 function ENT:_OnTakeDamage( damage )
@@ -136,7 +125,7 @@ end
 function ENT:CreateAlert (pos, _team)
 	self:PlayHudSound("ambient/alarms/doomsday_lift_alarm.wav", 0.2, 90, _team)
 	local alert = ents.Create( "ent_melon_HUD_alert" )
-	alert:SetPos(pos+Vector(0,0,100))
+	alert:SetPos(pos + Vector(0,0,100))
 	alert:Spawn()
 	alert:SetNWInt("drawTeam", _team)
 end

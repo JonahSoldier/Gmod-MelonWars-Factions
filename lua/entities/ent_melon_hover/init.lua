@@ -6,8 +6,6 @@ include( "shared.lua" )
 function ENT:Initialize()
 	MelonWars.defaults ( self )
 
-	self.birth = CurTime()
-
 	self.modelString = "models/props_c17/pulleywheels_small01.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
