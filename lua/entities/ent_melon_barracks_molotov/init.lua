@@ -8,12 +8,9 @@ function ENT:Initialize()
 	MelonWars.defaults ( self )
 
 	self.unit = 17
-	self.modelString = "models/props_industrial/oil_storage.mdl"
-	--self.Angles = Angle(0,0,180)
+	self.modelString = "models/props_wasteland/laundry_washer001a.mdl"
+	self.shotOffset = Vector(0,0,25)
 	self.maxHP = 100
-
-	--self.posOffset = Vector(0,0,10)
-	--self:SetPos(self:GetPos()+Vector(0,0,10))
 
 	self:BarrackInitialize()
 	self.population = 1

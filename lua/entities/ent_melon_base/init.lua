@@ -184,8 +184,8 @@ function ENT:Setup()
 		local mins, maxs = self:GetPhysicsObject():GetAABB()
 		self:PhysicsInitBox( mins, maxs, "slime" )
 	else
-		self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics
-		self:SetSolid( SOLID_VPHYSICS )
+		self:PhysicsInit( SOLID_VPHYSICS )
+		--self:SetSolid( SOLID_VPHYSICS )
 	end
 
 	self.phys = self:GetPhysicsObject()

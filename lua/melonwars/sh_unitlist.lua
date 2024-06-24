@@ -1028,8 +1028,8 @@ u.welded_cost 	= -1
 u.population 	= 1
 u.spawn_time 	= 20
 u.description   = BarracksText (17, 3)
-u.model 		= "models/props_industrial/oil_storage.mdl"
-u.offset 		= Vector(0,0,-10)
+u.model 		= "models/props_wasteland/laundry_washer001a.mdl"
+u.offset 		= Vector(0,0,30)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
 

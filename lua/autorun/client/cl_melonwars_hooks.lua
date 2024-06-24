@@ -26,6 +26,7 @@ hook.Add("PostDrawTranslucentRenderables", "MelonWars_DrawOutpostZones", functio
 	local zoneAlpha = mw_buildalpha_multiplier_cv:GetFloat()
 
 	if mw_oldZones_cv:GetBool() then
+		render.SetColorMaterial()
 		outpostRingCol.a = math.Clamp(10 * zoneAlpha, 0, 255)
 		for i, v in ipairs(ents.FindByClass("ent_melon_zone")) do
 			local zoneTeam = v:GetNWInt("zoneTeam", 0)

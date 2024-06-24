@@ -4,20 +4,15 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-
 	MelonWars.defaults ( self )
 
 	self.slowThinkTimer = 1
-	self.nextSlowThink = 0
 	self.modelString = "models/hunter/misc/sphere2x2.mdl"
-	--self.Angles = Angle(0,0,0)
 	self.shotOffset = Vector(0,0,0)
-	--self:SetPos(self:GetPos()+Vector(0,0,1))
 	self.materialString = "phoenix_storms/gear"
 	self.shotSound = "weapons/stunstick/stunstick_impact1.wav"
 
 	self.canMove = true
-	self.canBeSelected = true
 	self.speed = 25
 
 	self.maxHP = 500
@@ -34,31 +29,22 @@ function ENT:Initialize()
 
 	self.moveForceMultiplier = 2
 
-	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
-	self:SetSolid( SOLID_VPHYSICS )         -- Toolbox
 	self.moveType = MOVETYPE_VPHYSICS
-	--local weld = constraint.Weld( self, game.GetWorld(), 0, 0, 0, true , false )
-
-	self:SetNWInt("energy", 0)
-	self:SetNWFloat("state", 0) --0 = neutral, 1 = dar, -1 = necesitar
-	self:SetNWInt("maxenergy", 100)
-	self:SetNWVector("energyPos", Vector(0,0,100))
 
 	self:Setup()
 
 	self.zone = ents.Create( "ent_melon_zone" )
-	self.zone:SetModel("models/hunter/tubes/tube4x4x025.mdl")
-	self.zone:SetCollisionGroup( COLLISION_GROUP_IN_VEHICLE )
-	self.zone:SetParent(self)
-	self.zone:SetPos(self:GetPos()+Vector(0,0,-50))
-	self.zone:Spawn()
-	self.zone:SetMoveType( MOVETYPE_NONE )
-	self.zone:SetModelScale( 2.1, 0 ) --half size
-	self.zone:SetMaterial( "models/ihvtest/eyeball_l" )
-	self.zone:SetNWInt("zoneTeam", mw_melonTeam)
-	self.zone:SetNWInt("scale", 250)
+		self.zone:SetCollisionGroup( COLLISION_GROUP_IN_VEHICLE )
+		self.zone:SetParent(self)
+		self.zone:SetPos(self:GetPos()+Vector(0,0,-50))
+		self.zone:Spawn()
+		self.zone:SetMoveType( MOVETYPE_NONE )
+		self.zone:SetNWInt("zoneTeam", mw_melonTeam)
+		self.zone:SetNWInt("scale", 250)
 
-	self:DeleteOnRemove( self.zone )
+		self.zone:SetNoDraw(true)
+
+		self:DeleteOnRemove( self.zone )
 
 	self.phys:SetMass(1000)
 end
