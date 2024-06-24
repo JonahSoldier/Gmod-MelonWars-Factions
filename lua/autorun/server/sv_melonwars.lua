@@ -338,7 +338,7 @@ function MelonWars.spawnUnitAtPos( class, unit_index, pos, ang, cost, spawntime,
 	end
 
 	if (attach) then
-		newMarine:SetCollisionGroup( COLLISION_GROUP_DISSOLVING )
+		newMarine:SetCollisionGroup( COLLISION_GROUP_DEBRIS_TRIGGER )
 		if IsValid(parent) then
 			newMarine:Welded(newMarine, parent)
 		else
@@ -349,7 +349,7 @@ function MelonWars.spawnUnitAtPos( class, unit_index, pos, ang, cost, spawntime,
 
 	newMarine:Ini(_team)
 
-	if (IsValid(pl)) then
+	if IsValid(pl) then
 		pl.mw_melonTeam = _team
 		if (class ~= "ent_melon_unit_transport") then --  disable physgun grab / pickup for everything but except the unit transport
 			newMarine:SetOwner(pl)
@@ -392,6 +392,26 @@ function MelonWars.spawnUnitAtPos( class, unit_index, pos, ang, cost, spawntime,
 	return newMarine
 end
 
+function MelonWars.sanitizeContraptionEntities( dupeEntities )
+	--Nuke absolutely everything except for the basic values required to make the entity.
+	local legalDataValues = {
+		Model = true,
+		Angle = true,
+		Pos = true,
+		Name = true,
+		PhysicsObjects = true,
+		Class = true
+	}
+
+	for _, entity in pairs(dupeEntities) do
+		for k, v in pairs(entity) do
+			if not legalDataValues[k] then
+				entity[k] = nil
+			end
+		end
+	end
+end
+
 net.Receive( "ContraptionSave", function( _, pl )
 	local name = net.ReadString()
 	local entity = net.ReadEntity()
@@ -406,7 +426,10 @@ net.Receive( "ContraptionSave", function( _, pl )
 
 	duplicator.SetLocalPos( pl:GetEyeTrace().HitPos )
 	local dupetable = duplicator.Copy(entity)
-	duplicator.SetLocalPos( Vector(0,0,0) )
+	duplicator.SetLocalPos( vector_origin )
+
+	--This'll cut down on file sizes so why not
+	MelonWars.sanitizeContraptionEntities( dupetable.Entities )
 
 	local dubJSON = util.TableToJSON(dupetable)
 
@@ -461,16 +484,20 @@ end)
 function MelonWars.contraptionSpawn( spawnerEnt )
 	undo.Create("Melon Contraption")
 	local dupeTable = spawnerEnt.loadedContraption
+	local spawnerIsPlayer = spawnerEnt:IsPlayer()
+
 	local pos, entTeam, owner
-	if spawnerEnt:GetClass() == "player" then
+	if spawnerIsPlayer then
 		pos = spawnerEnt:GetEyeTrace().HitPos
 		entTeam = spawnerEnt:GetInfoNum("mw_team", 0)
 		owner = spawnerEnt
 	else
 		pos = spawnerEnt:GetPos()
 		entTeam = spawnerEnt:GetNWInt("mw_melonTeam")
-		owner = spawnerEnt.player --TODO: IMPLEMENT THIS
+		owner = spawnerEnt.player
 	end
+
+	MelonWars.sanitizeContraptionEntities( dupeTable.Entities )
 
 	local localpos = pos - Vector( ( dupeTable.Maxs.x + dupeTable.Mins.x ) / 2, ( dupeTable.Maxs.y + dupeTable.Mins.y ) / 2, dupeTable.Mins.z - 10 )
 
@@ -478,40 +505,45 @@ function MelonWars.contraptionSpawn( spawnerEnt )
 	local paste = duplicator.Paste( player.GetByID( 0 ), dupeTable.Entities, dupeTable.Constraints )
 	duplicator.SetLocalPos( vector_origin )
 
-	for _, v in pairs(paste) do --paste is discontinuous for some reason
-		if (v.Base == "ent_melon_base") then
+	local enableSkin = tobool(owner:GetInfo( "mw_enable_skin" ))
+	for _, v in pairs(paste) do
+		local vTbl = v:GetTable()
+		if vTbl.Base == "ent_melon_base" then
+			vTbl.population = math.ceil(vTbl.population / 2)
 			v:Ini(entTeam)
-			v:SetCollisionGroup(2)
+			if not vTbl.isContraptionPart then
+				vTbl.canMove = false
+			end
 
-			if (owner:GetInfo( "mw_enable_skin" ) == "1") then
+			v:SetCollisionGroup( COLLISION_GROUP_DEBRIS_TRIGGER ) --Don't collide with other turrets, or contraption props
+			vTbl.phys:SetDamping(0,0)
+
+			if enableSkin then
 				local _skin = MelonWars.specialSteamSkins[owner:SteamID()]
-				if _skin ~= nil and _skin.material ~= nil then
+				if _skin and _skin.material then
 					v:SkinMaterial( _skin.material )
-					-- if (_skin.trail ~= nil) then
-					-- 	local color = Color(v:GetColor().r*_skin.teamcolor+255*(1-_skin.teamcolor), v:GetColor().g*_skin.teamcolor+255*(1-_skin.teamcolor), v:GetColor().b*_skin.teamcolor+255*(1-_skin.teamcolor))
-					-- 	util.SpriteTrail( v, 0, color, false, _skin.startSize, _skin.endSize, _skin.length, 1 / _skin.startSize * 0.5, _skin.trail )
-					-- end
 				end
 			end
-		end
-		if (v:GetClass() == "ent_melon_propeller" or v:GetClass() == "ent_melon_hover") then --TODO: Shouldn't be hardcoded.
-			v:SetNWBool("done",true)
-		end
-		if not string.StartWith( v:GetClass(), "ent_melon") then
+			if not(v:GetNWBool("done", nil) == nil) then --If done nwVar exists, set it to true. Used for propeller/hover
+				v:SetNWBool("done",true)
+			end
+		else
+			v:SetCollisionGroup(COLLISION_GROUP_PLAYER) --Collide with other contraption props, but not turrets.
+
 			v:SetColor(MelonWars.teamColors[entTeam])
 			v:SetMaterial("")
 			v:SetRenderFX(kRenderFxNone)
 			v:SetNWInt("mw_melonTeam", entTeam)
-			v:SetNWInt("propHP", math.min(1000,v:GetPhysicsObject():GetMass())) --max 1000 de vida
-			v.realvalue = v:GetPhysicsObject():GetMass()
+			v:SetNWInt("propHP", math.min(1000,v:GetPhysicsObject():GetMass()))
+			vTbl.realvalue = v:GetPhysicsObject():GetMass()
 		end
-		if (spawnerEnt:GetClass() == "player") then
-			v:SetVar("targetPos", pos)
+		if spawnerIsPlayer then
+			vTbl.targetPos = pos
 			v:SetNWVector("targetPos", pos)
 		else
-			v:SetVar( "targetPos", spawnerEnt.targetPos + vector_up )
+			vTbl.targetPos = spawnerEnt.targetPos + vector_up
 			v:SetNWVector( "targetPos", spawnerEnt.targetPos + vector_up )
-			v:SetVar( "moving", true )
+			vTbl.moving = true
 		end
 
 		undo.AddEntity( v )
@@ -633,7 +665,7 @@ net.Receive( "MW_SpawnProp", function( _, pl )
 end )
 
 local function MW_SpawnBaseAtPos(_team, vector, pl, grandwar, unit)
-	local offset = Vector(0,0,0)
+	local offset = vector_origin
 
 	local class = "ent_melon_main_building"
 	if (grandwar) then

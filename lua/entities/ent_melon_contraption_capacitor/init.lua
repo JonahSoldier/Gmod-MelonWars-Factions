@@ -18,11 +18,12 @@ function ENT:Initialize()
 	self.maxHP = 50
 	self.shotOffset = Vector(0,0,15)
 
+	self.isContraptionPart = true
+
 	self:Setup()
 
 	self:SetNWInt("mw_charge", 0)
 	self:SetNWInt("maxCharge", 1000)
-
 end
 
 

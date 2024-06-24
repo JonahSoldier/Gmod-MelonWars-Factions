@@ -29,6 +29,8 @@ function ENT:Initialize()
 	self:GetPhysicsObject():SetMass(30)
 
 	self.moving = false
+
+	self.isContraptionPart = true
 end
 
 function ENT:SlowThink ( ent )

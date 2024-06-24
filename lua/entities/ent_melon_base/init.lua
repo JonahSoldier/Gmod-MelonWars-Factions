@@ -231,10 +231,10 @@ function ENT:Welded( ent, parent )
 
 	ent.phys:SetDamping(0,0)
 
-	ent:SetCollisionGroup(2)
+	ent:SetCollisionGroup( COLLISION_GROUP_DEBRIS_TRIGGER )
 	--Resta su poblacion para luego sumar la nueva
 	--MelonWars.updatePopulation(-ent.population, mw_melonTeam)
-	ent.population = math.ceil(ent.population/2)
+	ent.population = math.ceil(ent.population / 2)
 	--MelonWars.updatePopulation(ent.population, mw_melonTeam)
 end
 

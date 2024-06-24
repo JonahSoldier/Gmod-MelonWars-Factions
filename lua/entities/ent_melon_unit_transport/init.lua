@@ -23,6 +23,8 @@ function ENT:Initialize()
 
 	self.idsInside = {}
 
+	self.isContraptionPart = true
+
 	self:Setup()
 
 	self:SetCollisionGroup(COLLISION_GROUP_NONE)

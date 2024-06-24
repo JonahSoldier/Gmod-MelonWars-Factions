@@ -22,6 +22,7 @@ function ENT:Initialize()
 
 	self.maxHP = 25
 	self.shotOffset = Vector(0,0,15)
+	self.isContraptionPart = true
 
 	self:Setup()
 end

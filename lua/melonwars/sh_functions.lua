@@ -241,7 +241,7 @@ function MelonWars.calculateContraptionValues( dupetable )
 			local realUnit = MelonWars.units[realID]
 			cost = cost + MelonWars.unitCost(realID, true)
 			spawnTime = spawnTime + realUnit.spawn_time * 2
-			power = power + (realUnit.population or 0)
+			power = power + math.ceil( (realUnit.population or 0) / 2 )
 		elseif ent.realvalue then --If it's any other entity (props)
 			if SERVER and ent.Model then --A bit jank, but I don't think this is an issue. MW Contraptions aren't typically very many props.
 				local value = 1000

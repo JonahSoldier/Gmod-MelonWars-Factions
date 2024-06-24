@@ -21,6 +21,8 @@ function ENT:Initialize()
 	self.damping = 1
 	self.maxHP = 45
 
+	self.isContraptionPart = true
+
 	self:Setup()
 end
 

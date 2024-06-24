@@ -1,19 +1,12 @@
-local function MW_Initialize()
+hook.Add( "Initialize", "MelonWars_InitializeTeams", function()
 	MelonWars.teamColors[0] = Color( 100, 100, 100, 255 )
+end )
 
-	-- Create a file for contraption validation
-	local text = util.Compress( util.TableToJSON( MelonWars.units ) )
-	file.CreateDir( "melonwars/validation" )
-	file.Write( "melonwars/validation/unitValues.txt", text )
-end
-hook.Add( "Initialize", "MelonWars_InitializeTeams", MW_Initialize )
-
-local function MW_AddTabs()
+hook.Add( "AddToolMenuTabs", "MelonWars_AddTabs", function()
 	spawnmenu.AddToolTab( "MelonWars", "#Melonwarstab", "icon16/wrench.png" )
-end
-hook.Add( "AddToolMenuTabs", "MelonWars_AddTabs", MW_AddTabs ) -- Hook the Tab to the Spawn Menu
+end ) -- Hook the Tab to the Spawn Menu
 
-local function spawn( ply )
+hook.Add( "PlayerInitialSpawn", "MelonWars_InitSpawnData", function( ply )
 	ply.mw_hover = 0
 	ply.mw_menu = 0
 	ply.mw_selectTimer = 0
@@ -26,9 +19,7 @@ local function spawn( ply )
 		net.Send( ply )
 	end
 	util.PrecacheModel( "models/hunter/tubes/circle2x2.mdl" )
-end
-hook.Add( "PlayerInitialSpawn", "MelonWars_InitSpawnData", spawn )
-
+end)
 
 hook.Add( "EntityTakeDamage", "MelonWars_EntTakeDmg", function( target, dmginfo )
 	if not IsValid( target and dmginfo ) then return end
@@ -61,13 +52,14 @@ hook.Add( "InitPostEntity", "MelonWars_StartLoad", function()
 	end
 end )
 
+--[[
 local function MWSign( x )
 	if x > 0 then return 1 end
 	if x < 0 then return -1 end
 	return 0
 end
 
-local function MW_Move( ply, mv )
+hook.Add( "Move", "MelonWars_CalcView", function( ply, mv )
 	if not IsValid( ply.controllingUnit ) then return end
 	local cUnit = ply.controllingUnit
 
@@ -83,5 +75,5 @@ local function MW_Move( ply, mv )
 	end
 
 	return true
-end
-hook.Add( "Move", "MelonWars_CalcView", MW_Move )
+end )
+--]]
