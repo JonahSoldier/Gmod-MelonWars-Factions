@@ -14,7 +14,7 @@ TOOL.ClientConVar[ "mw_team" ] = 1
 CreateClientConVar( "mw_contraption_name", "default", 0, false )
 TOOL.ClientConVar[ "mw_contraption_name" ] = "default"
 CreateClientConVar( "mw_water_tank_value", "1000", false, true, "Sets the value of a water tank upon its creation.", 0, 50000 )
-TOOL.ClientConVar[ "mw_water_tank_value" ] = 10000
+TOOL.ClientConVar[ "mw_water_tank_value" ] = 1000
 
 CreateConVar( "mw_enable_skin", "1", FCVAR_ARCHIVE + FCVAR_USERINFO, "Enable or disable your custom skin." )
 TOOL.ClientConVar[ "mw_enable_skin" ] = "1"

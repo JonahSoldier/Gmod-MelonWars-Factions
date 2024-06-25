@@ -244,13 +244,14 @@ net.Receive( "MW_UseWaterTank", function( _, pl )
 	local _team = ent:GetNWInt("capTeam", -1)
 	if _team ~= pl:GetInfoNum( "mw_team", -1 ) then return end
 
-	MelonWars.teamCredits[_team] = MelonWars.teamCredits[_team] + ent.waterVal
+	local waterVal = ent:GetWaterValue()
+	MelonWars.teamCredits[_team] = MelonWars.teamCredits[_team] + waterVal
 	for _, v in ipairs( player.GetAll() ) do
 		if v:GetInfoNum( "mw_team", -1) == _team then
 			net.Start( "MW_TeamCredits" )
 				net.WriteInt( MelonWars.teamCredits[_team], 32 )
 			net.Send( v )
-			v:PrintMessage( HUD_PRINTTALK, "== Received " .. ent.waterVal .. " water! ==" )
+			v:PrintMessage( HUD_PRINTTALK, "== Received " .. waterVal .. " water! ==" )
 		end
 	end
 
