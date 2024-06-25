@@ -202,6 +202,7 @@ function ENT:Setup()
 			self.angularDamping = self.damping
 		end
 		self.phys:SetDamping( self.damping, self.angularDamping )
+		self.mw_mass = self.phys:GetMass() --Optimization. We can assume this number doesn't change.
 	end
 
 	if self.changeAngles then
@@ -308,7 +309,6 @@ function ENT:Update()
 	self:SetNWEntity( "targetEntity", selfTbl.targetEntity )
 	self:SetNWEntity( "followEntity", selfTbl.followEntity )
 
-	local entPos = self:GetPos()
 	local followEntityPos = vector_origin
 	if IsValid( selfTbl.followEntity ) then
 		followEntityPos = selfTbl.followEntity:GetPos()
@@ -319,9 +319,11 @@ function ENT:Update()
 	end
 
 	if not selfTbl.canMove then return end
+
+	local entPos = self:GetPos()
 	if selfTbl.followEntity ~= self then
 		if IsValid( selfTbl.followEntity ) then
-			if (followEntityPos-entPos):LengthSqr() > selfTbl.range*selfTbl.range then
+			if followEntityPos:DistToSqr(entPos) > selfTbl.range ^ 2 then
 				selfTbl.targetPos = followEntityPos+(entPos-followEntityPos):GetNormalized()*selfTbl.range*0.5
 				selfTbl.moving = true
 			end
@@ -343,28 +345,20 @@ function ENT:Update()
 
 	local phys = selfTbl.phys
 
-	if IsValid(phys) then
-		---------------------------------------------------------------------------Movimiento
-		if selfTbl.moving then
-			--if (self.chaseStance == false or self.targetEntity == nil) then
-			local moveVector = (selfTbl.targetPos-entPos):GetNormalized()*selfTbl.speed-self:GetVelocity()*0.5
-			local force = Vector(moveVector.x, moveVector.y, 0)
-			-- OLD MOVEMENT, MOVE IN THINK. NEW MOVEMENT IN PHYSICS UPDATE
-			--phys:ApplyForceCenter (force*phys:GetMass())
-			-- new:
-			selfTbl.phys:Wake()
-			selfTbl.moveForce = force*0.5*selfTbl.moveForceMultiplier
-			--end
-		end
+	if selfTbl.moving and IsValid(phys) then
+		local moveVector = (selfTbl.targetPos-entPos):GetNormalized() * selfTbl.speed - self:GetVelocity() * 0.5
+		moveVector.z = 0
+		selfTbl.phys:Wake()
+		selfTbl.moveForce = moveVector * (0.5 * selfTbl.moveForceMultiplier)
 
-		if selfTbl.moving and selfTbl.ai then
-			local distanceToLastPosition = (selfTbl.lastPosition-entPos):LengthSqr()
+		if selfTbl.ai then
+			local distanceToLastPosition = selfTbl.lastPosition:DistToSqr(entPos) --(selfTbl.lastPosition-entPos):LengthSqr()
 
-			if selfTbl.lastPosition ~= vector_origin and distanceToLastPosition > 500000 then --Stop moving if distance from lastposition is ridiculous (teleported)
+			if distanceToLastPosition > 500000 and selfTbl.lastPosition ~= vector_origin then --Stop moving if distance from lastposition is ridiculous (teleported)
 				self:FinishMovement()
 				selfTbl.lastPosition = vector_origin
-			elseif distanceToLastPosition < (selfTbl.speed/2)*(selfTbl.speed/2)then
-				selfTbl.stuck = selfTbl.stuck+1
+			elseif distanceToLastPosition < (selfTbl.speed / 2) ^ 2 then
+				selfTbl.stuck = selfTbl.stuck + 1
 			else
 				selfTbl.lastPosition = entPos
 				selfTbl.stuck = 0
@@ -386,15 +380,9 @@ function ENT:Update()
 		end
 	end
 
-	local flattenedTargetPos = Vector(selfTbl.targetPos.x, selfTbl.targetPos.y, entPos.z)
-	if selfTbl.ai then
-		if (flattenedTargetPos-entPos):LengthSqr() < 900 then
-			self:FinishMovement()
-		end
-	else
-		if (flattenedTargetPos-entPos):LengthSqr() < 100 then
-			self:FinishMovement()
-		end
+	local distSqr = selfTbl.targetPos:Distance2DSqr(entPos)
+	if distSqr < 100 or (selfTbl.ai and distSqr < 900) then
+		self:FinishMovement()
 	end
 
 	--TODO: Ditto of other todo in this function
@@ -407,8 +395,8 @@ end
 function ENT:Unstuck()
 	local phys = self.phys
 	if CurTime() <= self.nextJump then return end
-	phys:ApplyForceCenter (Vector(0,0,self.speed*2.5)*phys:GetMass())
-	self.nextJump = CurTime()+1
+	phys:ApplyForceCenter( Vector(0,0,self.speed * 2.5) * self.mw_mass )
+	self.nextJump = CurTime() + 1
 end
 
 function ENT:ClearOrders()
@@ -827,38 +815,41 @@ function MelonWars.die( ent )
 	if not IsValid(ent) then return end
 	if cvars.Bool("mw_admin_immortality") then return end
 	if ent.DeathEffect == nil then return end
-	-- ent:SpawnDoot()
 	ent:DeathEffect ( ent )
 end
 
 function ENT:PhysicsUpdate()
-	self:DefaultPhysicsUpdate()
+	self:GetTable().DefaultPhysicsUpdate(self) --Very slightly faster than calling it the sane way
 end
 
+--Warning: Black Magic below
+local resistForce = Vector(0,0,0)
 function ENT:DefaultPhysicsUpdate()
 	local selfTbl = self:GetTable()
-	if mw_admin_playing_cv:GetBool() and selfTbl.canMove then
+	if selfTbl.canMove and mw_admin_playing_cv:GetBool()  then
 		if selfTbl.moving then
-			local vel = self:GetVelocity()
+			local phys = selfTbl.phys
+			local vel = phys:GetVelocity()
 			if vel:LengthSqr() < selfTbl.speed ^ 2 then
-				local phys = selfTbl.phys
-				phys:ApplyForceCenter (selfTbl.moveForce * phys:GetMass())
+				phys:ApplyForceCenter(selfTbl.moveForce * selfTbl.mw_mass)
 			else
-				vel[3] = 0
-				vel:Mul( -0.02 * selfTbl.phys:GetMass())
-				selfTbl.phys:ApplyForceCenter (vel)
+				--Doing it this way is marginally faster in this specific context
+				local x, y = vel:Unpack()
+				local mul = -0.02 * selfTbl.mw_mass
+				resistForce.x, resistForce.y = mul * x, mul * y
+				phys:ApplyForceCenter(resistForce)
 			end
 		else
 			selfTbl.moveForce = vector_origin
 		end
 	else
-		self.phys:Sleep()
+		selfTbl.phys:Sleep()
 	end
 end
 
 function ENT:OnTakeDamage( damage )
 	local attacker = damage:GetAttacker()
-	if (attacker:GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not attacker:GetVar('careForFriendlyFire')) and not attacker:IsPlayer() then
+	if (attacker:GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not attacker.careForFriendlyFire) and not attacker:IsPlayer() then
 		local selfTbl = self:GetTable()
 		local damageDone = damage:GetDamage()
 
