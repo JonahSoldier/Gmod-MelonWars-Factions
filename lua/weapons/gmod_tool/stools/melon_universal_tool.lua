@@ -21,6 +21,7 @@ TOOL.ClientConVar[ "mw_enable_skin" ] = "1"
 
 CreateConVar( "mw_admin_open_permits", "0", 8192 + 128, "Whether or not everyone is allowed to use the admin menu." )
 TOOL.ClientConVar[ "mw_admin_spawn_time" ] = 0
+
 CreateConVar( "mw_admin_spawn_time", "0", 8192, "Whether or not units take time before spawning." )
 TOOL.ClientConVar[ "mw_admin_spawn_time" ] = 1 --TODO: This seems like it's duplicated / maybe shouldn't be here?
 CreateConVar( "mw_admin_immortality", "0", 8192, "Whether or not units are immortal. Intended for use in photography." )
@@ -47,9 +48,6 @@ CreateConVar( "mw_admin_ban_contraptions", "0", 8192, "If false, you can place C
 TOOL.ClientConVar[ "mw_admin_ban_contraptions" ] = 1
 CreateConVar( "mw_admin_locked_teams", "0", 8192, "If true, you can't change teams or factions." )
 TOOL.ClientConVar[ "mw_admin_locked_teams" ] = 0
-
-CreateConVar( "mw_admin_player_colors", "1", 8192, "If true, players will respawn with their team's color." )
-TOOL.ClientConVar[ "mw_admin_player_colors" ] = 1
 
 CreateConVar( "mw_admin_readyup_percentage", "0.75", 8192, "Percentage of players ready needed to trigger a match start." )
 TOOL.ClientConVar[ "mw_admin_base_income" ] = 0.75

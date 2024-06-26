@@ -28,7 +28,6 @@ function ENT:Initialize()
 end
 
 function ENT:Think(ent)
-	--TODO: Possibly re-connect to any newly built energy 
 	local selfTbl = self:GetTable()
 	for i, v in ipairs(selfTbl.targetConnections) do
 		if IsValid(v) then
@@ -43,14 +42,17 @@ function ENT:Think(ent)
 		end
 	end
 
+	self:Siphon_Connect()
+
 	self:Energy_Set_State()
 	self:NextThink( CurTime() + 1 )
 	return true
 end
 
-
 function ENT:FriendlyUnitsNearby()
 	local selfTeam = self:GetNWInt("mw_melonTeam", 0)
+	if cvars.Bool("mw_admin_allow_free_placing") or MelonWars.isInRange( self:GetPos(), selfTeam ) then return end
+
 	for i, v in ipairs(ents.FindInSphere( self:GetPos(), self.range)) do
 		if v.Base == "ent_melon_base" and MelonWars.sameTeam(v:GetNWInt("mw_melonTeam", 0), selfTeam) then
 			return
@@ -63,21 +65,20 @@ end
 
 function ENT:Siphon_Connect()
 	if not self:IsValid() then return end
-	for i, v in ipairs(ents.FindInSphere(self:GetPos(), self.connectionRange)) do
-		if v.Base == "ent_melon_energy_base" and not self:SameTeam(v) then
-			table.insert( self.targetConnections, v)
-		end
-	end
 
 	local selfEnergyPos = self:GetNWVector("energyPos",vector_origin)
-	for i, v in ipairs(self.targetConnections) do
-		local vEnergyPos = v:GetNWVector("energyPos",vector_origin)
-		constraint.Rope( self, v, 0, 0, selfEnergyPos, vEnergyPos, self:LocalToWorld( selfEnergyPos ):Distance(v:LocalToWorld( vEnergyPos )), 125, 0, 3, "cable/cable2", false )
-		print(v)
+	for i, v in ipairs(ents.FindInSphere(self:GetPos(), self.connectionRange)) do
+		if v.Base == "ent_melon_energy_base" and not self:SameTeam(v) and not table.HasValue(self.targetConnections, v) then
+			table.insert(self.targetConnections, v)
+
+			local vEnergyPos = v:GetNWVector("energyPos",vector_origin)
+			constraint.Rope( self, v, 0, 0, selfEnergyPos, vEnergyPos, self:LocalToWorld( selfEnergyPos ):Distance(v:LocalToWorld( vEnergyPos )), 125, 0, 3, "cable/cable2", false )
+
+			local zap = CreateSound( v, "ambient.electrical_random_zap_1" )
+			zap:Play()
+		end
 	end
 end
-
-function ENT:SlowThink(ent) end
 
 function ENT:Shoot( ent ) end
 

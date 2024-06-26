@@ -46,7 +46,7 @@ util.AddNetworkString( "MW_ServerControlUnit" )
 util.AddNetworkString( "MW_ClientControlUnit" )
 util.AddNetworkString( "MWControlShoot" )
 
--- (Most of) JonahSoldier's network stuff
+-- Misc Stuff added by faction mod
 util.AddNetworkString( "MWColourMod" )
 util.AddNetworkString( "SetMWConvar" )
 util.AddNetworkString( "MWReadyUp" )
@@ -63,16 +63,30 @@ include("melonwars/sh_functions.lua")
 
 AddCSLuaFile("melonwars/cl_worldrings.lua")
 
-net.Receive( "SetMWConvar", function( _, pl ) --TODO: See if there's a better way to do this.
+--Work-around to make playing on dedicated servers possible.
+--MW was originally developed solely on peer-to-peer, so a lot of 
+--admin settings rely on the player using them also being the server host.
+local mw_validConvars = {
+	mw_admin_playing = true,
+	mw_admin_locked_teams = true,
+	mw_admin_bonusunits = true,
+	mw_admin_allow_manual_placing = true,
+	mw_admin_ban_contraptions = true,
+	mw_admin_spawn_time = true,
+	mw_admin_credit_cost = true,
+	mw_admin_allow_free_placing = true,
+	mw_admin_move_any_team = true,
+	mw_admin_immortality = true
+}
+net.Receive( "SetMWConvar", function( _, pl )
 	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
-	--TODO: Just make a table of valid convars for this to take as input.
 
 	if not pl:IsAdmin() or openPerms then return end
 
 	local convar = net.ReadString()
 	local newValue = net.ReadBool()
 
-	if not string.StartWith( convar, "mw_" ) then return end -- NOTE: Switch to StartsWith when/if all Gmod branches are updated to the January 2023 patch
+	if not mw_validConvars[convar] then return end --Security. We *really* don't want to trust what the client gives us here.
 
 	GetConVar( convar ):SetBool( newValue )
 end )
@@ -234,14 +248,14 @@ net.Receive( "MW_UpdateClientInfo", function( _, pl )
 	end
 end )
 
-net.Receive( "MW_UpdateServerInfo", function()
+net.Receive( "MW_UpdateServerInfo", function() --TODO: This is bad. It shouldn't exist.
 	local a = net.ReadInt(8)
 	MelonWars.teamCredits[a] = net.ReadInt(32)
 end )
 
 net.Receive( "MW_UseWaterTank", function( _, pl )
 	local ent = net.ReadEntity()
-	local _team = ent:GetNWInt("capTeam", -1)
+	local _team = ent.capTeam
 	if _team ~= pl:GetInfoNum( "mw_team", -1 ) then return end
 
 	local waterVal = ent:GetWaterValue()

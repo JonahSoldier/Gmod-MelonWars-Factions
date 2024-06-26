@@ -15,8 +15,7 @@ function ENT:Initialize()
 
 	self.capTeam = 0
 
-	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
-	self:SetSolid( SOLID_VPHYSICS )         -- Toolbox
+	self:PhysicsInit( SOLID_VPHYSICS )
 	self:SetMoveType( MOVETYPE_NONE )
 	self:GetPhysicsObject():EnableMotion(false)
 end

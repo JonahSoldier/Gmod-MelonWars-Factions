@@ -19,8 +19,7 @@ function ENT:Initialize()
 	self:SetNWInt("captured", 0)
 	self:SetNWInt("capTeam", 0)
 
-	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
-	self:SetSolid( SOLID_VPHYSICS )         -- Toolbox
+	self:PhysicsInit( SOLID_VPHYSICS )
 	self:SetMoveType( MOVETYPE_NONE )
 	self:GetPhysicsObject():EnableMotion(false)
 
@@ -28,7 +27,7 @@ function ENT:Initialize()
 		self.zone:SetCollisionGroup( COLLISION_GROUP_IN_VEHICLE )
 
 		self.zone:Spawn()
-		self.zone:SetPos(self:GetPos()+Vector(0,0,-100))
+		self.zone:SetPos(self:GetPos() + Vector(0,0,-100))
 		self.zone:SetMoveType( MOVETYPE_NONE )
 
 		self.zone:SetNWInt("zoneTeam", 0)

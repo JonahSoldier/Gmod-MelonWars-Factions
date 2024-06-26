@@ -7,7 +7,7 @@ function MelonWars.isInRange( pos, teamIndex )
 		end
 	end
 
-	return false
+	return teamIndex == 0
 end
 
 function MelonWars.noEnemyNear( pos, teamIndex )

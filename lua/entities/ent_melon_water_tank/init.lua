@@ -6,39 +6,28 @@ include( "shared.lua" )
 MelonWars.teamColors = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(50,0,40,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
 
 function ENT:Initialize()
-	self.slowThinkTimer = 2
-	self.mw_melonTeam = 0
-	self.nextSlowThink = 0
 	self:SetModel( "models/props_wasteland/laundry_washer001a.mdl" )
 	self:SetMaterial( "models/shiny" )
 	self.captured = {0,0,0,0,0,0,0,0}
 
-	for i = 1, 8 do
-		self:SetNWInt("captured" .. tostring(i), 0)
-	end
+	self:GetNWInt("captured", -1)
 	self.capTeam = 0
 
-	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
-	self:SetSolid( SOLID_VPHYSICS )         -- Toolbox
+	self:PhysicsInit( SOLID_VPHYSICS )
 	self:SetMoveType( MOVETYPE_NONE )
 	self:GetPhysicsObject():EnableMotion(false)
 end
 
 function ENT:Think()
-	local selfTbl = self:GetTable()
-	if CurTime() <= selfTbl.nextSlowThink then return end
-	selfTbl.nextSlowThink = CurTime() + selfTbl.slowThinkTimer
-	if not cvars.Bool( "mw_admin_playing" ) then return end
+	if not cvars.Bool( "mw_admin_playing" ) then
+		self:NextThink(CurTime() + 2)
+		return
+	end
 
-	self:SlowThink( self )
-end
-
-function ENT:SlowThink()
 	local selfTbl = self:GetTable()
 	local capturing = {0,0,0,0,0,0,0,0}
 
-	local foundEnts = ents.FindInSphere( self:GetPos(), 200 )
-	for _, v in ipairs( foundEnts ) do
+	for _, v in ipairs( ents.FindInSphere( self:GetPos(), 200 ) ) do
 		local vTbl = v:GetTable()
 		if vTbl.Base == "ent_melon_base" then
 			local vTeam = v:GetNWInt("mw_melonTeam", 0)
@@ -83,25 +72,23 @@ function ENT:SlowThink()
 		totalCapture = totalCapture + selfTbl.captured[i]
 	end
 
-	if totalCapture == 100 then
-		for i = 1, 8 do
-			if (selfTbl.captured[i] == totalCapture) then
-				self:GetCaptured(i, self)
+	if totalCapture > 0 then
+		for i = 1,8 do
+			if selfTbl.captured[i] == totalCapture then
+				self:SetNWInt("capTeam", i)
+				if totalCapture == 100 then
+					self:GetCaptured(i, self)
+				end
 			end
 		end
-	end
-
-	if totalCapture == 0 then
+	else
 		self:GetCaptured(0, self)
 	end
 
-	if selfTbl.captured[selfTbl.capTeam] == 0 then
-		self:GetCaptured(0, self)
-	end
+	self:SetNWInt("captured", totalCapture)
 
-	for i = 1, 8 do
-		self:SetNWInt("captured" .. tostring(i), selfTbl.captured[i])
-	end
+	self:NextThink(CurTime() + 2)
+	return true
 end
 
 function ENT:GetCaptured(capturingTeam, ent)

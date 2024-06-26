@@ -36,6 +36,8 @@ end
 
 function ENT:FriendlyUnitsNearby()
 	local selfTeam = self:GetNWInt("mw_melonTeam", 0)
+	if cvars.Bool("mw_admin_allow_free_placing") or MelonWars.isInRange( self:GetPos(), selfTeam ) then return end
+
 	for i, v in ipairs(ents.FindInSphere( self:GetPos(), 250)) do
 		if not(v:GetClass() == "ent_melon_teleporter_receiver") and v.Base == "ent_melon_base" and MelonWars.sameTeam(v:GetNWInt("mw_melonTeam", 0), selfTeam) then
 			return
