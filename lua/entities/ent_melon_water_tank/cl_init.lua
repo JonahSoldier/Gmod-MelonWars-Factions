@@ -1,11 +1,12 @@
 include( "shared.lua" )
 
+local angOffset = Angle( -90, 0, 0 )
+local vOffset = Vector( 0, 0, 40 )
 function ENT:Draw()
-	-- self.BaseClass.Draw(self) -- Overrides Draw
 	self:DrawModel() -- Draws Model Client Side
-	if cvars.Number( "mw_team" ) ~= self:GetNWInt( "capTeam", -1 ) then return end
-	local angle = LocalPlayer():EyeAngles() + Angle( -90, 0, 0 )
-	local vpos = self:WorldSpaceCenter() + Vector( 0, 0, 40 ) + angle:Forward() * 7 + angle:Right() * 7
+	if self:GetNWInt("capture") < 100 or cvars.Number( "mw_team" ) ~= self:GetNWInt( "capTeam", -1 ) then return end
+	local angle = LocalPlayer():EyeAngles() + angOffset
+	local vpos = self:WorldSpaceCenter() + vOffset + angle:Forward() * 7 + angle:Right() * 7
 
 	cam.Start3D2D( vpos, angle, 1 )
 		--Display de actividad

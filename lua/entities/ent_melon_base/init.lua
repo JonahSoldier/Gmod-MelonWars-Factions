@@ -223,20 +223,19 @@ function ENT:Setup()
 end
 
 function ENT:Welded( ent, parent )
-	--script a ejecutar si se spawnea weldeada
-	local weld = constraint.Weld( ent, parent, 0, 0, 0, true , false )
+	constraint.Weld( ent, parent, 0, 0, 0, true , false )
+
 	ent.canMove = false
 	ent.materialString = "models/shiny"
 
 	ent.parent = parent
 
 	ent.phys:SetDamping(0,0)
-
 	ent:SetCollisionGroup( COLLISION_GROUP_DEBRIS_TRIGGER )
-	--Resta su poblacion para luego sumar la nueva
-	--MelonWars.updatePopulation(-ent.population, mw_melonTeam)
-	ent.population = math.ceil(ent.population / 2)
-	--MelonWars.updatePopulation(ent.population, mw_melonTeam)
+
+	if not(self.moveType == MOVETYPE_NONE) then
+		ent.population = math.ceil(ent.population / 2)
+	end
 end
 
 function ENT:Think()
@@ -252,21 +251,16 @@ function ENT:Think()
 	end
 
 	local phys = selfTbl.phys
-	if not phys:IsAsleep() then
-		if selfTbl.moving == false and selfTbl.canMove then -- NOTE: Is the commented-out code in this section actually necessary? If not having it breaks something, add it back in.
-			--local tr = util.QuickTrace( self:GetPos(), Vector( 0, 0, -self.sphereRadius + 15 ), self )
-			--if tr.Entity ~= nil then
-				--self.phys:SetDamping(self.damping*5,self.damping*5)
-				local velocity = self:GetVelocity()
-				local stoppingForce = phys:GetMass() * -velocity * 0.5
-				stoppingForce.z = 0
-				phys:ApplyForceCenter( stoppingForce )
-				if velocity:LengthSqr() < 800 then
-					phys:Sleep()
-				end
-			--end
-		--else
-			--phys:SetDamping( self.damping, self.damping )
+	if selfTbl.moving == false and selfTbl.canMove and not phys:IsAsleep()  then
+		local stoppingForce = self:GetVelocity()
+		local shouldSleep = stoppingForce:LengthSqr() < 800
+
+		stoppingForce:Mul(-( phys:GetMass() * 0.5 ))
+		stoppingForce.z = 0
+
+		phys:ApplyForceCenter( stoppingForce )
+		if shouldSleep then
+			phys:Sleep()
 		end
 	end
 
@@ -274,7 +268,7 @@ function ENT:Think()
 		self:Update()
 	end
 
-	if not selfTbl.canMove and self:GetClass() ~= ( "ent_melon_unit_transport" or "ent_melon_main_unit" ) and self:GetMoveType() ~= MOVETYPE_NONE then
+	if not selfTbl.canMove and self:GetMoveType() ~= MOVETYPE_NONE and self:GetClass() ~= "ent_melon_unit_transport" then
 		local const = constraint.FindConstraints( self, "Weld" )
 		table.Add( const, constraint.FindConstraints( self, "Axis" ) )
 		if table.Count( const ) == 0 then
@@ -282,7 +276,7 @@ function ENT:Think()
 		end
 	end
 
-	if not ( IsValid( selfTbl.parent ) or selfTbl.parent == nil or selfTbl.parent:IsWorld() ) then
+	if selfTbl.parent and not ( IsValid( selfTbl.parent ) or selfTbl.parent:IsWorld() ) then
 		selfTbl.damage = 5
 	end
 end
@@ -305,7 +299,6 @@ function ENT:Update()
 		end
 	end
 
-	--TODO: Find where target/follow entities are set, and see if this can be moved out. Doing it in update is expensive.
 	self:SetNWEntity( "targetEntity", selfTbl.targetEntity )
 	self:SetNWEntity( "followEntity", selfTbl.followEntity )
 
@@ -322,33 +315,28 @@ function ENT:Update()
 
 	local entPos = self:GetPos()
 	if selfTbl.followEntity ~= self then
-		if IsValid( selfTbl.followEntity ) then
-			if followEntityPos:DistToSqr(entPos) > selfTbl.range ^ 2 then
-				selfTbl.targetPos = followEntityPos+(entPos-followEntityPos):GetNormalized()*selfTbl.range*0.5
-				selfTbl.moving = true
-			end
+		if IsValid( selfTbl.followEntity ) and followEntityPos:DistToSqr(entPos) > selfTbl.range ^ 2 then
+			selfTbl.targetPos = followEntityPos + (entPos-followEntityPos):GetNormalized() * selfTbl.range * 0.5
+			selfTbl.moving = true
 		end
 	else
-		if selfTbl.chasing then
-			if IsValid(selfTbl.targetEntity) then
-				if (targetEntityPos-entPos):LengthSqr() > selfTbl.range*selfTbl.range then
-					local chanceDistMul = 0.9
-					if selfTbl.meleeAi then
-						chanceDistMul = 0.2
-					end
-					selfTbl.targetPos = targetEntityPos+(entPos-targetEntityPos):GetNormalized()*selfTbl.range*chanceDistMul
-					selfTbl.moving = true
-				end
+		if selfTbl.chasing and IsValid(selfTbl.targetEntity) and targetEntityPos:DistToSqr(entPos) > selfTbl.range ^ 2 then
+			local chanceDistMul = 0.9
+			if selfTbl.meleeAi then
+				chanceDistMul = 0.2
 			end
+			selfTbl.targetPos = targetEntityPos + (entPos-targetEntityPos):GetNormalized() * selfTbl.range * chanceDistMul
+			selfTbl.moving = true
 		end
 	end
 
 	local phys = selfTbl.phys
 
 	if selfTbl.moving and IsValid(phys) then
+		selfTbl.phys:Wake()
+
 		local moveVector = (selfTbl.targetPos-entPos):GetNormalized() * selfTbl.speed - self:GetVelocity() * 0.5
 		moveVector.z = 0
-		selfTbl.phys:Wake()
 		selfTbl.moveForce = moveVector * (0.5 * selfTbl.moveForceMultiplier)
 
 		if selfTbl.ai then
@@ -385,7 +373,6 @@ function ENT:Update()
 		self:FinishMovement()
 	end
 
-	--TODO: Ditto of other todo in this function
 	self:SetNWBool("moving", selfTbl.moving)
 
 	self:NextThink(CurTime() + 0.1)

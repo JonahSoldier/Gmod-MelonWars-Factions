@@ -156,5 +156,5 @@ end)
 
 net.Receive( "MW_ClientModifySpawnTime", function()
 	local spawnTimeChange = net.ReadFloat()
-	LocalPlayer().spawnTimeMult = 1 + spawnTimeChange
+	LocalPlayer().spawnTimeMult = spawnTimeChange
 end )

@@ -306,7 +306,7 @@ net.Receive( "MW_SpawnUnit", function( _, pl )
 
 	--Copied from client,
 	pl.mw_spawntime = pl.mw_spawntime or 0
-	if (cvars.Number("mw_admin_spawn_time") == 1) then
+	if cvars.Number("mw_admin_spawn_time") == 1 then
 		if (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.units[unit_index].buildAnywere or MelonWars.isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
 			if (pl.mw_spawntime < CurTime()) then
 				pl.mw_spawntime = CurTime() + MelonWars.units[unit_index].spawn_time * (pl.spawnTimeMult or 1) -- spawntimemult has been added here so I can compensate for matches with uneven numbers of commanders

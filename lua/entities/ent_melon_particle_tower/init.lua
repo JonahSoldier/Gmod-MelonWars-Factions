@@ -14,6 +14,8 @@ function ENT:Initialize()
 	self.energyCost = 1000
 	self.shotOffset = Vector(0,0,30)
 
+	self.population = 5
+
 	self.careForWalls = true
 	self.fireDelay = 30
 	self.canMove = false

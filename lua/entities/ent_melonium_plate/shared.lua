@@ -11,6 +11,7 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ENT.Editable = true
 
+ENT.AdminOnly = true --Can be set to an error model, which makes it hard to get rid of. Probably not something you want random players doing.
 
 function ENT:SetupDataTables()
 	self:NetworkVar( "String", 0, "MWModel", {
