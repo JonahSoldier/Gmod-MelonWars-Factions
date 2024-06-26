@@ -226,22 +226,19 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 	table.Add(points, ents.FindByClass( "ent_melon_mcguffin" ))
 	table.Add(points, ents.FindByClass( "ent_melon_water_tank" ))
 	table.Add(points, ents.FindByClass( "ent_melon_silo" ))
-	if istable(points) then
-		for _, v in RandomPairs( points ) do
-			if IsValid(v) and (ply:GetPos() - v:GetPos()):LengthSqr() < 800000 then
-				for i = 1, 8 do
-					local capture = v:GetNWInt( "captured" .. tostring( i ), 0 )
-					if capture > 0 then
-						local vpos = v:WorldSpaceCenter() + Vector( 0, 0, 100 )
-						local pos = vpos:ToScreen()
-						surface.SetDrawColor( 0, 0, 0, 255 )
-						surface.DrawRect( pos.x - 8, pos.y - 123, 16, 106 )
-						surface.SetDrawColor( 255, 255, 255, 255 )
-						surface.DrawRect( pos.x - 5 , pos.y - 120, 10, 100 )
-						surface.SetDrawColor( MelonWars.teamColors[i] )
-						surface.DrawRect( pos.x - 5 , pos.y - 20 - capture, 10 , capture )
-					end
-				end
+
+	for _, v in ipairs( points ) do
+		if IsValid(v) and ply:GetPos():DistToSqr(v:GetPos()) < 800000 then
+			local capture = v:GetNWInt( "captured", 0 )
+			if capture > 0 then
+				local vpos = v:WorldSpaceCenter() + Vector( 0, 0, 100 )
+				local pos = vpos:ToScreen()
+				surface.SetDrawColor( 0, 0, 0, 255 )
+				surface.DrawRect( pos.x - 8, pos.y - 123, 16, 106 )
+				surface.SetDrawColor( 255, 255, 255, 255 )
+				surface.DrawRect( pos.x - 5 , pos.y - 120, 10, 100 )
+				surface.SetDrawColor( MelonWars.teamColors[v:GetNWInt("capTeam")] )
+				surface.DrawRect( pos.x - 5 , pos.y - 20 - capture, 10 , capture )
 			end
 		end
 	end

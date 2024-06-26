@@ -110,7 +110,7 @@ function ENT:Ini( teamnumber, affectPopulation )
 		self.chaseStance = true
 	end
 
-	self.mw_melonTeam = teamnumber
+	--self.mw_melonTeam = teamnumber
 
 	if teamnumber == -1 then
 		error( "Unit " .. tostring( self ) .. " spawned with team -1!" )

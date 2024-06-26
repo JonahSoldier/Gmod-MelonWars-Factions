@@ -1,11 +1,9 @@
 include("shared.lua")
 
-PrecacheParticleSystem("vortigaunt_charge_token_b")
-PrecacheParticleSystem("vortigaunt_charge_token_c")
+PrecacheParticleSystem("vortigaunt_charge_token")
 
 function ENT:Initialize()
-	self.onParticles = CreateParticleSystem( self, "vortigaunt_charge_token_b", PATTACH_ABSORIGIN_FOLLOW, 0, Vector(0,0,15))
-	self.onParticles2 = CreateParticleSystem( self, "vortigaunt_charge_token_c", PATTACH_ABSORIGIN_FOLLOW, 0, Vector(0,0,15))
+	self.onParticles = CreateParticleSystem( self, "vortigaunt_charge_token", PATTACH_ABSORIGIN_FOLLOW, 0, Vector(0,0,15))
 end
 
 function ENT:Think()

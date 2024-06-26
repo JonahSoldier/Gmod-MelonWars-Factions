@@ -50,7 +50,7 @@ function ENT:SlowThink( ent )
 end
 
 function ENT:Shoot( ent, forcedTargetPos )
-	if not ent.ai or CurTime() > ent.nextControlShoot then return end
+	if not(ent.ai or CurTime() > ent.nextControlShoot) then return end
 	MelonWars.defaultShoot( ent, forcedTargetPos )
 	ent.nextControlShoot = CurTime() + ent.slowThinkTimer
 end
