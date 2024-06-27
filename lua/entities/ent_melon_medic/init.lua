@@ -153,7 +153,7 @@ function ENT:Shoot ( ent, forcedTargetPos )
 					sound.Play( ent.shotSound, pos )
 
 					ent.targetEntity:SetVar("HP", newHealth)
-					ent.targetEntity:SetNWFloat("health", newHealth)
+					ent.targetEntity:SetNWFloat("healthFrac", newHealth/ent.targetEntity.maxHP)
 					ent.fired = true
 					if (ent.targetEntity:GetVar("HP") == ent.targetEntity:GetVar("maxHP")) then
 						ent.targetEntity = nil

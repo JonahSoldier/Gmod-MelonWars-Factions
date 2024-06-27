@@ -261,7 +261,7 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 	--]]
 end )
 
---TODO: Bring back unit control (what this is)
+--*TODO: Bring back unit control (what this is)
 --I removed it to reduce the number of networked variables per entity, as range is only used for this.
 --We can probably bring it back without any downsides if I make it only set range when a unit is controlled.
 --[[

@@ -60,6 +60,8 @@ CreateClientConVar( "mw_prop_snap", "1", 0, false )
 TOOL.ClientConVar[ "mw_prop_snap" ] = 1
 CreateClientConVar( "mw_code", "0", 0, false )
 TOOL.ClientConVar[ "mw_code" ] = 1
+CreateClientConVar( "mw_faction", "", false )
+TOOL.ClientConVar[ "mw_faction" ] = ""
 CreateClientConVar( "mw_income_indicator", "1", 1, false )
 TOOL.ClientConVar[ "mw_income_indicator" ] = 1
 
@@ -317,9 +319,10 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 	if (pl.mw_menu == 0) then																	--units menu
 		local allowManualPlace = cvars.Bool("mw_admin_allow_manual_placing")
 		local plCode = pl:GetInfo("mw_code")
+		local plFaction = pl:GetInfo("mw_faction")
 		local bonusUnits = GetConVar( "mw_admin_bonusunits" ):GetBool()
 		local function check(unit)
-			return (allowManualPlace or unit.welded_cost ~= -1) and (not unit.code or plCode == unit.code) and (not unit.isBonusUnit or bonusUnits)
+			return (allowManualPlace or unit.welded_cost ~= -1) and (not unit.code or plCode == unit.code) and (not unit.isBonusUnit or bonusUnits) and (not unit.faction or unit.faction == plFaction)
 		end
 
 		unitScroller(1, firstBuilding, check)
@@ -354,8 +357,9 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 	elseif (pl.mw_menu == 1) then																--Buildings menu
 		local bonusUnits = GetConVar( "mw_admin_bonusunits" ):GetBool()
 		local plCode = pl:GetInfo("mw_code")
+		local plFaction = pl:GetInfo("mw_faction")
 		local function check(unit)
-			return (not unit.code or plCode == unit.code) and (not unit.isBonusUnit or bonusUnits)
+			return (not unit.code or plCode == unit.code) and (not unit.isBonusUnit or bonusUnits) and (not unit.faction or unit.faction == plFaction)
 		end
 
 		unitScroller(firstBuilding, firstEnergy, check)
@@ -622,8 +626,37 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 			draw.RoundedBox( 10, 0, 0, w, h, color_white )
 		end
 
-		local code = cvars.String("mw_code")
+		local plFaction = pl:GetInfo("mw_faction") --cvars.String("mw_code")
+		factionSelection:SetPos(180, 270)
 
+		local function factionSelect(fac, text, hOff, colour)
+			local xPos = 185 + hOff * 45
+			local button = vgui.Create("DButton", pl.panel)
+			button:SetSize(40,40)
+			button:SetPos(xPos,275)
+			button:SetText(text)
+			function button:DoClick()
+				pl:ConCommand("mw_faction " .. fac)
+				factionSelection:SetPos(xPos - 5, 270)
+			end
+			local outlineCol = Color(250,250,250)
+			button.Paint = function(s, w, h)
+				draw.RoundedBox( 6, 0, 0, w, h, colour )
+				draw.RoundedBox( 3, 10, 10, w-20, h-20, outlineCol )
+			end
+
+			if fac == plFaction then
+				factionSelection:SetPos(xPos - 5, 270)
+			end
+		end
+
+		factionSelect("none", "-", 0, Color(90,90,90))
+		factionSelect("full", "F", 1, Color(255,240,60))
+		factionSelect("void", "V", 2, Color(210,30,240))
+		factionSelect("prot", "P", 3, Color(20,170,230))
+
+
+		--[[
 		factionSelection:SetPos(180, 270)
 		local button = vgui.Create("DButton", pl.panel)
 		button:SetSize(40,40)
@@ -685,6 +718,7 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 			draw.RoundedBox( 6, 0, 0, w, h, Color(20,170,230) )
 			draw.RoundedBox( 3, 10, 10, w-20, h-20, Color(250,250,250) )
 		end
+		--]]
 		------------------------------------------
 
 		if not pl:IsAdmin() then return end
@@ -1458,12 +1492,9 @@ function TOOL:LeftClick( tr )
 			return
 		end
 
-		if cvars.Number("mw_admin_spawn_time") == 1 then
-			if (pl.mw_spawntime < CurTime()) then
-				pl.mw_spawntime = CurTime() + MelonWars.units[unit_index].spawn_time * pl.spawnTimeMult + 1 -- spawntimemult has been added here so I can compensate for matches with uneven numbers of commanders
-			else
-				pl.mw_spawntime = pl.mw_spawntime + MelonWars.units[unit_index].spawn_time * pl.spawnTimeMult
-			end
+		if cvars.Bool("mw_admin_spawn_time") then
+			pl.mw_spawntime = (pl.mw_spawntime > CurTime() and pl.mw_spawntime) or CurTime()
+			pl.mw_spawntime = pl.mw_spawntime + MelonWars.units[unit_index].spawn_time * (pl.spawnTimeMult or 1)
 		end
 
 		local spawnAngle

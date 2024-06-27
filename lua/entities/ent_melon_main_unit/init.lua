@@ -25,7 +25,7 @@ function ENT:Initialize()
 
 	self.population = 0
 
-	self.moveForceMultiplier = 2
+	self.moveForceMultiplier = 2000
 
 	self.moveType = MOVETYPE_VPHYSICS
 
@@ -88,7 +88,7 @@ end
 
 local zoneOffset = Vector(0,0,-50)
 function ENT:PhysicsUpdate()
-	self:DefaultPhysicsUpdate ()
+	self:DefaultPhysicsUpdate()
 	local zone = self:GetTable().zone
 	zone:SetPos( self:GetPos() + zoneOffset )
 end
@@ -113,7 +113,7 @@ function ENT:Shoot ( ent )
 	effectdata:SetScale(1)
 	effectdata:SetMagnitude(1)
 	effectdata:SetStart( entPos )
-	effectdata:SetOrigin( targetentPos )
+	effectdata:SetOrigin( targetEnt:GetPos() )
 	effectdata:SetEntity( ent )
 	util.Effect( "ToolTracer", effectdata )
 	sound.Play( ent.shotSound, entPos )

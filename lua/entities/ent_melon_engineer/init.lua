@@ -17,8 +17,6 @@ function ENT:Initialize()
 
 	self.speed = 60
 
-	--self.sphereRadius = 0
-
 	self.population = 1
 
 	self.captureSpeed = 1
@@ -35,7 +33,6 @@ end
 function ENT:PhysicsUpdate()
 
 	local inclination = self:Align(self:GetAngles():Forward()*-1, Vector(0,0,-1), 1000)
-	--self.phys:ApplyForceCenter( Vector(0,0,inclination*100 ))
 	local front = self:GetUp():Cross(self:GetRight())
 
 	self.phys:SetAngleVelocity( front*500*inclination)
@@ -167,7 +164,7 @@ function ENT:Shoot ( ent, forcedTargetPos )
 					sound.Play( ent.shotSound, pos )
 
 					ent.targetEntity:SetVar("HP", newHealth)
-					ent.targetEntity:SetNWFloat("health", newHealth)
+					ent.targetEntity:SetNWFloat("healthFrac", newHealth/ent.targetEntity.maxHP)
 					ent.fired = true
 					if (ent.targetEntity:GetVar("HP") == ent.targetEntity:GetVar("maxHP")) then
 						ent.targetEntity = nil

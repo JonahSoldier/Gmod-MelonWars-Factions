@@ -50,7 +50,7 @@ util.AddNetworkString( "MWControlShoot" )
 util.AddNetworkString( "MWColourMod" )
 util.AddNetworkString( "SetMWConvar" )
 util.AddNetworkString( "MWReadyUp" )
-util.AddNetworkString( "MW_ClientModifySpawnTime" ) --TODO: This needs to be handled on both client and server
+util.AddNetworkString( "MW_ClientModifySpawnTime" )
 
 -- Energy Networks
 util.AddNetworkString( "MW_UpdateNetwork" )
@@ -102,7 +102,7 @@ MelonWars.teamColors = {
 	Color(255,100,150,255)
 }
 
---TODO: Finish what Marum started and give Doorsday his damned door props.
+--*TODO: Finish what Marum started and give Doorsday his damned door props.
 --Drago earned one but never actually said what he wanted, so I don't know what to do about that.
 
 --[[
@@ -304,26 +304,18 @@ net.Receive( "MW_SpawnUnit", function( _, pl )
 		return
 	end
 
-	--Copied from client,
 	pl.mw_spawntime = pl.mw_spawntime or 0
-	if cvars.Number("mw_admin_spawn_time") == 1 then
-		if (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.units[unit_index].buildAnywere or MelonWars.isInRange(trace.HitPos, mw_melonTeam) or mw_melonTeam == 0) then
-			if (pl.mw_spawntime < CurTime()) then
-				pl.mw_spawntime = CurTime() + MelonWars.units[unit_index].spawn_time * (pl.spawnTimeMult or 1) -- spawntimemult has been added here so I can compensate for matches with uneven numbers of commanders
-			else
-				pl.mw_spawntime = pl.mw_spawntime + MelonWars.units[unit_index].spawn_time * (pl.spawnTimeMult or 1)
-			end
-		end
+	if cvars.Bool("mw_admin_spawn_time") then
+		pl.mw_spawntime = (pl.mw_spawntime > CurTime() and pl.mw_spawntime) or CurTime()
+		pl.mw_spawntime = pl.mw_spawntime + MelonWars.units[unit_index].spawn_time * (pl.spawnTimeMult or 1)
 	end
-	local spawntime = pl.mw_spawntime
 
-	sound.Play( "garrysmod/content_downloaded.wav", position, 60, 90, 1 ) --TODO: Move sounds elsewhere
-
+	sound.Play( "garrysmod/content_downloaded.wav", position, 60, 90, 1 )
 	if IsValid(pl) then
 		sound.Play( "garrysmod/content_downloaded.wav", pl:GetPos(), 60, 90, 1 )
 	end
 
-	local newMarine = MelonWars.spawnUnitAtPos(class, position, angle, cost, spawntime, _team, attach, trace.Entity, pl, spawndelay)
+	local newMarine = MelonWars.spawnUnitAtPos(class, position, angle, cost, pl.mw_spawntime, _team, attach, trace.Entity, pl, spawndelay)
 
 	undo.Create("Melon " .. unit.name)
 		undo.AddEntity( newMarine )
@@ -371,10 +363,6 @@ function MelonWars.spawnUnitAtPos( class, pos, ang, cost, spawntime, _team, atta
 			local _skin = MelonWars.specialSteamSkins[pl:SteamID()]
 			if _skin ~= nil and _skin.material ~= nil then
 				newMarine:SkinMaterial( _skin.material )
-				-- if (_skin.trail ~= nil) then
-				-- 	local color = Color(newMarine:GetColor().r*_skin.teamcolor+255*(1-_skin.teamcolor), newMarine:GetColor().g*_skin.teamcolor+255*(1-_skin.teamcolor), newMarine:GetColor().b*_skin.teamcolor+255*(1-_skin.teamcolor))
-				-- 	util.SpriteTrail( newMarine, 0, color, false, _skin.startSize, _skin.endSize, _skin.length, 1 / _skin.startSize * 0.5, _skin.trail )
-				-- end
 			end
 			--[[_skin = mw_special_steam_decoration["STEAM_0:0:165277892"]-- [pl:SteamID()]
 			if (_skin ~= nil) then
@@ -571,7 +559,7 @@ end
 
 net.Receive( "ContraptionSpawn", function( _, pl )
 	if not pl.loadedContraption then return end
-	--TODO: Make sure this is allowed!
+	if cvars.Bool("mw_admin_credit_cost") then return end
 	MelonWars.contraptionSpawn( pl )
 	pl.loadedContraption = nil
 end)
@@ -626,7 +614,7 @@ local function MW_SpawnProp( model, pos, ang, _team, parent, health, cost, pl, s
 	end
 
 	newMarine:SetVar("shotOffset", offset) 	-- NOT WORKING!!!!!
-	--TODO: Check what Marum meant by that comment.
+	--*TODO: Check what Marum meant by that comment.
 
 	if IsValid(pl) then
 		sound.Play( "garrysmod/content_downloaded.wav", pl:GetPos(), 60, 90, 1 )
@@ -654,7 +642,7 @@ end
 
 net.Receive( "MW_SpawnProp", function( _, pl )
 	local index = net.ReadUInt(8)
-	local trace = net.ReadTable() --TODO: just send the entity and pos over the network, not the entire traceResult table.
+	local trace = net.ReadTable() --*TODO: just send the entity and pos over the network, not the entire traceResult table.
 	local _team = net.ReadInt(8)
 	local propAngle = net.ReadAngle()
 

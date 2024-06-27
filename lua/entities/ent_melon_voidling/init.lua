@@ -69,7 +69,7 @@ function ENT:Shoot ( ent, forceTargetPos )
 	phys:ApplyForceCenter( Vector(0,0,115) + (selfTbl.targetEntity:GetPos() - self:GetPos() ) * 3 / phys:GetMass())
 	selfTbl.fired = true
 	timer.Simple(0.4, function()
-		if (IsValid(selfTbl.targetEntity)) then
+		if IsValid(self) and IsValid(selfTbl.targetEntity) then
 			self:Explode()
 		end
 	end)

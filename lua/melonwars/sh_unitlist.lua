@@ -185,7 +185,7 @@ u.isBonusUnit   = true
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "void"
+u.faction		= "void"
 u.name 			= "Voidling"
 u.class 		= "ent_melon_voidling"
 u.cost 			= 20
@@ -198,7 +198,7 @@ u.code 			= "--banned--"
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "void"
+u.faction		= "void"
 u.name 			= "Raider"
 u.class 		= "ent_melon_void_raider"
 u.cost 			= 400
@@ -212,7 +212,7 @@ u.model 		= "models/props_junk/MetalBucket01a.mdl"
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "full"
+u.faction		= "full"
 u.name 			= "Buck"
 u.class 		= "ent_melon_buck"
 u.cost 			= 500
@@ -225,7 +225,7 @@ u.model 		= "models/props_junk/plasticbucket001a.mdl"
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "full"
+u.faction		= "full"
 u.name 			= "Fighter"
 u.class 		= "ent_melon_fighter"
 u.cost 			= 750
@@ -238,7 +238,7 @@ u.model 		= "models/props_phx/construct/metal_plate1_tri.mdl"
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "prot"
+u.faction		= "prot"
 u.name 			= "Gatling"
 u.class 		= "ent_melon_gatling"
 u.cost 			= 450
@@ -250,7 +250,7 @@ u.model 		= "models/Mechanics/gears/gear12x24.mdl"
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "prot"
+u.faction		= "prot"
 u.name 			= "Molotov"
 u.class 		= "ent_melon_molotov"
 u.cost 			= 200
@@ -288,24 +288,10 @@ u.description 	= [[A very long range superweapon that needs to deploy to attack.
 u.model 		= "models/props_trainstation/trainstation_ornament001.mdl"
 u.button_color 	= button_energy_color
 
---[[
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "--banned--"
-u.name 			= "Forcefield"
-u.class 		= "ent_melon_forcefield"
-u.cost 			= 0
-u.welded_cost 	= -1
-u.population 	= 0
-u.spawn_time 	= 20000
-u.offset        = Vector(0,0,42)
---u.description 	= [[A forcefield that blocks bullets from the enemy team.]]
---u.model 		= "models/hunter/tubes/tube4x4x2to2x2.mdl"
---]]
-
-i = i + 1
-u = MelonWars.units[i]
-u.code = "prot"
+u.code			= "admin"
+u.faction		= "prot"
 u.name 			= "Heavy Flamethrower"
 u.class 		= "ent_melon_flamethrower"
 u.cost 			= 9000
@@ -315,11 +301,11 @@ u.spawn_time 	= 35
 u.offset        = Vector(0,0,42)
 u.description 	= [[Fire.]]
 u.model 		= "models/props_citizen_tech/firetrap_propanecanister01a.mdl"
-u.isBonusUnit   = true
+--u.isBonusUnit   = true
 
 i = i + 1
 u = MelonWars.units[i]
-u.code = "full"
+u.faction		= "full"
 u.name 			= "EMP Device"
 u.class 		= "ent_melon_emp"
 u.cost 			= 100
@@ -345,7 +331,7 @@ u.isBonusUnit   = true
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "void"
+u.faction		= "void"
 u.name 			= "Mammoth"
 u.class 		= "ent_melon_void_mammoth"
 u.cost 			= 1000
@@ -359,7 +345,6 @@ u.isBonusUnit   = true
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "admin"
 u.name 			= "Engineer"
 u.class 		= "ent_melon_engineer"
 u.cost 			= 300
@@ -370,6 +355,7 @@ u.angle 		= Angle(90, 0, 0)
 u.offset 		= Vector(0,0,10)
 u.description 	= [[A heavy, clunky thing that can repair stationary structures.]]
 u.model 		= "models/props_wasteland/light_spotlight01_lamp.mdl"
+u.isBonusUnit	= true
 
 
 i = i + 1
@@ -391,7 +377,7 @@ u.angle 		= Angle(90, -90, 90)
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "full"
+u.faction		= "full"
 u.name 			= "Refuel Station"
 u.class 		= "ent_melon_refuel"
 u.cost 			= 500
@@ -436,7 +422,7 @@ u.indRingColour = indicator_attack_colour
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "prot"
+u.faction		= "prot"
 u.name 			= "Electrified Debris"
 u.class 		= "ent_melon_teslarods"
 u.cost 			= 150
@@ -476,7 +462,7 @@ u.offset 		= Vector(0,0,-5)
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "void"
+u.faction		= "void"
 u.name 			= "Teleporter Transmitter"
 u.class 		= "ent_melon_teleporter_sender"
 u.cost 			= 1000
@@ -489,7 +475,7 @@ u.offset 		= Vector(0,0,-5)
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "void"
+u.faction		= "void"
 u.name 			= "Teleporter Receiver"
 u.class 		= "ent_melon_teleporter_receiver"
 u.cost 			= 250
@@ -543,13 +529,13 @@ u.description 	= [[A makeshift outpost that allows you to build around it.]]
 u.model 		= "models/props_rooftop/roof_vent004.mdl"
 u.offset 		= Vector(0,0,0)
 u.angle 		= Angle(0,0,0)
-u.code			= "admin"
 u.indRingRadius = 250
 u.indRingColour = indicator_utility_colour
+u.isBonusUnit	= true
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "prot"
+u.faction		= "prot"
 u.name 			= "Energy Siphon"
 u.class 		= "ent_melon_energy_siphon"
 u.cost 			= 1250
@@ -599,7 +585,7 @@ u.indRingColour = indicator_attack_colour
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "full"
+u.faction		= "full"
 u.name 			= "Particle Tower"
 u.class 		= "ent_melon_particle_tower"
 u.cost 			= 12000
@@ -617,7 +603,7 @@ u.indRingColour = indicator_attack_colour
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "void"
+u.faction		= "void"
 u.name 			= "Anti-Power Reactor"
 u.class 		= "ent_melon_energy_powerupgrader"
 u.cost 			= 2000
@@ -634,7 +620,7 @@ u.isBonusUnit   = true
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "void"
+u.faction		= "void"
 u.name 			= "Unit Launcher"
 u.class 		= "ent_melon_unit_launcher"
 u.cost 			= 2500
@@ -753,7 +739,7 @@ u.indRingColour = indicator_utility_colour
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "full"
+u.faction		= "full"
 u.name 			= "Point Defence"
 u.class 		= "ent_melon_point_defence"
 u.cost 			= 750
@@ -911,24 +897,10 @@ u.model 		= "models/props_lab/teleportframe.mdl"
 u.offset 		= Vector(0,0,0)
 u.canOverlap 	= false
 u.button_color 	= button_barrack_color
---[[
+
 i = i + 1
 u = MelonWars.units[i]
-u.name 			= "Tombstone"
-u.class 		= "ent_melon_barracks_doot"
-u.cost 			= 300
-u.welded_cost 	= -1
-u.population 	= 1
-u.spawn_time 	= 10
-u.description 	= BarracksText (11, 3)
-u.model 		= "models/props_c17/gravestone002a.mdl"
-u.offset 		= Vector(0,0,0)
-u.canOverlap 	= false
-u.button_color 	= button_barrack_color
-]]
-i = i + 1
-u = MelonWars.units[i]
-u.code 			= "void"
+u.faction		= "void"
 u.name 			= "Voidling Reactor"
 u.class 		= "ent_melon_barracks_voidling"
 u.cost 			= 1500
@@ -943,10 +915,10 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "void"
+u.faction		= "void"
 u.name 			= "Raider Fabrication Platform"
 u.class 		= "ent_melon_barracks_void_raider"
-u.cost 			= 500 --TODO: This seems way too low. I don't remember ever using raider barracks so maybe there was a reason for them to be this cheap? It could've just been accidental or overlooked.
+u.cost 			= 500 --*TODO: This seems way too low. I don't remember ever using raider barracks so maybe there was a reason for them to be this cheap? It could've just been accidental or overlooked.
 u.welded_cost 	= -1
 u.population 	= 1
 u.spawn_time 	= 30
@@ -959,7 +931,7 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "void"
+u.faction		= "void"
 u.name 			= "Mammoth Spawning Vat"
 u.class 		= "ent_melon_barracks_void_mammoth"
 u.cost 			= 5000
@@ -975,7 +947,7 @@ u.isBonusUnit   = true
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "full"
+u.faction		= "full"
 u.name 			= "Buck University"
 u.class 		= "ent_melon_barracks_buck"
 u.cost 			= 4000
@@ -990,7 +962,7 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "full"
+u.faction		= "full"
 u.name 			= "Fighter University"
 u.class 		= "ent_melon_barracks_fighter"
 u.cost 			= 4500
@@ -1005,7 +977,7 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "prot"
+u.faction		= "prot"
 u.name 			= "Gatling Depot"
 u.class 		= "ent_melon_barracks_gatling"
 u.cost 			= 2000
@@ -1020,7 +992,7 @@ u.button_color 	= button_barrack_color
 
 i = i + 1
 u = MelonWars.units[i]
-u.code 			= "prot"
+u.faction		= "prot"
 u.name 			= "Molotov Depot"
 u.class 		= "ent_melon_barracks_molotov"
 u.cost 			= 900
