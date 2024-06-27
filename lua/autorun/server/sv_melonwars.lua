@@ -317,7 +317,13 @@ net.Receive( "MW_SpawnUnit", function( _, pl )
 	end
 	local spawntime = pl.mw_spawntime
 
-	local newMarine = MelonWars.spawnUnitAtPos(class, unit_index, position, angle, cost, spawntime, _team, attach, trace.Entity, pl, spawndelay)
+	sound.Play( "garrysmod/content_downloaded.wav", position, 60, 90, 1 ) --TODO: Move sounds elsewhere
+
+	if IsValid(pl) then
+		sound.Play( "garrysmod/content_downloaded.wav", pl:GetPos(), 60, 90, 1 )
+	end
+
+	local newMarine = MelonWars.spawnUnitAtPos(class, position, angle, cost, spawntime, _team, attach, trace.Entity, pl, spawndelay)
 
 	undo.Create("Melon " .. unit.name)
 		undo.AddEntity( newMarine )
@@ -329,28 +335,19 @@ net.Receive( "MW_SpawnUnit", function( _, pl )
 	end
 end )
 
-function MelonWars.spawnUnitAtPos( class, unit_index, pos, ang, cost, spawntime, _team, attach, parent, pl, spawndelay )
+function MelonWars.spawnUnitAtPos( class, pos, ang, cost, spawntime, _team, attach, parent, pl, spawndelay )
 	local newMarine = ents.Create( class )
 	if not IsValid( newMarine ) then return end
 
 	newMarine:SetPos( pos )
 	newMarine:SetAngles( ang )
 
-	sound.Play( "garrysmod/content_downloaded.wav", pos, 60, 90, 1 ) --TODO: Move sounds elsewhere
-
-	if (IsValid(pl)) then
-		sound.Play( "garrysmod/content_downloaded.wav", pl:GetPos(), 60, 90, 1 )
-	end
-	mw_melonTeam = _team
+	mw_melonTeam = _team --This is dumb
 
 	newMarine.mw_spawntime = spawntime
 	newMarine:Spawn()
 	newMarine:SetNWFloat("spawnTime", spawntime)
 	newMarine:SetNWInt("mw_melonTeam", _team)
-
-	if (unit_index == -1 or unit_index == -2) then --si es un motor o un propeller
-		newMarine:GetPhysicsObject():EnableCollisions( false )
-	end
 
 	if (attach) then
 		newMarine:SetCollisionGroup( COLLISION_GROUP_DEBRIS_TRIGGER )
@@ -999,6 +996,16 @@ function MelonWars.broadcastTeamMessage(_team, message, mode)
 	for i, v in ipairs(player.GetAll()) do
 		if v:GetInfoNum("mw_team", -1) == _team then
 			v:PrintMessage( mode, message )
+		end
+	end
+end
+
+function MelonWars.updateClientCredits(_team)
+	for i, v in ipairs( player.GetAll() ) do
+		if v:GetInfoNum("mw_team", -1) == _team then
+			net.Start("MW_TeamCredits")
+				net.WriteInt(MelonWars.teamCredits[_team] ,32)
+			net.Send(v)
 		end
 	end
 end

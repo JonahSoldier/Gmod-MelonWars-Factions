@@ -19,7 +19,7 @@ function ENT:Use( pl )
 
 	local mult = self:GetSpeedMult()
 	for _, v in ipairs( player.GetAll() ) do
-		v:PrintMessage( HUD_PRINTTALK, "== " .. pl:Nick() .. " set their Spawn-Time multiplier to " .. tostring(mult) .. "x ==" )
+		v:PrintMessage( HUD_PRINTTALK, "== " .. pl:Nick() .. " set their Spawn-Time multiplier to " .. tostring(math.Round(mult,2)) .. "x ==" )
 	end
 
 	pl.spawnTimeMult = mult

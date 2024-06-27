@@ -45,13 +45,7 @@ function ENT:SlowThink(ent)
 	local selfTeam = self:GetNWInt("mw_melonTeam", 0)
 	if selfTeam ~= 0 then
 		MelonWars.teamCredits[selfTeam] = MelonWars.teamCredits[selfTeam] + mw_admin_base_income_cv:GetInt()
-		for i, v in pairs( player.GetAll() ) do
-			if v:GetInfoNum("mw_team", -1) == selfTeam then
-				net.Start("MW_TeamCredits")
-					net.WriteInt(MelonWars.teamCredits[selfTeam] ,32)
-				net.Send(v)
-			end
-		end
+		MelonWars.updateClientCredits(selfTeam)
 	end
 	MelonWars.unitDefaultThink ( ent )
 end

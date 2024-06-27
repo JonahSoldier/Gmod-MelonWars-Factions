@@ -17,7 +17,7 @@ function ENT:Initialize()
 	self.shotSound = "weapons/ar1/ar1_dist2.wav"
 	self.tracer = "AR2Tracer"
 
-	self.shotOffset = Vector(0,0,15)
+	self.shotOffset = Vector(0,0,20)
 
 	self.canMove = false
 	self.canBeSelected = false

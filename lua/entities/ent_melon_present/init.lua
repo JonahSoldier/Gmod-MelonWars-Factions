@@ -64,7 +64,7 @@ function ENT:Open(_team)
 
 	local randomclass = present_possibilities[ math.random( #present_possibilities ) ]
 
-	local unit = MelonWars.spawnUnitAtPos (randomclass, 0, self:GetPos(), Angle(0,0,0), 0, 0, _team, false, nil, nil)
+	local unit = MelonWars.spawnUnitAtPos (randomclass, self:GetPos(), Angle(0,0,0), 0, 0, _team, false, nil, nil)
 
 	local time = 180
 

@@ -35,13 +35,7 @@ function ENT:Think(ent)
 		if (MelonWars.teamCredits[selfTeam] >= waterCost or not mw_admin_credits_cv:GetBool()) and self:GivePower(energyGain) then
 			if mw_admin_credits_cv:GetBool() then
 				MelonWars.teamCredits[selfTeam] = MelonWars.teamCredits[selfTeam]-waterCost
-				for i, v in ipairs( player.GetAll() ) do
-					if v:GetInfoNum("mw_team", -1) == selfTeam then
-						net.Start("MW_TeamCredits")
-							net.WriteInt(MelonWars.teamCredits[selfTeam] ,32)
-						net.Send(v)
-					end
-				end
+				MelonWars.updateClientCredits(selfTeam)
 			end
 			local effectdata = EffectData()
 			effectdata:SetOrigin( self:GetPos() + Vector(0,0,55))

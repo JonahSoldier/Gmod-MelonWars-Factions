@@ -22,6 +22,7 @@ function ENT:Initialize()
 	self.maxHP = 45
 
 	self.isContraptionPart = true
+	self.blockFriendlyTraces = true
 
 	self:Setup()
 end

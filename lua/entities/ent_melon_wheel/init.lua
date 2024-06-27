@@ -31,6 +31,7 @@ function ENT:Initialize()
 	self.moving = false
 
 	self.isContraptionPart = true
+	self.blockFriendlyTraces = true
 end
 
 function ENT:SlowThink ( ent )
@@ -65,7 +66,7 @@ end
 function ENT:Shoot ( ent )
 end
 
-function ENT:PhysicsUpdate() --TODO: Wheel behaviour is generally kinda fucked even with welds working correctly.
+function ENT:PhysicsUpdate()
 	--[[
 	local phys = self:GetTable().phys
 	local vel = phys:GetVelocity()
@@ -75,7 +76,7 @@ function ENT:PhysicsUpdate() --TODO: Wheel behaviour is generally kinda fucked e
 	--]]
 end
 
-function ENT:Update (ent)
+function ENT:Think()
 	local selfTbl = self:GetTable()
 	if selfTbl.moving and selfTbl.weld ~= nil then
 		constraint.RemoveConstraints( self, "Weld" )

@@ -41,7 +41,11 @@ function ENT:SlowThink(ent) --TODO: Refactor
 	local phys = ent:GetPhysicsObject()
 	phys:ApplyForceOffset(Vector(-5000,0,0), Vector(0, 100, 0))
 	phys:ApplyForceOffset(Vector(5000,0,0), Vector(0, -100, 0))
+
 	local foundEnts = ents.FindInSphere( ent:GetPos() , 60 )
+	if #foundEnts == 0 then return end
+
+	local selfTeam = self:GetNWInt("mw_melonTeam", 0)
 	for k, v in pairs( foundEnts ) do
 		if (v.Base == "ent_melon_base" or v.Base == "ent_melon_energy_base") and v:GetClass() ~= "ent_melon_shredder" then
 			if v.isShredding ~= true and v.HP <= self.damageDeal then
@@ -49,14 +53,8 @@ function ENT:SlowThink(ent) --TODO: Refactor
 				if (v.spawned and v:GetClass() == "ent_melon_voidling") then
 					gain = v:GetVar("value")+1
 				end
-				MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] = MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)]+gain
-				for i, v in ipairs( player.GetAll() ) do
-					if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
-						net.Start("MW_TeamCredits")
-							net.WriteInt(MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
-						net.Send(v)
-					end
-				end
+				MelonWars.teamCredits[selfTeam] = MelonWars.teamCredits[selfTeam]+gain
+				MelonWars.updateClientCredits(selfTeam)
 				v.isShredding = true
 			end
 

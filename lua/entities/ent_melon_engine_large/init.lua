@@ -100,11 +100,9 @@ function ENT:Update( ent ) --TODO: Refactor
 end
 
 function ENT:PhysicsUpdate()
-	self:Align(self:GetAngles():Forward(), Vector(0,0,-1), 1000)
-
 	local moveVector = (self.targetPos-self:GetPos())
-	if (self.moving) then
-		self:Align(self:GetAngles():Up(), -moveVector:GetNormalized(), 100000)
+	if self.moving then
+		self:Align(self:GetAngles():Up(), -moveVector:GetNormalized(), 175000)
 	end
 
 	self:StopAngularVelocity(0.8)

@@ -86,7 +86,7 @@ function ENT:FreeUnits()
 		local cEnt = self.containedEnts[i]
 		if cEnt then
 			local pos = exitPos + Vector(math.random(-10,10),math.random(-10,10), i * 10)
-			local newUnit = MelonWars.spawnUnitAtPos( cEnt.class, nil, pos, angle_zero, cEnt.value, 0, selfTeam, false, nil, cEnt.owner, 0 )
+			local newUnit = MelonWars.spawnUnitAtPos( cEnt.class, pos, angle_zero, cEnt.value, 0, selfTeam, false, nil, cEnt.owner, 0 )
 
 			if cEnt.energy > 0 then
 				newUnit:SetNWInt("mw_charge", cEnt.Energy)

@@ -70,7 +70,7 @@ function ENT:Update() --TODO: Rewrite. This is just copied from the (old) ent_me
 		end
 
 		self:SetNWBool("moving", self.moving)
-		self:NextThink(CurTime() + 0.01) --TODO: Does this change anything when done in :Update()?
+		--self:NextThink(CurTime() + 0.01) --TODO: Does this change anything when done in :Update()?
 		return true
 	end
 end
@@ -78,7 +78,7 @@ end
 function ENT:PhysicsUpdate()
 	local selfAng = self:GetAngles()
 	local selfTbl = self:GetTable()
-	self:Align(selfAng:Forward(), Vector(0, 0, -1), 10000) --TODO: Do we care that much about keep-uprighting an engine?
+	--self:Align(selfAng:Forward(), Vector(0, 0, -1), 10000) --TODO: Do we care that much about keep-uprighting an engine?
 
 	if selfTbl.moving then
 		local moveVector = (selfTbl.targetPos - self:GetPos()):GetNormalized()
@@ -91,7 +91,6 @@ function ENT:PhysicsUpdate()
 end
 
 function ENT:Shoot(ent)
-	--MelonWars.defaultShoot ( ent )
 end
 
 function ENT:DeathEffect(ent)

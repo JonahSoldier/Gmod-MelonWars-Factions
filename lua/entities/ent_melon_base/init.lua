@@ -394,7 +394,7 @@ function ENT:ClearOrders()
 	selfTbl.moving = false
 	self:SetNWBool("moving", false)
 	selfTbl.chasing = false
-	selfTbl.followEntity = v
+	selfTbl.followEntity = self
 	self:SetNWEntity("followEntity", self)
 	self:RemoveRallyPoints()
 end
@@ -752,16 +752,10 @@ function MelonWars.bullet(ent, startingPos, direction, distance, ignore, callbac
 	else
 		direction:Rotate(spread)
 
-		local blockTraces = { --TODO: This should be a value on the entity, not hard-coded.
-			["ent_melon_wheel"] = true,
-			["ent_melon_propeller"] = true,
-			["ent_melon_hover"] = true
-		}
 		local entTeam = ent:GetNWInt("mw_melonTeam", -1)
 
 		local tr = util.QuickTrace( startingPos, direction * distance, function(hitEnt)
-			local cl = hitEnt:GetClass()
-			return blockTraces[cl] or not(MelonWars.sameTeam(entTeam, hitEnt:GetNWInt("mw_melonTeam", -1) or hitEnt == ent))
+			return hitEnt:GetTable().blockFriendlyTraces or not(MelonWars.sameTeam(entTeam, hitEnt:GetNWInt("mw_melonTeam", -1) or hitEnt == ent))
 		end)
 
 		hitpos = tr.HitPos
@@ -882,17 +876,9 @@ function ENT:DefaultOnRemove()
 	local selfTbl = self:GetTable()
 	local selfTeam = self:GetNWInt("mw_melonTeam", 0)
 	MelonWars.updatePopulation(-selfTbl.population, selfTeam)
-	if not selfTbl.gotHit and CurTime() - self:GetCreationTime() < 30 and not selfTbl.fired then
-		if MelonWars.teamCredits[selfTeam] then
-			MelonWars.teamCredits[selfTeam] = MelonWars.teamCredits[selfTeam] + selfTbl.value
-		end
-		for _, v in ipairs( player.GetAll() ) do
-			if v:GetInfoNum("mw_team", -1) == selfTeam and selfTeam ~= 0 then
-				net.Start("MW_TeamCredits")
-					net.WriteInt(MelonWars.teamCredits[selfTeam] ,32)
-				net.Send(v)
-			end
-		end
+	if not selfTbl.gotHit and CurTime() - self:GetCreationTime() < 30 and not selfTbl.fired and MelonWars.teamCredits[selfTeam] then
+		MelonWars.teamCredits[selfTeam] = MelonWars.teamCredits[selfTeam] + selfTbl.value
+		MelonWars.updateClientCredits(selfTeam)
 	end
 end
 
@@ -959,125 +945,92 @@ local function EnoughPower(_team)
 	return true
 end
 
-function ENT:BarrackSlowThink() --TODO: Optimize
+function ENT:BarrackSlowThink() --TODO: Optimize / Refactor
 	local ent = self
+	local selfTbl = self:GetTable()
+	local selfTeam = self:GetNWInt("mw_melonTeam", -1)
 
-	if (not (IsValid(self.parent) or self.parent == nil or self.parent:IsWorld())) then
-		self.gotHit = true
-		self.HP = self.HP-50
-		self:SetNWFloat( "healthFrac", selfTbl.HP / selfTbl.maxHP )
-		self.damage = 0
-		if (self.HP <= 0) then
-			MelonWars.die( self )
-		end
+	if selfTbl.parent and not(IsValid(selfTbl.parent) or selfTbl.parent:IsWorld()) then
+		selfTbl.gotHit = true
+		selfTbl.HP = 0
+		self:SetNWFloat( "healthFrac", 0 )
+		MelonWars.die( self )
 	end
 
-	if self.spawned == false then return end
+	if not selfTbl.spawned then return end
 	if not mw_admin_playing_cv:GetBool() then return end
-	if not self.unitspawned then
-		if (self:GetNWFloat("nextSlowThink") < CurTime()+self:GetNWFloat("overdrive", 0)) then
-			if (EnoughPower(ent:GetNWInt("mw_melonTeam", 0))) then
-				self:SetNWFloat("overdrive", 0)
-				local newMarine = ents.Create( self.unit_class )
-				if not IsValid( newMarine ) then return end -- Check whether we successfully made an entity, if not - bail
-				local rotatedShotOffset = Vector(ent.shotOffset.x, ent.shotOffset.y, ent.shotOffset.z)
-				rotatedShotOffset:Rotate(self:GetAngles())
-				newMarine:SetPos( ent:GetPos() + Vector(0,0,20) + rotatedShotOffset)
 
-				sound.Play( "doors/door_latch1.wav", ent:GetPos(), 75, 150, 1 )
+	if not selfTbl.unitspawned and ( self.nextSlowThink < CurTime() + self:GetNWFloat("overdrive", 0) ) and EnoughPower(selfTeam) then
+		self:SetNWFloat("overdrive", 0)
 
-				mw_melonTeam = ent:GetNWInt("mw_melonTeam", 0)
+		local rotatedShotOffset = Vector(self.shotOffset)
+		rotatedShotOffset:Rotate(self:GetAngles())
+		local pos = ent:GetPos() + Vector(0,0,20) + rotatedShotOffset
 
-				newMarine:Spawn()
-				newMarine:SetNWInt("mw_melonTeam", ent:GetNWInt("mw_melonTeam", 0))
-				newMarine:Ini(ent:GetNWInt("mw_melonTeam", 0))
+		sound.Play( "doors/door_latch1.wav", ent:GetPos(), 75, 150, 1 )
+		local newMarine = MelonWars.spawnUnitAtPos( self.unit_class, pos, angle_zero, self.unit_cost, 0, selfTeam, false, nil, self:GetOwner(), 0 )
 
-				for i=1, 30 do
-					newMarine.rallyPoints[i] = self.rallyPoints[i]
-				end
-
-				if (cvars.Bool("mw_admin_credit_cost")) then
-					newMarine.value = self.unit_cost
-				else
-					newMarine.value = 0
-				end
-
-				if (ent.targetPos == ent:GetPos()) then
-					newMarine:SetVar('targetPos', ent:GetPos()+Vector(100,0,0))
-					newMarine:SetNWVector('targetPos', ent:GetPos()+Vector(100,0,0))
-				else
-					newMarine:SetVar('targetPos', ent.targetPos+Vector(0,0,1))
-					newMarine:SetNWVector('targetPos', ent.targetPos+Vector(0,0,1))
-				end
-				newMarine:SetVar('moving', true)
-
-				if (IsValid(self:GetOwner())) then
-					if (self:GetOwner():GetInfo( "mw_enable_skin" ) == "1") then
-						local _skin = MelonWars.specialSteamSkins[self:GetOwner():SteamID()]
-						if (_skin ~= nil) then
-							if (_skin.material ~= nil) then
-								newMarine:SkinMaterial(_skin.material)
-							end
-							--if (_skin.trail ~= nil) then
-							--	local color = Color(newMarine:GetColor().r*_skin.teamcolor+255*(1-_skin.teamcolor), newMarine:GetColor().g*_skin.teamcolor+255*(1-_skin.teamcolor), newMarine:GetColor().b*_skin.teamcolor+255*(1-_skin.teamcolor))
-							--	util.SpriteTrail( newMarine, 0, color, false, _skin.startSize, _skin.endSize, _skin.length, 1 / _skin.startSize * 0.5, _skin.trail )
-							--end
-						end
-					end
-				end
-
-				table.insert(ent.melons, newMarine)
-				undo.Create("Melon Marine")
-					undo.AddEntity( newMarine )
-					undo.SetPlayer( ent:GetOwner())
-				undo.Finish()
-
-				if (self:GetNWBool("active", false)) then
-					self.nextSlowThink = CurTime()+self.slowThinkTimer
-					self:SetNWFloat("nextSlowThink", self.nextSlowThink)
-				end
-				self.unitspawned = true
-				self:SetNWBool("spawned", self.unitspawned)
-			end
+		for i = 1, 30 do
+			newMarine.rallyPoints[i] = self.rallyPoints[i]
 		end
-	end
 
-	self:SetNWInt("count", 0)
-	for k, v in pairs( ent.melons ) do
-		if (IsValid(v)) then
-			self:SetNWInt("count", self:GetNWInt("count", 0)+1)
+		if ent.targetPos == ent:GetPos() then
+			newMarine.targetPos =  ent:GetPos() + Vector(100,0,0)
+			newMarine:SetNWVector("targetPos", ent:GetPos() + Vector(100,0,0))
 		else
-			table.remove(ent.melons, k)
+			newMarine.targetPos = ent.targetPos + vector_up
+			newMarine:SetNWVector("targetPos", ent.targetPos + vector_up)
 		end
-	end
+		newMarine.moving = true
 
-	if (self:GetNWBool("active", false)) then
-		if self.unitspawned == false then return end
-		if (self:GetNWInt("count", 0) < self:GetNWInt("maxunits", 0) and EnoughPower(self:GetNWInt("mw_melonTeam", -1))) then
-			if not (MelonWars.teamCredits[ent:GetNWInt("mw_melonTeam", 0)] >= self.unit_cost or not cvars.Bool("mw_admin_credit_cost")) then return end
-			-- Start Production
-			--self:SetNWBool("spawned", false)
+		table.insert(ent.melons, newMarine)
+		undo.Create("Melon Marine")
+			undo.AddEntity( newMarine )
+			undo.SetPlayer( ent:GetOwner())
+		undo.Finish()
 
-			if (cvars.Bool("mw_admin_credit_cost")) then
-				MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] = MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)]-self.unit_cost
-				for k, v in pairs( player.GetAll() ) do
-					if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
-						net.Start("MW_TeamCredits")
-							net.WriteInt(MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
-						net.Send(v)
-					end
-				end
-			end
-
-			self.nextSlowThink = CurTime()+self.slowThinkTimer
+		if self:GetNWBool("active", false) then
+			self.nextSlowThink = CurTime() + self.slowThinkTimer
 			self:SetNWFloat("nextSlowThink", self.nextSlowThink)
-			self.unitspawned = false
-			self:SetNWBool("spawned", self.unitspawned)
+		end
+		self.unitspawned = true
+		self:SetNWBool("spawned", self.unitspawned)
+	end
+
+	local count = 0
+	for i = #ent.melons, 1, -1 do
+		local v = ent.melons[i]
+		if IsValid(v) then
+			count = count + 1
 		else
-			self.unitspawned = true
-			self:SetNWBool("spawned", self.unitspawned)
+			table.remove(ent.melons, i)
 		end
 	end
+	self:SetNWInt("count", count)
+
+
+	--TODO: Below is generally pretty unreadable.
+
+	if not self.unitspawned or not self:GetNWBool("active", false) then return end
+
+	local creditCost = cvars.Bool("mw_admin_credit_cost")
+	if not(MelonWars.teamCredits[selfTeam] >= self.unit_cost or not creditCost) then return end
+
+	local shouldSpawnNewUnit = count < self:GetNWInt("maxunits", 0) and EnoughPower(selfTeam)
+
+	self.unitspawned = not shouldSpawnNewUnit
+	self:SetNWBool("spawned", self.unitspawned)
+
+	if not shouldSpawnNewUnit then return end
+
+
+	self.nextSlowThink = CurTime() + self.slowThinkTimer
+	self:SetNWFloat("nextSlowThink", self.nextSlowThink)
+
+	if not creditCost then return end
+
+	MelonWars.teamCredits[selfTeam] = MelonWars.teamCredits[selfTeam]-self.unit_cost
+	MelonWars.updateClientCredits(selfTeam)
 end
 
 function ENT:PlayHudSound(sndFile, volume, pitch, _team)

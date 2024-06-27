@@ -41,13 +41,7 @@ function ENT:Think(ent)
 
 				self.value = math.max(self.value - waterGain, 0)
 				self:SetNWInt("waterGenerated", waterGenerated + waterGain)
-				for i, v in pairs( player.GetAll() ) do
-					if v:GetInfoNum("mw_team", -1) == selfTeam then
-						net.Start("MW_TeamCredits")
-							net.WriteInt(MelonWars.teamCredits[selfTeam] ,32)
-						net.Send(v)
-					end
-				end
+				MelonWars.updateClientCredits(selfTeam)
 			end
 			--self:Energy_Add_State()
 		else
