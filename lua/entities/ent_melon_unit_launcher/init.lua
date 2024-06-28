@@ -53,7 +53,7 @@ function ENT:AbsorbUnit(unit)
 		if unit:GetNWInt("mw_melonTeam", 0) == selfTeam and unit.canMove and uClass ~= "ent_melon_engine" and uClass ~= "ent_melon_engine_large" and uClass ~= "ent_melon_wheel" and uClass ~= "ent_melon_main_unit" then
 			if unit.population <= self:GetNWInt("maxunits", 0) - self:GetNWInt("count", 0) then
 				local index = self:GetNWInt("count", 0)
-				self.containedEnts[index] = {
+				self.containedEnts[index+1] = {
 					class = unit:GetClass(),
 					hp = unit.HP,
 					value = unit.value,

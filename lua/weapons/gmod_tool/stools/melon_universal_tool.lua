@@ -20,10 +20,10 @@ CreateConVar( "mw_enable_skin", "1", FCVAR_ARCHIVE + FCVAR_USERINFO, "Enable or 
 TOOL.ClientConVar[ "mw_enable_skin" ] = "1"
 
 CreateConVar( "mw_admin_open_permits", "0", 8192 + 128, "Whether or not everyone is allowed to use the admin menu." )
-TOOL.ClientConVar[ "mw_admin_spawn_time" ] = 0
+TOOL.ClientConVar[ "mw_admin_open_permits" ] = 0
 
 CreateConVar( "mw_admin_spawn_time", "0", 8192, "Whether or not units take time before spawning." )
-TOOL.ClientConVar[ "mw_admin_spawn_time" ] = 1 --TODO: This seems like it's duplicated / maybe shouldn't be here?
+TOOL.ClientConVar[ "mw_admin_spawn_time" ] = 1
 CreateConVar( "mw_admin_immortality", "0", 8192, "Whether or not units are immortal. Intended for use in photography." )
 TOOL.ClientConVar[ "mw_admin_immortality" ] = 1
 CreateConVar( "mw_admin_move_any_team", "1", 8192, "If true, everyone can move any melon." )
@@ -305,7 +305,7 @@ local function unitScroller( lStart, lEnd, unitCheck)
 	return scroll
 end
 
-local function _CreatePanel() --TODO: This is like 75% of the file. I should probably refactor/reorganize it. 
+local function _CreatePanel()
 	if not CLIENT then return end
 	local pl = LocalPlayer()
 
@@ -322,7 +322,7 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 		local plFaction = pl:GetInfo("mw_faction")
 		local bonusUnits = GetConVar( "mw_admin_bonusunits" ):GetBool()
 		local function check(unit)
-			return (allowManualPlace or unit.welded_cost ~= -1) and (not unit.code or plCode == unit.code) and (not unit.isBonusUnit or bonusUnits) and (not unit.faction or unit.faction == plFaction)
+			return (allowManualPlace or unit.welded_cost ~= -1) and (not unit.code or plCode == unit.code) and (not unit.isBonusUnit or bonusUnits) and (not unit.faction or unit.faction == plFaction) and not (unit.code == "admin" and not pl:IsAdmin())
 		end
 
 		unitScroller(1, firstBuilding, check)
@@ -359,7 +359,7 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 		local plCode = pl:GetInfo("mw_code")
 		local plFaction = pl:GetInfo("mw_faction")
 		local function check(unit)
-			return (not unit.code or plCode == unit.code) and (not unit.isBonusUnit or bonusUnits) and (not unit.faction or unit.faction == plFaction)
+			return (not unit.code or plCode == unit.code) and (not unit.isBonusUnit or bonusUnits) and (not unit.faction or unit.faction == plFaction) and not (unit.code == "admin" and not pl:IsAdmin())
 		end
 
 		unitScroller(firstBuilding, firstEnergy, check)
@@ -655,70 +655,6 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 		factionSelect("void", "V", 2, Color(210,30,240))
 		factionSelect("prot", "P", 3, Color(20,170,230))
 
-
-		--[[
-		factionSelection:SetPos(180, 270)
-		local button = vgui.Create("DButton", pl.panel)
-		button:SetSize(40,40)
-		button:SetPos(185,275)
-		button:SetText("-")
-		function button:DoClick()
-			pl:ConCommand("mw_code none")
-			factionSelection:SetPos(180, 270)
-		end
-		button.Paint = function(s, w, h)
-			draw.RoundedBox( 6, 0, 0, w, h, Color(90,90,90) )
-			draw.RoundedBox( 3, 10, 10, w-20, h-20, Color(250,250,250) )
-		end
-
-		if code == "full" then
-			factionSelection:SetPos( 225, 270 )
-		end
-		local button = vgui.Create("DButton", pl.panel)
-		button:SetSize(40,40)
-		button:SetPos(185+45,275)
-		button:SetText("F")
-		function button:DoClick()
-			pl:ConCommand("mw_code full")
-			factionSelection:SetPos(180+45, 270)
-		end
-		button.Paint = function(s, w, h)
-			draw.RoundedBox( 6, 0, 0, w, h, Color(255,240,60) )
-			draw.RoundedBox( 3, 10, 10, w-20, h-20, Color(250,250,250) )
-		end
-
-		if code == "void" then
-			factionSelection:SetPos( 270, 270 )
-		end
-		local button = vgui.Create( "DButton", pl.panel )
-		button:SetSize( 40, 40 )
-		button:SetPos( 275, 275 )
-		button:SetText("V")
-		function button:DoClick()
-			pl:ConCommand( "mw_code void" )
-			factionSelection:SetPos( 270, 270 )
-		end
-		button.Paint = function(s, w, h)
-			draw.RoundedBox( 6, 0, 0, w, h, Color(210,30,240) )
-			draw.RoundedBox( 3, 10, 10, w-20, h-20, Color(250,250,250) )
-		end
-
-		if (code == "prot") then
-			factionSelection:SetPos(180+135, 270)
-		end
-		local button = vgui.Create("DButton", pl.panel)
-		button:SetSize(40,40)
-		button:SetPos(185 + 135,275)
-		button:SetText("P")
-		function button:DoClick()
-			pl:ConCommand("mw_code prot")
-			factionSelection:SetPos(180 + 135, 270)
-		end
-		button.Paint = function(s, w, h)
-			draw.RoundedBox( 6, 0, 0, w, h, Color(20,170,230) )
-			draw.RoundedBox( 3, 10, 10, w-20, h-20, Color(250,250,250) )
-		end
-		--]]
 		------------------------------------------
 
 		if not pl:IsAdmin() then return end
@@ -820,10 +756,10 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 			"	Playtesters:\n" ..
 			"		MerekiDor\n" ..
 			"		D-Boi-9341\n" ..
-			"		Andrew\n".. --idk what to put here, his names aren't exactly recognisable. Maybe Commander Kettle?
+			"		Andrew\n" .. --idk what to put here, his names aren't exactly recognisable. Maybe Commander Kettle?
 			"		Kazzigum\n\n" .. --TODO: Ask everyone if they want to be included here.
 			"If You're from my private server and want to be added to this list, dm me!\n\n\n" ..
-			"The Original Melon Wars:\n"..
+			"The Original Melon Wars:\n" ..
 			"	Creator: Marum\n" ..
 			"	Testers and supporters:\n		X marks it\n		(Xen)SunnY\n		BOOM! The_Rusty_Geek\n		Dagren\n		Fush\n		Broh\n		Jwanito\n		Mr. Thompson\n		Arheisel\n		Hipnox\n\n" ..
 			"	Suggestions:\n		Squid-Inked (Tesla Tower)\n		Durendal5150 (Radar)"
@@ -832,7 +768,7 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 		-- }
 	elseif (pl.mw_menu == 7) then																--Admin menu
 		-- { ADMIN MENU
-		if not(pl:IsAdmin() or cvars.Number("mw_admin_open_permits") == 1) then
+		if not(pl:IsAdmin() or cvars.Bool("mw_admin_open_permits")) then
 			local label = vgui.Create("DLabel", pl.panel)
 			label:SetPos(120, 210)
 			label:SetSize(370,30)
@@ -1161,7 +1097,7 @@ local function _CreatePanel() --TODO: This is like 75% of the file. I should pro
 		end
 		-- }
 	elseif (pl.mw_menu == 8) then -- Player menu
-		--TODO: See if I can re-use the slider function
+		--*TODO: See if I can re-use the slider function
 		local y = 20
 		local scroll = vgui.Create("DScrollPanel", pl.panel)
 		local px, py = pl.panel:GetSize()
@@ -1845,11 +1781,11 @@ function TOOL:Think()
 					local correctTeam = (tr.Entity:GetNWInt("mw_melonTeam", 0) == newTeam or tr.Entity:GetNWInt("capTeam", 0) == newTeam or cvars.Bool("mw_admin_move_any_team", false))
 
 					local entClass = tr.Entity:GetClass()
-					if entClass == "ent_melon_contraption_assembler" and correctTeam then --TODO: Team checks here unreliable.
+					if entClass == "ent_melon_contraption_assembler" and correctTeam then --*TODO: Team checks here unreliable.
 						plyTbl.selectedAssembler = tr.Entity
 						self:MakeContraptionMenu()
 					elseif entClass == "ent_melon_water_tank" then
-						net.Start("MW_UseWaterTank") --TODO: This could probably be rewritten to just use activate
+						net.Start("MW_UseWaterTank") --*TODO: This could probably be rewritten to just use activate
 							net.WriteEntity(tr.Entity)
 							net.WriteInt(newTeam,8)
 						net.SendToServer()

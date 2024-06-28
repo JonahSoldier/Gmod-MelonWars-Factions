@@ -290,7 +290,6 @@ u.button_color 	= button_energy_color
 
 i = i + 1
 u = MelonWars.units[i]
-u.code			= "admin"
 u.faction		= "prot"
 u.name 			= "Heavy Flamethrower"
 u.class 		= "ent_melon_flamethrower"
@@ -301,7 +300,7 @@ u.spawn_time 	= 35
 u.offset        = Vector(0,0,42)
 u.description 	= [[Fire.]]
 u.model 		= "models/props_citizen_tech/firetrap_propanecanister01a.mdl"
---u.isBonusUnit   = true
+u.isBonusUnit   = true
 
 i = i + 1
 u = MelonWars.units[i]

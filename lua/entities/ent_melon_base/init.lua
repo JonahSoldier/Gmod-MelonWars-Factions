@@ -160,6 +160,7 @@ local function MW_Spawn( ent )
 end
 
 function ENT:Setup()
+	self.muzzleOffset = self.muzzleOffset or self.shotOffset
 	self.targetEntity = nil
 	self.followEntity = nil
 	self.forcedTargetEntity = nil
@@ -694,7 +695,7 @@ function MelonWars.defaultShoot( ent, forceTargetPos )
 	local validTarget = IsValid(entTbl.targetEntity)
 
 	if validTarget or forceTargetPos then
-		local pos = ent:GetPos() + entTbl.shotOffset
+		local pos = ent:GetPos() + entTbl.muzzleOffset
 
 		local dir
 		if validTarget then

@@ -31,155 +31,107 @@ function ENT:ModifyColor()
 end
 
 function ENT:PhysicsUpdate()
-
 	local inclination = self:Align(self:GetAngles():Forward()*-1, Vector(0,0,-1), 1000)
 	local front = self:GetUp():Cross(self:GetRight())
 
-	self.phys:SetAngleVelocity( front*500*inclination)
+	self.phys:SetAngleVelocity( front * 500 * inclination)
 
 	self:DefaultPhysicsUpdate()
 end
 
 
 function ENT:SlowThink ( ent )
-	local healed = false
-	if (ent.canShoot) then
-		local pos = ent:GetPos()
-		if (ent.targetEntity == nil) then
-			----------------------------------------------------------------------Buscar target
-			local foundEnts = ents.FindInSphere(pos, ent.range )
-			for k, v in RandomPairs( foundEnts ) do
-				if (v.Base == "ent_melon_base") then
-					if (v:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 0) or ent:SameTeam(v)) then
-						if(v:GetClass() ~= ent:GetClass()) then
-							if (not string.StartWith(v:GetClass(), "ent_melon_main_building")) then
-								if (v.spawned) then
-									if not v.canMove then
-										local tr = util.TraceLine( {
-										start = pos,
-										endpos = v:GetPos(),
-										filter = function( foundEnt )
-											if ( foundEnt:GetClass() == "prop_physics" ) then
-												return true
-											end
-										end
-										})
-										if (tostring(tr.Entity) == '[NULL Entity]') then
-										----------------------------------------------------------Encontró target
-											if (v:GetVar("HP") < v:GetVar("maxHP")) then
-												ent.targetEntity = v
-											end
-										end
-									end
-								end
-							end
-						end
-					end
-				end
-			end
+	local selfTbl = self:GetTable()
+
+	if not selfTbl.targetEntity then
+		local selfTeam = self:GetNWInt("mw_melonTeam", -1)
+		local function validCheck(thisEnt, targEnt)
+			local targEntTbl = targEnt:GetTable()
+			return (targEntTbl.Base == "ent_melon_base" or targEntTbl.Base == "ent_melon_energy_base") and targEntTbl.spawned and not targEntTbl.canMove and targEntTbl.HP < targEntTbl.maxHP and not string.StartWith(targEnt:GetClass(), "ent_melon_main_" ) and MelonWars.sameTeam(selfTeam, targEnt:GetNWInt("mw_melonTeam", -1))
 		end
 
-		--if (IsValid(ent.forcedTargetEntity)) then
-		--	ent.targetEntity = ent.forcedTargetEntity
-		--else
-		--	ent.forcedTargetEntity = nil
-		--end
+		local foundEntities = MelonWars.FindTargets( self, true, validCheck )
+		selfTbl.targetEntity = foundEntities[ math.random(1, #foundEntities) ]
+	else
+		local targEnt = selfTbl.targetEntity
+		local pos = self:GetPos()
 
-		if (ent.targetEntity ~= nil) then
-			----------------------------------------------------------------------Perder target
-			----------------------------------------por que no existe
-			if not IsValid(ent.targetEntity) then
-				ent.targetEntity = nil
-				ent.nextSlowThink = CurTime()+0.1
-				return false
-			end
-			----------------------------------------por que está lejos
-			if (IsValid(ent.targetEntity) and ent.targetEntity:GetPos():Distance(pos) > ent.range) then
-				ent.targetEntity = nil
-				ent.nextSlowThink = CurTime()+0.1
-				return false
-			end
-			----------------------------------------por que hay algo en el medio
-			local tr = util.TraceLine( {
+		if not IsValid(targEnt) or targEnt:GetPos():DistToSqr(pos) > selfTbl.range ^ 2 then
+			selfTbl.targetEntity = nil
+			selfTbl.nextSlowThink = CurTime() + 0.1
+			return false
+		end
+
+		local tr = util.TraceLine( {
 			start = pos,
-			endpos = ent.targetEntity:GetPos(),
-			filter = function( foundEntity ) if ( foundEntity:GetClass() == "prop_physics" and foundEntity ~= ent.targetEntity and not string.StartWith( ent.targetEntity:GetClass(), "ent_melon_main_building") and not string.StartWith( ent.targetEntity:GetClass(), "ent_melonbullet_" )) then return true end end
-			})
-			if (tostring(tr.Entity) ~= '[NULL Entity]') then
-				ent.targetEntity = nil
-				ent.nextSlowThink = CurTime()+0.1
-				return false
+			endpos = selfTbl.targetEntity:GetPos(),
+			filter = function( foundEntity )
+				return foundEntity:GetClass() == "prop_physics"
 			end
-
-			healed = ent:Shoot( ent )
+		})
+		if tr.Entity:IsValid() then
+			selfTbl.targetEntity = nil
+			selfTbl.nextSlowThink = CurTime() + 0.1
+			return false
 		end
 	end
-	if (not healed) then
-		if (ent.HP < ent.maxHP) then -- SELF HEAL
-			ent.HP = ent.HP+1
-			if (ent.HP > ent.maxHP) then
-				ent.HP = ent.maxHP
-			end
-			ent:SetNWFloat( "health", ent.HP )
-		end
+
+	local healed = false
+	if selfTbl.targetEntity and selfTbl.targetEntity.HP < selfTbl.targetEntity.maxHP then
+		healed = self:Shoot( selfTbl.targetEntity )
+	end
+
+	if not healed  then -- SELF HEAL
+		selfTbl.HP = math.min(selfTbl.HP + 1, selfTbl.maxHP)
+		self:SetNWFloat( "healthFrac", selfTbl.HP / selfTbl.maxHP )
 	end
 end
 
-function ENT:Shoot ( ent, forcedTargetPos )
-	if (ent.ai or CurTime() > ent.nextControlShoot) then
-		--------------------------------------------------------Disparar
-		if (forcedTargetPos ~= nil) then
-			local targets = ents.FindInSphere( forcedTargetPos, 3 )
-			for k, v in pairs(targets) do
-				if (v:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 0) or ent:SameTeam(v)) then
-					ent.targetEntity = v
-					break;
-				end
-			end
-		end
+function ENT:Shoot ( ent )
+	local selfTbl = self:GetTable()
+	if not(selfTbl.ai or CurTime() > selfTbl.nextControlShoot) then return false end
 
-		if (ent.targetEntity == ent) then ent.targetEntity = nil end
+	if selfTbl.targetEntity == self then selfTbl.targetEntity = nil end
+	if not IsValid(selfTbl.targetEntity) then return false end
+	local targetEnt = selfTbl.targetEntity
+	local targetEntTbl = targetEnt:GetTable()
 
-		if (IsValid(ent.targetEntity)) then
-			if (ent.targetEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 0) or ent:SameTeam(ent.targetEntity)) then
-				local heal = math.min(ent.damageDeal, ent.targetEntity:GetVar("maxHP")-ent.targetEntity:GetVar("HP"))
-
-				if (heal < ent.HP) then
-					local newHealth = ent.targetEntity:GetVar("HP")+heal
-					local pos = ent:GetPos()+ent.shotOffset
-					local targetPos = ent.targetEntity:GetPos()
-					if (ent.targetEntity:GetVar("shotOffset") ~= nil) then
-						targetPos = targetPos+ent.targetEntity:GetVar("shotOffset")
-					end
-					--ent:FireBullets(bullet)
-					local effectdata = EffectData()
-					effectdata:SetOrigin( targetPos + Vector(0,0,10) )
-					util.Effect( "inflator_magic", effectdata )
-					util.Effect( "inflator_magic", effectdata )
-					util.Effect( "inflator_magic", effectdata )
-					util.Effect( "inflator_magic", effectdata )
-					util.Effect( "inflator_magic", effectdata )
-					effectdata:SetOrigin( pos + Vector(0,0,10) )
-					util.Effect( "inflator_magic", effectdata )
-					sound.Play( ent.shotSound, pos )
-
-					ent.targetEntity:SetVar("HP", newHealth)
-					ent.targetEntity:SetNWFloat("healthFrac", newHealth/ent.targetEntity.maxHP)
-					ent.fired = true
-					if (ent.targetEntity:GetVar("HP") == ent.targetEntity:GetVar("maxHP")) then
-						ent.targetEntity = nil
-					end
-					ent.damage = heal
-					ent.nextControlShoot = CurTime()+ent.slowThinkTimer
-					return true
-				end
-			else
-				ent.targetentity = nil
-			end
-		end
+	if not self:SameTeam(targetEnt) then
+		selfTbl.targetentity = nil
+		return false
 	end
-	return false
+
+	local heal = math.min(selfTbl.damageDeal, targetEntTbl.maxHP - targetEntTbl.HP)
+	if heal >= selfTbl.HP then return false end
+
+	targetEntTbl.HP =  targetEntTbl.HP + heal
+	targetEnt:SetNWFloat("healthFrac", targetEntTbl.HP / targetEntTbl.maxHP)
+	selfTbl.fired = true
+	if targetEntTbl.HP == targetEntTbl.maxHP then
+		selfTbl.targetEnt = nil
+	end
+	selfTbl.damage = heal
+
+
+	local pos = self:GetPos() + selfTbl.shotOffset
+	local targetPos = targetEnt:GetPos()
+	if targetEntTbl.shotOffset then
+		targetPos = targetPos + targetEntTbl.shotOffset
+	end
+
+	local effectdata = EffectData()
+	effectdata:SetOrigin( targetPos + Vector(0,0,10) )
+	for i = 1, 5, 1 do
+		util.Effect( "inflator_magic", effectdata )
+	end
+	effectdata:SetOrigin( pos + Vector(0,0,10) )
+	util.Effect( "inflator_magic", effectdata )
+	sound.Play( selfTbl.shotSound, pos )
+
+	selfTbl.nextControlShoot = CurTime() + selfTbl.slowThinkTimer
+	return true
 end
+
 
 function ENT:DeathEffect ( ent )
 	MelonWars.defaultDeathEffect ( ent )

@@ -4,7 +4,6 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-
 	MelonWars.defaults ( self )
 
 	self.modelString = "models/combine_turrets/ground_turret.mdl"
@@ -17,7 +16,8 @@ function ENT:Initialize()
 	self.shotSound = "weapons/ar1/ar1_dist2.wav"
 	self.tracer = "AR2Tracer"
 
-	self.shotOffset = Vector(0,0,-2.5) --TODO: make visual shot offset different, if possible. We use a different origin for targeting and for displaying muzzleflashes, but the same offset, causing issues.
+	self.shotOffset = Vector(0,0,-2.5)
+	self.muzzleOffset = Vector(0,0,20)
 
 	self.canMove = false
 	self.canBeSelected = false
