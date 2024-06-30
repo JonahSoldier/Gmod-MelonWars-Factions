@@ -32,71 +32,49 @@ function ENT:Initialize()
 end
 
 function ENT:SlowThink ( ent )
-	--MelonWars.unitDefaultThink ( ent )
 end
 
-function ENT:Welded( ent, parent )
-	local weld = constraint.Weld( ent, parent, 0, 0, 0, true , false )
-
-	--ent.canMove = false
+function ENT:Welded(ent, parent)
+	constraint.Weld(ent, parent, 0, 0, 0, true, false)
 	ent.materialString = "models/shiny"
-
 	ent.parent = parent
-
-	--Resta su poblacion para luego sumar la nueva
-	MelonWars.updatePopulation(-ent.population, mw_melonTeam)
-	ent.population = math.ceil(ent.population/2)
-	MelonWars.updatePopulation(ent.population, mw_melonTeam)
 end
 
-function ENT:Update( ent ) --TODO: Refactor
-	----[[
-	if (cvars.Bool("mw_admin_playing") ) then
+local mw_admin_playing_cv = GetConVar( "mw_admin_playing" )
+function ENT:Update()
+	if not mw_admin_playing_cv:GetBool() then return end
+	local selfTbl = self:GetTable()
 
-		local const = constraint.FindConstraints( self, "Weld" )
-		if table.Count(const) == 0 then
-			self:TakeDamage(5)
-		end
+	local const = constraint.FindConstraints( self, "Weld" )
+	if table.Count(const) == 0 then
+		self:TakeDamage(5)
+	end
 
-		self:SetNWVector( "targetPos", self.targetPos )
+	self:SetNWVector("targetPos", selfTbl.targetPos)
+	self:SetNWEntity("followEntity", selfTbl.followEntity)
 
-		self:SetNWEntity( "followEntity", self.followEntity )
-
-		if (self.canMove) then
-			local phys = self.phys
-
-			if (IsValid(phys)) then
-				---------------------------------------------------------------------------Movimiento
-				if (self.moving) then
-					local moveVector = (self.targetPos-self:GetPos()):GetNormalized()*self.speed-self:GetVelocity()
-					local force = Vector(moveVector.x, moveVector.y, 0)
-					--Takes the average between the prev moveforce and the desired new moveforce, prevents it from shaking violently without any noticeable effect on its ability to move
-					self.moveForce = (self.moveForce + force*self.thrustforce)/2
-
-				else
-					local moveVector = -self:GetVelocity()*0.2
-					local force = Vector(moveVector.x, moveVector.y, 0)
-					self.moveForce = force
-				end
-			end
-
-			if (Vector(self:GetPos().x, self:GetPos().y, 0):Distance(Vector(self.targetPos.x, self.targetPos.y, 0)) < 100) then
-				self:FinishMovement()
-				for k, v in pairs(constraint.GetAllConstrainedEntities( self )) do
-					if (v.Base == "ent_melon_base") then
-						if (v ~= self) then
-							v:FinishMovement()
-						end
-					end
-				end
-			end
-
-			self:SetNWBool("moving", self.moving)
-			self:NextThink(CurTime() + 0.01)
-			return true
+	local phys = selfTbl.phys
+	if IsValid(phys) then
+		if selfTbl.moving then
+			local moveVector = (selfTbl.targetPos - self:GetPos()):GetNormalized() * selfTbl.speed - self:GetVelocity()
+			moveVector.z = 0
+			selfTbl.moveForce = (selfTbl.moveForce + moveVector * selfTbl.thrustforce) / 2
+		else
+			local moveVector = -self:GetVelocity() * 0.2
+			moveVector.z = 0
+			selfTbl.moveForce = moveVector
 		end
 	end
-	--]]--
+
+	if selfTbl.moving and self:GetPos():Distance2DSqr(selfTbl.targetPos) < 100^2 then
+		for k, v in pairs(constraint.GetAllConstrainedEntities(self)) do
+			if v:GetTable().Base == "ent_melon_base" then
+				v:FinishMovement()
+			end
+		end
+	end
+
+	self:SetNWBool("moving", selfTbl.moving)
 end
 
 function ENT:PhysicsUpdate()

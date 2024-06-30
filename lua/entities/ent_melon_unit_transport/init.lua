@@ -11,7 +11,9 @@ function ENT:Initialize()
 	self.maxHP = 50
 
 	self.moveType = MOVETYPE_VPHYSICS
-	self.canMove = false
+	self.canMove = true
+	self.speed = 0
+
 	self.population = 1
 	self:SetNWInt("maxunits", 10)
 	self:SetNWInt("count", 0)
@@ -52,7 +54,7 @@ function ENT:AbsorbUnit(unit)
 	if self.canEatUnits and unit.Base == "ent_melon_base" then
 		local uClass = unit:GetClass()
 		local selfTeam = self:GetNWInt("mw_melonTeam", -1)
-		if unit:GetNWInt("mw_melonTeam", 0) == selfTeam and unit.canMove and uClass ~= "ent_melon_engine" and uClass ~= "ent_melon_engine_large" and uClass ~= "ent_melon_wheel" and uClass ~= "ent_melon_main_unit" then
+		if unit:GetNWInt("mw_melonTeam", 0) == selfTeam and unit.canMove and not unit.isContraptionPart and unit:GetClass() ~= "ent_melon_main_unit" then
 			if unit.population <= self:GetNWInt("maxunits", 0) - self:GetNWInt("count", 0) then
 				local index = self:GetNWInt("count", 0)
 				self.containedEnts[index+1] = {

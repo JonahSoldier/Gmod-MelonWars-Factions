@@ -28,57 +28,51 @@ function ENT:SlowThink(ent)
 end
 
 function ENT:Welded(ent, parent)
-	local weld = constraint.Weld(ent, parent, 0, 0, 0, true, false)
+	constraint.Weld(ent, parent, 0, 0, 0, true, false)
 	ent.materialString = "models/shiny"
 	ent.parent = parent
-	--Resta su poblacion para luego sumar la nueva
-	MelonWars.updatePopulation(-ent.population, mw_melonTeam)
-	ent.population = math.ceil(ent.population / 2)
-	MelonWars.updatePopulation(ent.population, mw_melonTeam)
 end
 
-function ENT:Update() --TODO: Rewrite. This is just copied from the (old) ent_melon_base
-	if not cvars.Bool("mw_admin_playing") then return end
+local mw_admin_playing_cv = GetConVar( "mw_admin_playing" )
+function ENT:Update()
+	if not mw_admin_playing_cv:GetBool() then return end
+	local selfTbl = self:GetTable()
 
 	local const = constraint.FindConstraints( self, "Weld" )
 	if table.Count(const) == 0 then
 		self:TakeDamage(5)
 	end
 
-	self:SetNWVector("targetPos", self.targetPos)
-	self:SetNWEntity("followEntity", self.followselfity)
-	if self.canMove then
-		local phys = self.phys
-		if IsValid(phys) then
-			---------------------------------------------------------------------------Movimiento
-			if self.moving then
-				local moveVector = (self.targetPos - self:GetPos()):GetNormalized() * self.speed - self:GetVelocity()
-				local force = Vector(moveVector.x, moveVector.y, 0)
-				self.moveForce = force * self.thrustforce
-			else
-				local moveVector = -self:GetVelocity() * 0.2
-				local force = Vector(moveVector.x, moveVector.y, 0)
-				self.moveForce = force
-			end
-		end
+	self:SetNWVector("targetPos", selfTbl.targetPos)
+	self:SetNWEntity("followEntity", selfTbl.followEntity)
 
-		if Vector(self:GetPos().x, self:GetPos().y, 0):Distance(Vector(self.targetPos.x, self.targetPos.y, 0)) < 100 then
-			self:FinishMovement()
-			for k, v in pairs(constraint.GetAllConstrainedEntities(self)) do
-				if v.Base == "ent_melon_base" then if v ~= self then v:FinishMovement() end end
-			end
+	local phys = selfTbl.phys
+	if IsValid(phys) then
+		if selfTbl.moving then
+			local moveVector = (selfTbl.targetPos - self:GetPos()):GetNormalized() * selfTbl.speed - self:GetVelocity()
+			moveVector.z = 0
+			selfTbl.moveForce = (selfTbl.moveForce + moveVector * selfTbl.thrustforce) / 2
+		else
+			local moveVector = -self:GetVelocity() * 0.2
+			moveVector.z = 0
+			selfTbl.moveForce = moveVector
 		end
-
-		self:SetNWBool("moving", self.moving)
-		--self:NextThink(CurTime() + 0.01) --TODO: Does this change anything when done in :Update()?
-		return true
 	end
+
+	if selfTbl.moving and self:GetPos():Distance2DSqr(selfTbl.targetPos) < 100^2 then
+		for k, v in pairs(constraint.GetAllConstrainedEntities(self)) do
+			if v:GetTable().Base == "ent_melon_base" then
+				v:FinishMovement()
+			end
+		end
+	end
+
+	self:SetNWBool("moving", selfTbl.moving)
 end
 
 function ENT:PhysicsUpdate()
 	local selfAng = self:GetAngles()
 	local selfTbl = self:GetTable()
-	--self:Align(selfAng:Forward(), Vector(0, 0, -1), 10000) --TODO: Do we care that much about keep-uprighting an engine?
 
 	if selfTbl.moving then
 		local moveVector = (selfTbl.targetPos - self:GetPos()):GetNormalized()

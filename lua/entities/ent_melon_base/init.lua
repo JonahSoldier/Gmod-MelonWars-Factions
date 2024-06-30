@@ -269,7 +269,7 @@ function ENT:Think()
 		self:Update()
 	end
 
-	if not selfTbl.canMove and self:GetMoveType() ~= MOVETYPE_NONE and self:GetClass() ~= "ent_melon_unit_transport" then
+	if not selfTbl.canMove and self:GetMoveType() ~= MOVETYPE_NONE then
 		local const = constraint.FindConstraints( self, "Weld" )
 		table.Add( const, constraint.FindConstraints( self, "Axis" ) )
 		if table.Count( const ) == 0 then
