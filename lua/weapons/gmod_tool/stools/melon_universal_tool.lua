@@ -1636,6 +1636,10 @@ function TOOL:Deploy()
 			net.WriteInt( MelonWars.teamUnits[_team], 16 )
 		net.Send( owner )
 	end
+
+	owner.mw_hudColor = MelonWars.teamColors[_team] or Color(100,100,100,255)
+	owner.mw_spawntime = 0
+
 	owner:PrintMessage( HUD_PRINTCENTER, "Press R to open the menu" )
 end
 
@@ -1808,7 +1812,7 @@ function TOOL:Think()
 	end
 
 	local newColor
-	if (newTeam ~= 0) then
+	if newTeam ~= 0 then
 		newColor = MelonWars.teamColors[newTeam]
 	else
 		newColor = Color(100,100,100,255)
