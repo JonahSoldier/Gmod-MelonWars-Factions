@@ -23,7 +23,7 @@ end)
 
 hook.Add( "EntityTakeDamage", "MelonWars_EntTakeDmg", function( target, dmginfo )
 	if not IsValid( target and dmginfo ) then return end
-	if dmginfo:GetAttacker():GetClass() == "player" then return end
+	if dmginfo:GetAttacker():IsPlayer() then return end
 	if target:GetNWInt("propHP", -1) ~= -1 then
 		target:SetNWInt( "propHP", target:GetNWInt( "propHP", 1 ) - dmginfo:GetDamage() )
 		if (target:GetNWInt( "propHP", 1) <= 0) then

@@ -975,6 +975,11 @@ local function _CreatePanel()
 				button:SetText( "" )
 				function button:DoClick()
 					pl:ConCommand( convar .. " " .. tostring( i * valMul ) )
+
+					net.Start("SetMWConvarInt")
+						net.WriteString(convar)
+					net.WriteInt( i * valMul, 32 )
+					net.SendToServer()
 					slider:SetSize( i * 12, 40 )
 					label:SetText( text .. tostring( i * valMul ) )
 				end

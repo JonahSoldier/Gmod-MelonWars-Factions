@@ -49,6 +49,7 @@ util.AddNetworkString( "MWControlShoot" )
 -- Misc Stuff added by faction mod
 util.AddNetworkString( "MWColourMod" )
 util.AddNetworkString( "SetMWConvar" )
+util.AddNetworkString( "SetMWConvarInt" )
 util.AddNetworkString( "MWReadyUp" )
 util.AddNetworkString( "MW_ClientModifySpawnTime" )
 
@@ -76,12 +77,16 @@ local mw_validConvars = {
 	mw_admin_credit_cost = true,
 	mw_admin_allow_free_placing = true,
 	mw_admin_move_any_team = true,
-	mw_admin_immortality = true
+	mw_admin_immortality = true,
+
+	mw_admin_max_units = true,
+	mw_admin_starting_credits = true,
+	mw_admin_base_income = true,
+	mw_water_tank_value = true,
 }
 net.Receive( "SetMWConvar", function( _, pl )
 	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
-
-	if not pl:IsAdmin() or openPerms then return end
+	if not(openPerms or pl:IsAdmin()) then return end
 
 	local convar = net.ReadString()
 	local newValue = net.ReadBool()
@@ -89,6 +94,18 @@ net.Receive( "SetMWConvar", function( _, pl )
 	if not mw_validConvars[convar] then return end --Security. We *really* don't want to trust what the client gives us here.
 
 	GetConVar( convar ):SetBool( newValue )
+end )
+
+net.Receive( "SetMWConvarInt", function( _, pl ) --Duplicate but for integers (e.g. income values)
+	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
+	if not(openPerms or pl:IsAdmin()) then return end
+
+	local convar = net.ReadString()
+	local newValue = net.ReadInt(32)
+
+	if not mw_validConvars[convar] then return end
+
+	GetConVar( convar ):SetInt( newValue )
 end )
 
 MelonWars.teamColors = {
@@ -699,6 +716,9 @@ local function MW_SpawnBaseAtPos(_team, vector, pl, grandwar, unit)
 end
 
 net.Receive( "SpawnBase", function( _, pl )
+	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
+	if not(openPerms or pl:IsAdmin()) then return end
+
 	local trace = net.ReadTable()
 	local _team = net.ReadInt(8)
 	if ( IsValid( trace.Entity ) and trace.Entity.Base == "ent_melon_base" ) then return end
@@ -706,6 +726,9 @@ net.Receive( "SpawnBase", function( _, pl )
 end )
 
 net.Receive( "SpawnBaseGrandWar", function( _, pl )
+	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
+	if not(openPerms or pl:IsAdmin()) then return end
+
 	local trace = net.ReadTable()
 	local _team = net.ReadInt(8)
 	if ( IsValid( trace.Entity ) and trace.Entity.Base == "ent_melon_base" ) then return end
@@ -713,6 +736,9 @@ net.Receive( "SpawnBaseGrandWar", function( _, pl )
 end )
 
 net.Receive( "SpawnBaseUnit", function( _, pl )
+	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
+	if not(openPerms or pl:IsAdmin()) then return end
+
 	local trace = net.ReadTable()
 	local _team = net.ReadInt(8)
 	if IsValid( trace.Entity ) and trace.Entity.Base == "ent_melon_base" then return end
@@ -771,7 +797,8 @@ net.Receive( "SellEntity", function( _, pl )
 end )
 
 concommand.Add( "mw_reset_credits", function(ply)
-	if ply:IsValid() and not ply:IsAdmin() then return end
+	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
+	if ply:IsValid() and not(openPerms or ply:IsAdmin()) then return end
 
 	local c = cvars.Number( "mw_admin_starting_credits" )
 	MelonWars.teamCredits = { c, c, c, c, c, c, c, c }
@@ -783,7 +810,8 @@ concommand.Add( "mw_reset_credits", function(ply)
 end )
 
 concommand.Add( "mw_reset_power", function(ply)
-	if ply:IsValid() and not ply:IsAdmin() then return end
+	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
+	if ply:IsValid() and not(openPerms or ply:IsAdmin()) then return end
 
 	MelonWars.teamUnits = {0,0,0,0,0,0,0,0}
 
@@ -821,7 +849,10 @@ local function startMatch()
 	end)
 end
 
-net.Receive( "StartGame", function()
+net.Receive( "StartGame", function(_, ply)
+	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
+	if not(openPerms or ply:IsAdmin()) then return end
+
 	startMatch()
 end)
 
@@ -838,7 +869,18 @@ net.Receive( "MWReadyUp", function()
 	end)
 end )
 
-net.Receive( "SandboxMode", function()
+net.Receive( "SandboxMode", function(_, ply)
+	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
+	if not(openPerms or pl:IsAdmin()) then return end
+
+	RunConsoleCommand("mw_admin_playing", "1")
+	RunConsoleCommand("mw_admin_locked_teams", "0")
+	RunConsoleCommand("mw_admin_move_any_team", "1")
+	RunConsoleCommand("mw_admin_credit_cost", "0")
+	RunConsoleCommand("mw_admin_allow_free_placing", "1")
+	RunConsoleCommand("mw_admin_spawn_time", "0")
+	RunConsoleCommand("mw_admin_allow_manual_placing", "1")
+
 	for _, v in ipairs( player.GetAll() ) do
 		sound.Play( "garrysmod/save_load1.wav", v:GetPos() + Vector( 0, 0, 45 ), 100, 150, 1 )
 		v:PrintMessage( HUD_PRINTTALK, "== MelonWars options set to Sandbox ==" )
