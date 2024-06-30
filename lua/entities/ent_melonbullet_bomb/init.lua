@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 
-include('shared.lua')
+include( "shared.lua" )
 
 function ENT:Initialize()
 	self:PhysicsInitSphere( 5, "default" )
@@ -22,22 +22,19 @@ end
 
 function ENT:PhysicsUpdate(colData, collider)
 	local phys = self:GetPhysicsObject()
-	phys:ApplyTorqueCenter( self.rotation*50 )
-	phys:ApplyForceCenter(Vector(0,0,5.6)*phys:GetMass())
+	phys:ApplyTorqueCenter( self:GetTable().rotation * 50 )
+	phys:ApplyForceCenter( vector_up * (phys:GetMass() * 5.6) )
 end
-
-
 
 function ENT:PhysicsCollide( colData, collider )
 	local other = colData.HitEntity
-	if (other.canMove == false) then
-		if (self:IsValid()) then
-			other.damage = 30
-			--util.BlastDamage( self, self, self:GetPos(), 30, 75 )
-			local effectdata = EffectData()
-			effectdata:SetOrigin( self:GetPos() )
-			util.Effect( "Explosion", effectdata )
-			self:Remove()
-		end
-	end
+	if not self:IsValid() then return end
+	if not(not other.canMove or other.Base == "ent_melon_prop_base") or not other:IsValid() then return end
+
+	other:TakeDamage(30, self, self)
+
+	local effectdata = EffectData()
+	effectdata:SetOrigin( self:GetPos() )
+	util.Effect( "Explosion", effectdata )
+	self:Remove()
 end

@@ -1,18 +1,13 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-	MW_Energy_Defaults ( self )
+	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_buildings/watertower_001c.mdl"
 	self.maxHP = 100
-	--self.Angles = Angle(0,0,0)
-	--/local offset = Vector(0,0,50)
-	--offset:Rotate(self:GetAngles())
-	--self:SetPos(self:GetPos()+offset)
-	--self:SetPos(self:GetPos()+Vector(0,0,10))
 	self.moveType = MOVETYPE_NONE
 	self.canMove = false
 
@@ -23,79 +18,52 @@ function ENT:Initialize()
 	self:SetNWVector("energyPos", Vector(0,0,30))
 
 	self.maxWater = 4000
-	self.waterGenerated = 0
+	--self.waterGenerated = 0
+	self:SetNWInt("waterGenerated", 0)
 
-	MW_Energy_Setup ( self )
+	MelonWars.energySetup ( self )
 end
 
 function ENT:Actuate()
 	local on = self:GetNWBool("active", false)
-	if (on) then
-		self:SetNWBool("active", false)
-		self:SetNWString("message", "Generator Off")
-		self:Energy_Add_State()
-	else
-		self:SetNWBool("active", true)
-	end
+	self:SetNWBool("active", not on)
 end
 
 function ENT:Think(ent)
-	if(self.spawned) then
-		if(cvars.Bool("mw_admin_playing")) then
-			local waterGain = 5
-			local energyCost = 5
-			if (self.maxWater > self.waterGenerated) then
-				if (self:GetNWBool("active", false)) then
-					if (self:DrainPower(energyCost)) then
-						mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)]+waterGain
-						if (self.value > 0) then
-							self.value = self.value-waterGain
-							if (self.value < 0) then
-								self.value = 0
-							end
-						end
-						self.waterGenerated = self.waterGenerated+waterGain
-						for k, v in pairs( player.GetAll() ) do
-							if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
-								net.Start("MW_TeamCredits")
-									net.WriteInt(mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
-								net.Send(v)
-							end
-						end
-						self:SetNWString("message", "Generating water ("..self.waterGenerated.."/"..self.maxWater.."w)")
+	if self.spawned and cvars.Bool("mw_admin_playing") then
+		local waterGain = 5
+		local energyCost = 5
+		local waterGenerated = self:GetNWInt("waterGenerated", 0)
+		if self.maxWater > waterGenerated then
+			if self:GetNWBool("active", false) and self:DrainPower(energyCost) then
+				local selfTeam = self:GetNWInt("mw_melonTeam", 0)
+				MelonWars.teamCredits[selfTeam] = MelonWars.teamCredits[selfTeam] + waterGain
 
-					else
-						self:SetNWString("message", "Not enough energy! ("..self.waterGenerated.."/"..self.maxWater.."w)")
-					end
-				else
-					self:SetNWString("message", "Pump Off ("..self.waterGenerated.."/"..self.maxWater.."w)")
-				end
-				self:Energy_Add_State()
-			else
-				self:SetNWString("message", "Water depleted. Disassembling...")
-				self:SetColor(Color(150,150,150,255))
-	
-				self.HP = self.HP-10
-				self:SetNWFloat( "health", self.HP )
-				if (self.HP <= 0) then
-					MW_Die( self )
-				end
+				self.value = math.max(self.value - waterGain, 0)
+				self:SetNWInt("waterGenerated", waterGenerated + waterGain)
+				MelonWars.updateClientCredits(selfTeam)
+			end
+			--self:Energy_Add_State()
+		else
+			self:SetColor(Color(150,150,150,255))
+
+			self.HP = self.HP-10
+			self:SetNWFloat( "health", self.HP )
+			if self.HP <= 0 then
+				MelonWars.die( self )
 			end
 		end
-
 	end
-	self:NextThink( CurTime()+1 )
+	self:NextThink( CurTime() + 1 )
 	return true
 end
 
 function ENT:SlowThink(ent)
-
 end
 
 function ENT:Shoot ( ent )
-
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

@@ -1,10 +1,10 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-	MW_Energy_Defaults ( self )
+	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_lab/teleportbulkeli.mdl"
 	self.maxHP = 1250
@@ -23,24 +23,23 @@ function ENT:Initialize()
 	self:SetNWVector("energyPos", Vector(0,0,30))
 	self.shotOffset = Vector(0,0,30)
 
-	MW_Energy_Setup ( self )
+	MelonWars.energySetup ( self )
 
 end
 
-
-function ENT:Think(ent)
+function ENT:Think(ent) --TODO: Rewrite. This was copied from other files initially and is really messy. A lot of its unnecessary.
 	if(self.spawned) then
 		local waterCost = 0
 		local energyGain = 250
 		if (self:GetNWBool("active", false)) then
-			if (mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] >= waterCost or not cvars.Bool("mw_admin_credit_cost")) then
+			if (MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] >= waterCost or not cvars.Bool("mw_admin_credit_cost")) then
 				if (self:GivePower(energyGain)) then
 					if (cvars.Bool("mw_admin_credit_cost")) then
-						mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)]-waterCost
+						MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] = MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)]-waterCost
 						for k, v in pairs( player.GetAll() ) do
 							if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
 								net.Start("MW_TeamCredits")
-									net.WriteInt(mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
+									net.WriteInt(MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
 								net.Send(v)
 							end
 						end
@@ -105,12 +104,12 @@ function ENT:DeathEffect ( ent )
 				local effectdata = EffectData()
 				effectdata:SetOrigin( ent:GetPos() + Vector(-150,-150,0))
 				util.Effect( "Explosion", effectdata )
-			
+
 			local pos1 = ent:GetPos()-- Set worldpos 1. Add to the hitpos the world normal.
 			local pos2 = ent:GetPos()+Vector(0,0,-20) -- Set worldpos 2. Subtract from the hitpos the world normal.
 			ent.fired = true
 			ent:Remove()
-			
+
 			util.Decal("Scorch",pos1,pos2)
 		end
 	end)

@@ -1,11 +1,11 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Energy_Defaults ( self )
+	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_phx/construct/metal_plate2x4.mdl"--"models/props_c17/TrapPropeller_Engine.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -14,13 +14,8 @@ function ENT:Initialize()
 	self.speed = 200
 	self.force = 100
 
-	--self:SetAngles(self:GetAngles()+Angle(90,0,0))
-
-	--local offset = Vector(0,0,42)
-	--self:SetPos(self:GetPos()+offset)
-
 	self.closedpos = self:GetPos()
-	self.openedpos = self:GetPos()+Vector(0,0,150)
+	self.openedpos = self:GetPos() + Vector(0,0,150)
 
 	self.maxHP = 250
 
@@ -30,12 +25,12 @@ function ENT:Initialize()
 	self.population = 0
 
 	self.capacity = 0
-	self:SetNWVector("energyPos", Vector(0,0,0))
+	self:SetNWVector("energyPos", vector_origin)
 
 	self.damping = 4
-	
-	MW_Energy_Setup ( self )
-	
+
+	MelonWars.energySetup ( self )
+
 	self:GetPhysicsObject():EnableMotion(false)
 end
 
@@ -44,39 +39,32 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-	--MW_UnitDefaultThink ( ent )
+	--MelonWars.unitDefaultThink ( ent )
 end
 
 function ENT:Actuate ()
-	--if (self.process <= 0) then
-		self.process = 5-self.process
-		self.open = not self.open
-		self:SetNWBool("open", self.open)
-	--end
+	self.process = 5-self.process
+	self.open = not self.open
+	self:SetNWBool("open", self.open)
 end
 
 function ENT:Update()
-	if (self.process > 0) then
-		if (self:DrainPower(1)) then
-			self.process = self.process - 0.2
-			if (self.process < 0) then
-				self.process = 0
-			end
-			local percent = self.process/5
-			if not self.open then
-				self:SetPos(self.openedpos*percent+self.closedpos*(1-percent))
-			else
-				self:SetPos(self.openedpos*(1-percent)+self.closedpos*(percent))
-			end
+	local selfTbl = self:GetTable()
+	if selfTbl.process > 0 and self:DrainPower(1) then
+		selfTbl.process = math.max(selfTbl.process - 0.2, 0)
+
+		local percent = selfTbl.process / 5
+		if not selfTbl.open then
+			self:SetPos(selfTbl.openedpos * percent + selfTbl.closedpos * (1-percent))
+		else
+			self:SetPos(selfTbl.openedpos * (1-percent) + selfTbl.closedpos * percent)
 		end
 	end
-	self:Energy_Set_State()
 end
 
 function ENT:Shoot ( ent )
-	--MW_DefaultShoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

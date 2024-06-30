@@ -1,16 +1,16 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_c17/utilityconnecter006c.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
-	
+
 	self.shotSound = "weapons/stunstick/stunstick_impact2.wav"
 
 	self.maxHP = 40
@@ -31,7 +31,7 @@ function ENT:Initialize()
 
 	--print("My Initialization")
 
-	MW_Setup ( self )
+	self:Setup()
 
 	self.phys:SetDamping(10,100000)
 	self.phys:SetMaterial("gmod_ice")
@@ -39,13 +39,13 @@ end
 
 function ENT:SlowThink ( ent )
 	if (self:GetNWInt("mw_charge",0) >= self.energyCost) then
-		MW_UnitDefaultThink ( ent )
+		MelonWars.unitDefaultThink ( ent )
 	end
 end
 
 function ENT:Shoot ( ent, forceTargetPos )
 	if (ent.ai or CurTime() > ent.nextControlShoot) then
-		MW_DefaultShoot ( ent, forceTargetPos )
+		MelonWars.defaultShoot ( ent, forceTargetPos )
 		ent:SetNWInt("mw_charge",ent:GetNWInt("mw_charge",0)-self.energyCost)
 		ent.nextSlowThink = CurTime()+ent.fireDelay
 		ent.nextControlShoot = CurTime()+ent.fireDelay
@@ -53,7 +53,7 @@ function ENT:Shoot ( ent, forceTargetPos )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end
 
 function ENT:PhysicsUpdate()

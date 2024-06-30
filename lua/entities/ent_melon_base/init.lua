@@ -4,15 +4,12 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include("shared.lua")
 
 local unit_colors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
+local mw_admin_playing_cv = GetConVar( "mw_admin_playing" )
 
--- Possible tesla unit models/props_c17/utilityconnecter006c.mdl
--- Charging Station models/props_c17/substation_transformer01d.mdl
-
-function MW_Defaults( ent )
-	--ent:NextThink(CurTime() + 0.1)
+function MelonWars.defaults( ent )
 	ent.maxHP = 20
 	ent.HP = 1
-	ent:SetNWFloat( "health", 1 )
+	ent:SetNWFloat( "healthFrac" , 1)
 	ent.speed = 100
 	ent.range = 250
 	ent.spread = 1
@@ -69,8 +66,6 @@ function MW_Defaults( ent )
 
 	ent.deathEffect = "cball_explode"
 
-	--ent:SetNWInt("mw_melonTeam", 0)
-	--ent.mw_melonTeam = 0
 	ent.canShoot = true
 
 	ent.slowThinkTimer = 2
@@ -81,7 +76,6 @@ function MW_Defaults( ent )
 	if (ent.Angles == nil) then ent.Angles = Angle(0,0,0) end
 	ent:SetMaterial( "Models/effects/comball_sphere" )
 
-	--ent:SetColor( mw_melonTeam ) --Doing this breaks the game now apparently????
 	ent:SetColor( unit_colors[mw_melonTeam] )
 
 	ent.damping = 1.5
@@ -110,13 +104,13 @@ function ENT:Ini( teamnumber, affectPopulation )
 	self:MelonSetColor( teamnumber )
 	self.nextSlowThink = CurTime() + 1
 	if affectPopulation ~= false then
-		MW_UpdatePopulation( self.population, teamnumber )
+		MelonWars.updatePopulation( self.population, teamnumber )
 	end
 	if teamnumber == 0 then
 		self.chaseStance = true
 	end
 
-	self.mw_melonTeam = teamnumber
+	--self.mw_melonTeam = teamnumber
 
 	if teamnumber == -1 then
 		error( "Unit " .. tostring( self ) .. " spawned with team -1!" )
@@ -144,11 +138,6 @@ end
 function ENT:ModifyColor() -- Meant to be overridden by certain units if necessary
 end
 
---[[
-function ENT:OnDuplicated( entTable )
-	self:SetPos(self:GetPos()-self.posOffset)
-end
-]]
 local function MW_Spawn( ent )
 	if not SERVER then return end
 	ent:SetMoveType( ent.moveType )   -- after all, gmod is a physics
@@ -156,8 +145,7 @@ local function MW_Spawn( ent )
 	ent.spawned = true
 
 	ent.HP = ent.maxHP
-	ent:SetNWFloat( "maxhealth", ent.maxHP )
-	ent:SetNWFloat( "health", ent.HP )
+	ent:SetNWFloat( "healthFrac", ent.HP / ent.maxHP )
 
 	local baseSize
 	if (ent.sphereRadius ~= 0) then
@@ -166,281 +154,276 @@ local function MW_Spawn( ent )
 		local mins = ent.phys:GetAABB()
 		baseSize = (-mins.x-mins.y) * 0.6
 	end
-	ent:SetNWFloat( "baseSize", baseSize + 5 )
+	ent:SetNWFloat( "baseSize", baseSize + 5 ) --TODO: See if this can be done without networking
 
 	hook.Run("MelonWarsEntitySpawned", ent)
 end
 
-function MW_Setup( ent )
-	ent.targetEntity = nil
-	ent.followEntity = nil
-	ent.forcedTargetEntity = nil
-	ent:SetNWEntity( "targetEntity", ent.targetEntity )
-	ent:SetNWEntity( "followEntity", ent.followEntity )
-	ent:SetNWBool("moving", false)
-	ent:SetNWFloat("range", ent.range)
+function ENT:Setup()
+	self.muzzleOffset = self.muzzleOffset or self.shotOffset
+	self.targetEntity = nil
+	self.followEntity = nil
+	self.forcedTargetEntity = nil
+	self:SetNWEntity( "targetEntity", self.targetEntity )
+	self:SetNWEntity( "followEntity", self.followEntity )
+	self:SetNWBool( "moving", false )
+	--self:SetNWFloat( "range", self.range )
 
-	ent.moving = false
-	ent.damage = 0
+	self.moving = false
+	self.damage = 0
 
-	ent.moveForce = Vector(0,0,0)
+	self.moveForce = Vector( 0, 0, 0 )
 
-	--ent:SetPos(ent:GetPos()+ent.posOffset)
-
-	if (ent.changeModel) then
-		ent:SetModel( ent.modelString )
+	if self.changeModel then
+		self:SetModel( self.modelString )
 	end
 
-	if (ent.sphereRadius == 0) then
-		ent:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
-		ent:SetSolid( SOLID_VPHYSICS )
+	if self.sphereRadius > 0 then
+		self:PhysicsInitSphere( self.sphereRadius, "slime" )
+	elseif self.useBBoxPhys then
+		self:PhysicsInit( SOLID_VPHYSICS )
+		local mins, maxs = self:GetPhysicsObject():GetAABB()
+		self:PhysicsInitBox( mins, maxs, "slime" )
 	else
-		ent:PhysicsInitSphere( ent.sphereRadius, "slime" )
+		self:PhysicsInit( SOLID_VPHYSICS )
+		--self:SetSolid( SOLID_VPHYSICS )
 	end
 
-	ent.phys = ent:GetPhysicsObject()
+	self.phys = self:GetPhysicsObject()
 
-	if (ent.moveType == 0) then
-		local weld = constraint.Weld( ent, game.GetWorld(), 0, 0, 0, true , false )
-		canMove = false
-		ent.phys:EnableMotion(false)
+	if self.moveType == 0 then
+		local weld = constraint.Weld( self, game.GetWorld(), 0, 0, 0, true , false )
+		self.canMove = false
+		self.phys:EnableMotion( false )
 	end
 
-	if (IsValid(ent.phys)) then
-		ent.phys:Wake()
-		if (ent.angularDamping == -1) then
-			ent.angularDamping = ent.damping
+	if IsValid( self.phys ) then
+		self.phys:Wake()
+		if self.angularDamping == -1 then
+			self.angularDamping = self.damping
 		end
-		ent.phys:SetDamping(ent.damping,ent.angularDamping)
+		self.phys:SetDamping( self.damping, self.angularDamping )
+		self.mw_mass = self.phys:GetMass() --Optimization. We can assume this number doesn't change.
 	end
 
-	if (ent.changeAngles) then
-		ent:SetAngles( ent:GetAngles()+ent.Angles )
+	if self.changeAngles then
+		self:SetAngles( self:GetAngles() + self.Angles )
 	end
 
-	ent:SetNWEntity( "targetEntity", ent.targetEntity )
+	self:SetNWEntity( "targetEntity", self.targetEntity )
 
-	if (cvars.Number("mw_admin_spawn_time") == 1 and ent.mw_spawntime ~= nil) then
-		timer.Simple( ent.mw_spawntime-CurTime(), function()
-			if (IsValid(ent)) then
-				MW_Spawn(ent)
+	if cvars.Number( "mw_admin_spawn_time" ) == 1 and self.mw_spawntime ~= nil then
+		timer.Simple( self.mw_spawntime - CurTime(), function()
+			if IsValid( self ) then
+				MW_Spawn( self )
 			end
-		end)
+		end )
 	else
-		MW_Spawn(ent)
+		MW_Spawn( self )
 	end
 end
 
 function ENT:Welded( ent, parent )
-	--script a ejecutar si se spawnea weldeada
-	local weld = constraint.Weld( ent, parent, 0, 0, 0, true , false )
+	constraint.Weld( ent, parent, 0, 0, 0, true , false )
+
 	ent.canMove = false
 	ent.materialString = "models/shiny"
 
 	ent.parent = parent
 
 	ent.phys:SetDamping(0,0)
+	ent:SetCollisionGroup( COLLISION_GROUP_DEBRIS_TRIGGER )
 
-	ent:SetCollisionGroup(2)
-	--Resta su poblacion para luego sumar la nueva
-	--MW_UpdatePopulation(-ent.population, mw_melonTeam)
-	ent.population = math.ceil(ent.population/2)
-	--MW_UpdatePopulation(ent.population, mw_melonTeam)
+	if not(self.moveType == MOVETYPE_NONE) then
+		ent.population = math.ceil(ent.population / 2)
+	end
 end
 
 function ENT:Think()
-	if (self.carryingMelonium) then
-		self:SetNWFloat("mw_sick", 30)
+	local selfTbl = self:GetTable()
+	if selfTbl.carryingMelonium then
+		self:SetNWFloat( "mw_sick", 30 )
 	end
 
-	local sick = self:GetNWFloat("mw_sick", 0)
-	if (sick > 0) then
-		self:SetNWFloat("mw_sick", sick-0.2)
-		self.damage = self.damage+0.12
+	local sick = self:GetNWFloat( "mw_sick", 0 )
+	if sick > 0 then
+		self:SetNWFloat( "mw_sick", sick - 0.2 )
+		selfTbl.damage = selfTbl.damage + 0.12
 	end
 
-	if not self.phys:IsAsleep() then
-		if (self.moving == false and self.canMove) then
-			local tr = util.QuickTrace( self:GetPos(), Vector(0,0,-self.sphereRadius+15), self )
-			if (tr.Entity ~= nil) then
-				--self.phys:SetDamping(self.damping*5,self.damping*5)
-				local stoppingForce = self.phys:GetMass()*-self:GetVelocity()*0.5
-				stoppingForce.z = 0
-				self.phys:ApplyForceCenter(stoppingForce)
-				if (self:GetVelocity():LengthSqr() < 800) then
-					self.phys:Sleep()
-				end
-			end
-		else
-			self.phys:SetDamping(self.damping,self.damping)
+	local phys = selfTbl.phys
+	if selfTbl.moving == false and selfTbl.canMove and not phys:IsAsleep()  then
+		local stoppingForce = self:GetVelocity()
+		local shouldSleep = stoppingForce:LengthSqr() < 800
+
+		stoppingForce:Mul(-( phys:GetMass() * 0.5 ))
+		stoppingForce.z = 0
+
+		phys:ApplyForceCenter( stoppingForce )
+		if shouldSleep then
+			phys:Sleep()
 		end
 	end
-	if (self.spawned) then
-		self:Update(self)
+
+	if selfTbl.spawned then
+		self:Update()
 	end
-	if not self.canMove and self:GetClass() ~= "ent_melon_unit_transport" and self:GetClass() ~= "ent_melon_main_unit" then
-		if (self:GetMoveType() ~= MOVETYPE_NONE ) then
-			local const = constraint.FindConstraints( self, "Weld" )
-			table.Add(const, constraint.FindConstraints( self, "Axis" ))
-			if (table.Count(const) == 0) then
-				self.damage = 5
-			end
+
+	if not selfTbl.canMove and self:GetMoveType() ~= MOVETYPE_NONE then
+		local const = constraint.FindConstraints( self, "Weld" )
+		table.Add( const, constraint.FindConstraints( self, "Axis" ) )
+		if table.Count( const ) == 0 then
+			selfTbl.damage = 5
 		end
 	end
-	if (not (IsValid(self.parent) or self.parent == nil or self.parent:IsWorld())) then
-		self.damage = 5
+
+	if selfTbl.parent and not ( IsValid( selfTbl.parent ) or selfTbl.parent:IsWorld() ) then
+		selfTbl.damage = 5
 	end
 end
---[[
-function ENT:SpawnDoot()
-	if self.dootChance <= math.random() then return end
-	local vPoint = self:GetPos()
-	local effectdata = EffectData()
-	effectdata:SetOrigin( vPoint )
-	util.Effect( "AntlionGib", effectdata )
-	sound.Play("npc/zombie/zombie_voice_idle7.wav", self:GetPos(), 75, 240)
-	SpawnUnitAtPos("ent_melon_doot", 0, self:GetPos(), self:GetAngles(), 0, 0, 0, false, nil, nil)
-end
-]]
-function ENT:Update( ent )
-	if not cvars.Bool("mw_admin_playing") then return end
-	if (CurTime() > ent.nextSlowThink) then
-		ent.nextSlowThink = CurTime()+ent.slowThinkTimer
-		ent:SlowThink( ent )
+
+function ENT:Update()
+	if not mw_admin_playing_cv:GetBool() then return end
+	local selfTbl = self:GetTable()
+	if CurTime() > selfTbl.nextSlowThink then
+		selfTbl.nextSlowThink = CurTime() + selfTbl.slowThinkTimer
+		self:SlowThink( self )
 	end
 
-	if (ent.damage > 0) then -- Apply damage
-		ent.gotHit = true
-		ent.HP = ent.HP-ent.damage
-		ent:SetNWFloat( "health", ent.HP )
-		ent.damage = 0
-		if (ent.HP <= 0) then
-			MW_Die( ent )
+	if selfTbl.damage > 0 then -- Apply damage
+		selfTbl.gotHit = true
+		selfTbl.HP = selfTbl.HP - selfTbl.damage
+		self:SetNWFloat( "healthFrac", selfTbl.HP / selfTbl.maxHP )
+		selfTbl.damage = 0
+		if selfTbl.HP <= 0 then
+			MelonWars.die( self )
 		end
 	end
 
-	ent:SetNWEntity( "targetEntity", ent.targetEntity )
-	ent:SetNWEntity( "followEntity", ent.followEntity )
+	self:SetNWEntity( "targetEntity", selfTbl.targetEntity )
+	self:SetNWEntity( "followEntity", selfTbl.followEntity )
 
-	local entPos = ent:GetPos()
-	local followEntityPos = Vector(0,0,0)
-	if (IsValid(ent.followEntity)) then
-		followEntityPos = ent.followEntity:GetPos()
+	local followEntityPos = vector_origin
+	if IsValid( selfTbl.followEntity ) then
+		followEntityPos = selfTbl.followEntity:GetPos()
 	end
-	local targetEntityPos = Vector(0,0,0)
-	if (IsValid(ent.targetEntity)) then
-		targetEntityPos = ent.targetEntity:GetPos()
+	local targetEntityPos = vector_origin
+	if IsValid( selfTbl.targetEntity ) then
+		targetEntityPos = selfTbl.targetEntity:GetPos()
 	end
 
-	if not ent.canMove then return end
-	if (ent.followEntity ~= ent) then
-		if (IsValid(ent.followEntity)) then
-			if ((followEntityPos-entPos):LengthSqr() > ent.range*ent.range) then
-				ent.targetPos = followEntityPos+(entPos-followEntityPos):GetNormalized()*ent.range*0.5
-				ent.moving = true
-			end
+	if not selfTbl.canMove then return end
+
+	local entPos = self:GetPos()
+	if selfTbl.followEntity ~= self then
+		if IsValid( selfTbl.followEntity ) and followEntityPos:DistToSqr(entPos) > selfTbl.range ^ 2 then
+			selfTbl.targetPos = followEntityPos + (entPos-followEntityPos):GetNormalized() * selfTbl.range * 0.5
+			selfTbl.moving = true
 		end
 	else
-		if (ent.chasing) then
-			if (IsValid(ent.targetEntity)) then
-				if ((targetEntityPos-entPos):LengthSqr() > ent.range*ent.range) then
-					local chanceDistMul = 0.9
-					if (ent.meleeAi) then
-						chanceDistMul = 0.2
-					end
-					ent.targetPos = targetEntityPos+(entPos-targetEntityPos):GetNormalized()*ent.range*chanceDistMul
-					ent.moving = true
-				end
+		if selfTbl.chasing and IsValid(selfTbl.targetEntity) and targetEntityPos:DistToSqr(entPos) > selfTbl.range ^ 2 then
+			local chanceDistMul = 0.9
+			if selfTbl.meleeAi then
+				chanceDistMul = 0.2
 			end
+			selfTbl.targetPos = targetEntityPos + (entPos-targetEntityPos):GetNormalized() * selfTbl.range * chanceDistMul
+			selfTbl.moving = true
 		end
 	end
 
-	local phys = ent.phys
+	local phys = selfTbl.phys
 
-	if (IsValid(phys)) then
-		---------------------------------------------------------------------------Movimiento
-		if (ent.moving) then
-			--if (ent.chaseStance == false or ent.targetEntity == nil) then
-			local moveVector = (ent.targetPos-entPos):GetNormalized()*ent.speed-ent:GetVelocity()*0.5
-			local force = Vector(moveVector.x, moveVector.y, 0)
-			-- OLD MOVEMENT, MOVE IN THINK. NEW MOVEMENT IN PHYSICS UPDATE
-			--phys:ApplyForceCenter (force*phys:GetMass())
-			-- new:
-			ent.phys:Wake()
-			ent.moveForce = force*0.5*ent.moveForceMultiplier
-			--end
-		end
+	if selfTbl.moving and IsValid(phys) then
+		selfTbl.phys:Wake()
 
-		if (ent.moving and ent.ai) then
-			local distanceToLastPosition = (ent.lastPosition-entPos):LengthSqr()
+		local moveVector = (selfTbl.targetPos-entPos):GetNormalized() * selfTbl.speed - self:GetVelocity() * 0.5
+		moveVector.z = 0
+		selfTbl.moveForce = moveVector * (0.5 * selfTbl.moveForceMultiplier)
 
-			if (ent.lastPosition ~= Vector(0,0,0) and distanceToLastPosition > 500000) then --Stop moving if distance from lastposition is ridiculous (teleported)
-				ent:FinishMovement()
-				ent.lastPosition = Vector(0,0,0)
-			elseif (distanceToLastPosition < (ent.speed/2)*(ent.speed/2))then
-				ent.stuck = ent.stuck+1
+		if selfTbl.ai then
+			local distanceToLastPosition = selfTbl.lastPosition:DistToSqr(entPos) --(selfTbl.lastPosition-entPos):LengthSqr()
+
+			if distanceToLastPosition > 500000 and selfTbl.lastPosition ~= vector_origin then --Stop moving if distance from lastposition is ridiculous (teleported)
+				self:FinishMovement()
+				selfTbl.lastPosition = vector_origin
+			elseif distanceToLastPosition < (selfTbl.speed / 2) ^ 2 then
+				selfTbl.stuck = selfTbl.stuck + 1
 			else
-				ent.lastPosition = entPos
-				ent.stuck = 0
+				selfTbl.lastPosition = entPos
+				selfTbl.stuck = 0
 			end
 
-			if (ent.stuck%8 == 7) then
-				if (ent.stuck > 40) then
-					if not ent.chaseStance then
-						ent.targetEntity = nil
-						ent:FinishMovement()
-						ent.stuck = 0
+			if selfTbl.stuck % 8 == 7 then
+				if selfTbl.stuck > 40 then
+					if not selfTbl.chaseStance then
+						selfTbl.targetEntity = nil
+						self:FinishMovement()
+						selfTbl.stuck = 0
 					end
 				else
-					if not ent.chaseStance or (ent.chaseStance and not IsValid(ent.targetEntity)) then
-						ent:Unstuck()
+					if not selfTbl.chaseStance or (selfTbl.chaseStance and not IsValid(selfTbl.targetEntity)) then
+						self:Unstuck()
 					end
 				end
 			end
 		end
 	end
 
-	local flattenedTargetPos = Vector(ent.targetPos.x, ent.targetPos.y, entPos.z)
-	if (ent.ai) then
-		if ((flattenedTargetPos-entPos):LengthSqr() < 30*30) then
-			ent:FinishMovement()
-		end
-	else
-		if ((flattenedTargetPos-entPos):LengthSqr() < 10*10) then
-			ent:FinishMovement()
-		end
+	local distSqr = selfTbl.targetPos:Distance2DSqr(entPos)
+	if distSqr < 100 or (selfTbl.ai and distSqr < 900) then
+		self:FinishMovement()
 	end
 
-	ent:SetNWBool("moving", ent.moving)
-	ent:NextThink(CurTime() + 0.1)
+	self:SetNWBool("moving", selfTbl.moving)
+
+	self:NextThink(CurTime() + 0.1)
 	return true
 end
 
 function ENT:Unstuck()
 	local phys = self.phys
 	if CurTime() <= self.nextJump then return end
-	phys:ApplyForceCenter (Vector(0,0,self.speed*2.5)*phys:GetMass())
-	self.nextJump = CurTime()+1
+	phys:ApplyForceCenter( Vector(0,0,self.speed * 2.5) * self.mw_mass )
+	self.nextJump = CurTime() + 1
+end
+
+function ENT:ClearOrders()
+	local selfTbl = self:GetTable()
+	local selfPos = self:GetPos()
+	selfTbl.targetPos = selfPos
+	self:SetNWVector("targetPos", selfPos)
+	selfTbl.moving = false
+	self:SetNWBool("moving", false)
+	selfTbl.chasing = false
+	selfTbl.followEntity = self
+	self:SetNWEntity("followEntity", self)
+	self:RemoveRallyPoints()
 end
 
 function ENT:FinishMovement()
-	if (self.rallyPoints[1] == Vector(0,0,0)) then
-		self.moving = false
-		self.stuck = 0
+	local selfTbl = self:GetTable()
+	if selfTbl.rallyPoints[1] == vector_origin then
+		selfTbl.moving = false
+		selfTbl.stuck = 0
 	else
-		self.targetPos = self.rallyPoints[1]
-		self:SetNWVector("targetPos", self.rallyPoints[1])
-		self.moving = true
-		for i=1, 30 do
-			self.rallyPoints[i] = self.rallyPoints[i+1]
+		selfTbl.targetPos = selfTbl.rallyPoints[1]
+		self:SetNWVector("targetPos", selfTbl.rallyPoints[1])
+		selfTbl.moving = true
+		for i = 1, 30 do
+			selfTbl.rallyPoints[i] = selfTbl.rallyPoints[i + 1]
 		end
-		self.rallyPoints[30] = Vector(0,0,0)
+		selfTbl.rallyPoints[30] = vector_origin
 	end
+	self:OnFinishMovement()
+end
+
+function ENT:OnFinishMovement()
 end
 
 function ENT:RemoveRallyPoints()
-	for i=1, 30 do
-		self.rallyPoints[i] = Vector(0,0,0)
+	local rallyPoints = self.rallyPoints
+	for i = 1, 30 do
+		rallyPoints[i] = vector_origin
 	end
 end
 
@@ -453,130 +436,144 @@ function ENT:SameTeam(ent)
 	if (myTeam == 0 or otherTeam == 0) then
 		return false
 	end
-	return teamgrid[myTeam][otherTeam];
+	return MelonWars.teamGrid[myTeam][otherTeam];
+end
+
+function ENT:AlignUpright( strength, incMult )
+	local selfTbl = self:GetTable()
+	local inclination = selfTbl.Align(self, self:GetAngles():Up(), vector_up, strength)
+	selfTbl.phys:ApplyForceCenter( Vector(0,0,inclination * incMult))
 end
 
 function ENT:Align( reference, target, multiplier )
 	local cross = reference:Cross(target)
-	local torque = cross*multiplier
+	local torque = cross * multiplier
 
-	self:ApplyTorque(torque)
+	self:GetTable().ApplyTorque(self, torque)
 
 	return cross:LengthSqr()
 end
 
 function ENT:StopAngularVelocity( percent )
-	self.phys:AddAngleVelocity( -self.phys:GetAngleVelocity()*percent )
+	local phys = self.phys
+	phys:AddAngleVelocity( -phys:GetAngleVelocity() * percent )
 end
 
 function ENT:ApplyTorque( torque )
 	local forceOffset = torque:Angle():Right()
 	local forceDirection = torque:Cross(forceOffset)
 
-	self.phys:ApplyForceOffset( forceDirection, self:GetPos()+forceOffset )
-	self.phys:ApplyForceOffset( -forceDirection, self:GetPos()-forceOffset )
+	local phys = self:GetTable().phys
+	local pos = self:GetPos()
+
+	phys:ApplyForceOffset( forceDirection, pos + forceOffset )
+	pos:Sub(forceOffset) --vector optimization
+	forceDirection:Negate()
+	phys:ApplyForceOffset( forceDirection, pos )
 end
 
-function MW_UnitDefaultThink( ent )
-	if not util.IsInWorld( ent:GetPos() ) then ent:Remove() end
-	if not ( ent.canShoot and ent.ai ) then return end
+function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 	local pos = ent:GetPos()
-	if (ent.targetEntity == nil or ent.targetEntity.Base == "ent_melon_prop_base" or ent.targetEntity:GetNWInt("propHP",-1) ~= -1) then
+	if not util.IsInWorld( pos ) then ent:Remove() end
+	local entTbl = ent:GetTable()
+	if not ( entTbl.canShoot and entTbl.ai ) then return end
+
+	if ( not(IsValid(entTbl.targetEntity)) or entTbl.targetEntity.Base == "ent_melon_prop_base" or entTbl.targetEntity:GetNWInt("propHP",-1) ~= -1) then
 		----------------------------------------------------------------------Buscar target
-		local foundEnts = ents.FindInSphere(pos, ent.range )
-		for k, v in RandomPairs( foundEnts ) do
-			if (v.Base == "ent_melon_base") then --si es una sandía
-				if (v:GetNWInt("mw_melonTeam", 0) ~= ent:GetNWInt("mw_melonTeam", 0)) then -- si tienen distinto equipo
-					if (v.targetable) then -- si es targeteable
-						if not ent:SameTeam(v) then -- si no es un aliado
-							if (ent.careForWalls) then
-								local tr = util.TraceLine( {
-								start = pos,
-								endpos = v:GetPos()+v:GetVar("shotOffset",Vector(0,0,0)),
-								filter = function( foundEnt )
-									if ( foundEnt:GetClass() == "prop_physics") then--si hay un prop en el medio
-										return true
-									end
-									if (ent.careForFriendlyFire) then --No dispara si hay un compañero en el camino
-										if ( foundEnt.Base == "ent_melon_base" ) then
-											if (foundEnt:GetNWInt("mw_melonTeam", -1) == ent:GetNWInt("mw_melonTeam", 0) and foundEnt ~= ent) then
-												return true
-											end
-										end
-									end
-								end
-								})
-							end
-							if (not ent.careForWalls or (tr ~= nil and tostring(tr.Entity) == '[NULL Entity]')) then
-							----------------------------------------------------------Encontró target
-								ent.targetEntity = v
-							end
+		local foundEnts = ents.FindInSphere(pos, entTbl.range )
+
+		local ourTeam = ent:GetNWInt("mw_melonTeam", 0)
+		for _, v in ipairs( foundEnts ) do
+			local vTbl = v:GetTable()
+			if (vTbl.Base == "ent_melon_base" or vTbl.Base == "ent_melon_energy_base") and vTbl.targetable and not MelonWars.sameTeam(ourTeam, v:GetNWInt("mw_melonTeam", 0)) and ( not vTbl.AOETargetableOnly or entTbl.isAOE) then
+				if entTbl.careForWalls then
+					local tr = util.TraceLine( {
+						start = pos,
+						endpos = v:GetPos() + (vTbl.shotOffset or vector_origin),
+						filter = function( foundEnt )
+							return foundEnt:GetClass() == "prop_physics" or foundEnt:GetTable().blockFriendlyTraces
 						end
+						})
+					if not tr.Entity:IsValid() then
+						entTbl.targetEntity = v
+						break
 					end
+				else
+					entTbl.targetEntity = v
+					break
 				end
 			end
 		end
+
 		-------------------------------------------------Si aun asi no encontró target
-		if (ent.targetEntity == nil) then
-			for k, v in RandomPairs( foundEnts ) do
-				if (v:GetNWInt("mw_melonTeam", ent:GetNWInt("mw_melonTeam", 0)) ~= ent:GetNWInt("mw_melonTeam", 0) and not string.StartWith( v:GetClass(), "ent_melonbullet_" ) and not ent:SameTeam(v)) then --si es de otro equipo
-					if (ent.chaseStance) then
-						if (v:GetClass() == "ent_melon_wall") then
-							if (ent.stuck > 15) then
-								if (IsValid(ent.barrier)) then
-									ent.targetEntity = ent.barrier
-								else
-									ent.targetEntity = v
+		if entTbl.targetEntity == nil then
+			for _, v in ipairs( foundEnts ) do
+				local vTbl = v:GetTable()
+				local vClass = v:GetClass()
+				if vTbl.Base == "ent_melon_prop_base" or v:GetNWInt("propHP",-1) ~= -1 then
+					local vTeam = v:GetNWInt("mw_melonTeam", ourTeam)
+					if not( ourTeam == vTeam or MelonWars.sameTeam(ourTeam, vTeam) or string.StartWith( vClass, "ent_melonbullet_" )) and (not v.AOETargetableOnly or entTbl.isAOE) then
+						if entTbl.chaseStance then
+							if vClass == "ent_melon_wall" then
+								if (entTbl.stuck > 15) then
+									if (IsValid(entTbl.barrier)) then
+										entTbl.targetEntity = entTbl.barrier
+									else
+										entTbl.targetEntity = v
+										break
+									end
 								end
+							else
+								entTbl.targetEntity = v
+								break
 							end
 						else
-							ent.targetEntity = v
+							entTbl.targetEntity = v
+							break
 						end
-					else
-						ent.targetEntity = v
 					end
 				end
 			end
 		end
 	end
 
-	if (ent.targetEntity ~= nil) then
+	if (entTbl.targetEntity ~= nil) then
 		----------------------------------------------------------------------Perder target
 		----------------------------------------porque no existe
-		if not IsValid(ent.targetEntity) then
-			ent.stuck = 0
+		if not IsValid(entTbl.targetEntity) then
+			entTbl.stuck = 0
 			return ent:LoseTarget()
 		----------------------------------------por que esta en el 0,0,0
-		elseif (ent.targetEntity:GetPos() == Vector(0,0,0)) then
+		elseif (entTbl.targetEntity:GetPos() == vector_origin) then
 			return ent:LoseTarget()
 		end
 		----------------------------------------porque es intargeteable
-		if (not ent.targetable) then
+		if (not entTbl.targetable) then
 			return ent:LoseTarget()
 		end
 		----------------------------------------porque es el mismo
-		if (ent.targetEntity == ent or ent.forcedTargetEntity == ent) then
+		if (entTbl.targetEntity == ent or entTbl.forcedTargetEntity == ent) then
 			return ent:LoseTarget()
 		end
 		----------------------------------------porque es un aliado
-		if (ent:SameTeam(ent.targetEntity) or ent:SameTeam(ent.targetEntity)) then
+		if ent:SameTeam(entTbl.targetEntity) then
 			return ent:LoseTarget()
 		end
 		----------------------------------------porque está lejos (o muy cerca)
-		local targetDist = ent.targetEntity:GetPos():Distance(pos)
-		if (IsValid(ent.targetEntity) and (targetDist > ent.range+ent.targetEntity:GetNWFloat( "baseSize", 0) or targetDist < ent.minRange)) then
-			if (ent.chaseStance and ent.ai_chases) then
-				if (not ent.chasing) then
-					ent.holdGroundPosition = ent:GetPos()
-					ent.chasing = true
+		local targetDist = entTbl.targetEntity:GetPos():Distance(pos)
+		if (IsValid(entTbl.targetEntity) and (targetDist > entTbl.range + entTbl.targetEntity:GetNWFloat( "baseSize", 0) or targetDist < entTbl.minRange)) then
+			if (entTbl.chaseStance and entTbl.ai_chases) then
+				if (not entTbl.chasing) then
+					entTbl.holdGroundPosition = pos
+					entTbl.chasing = true
 				end
-				local tepos = ent.targetEntity:GetPos()
-				ent:SetVar("targetPos", tepos)
+				local tepos = entTbl.targetEntity:GetPos()
+				entTbl.targetPos = tepos
 				ent:SetNWVector("targetPos", tepos)
-				ent:SetVar("moving", true)
-				ent:SetVar("followEntity", ent)
+				entTbl.moving = true
+				entTbl.followEntity = ent
 				ent:SetNWEntity("followEntity", ent)
-				if ((tepos-ent.holdGroundPosition):LengthSqr() > ent.maxChaseDistance*ent.maxChaseDistance) then
+				if ((tepos-entTbl.holdGroundPosition):LengthSqr() > entTbl.maxChaseDistance*entTbl.maxChaseDistance) then
 					ent:LoseTarget()
 				end
 			else
@@ -584,24 +581,27 @@ function MW_UnitDefaultThink( ent )
 			end
 			return false
 		end
-
 		----------------------------------------------objetivo forzado
-		if (IsValid(ent.forcedTargetEntity)) then
-			ent.targetEntity = ent.forcedTargetEntity
+		if (IsValid(entTbl.forcedTargetEntity)) then
+			entTbl.targetEntity = entTbl.forcedTargetEntity
 		else
-			ent.forcedTargetEntity = nil
+			entTbl.forcedTargetEntity = nil
 		end
 
+		local ourTeam = ent:GetNWInt("mw_melonTeam", 0)
 		local tr = util.TraceLine( {
 			start = pos,
-			endpos = ent.targetEntity:GetPos()+ent.targetEntity:GetVar("shotOffset", Vector(0,0,0)),
-			--filter = function( foundEntity ) if (( (foundEntity:GetClass() == "ent_melon_wall" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1)) or (foundEntity:GetClass() == "prop_physics" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1)) ) and foundEntity ~= ent.targetEntity ) then return true end end
-			filter = function( foundEntity ) if (foundEntity.Base ~= "ent_melon_base" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1) or foundEntity:GetClass() == "prop_physics" and foundEntity ~= ent.targetEntity) then return true end end
+			endpos = entTbl.targetEntity:GetPos()+entTbl.targetEntity:GetVar("shotOffset", vector_origin),
+				filter = function( foundEntity ) 
+					if (foundEntity.Base ~= "ent_melon_base" and foundEntity.Base ~= "ent_melon_energy_base" and foundEntity:GetNWInt("mw_melonTeam", -1) == ourTeam or foundEntity:GetClass() == "prop_physics" and foundEntity ~= entTbl.targetEntity) then
+						 return true
+					end
+				end
 			})
 		----------------------------------------por que hay algo en el medio
 
-		if (ent.careForWalls) then
-			if (tostring(tr.Entity) ~= '[NULL Entity]') then
+		if (entTbl.careForWalls) then
+			if (tostring(tr.Entity) ~= "[NULL Entity]") then
 				return ent:LoseTarget()
 			end
 
@@ -611,14 +611,46 @@ function MW_UnitDefaultThink( ent )
 		end
 	end
 
-	if (ent.targetEntity ~= nil) then
-		local distance = ent.targetEntity:GetPos():Distance(ent:GetPos())
-		if (distance < ent.range+ent.targetEntity:GetNWFloat( "baseSize", 0) and distance > ent.minRange) then
-			if (ent.targetEntity:GetNWInt("mw_melonTeam", 0) ~= ent:GetNWInt("mw_melonTeam", 0)) then
+	if (entTbl.targetEntity ~= nil) then
+		local distSqr = entTbl.targetEntity:GetPos():DistToSqr(pos)
+		if distSqr < (entTbl.range + entTbl.targetEntity:GetNWFloat( "baseSize", 0)) ^ 2 and distSqr > entTbl.minRange ^ 2 then
+			if (entTbl.targetEntity:GetNWInt("mw_melonTeam", 0) ~= ent:GetNWInt("mw_melonTeam", 0)) then --TODO: maybe re-structure to get our team earlier and recycle it here too.
 				ent:Shoot( ent )
 			end
 		end
 	end
+end
+
+local function defaultValidCheck( ent, targEnt )
+	local targEntTbl = targEnt:GetTable()
+	return (targEntTbl.Base == "ent_melon_base" or targEntTbl.Base == "ent_melon_energy_base" or targEntTbl.Base == "ent_melon_prop_base") and not ent:SameTeam(targEnt)
+end
+
+function MelonWars.FindTargets( ent, careForWalls, validCheck )
+	local entTbl = ent:GetTable()
+	if not isfunction(validCheck) then
+		validCheck = defaultValidCheck
+	end
+
+	local pos = ent:GetPos() + (entTbl.shotOffset or vector_origin)
+
+	local foundEnts = {}
+	for i, v in ipairs( ents.FindInSphere(pos, entTbl.range) ) do
+		if not(v == ent) and validCheck( ent, v ) then
+			local tr = util.TraceLine( {
+				start = pos,
+				endpos = v:GetPos() + (v.shotOffset or vector_origin),
+				filter = function( foundEnt )
+					local foundTbl = foundEnt:GetTable()
+					return not( foundEnt == ent or foundTbl.Base == "ent_melon_base" or foundTbl.Base == "ent_melon_energy_base" or (not careForWalls and (foundEnt:GetClass() == "prop_physics" or foundTbl.Base == "ent_melon_prop_base")))
+				end
+			})
+			if not tr.Entity:IsValid() and not(careForWalls and tr.Entity:IsWorld()) then
+				table.insert(foundEnts, v)
+			end
+		end
+	end
+	return foundEnts
 end
 
 function ENT:LoseTarget()
@@ -639,97 +671,97 @@ function ENT:LoseTarget()
 end
 
 function ENT:PhysicsCollide( colData, physObject )
-	if not IsValid(colData.HitEntity) then return end
 	local other = colData.HitEntity
-	local otherTargetPos = other:GetVar('targetPos')
-	if (otherTargetPos == self.targetPos and other:GetVar('moving', false) == false) or self.rallyPoints[1] == otherTargetPos then
+	if not IsValid(other) then return end
+
+	local selfTbl = self:GetTable()
+	local otherTbl = other:GetTable()
+
+	local otherTargetPos = otherTbl.targetPos
+	if (otherTargetPos == selfTbl.targetPos and not otherTbl.moving) or selfTbl.rallyPoints[1] == otherTargetPos then
 		self:FinishMovement()
 	end
-	if other:GetNWFloat("mw_sick", 0) > self:GetNWFloat("mw_sick", 0) then
-		self:SetNWFloat("mw_sick", other:GetNWFloat("mw_sick", 0))
+	local otherSick = other:GetNWFloat("mw_sick", 0)
+	if otherSick > 0 and otherSick > self:GetNWFloat("mw_sick", 0) then --Slightly less efficient when the target is sick, but slightly more-so when they aren't (which is more common).
+		self:SetNWFloat("mw_sick", otherSick)
 	end
 	if other:GetClass() == "ent_melon_wall" then
-		self.barrier = other
+		selfTbl.barrier = other
 	end
 end
 
-function MW_DefaultShoot( ent, forceTargetPos )
-	local pos = ent:GetPos()+ent.shotOffset
-	--------------------------------------------------------Disparar
-	if (forceTargetPos ~= nil or IsValid(ent.targetEntity)) then
-		local dir = nil
-		if (IsValid(ent.targetEntity)) then
-			local targetPos = ent.targetEntity:GetPos()-ent.targetEntity:OBBCenter()
-			if (ent.targetEntity:GetVar("shotOffset") ~= nil) then
-				if (ent.targetEntity:GetVar("shotOffset") ~= Vector(0,0,0)) then
-					targetPos = ent.targetEntity:GetPos()+ent.targetEntity:GetVar("shotOffset")
-				end
+function MelonWars.defaultShoot( ent, forceTargetPos )
+	local entTbl = ent:GetTable()
+	local validTarget = IsValid(entTbl.targetEntity)
+
+	if validTarget or forceTargetPos then
+		local pos = ent:GetPos() + entTbl.muzzleOffset
+
+		local dir
+		if validTarget then
+			local targetPos = entTbl.targetEntity:GetPos() - entTbl.targetEntity:OBBCenter()
+
+			local shotOffset = entTbl.targetEntity:GetTable().shotOffset
+			if shotOffset and shotOffset ~= vector_origin then
+				targetPos:Add(shotOffset)
+			else
+				targetPos:Sub(entTbl.targetEntity:OBBCenter())
 			end
-			dir= (targetPos-pos):GetNormalized()
+			dir = (targetPos-pos):GetNormalized()
 		else
 			dir = (forceTargetPos-pos):GetNormalized()
 		end
 
-		MW_Bullet(ent, pos, dir, ent.range, ent, nil, 0)
+		MelonWars.bullet(ent, pos, dir, entTbl.range, ent, nil, 0)
 
 		local effectdata = EffectData()
 		effectdata:SetScale(1)
 		effectdata:SetAngles( dir:Angle())
-		effectdata:SetOrigin( pos + dir:GetNormalized()*10 )
+		effectdata:SetOrigin( pos + dir:GetNormalized() * 10 )
 		util.Effect( "MuzzleEffect", effectdata )
-		sound.Play( ent.shotSound, pos )
+		sound.Play( entTbl.shotSound, pos )
 	end
 end
 
-function MW_Bullet(ent, startingPos, direction, distance, ignore, callback, depth)
-	local damage = ent.damageDeal
-	local spread = Angle(math.random(-ent.spread/4, ent.spread/4),math.random(-ent.spread/4, ent.spread/4),0)
-	ent.fired = true
+function MelonWars.bullet(ent, startingPos, direction, distance, ignore, callback, depth)
+	local entTbl = ent:GetTable()
+
+	local spr = entTbl.spread / 4
+	local spread = Angle(math.random(-spr, spr),math.random(-spr, spr),0)
+
+	entTbl.fired = true
+
 	local effectdata = EffectData()
+	effectdata:SetOrigin(startingPos + direction * 130)
+
 	local angle = direction:Angle()
-	local hitpos = startingPos+direction*distance
-	local hitNormal = -direction
-	---------------------------------------------------------------------Esto va hacer que se aplique el daño le pegue o no
-	if (forceTargetPos == nil and ent.targetEntity.Base == "ent_melon_prop_base") then
-		ent.targetEntity:SetNWFloat( "health", ent.targetEntity:GetNWFloat( "health", 1)-ent.damageDeal)
-		if (ent.targetEntity:GetNWFloat( "health", 1) <= 0) then
-			PropDie( ent.targetEntity )
-		end
-	elseif (forceTargetPos == nil and ent.targetEntity:GetClass() == "prop_physics") then
-		ent.targetEntity:TakeDamage( ent.damageDeal, ent, ent )
+	local hitpos = startingPos + direction * distance
+
+	if forceTargetPos == nil and entTbl.targetEntity.Base == "ent_melon_prop_base" then --Always hit baseprops/contraption props to prevent props with bad hitboxes/origins being abused.
+		entTbl.targetEntity:TakeDamage( entTbl.damageDeal, ent, ent )
+	elseif forceTargetPos == nil and entTbl.targetEntity:GetClass() == "prop_physics" then
+		entTbl.targetEntity:TakeDamage( entTbl.damageDeal, ent, ent )
 		local php = ent:GetNWInt("propHP", -1)
 		if (php ~= -1) then
-			ent:SetNWInt("propHP", php-ent.damageDeal)
+			ent:SetNWInt("propHP", php-entTbl.damageDeal)
 		end
 	else
-
-		-- New Laser shooting
 		direction:Rotate(spread)
-		local tr = util.QuickTrace( startingPos, direction*distance, function(hitEnt)
-			local cl = hitEnt:GetClass()
-			if (cl == "ent_melon_wheel" or cl == "ent_melon_propeller" or cl == "ent_melon_hover") then
-				return true
-			end
-			if (hitEnt == ent or ent:SameTeam(hitEnt)) then
-				return false
-			end
-			return true
+
+		local entTeam = ent:GetNWInt("mw_melonTeam", -1)
+
+		local tr = util.QuickTrace( startingPos, direction * distance, function(hitEnt)
+			return hitEnt:GetTable().blockFriendlyTraces or not(MelonWars.sameTeam(entTeam, hitEnt:GetNWInt("mw_melonTeam", -1) or hitEnt == ent))
 		end)
 
 		hitpos = tr.HitPos
-
-		local angle = (tr.HitPos-startingPos):Angle()
-
-		local effectdata = EffectData()
-		if ((tr.HitPos-startingPos):LengthSqr() < 130*130) then
-			effectdata:SetOrigin(startingPos+direction*130)
-		else
-			effectdata:SetOrigin(tr.HitPos)
+		if hitpos:DistToSqr(startingPos) >= 130^2 then
+			effectdata:SetOrigin(hitpos)
 		end
 
-		if (IsValid(tr.Entity)) then
-			tr.Entity:TakeDamage( damage, ent, ent )
-			if (callback ~= nil) then
+		if IsValid(tr.Entity) then
+			tr.Entity:TakeDamage( entTbl.damageDeal, ent, ent )
+			if isfunction(callback) then
 				callback(ent,tr.Entity)
 			end
 		end
@@ -742,31 +774,9 @@ function MW_Bullet(ent, startingPos, direction, distance, ignore, callback, dept
 	effectdata:SetScale(3)
 	effectdata:SetNormal(direction)
 	util.Effect( "AR2Impact", effectdata )
-	------------
-
-	-- Can shoot through friends
-	/*bullet.Distance=distance
-	bullet.IgnoreEntity = ignore
-	bullet.Dir = direction
-	if (depth < 5) then
-		bullet.Callback = function(attacker, tr, dmgInfo)
-			if (tr.Hit) then
-				if (callback ~= nil) then
-					callback(attacker,tr,dmginfo)
-				end
-				local cl = tr.Entity:GetClass()
-				if (tr.Entity.canMove and ent:SameTeam(tr.Entity) and cl ~= "ent_melon_wheel" and cl ~= "ent_melon_propeller" and cl ~= "ent_melon_hover") then
-					MW_Bullet(ent, tr.HitPos+direction*5, direction, (distance-5)*(1-tr.Fraction), tr.Entity, callback, depth+1)
-				end
-			end
-		end
-	end
-
-	ent.fired = true
-	ent:FireBullets(bullet)*/
 end
 
-function MW_DefaultDeathEffect( ent )
+function MelonWars.defaultDeathEffect( ent )
 	local effectdata = EffectData()
 	effectdata:SetOrigin( ent:GetPos() )
 	util.Effect( ent.deathEffect, effectdata )
@@ -775,80 +785,80 @@ function MW_DefaultDeathEffect( ent )
 end
 
 function ENT:DeathEffect( ent )
-	MW_DefaultDeathEffect(ent)
+	MelonWars.defaultDeathEffect(ent)
 end
 
-function MW_Die( ent )
+function MelonWars.die( ent )
 	if not IsValid(ent) then return end
 	if cvars.Bool("mw_admin_immortality") then return end
 	if ent.DeathEffect == nil then return end
-	-- ent:SpawnDoot()
 	ent:DeathEffect ( ent )
 end
 
-function ENT:MW_PropDefaultDeathEffect( ent )
-	local effectdata = EffectData()
-	effectdata:SetOrigin( ent:GetPos() )
-	util.Effect( ent.deathEffect, effectdata )
-	sound.Play( ent.deathSound, ent:GetPos() )
-	ent:Remove()
-end
-
 function ENT:PhysicsUpdate()
-	self:DefaultPhysicsUpdate()
+	self:GetTable().DefaultPhysicsUpdate(self) --Very slightly faster than calling it the sane way
 end
 
+--Warning: Black Magic below
+local resistForce = Vector(0,0,0)
 function ENT:DefaultPhysicsUpdate()
-	if cvars.Bool("mw_admin_playing") then
-		if (self.moving) then
-			if (self:GetVelocity():LengthSqr() < self.speed*self.speed) then
-				self.phys:ApplyForceCenter (self.moveForce*self.phys:GetMass())
+	local selfTbl = self:GetTable()
+	if selfTbl.canMove and mw_admin_playing_cv:GetBool()  then
+		if selfTbl.moving then
+			local phys = selfTbl.phys
+			local vel = phys:GetVelocity()
+			if vel:LengthSqr() < selfTbl.speed ^ 2 then
+				phys:ApplyForceCenter(selfTbl.moveForce * selfTbl.mw_mass)
 			else
-				local horizontalVelocity = Vector(self:GetVelocity().x, self:GetVelocity().y, 0)
-				self.phys:ApplyForceCenter (-horizontalVelocity*0.02*self.phys:GetMass())
+				--Doing it this way is marginally faster in this specific context
+				local x, y = vel:Unpack()
+				local mul = -0.02 * selfTbl.mw_mass
+				resistForce.x, resistForce.y = mul * x, mul * y
+				phys:ApplyForceCenter(resistForce)
 			end
 		else
-			self.moveForce = Vector(0,0,0)
+			selfTbl.moveForce = vector_origin
 		end
 	else
-		self.phys:Sleep()
+		selfTbl.phys:Sleep()
 	end
 end
 
 function ENT:OnTakeDamage( damage )
-	if (damage:GetAttacker():GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not damage:GetAttacker():GetVar('careForFriendlyFire')) and not damage:GetAttacker():IsPlayer() then
-		local damageDone = 0
+	local attacker = damage:GetAttacker()
+	if (attacker:GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not attacker.careForFriendlyFire) and not attacker:IsPlayer() then
+		local selfTbl = self:GetTable()
+		local damageDone = damage:GetDamage()
 
-		if (self.canMove == true) then
-			damageDone = damage:GetDamage()
-		else
-			local mul = damage:GetAttacker().buildingDamageMultiplier
-			if (mul == nil) then
-				mul = 1
-			end
-			damageDone = damage:GetDamage()*mul
+		if not selfTbl.canMove then
+			local mul = attacker.buildingDamageMultiplier
+			damageDone = damageDone * (mul or 1)
 		end
-		if (damage:GetDamageType() == DMG_BURN) then
-			damageDone = damageDone*0.5
+		if damage:GetDamageType() == DMG_BURN then
+			damageDone = damageDone * 0.5
 		end
-		if (damage:GetAttacker():GetNWInt("mw_melonTeam", 0) == self:GetNWInt("mw_melonTeam", 0)) then
-			damageDone = damageDone/10
+		if self:SameTeam(attacker) then
+			damageDone = damageDone / 10
 		end
-		self.HP = self.HP - damageDone
-		if (damageDone > 0) then
-			self.gotHit = true
+
+		selfTbl.HP = selfTbl.HP - damageDone
+		selfTbl.gotHit = selfTbl.gotHit or damageDone > 0
+		self:SetNWFloat( "healthFrac", selfTbl.HP / selfTbl.maxHP )
+
+		if selfTbl.HP <= 0 then
+			MelonWars.die (self)
 		end
-		self:SetNWFloat( "health", self.HP )
-		if (self.HP <= 0) then
-			MW_Die (self)
-		end
+		self:_OnTakeDamage( damage )
 	end
 end
 
+function ENT:_OnTakeDamage( damage )
+end
+
 function ENT:OnRemove()
-	if (self.carryingMelonium) then
+	if self:GetTable().carryingMelonium then
 		local melonium = ents.Create("ent_melonium")
-		melonium:SetPos(self:GetPos()+Vector(0,0,10))
+		melonium:SetPos(self:GetPos() + Vector(0,0,10))
 		melonium:Spawn()
 		melonium:GetPhysicsObject():ApplyForceCenter(Vector(0,0,100))
 	end
@@ -859,40 +869,26 @@ end
 function ENT:DefaultOnRemove()
 	if not SERVER then return end
 	if not IsValid(self) then return end
-	MW_UpdatePopulation(-self.population, self:GetNWInt("mw_melonTeam", 0))
-	if not self.gotHit and CurTime()-self:GetCreationTime() < 30 and not self.fired then
-		if (mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ~= nil) then
-			mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)]+self.value
-		end
-		for _, v in ipairs( player.GetAll() ) do
-			if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
-				if (self:GetNWInt("mw_melonTeam", 0) ~= 0) then
-					net.Start("MW_TeamCredits")
-						net.WriteInt(mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
-					net.Send(v)
-					--v:PrintMessage( HUD_PRINTTALK, "== "..self.value.." Water Refunded" )
-				end
-			end
-		end
+	local selfTbl = self:GetTable()
+	local selfTeam = self:GetNWInt("mw_melonTeam", 0)
+	MelonWars.updatePopulation(-selfTbl.population, selfTeam)
+	if not selfTbl.gotHit and CurTime() - self:GetCreationTime() < 30 and not selfTbl.fired and MelonWars.teamCredits[selfTeam] then
+		MelonWars.teamCredits[selfTeam] = MelonWars.teamCredits[selfTeam] + selfTbl.value
+		MelonWars.updateClientCredits(selfTeam)
 	end
 end
 
-function MW_UpdatePopulation (ammount, teamID)
-	-- if not SERVER then return end
-	if ammount ~= 0 and teamID ~= 0 and teamID ~= nil then
-		mw_teamUnits[teamID] = mw_teamUnits[teamID]+ammount
-		local ownerPlayers = {}
-		ownerPlayers = player.GetAll()
-		local i = 0 --Parche horrible: cada vez que elimina a alguien de la lista, al remover a alguien mas busca un lugar antes, ya que la lista se acomodó para rellenar el espacio vacio
-		for k, v in pairs( player.GetAll() ) do
-			if (v:GetInfoNum("mw_team", 0) ~= teamID) then
-				table.remove(ownerPlayers, k-i)
-				i = i+1
+function MelonWars.updatePopulation( amount, teamID )
+	if amount ~= 0 and teamID and teamID ~= 0 then
+		MelonWars.teamUnits[teamID] = MelonWars.teamUnits[teamID] + amount
+
+		for i, v in ipairs(player.GetAll()) do
+			if v:GetInfoNum("mw_team", -1) == teamID then
+				net.Start( "MW_TeamUnits" )
+					net.WriteInt( MelonWars.teamUnits[teamID], 16 )
+				net.Send( v )
 			end
 		end
-		net.Start("mw_teamUnits")
-			net.WriteInt(mw_teamUnits[teamID] ,16)
-		net.Send(ownerPlayers)
 	end
 end
 
@@ -913,8 +909,8 @@ function ENT:BarrackInitialize ()
 
 	local rotatedSpawnOffset = Vector(150,0,0)
 	rotatedSpawnOffset:Rotate(self:GetAngles())
-	self:SetVar('targetPos', self:GetPos()+rotatedSpawnOffset)
-	self:SetNWVector('targetPos', self:GetPos()+rotatedSpawnOffset)
+	self:SetVar("targetPos", self:GetPos() + rotatedSpawnOffset)
+	self:SetNWVector("targetPos", self:GetPos() + rotatedSpawnOffset)
 
 	self.deathSound = "ambient/explosions/explode_9.wav"
 	self.deathEffect = "Explosion"
@@ -924,149 +920,113 @@ function ENT:BarrackInitialize ()
 	self.population = 5
 
 	if (self.unit ~= nil) then
-		self.slowThinkTimer = mw_units[self.unit].spawn_time*3
-		self.unit_class = mw_units[self.unit].class
-		self.unit_cost = mw_units[self.unit].cost/2
+		self.slowThinkTimer = MelonWars.units[self.unit].spawn_time * 3
+		self.unit_class = MelonWars.units[self.unit].class
+		self.unit_cost = MelonWars.units[self.unit].cost / 2
 	end
 
 	self:SetNWFloat("slowThinkTimer", self.slowThinkTimer)
 	self:SetNWFloat("nextSlowThink", CurTime())
+
+	self.Actuate = function( ent )
+		local on = ent:GetNWBool("active", false)
+		ent:SetNWBool("active", not on)
+	end
 end
 
 local function EnoughPower(_team)
-	local res = false
-	if (_team > 0) then
-		res = mw_teamUnits[_team] < cvars.Number("mw_admin_max_units")
-	else
-		res = true
+	if _team > 0 then
+		return MelonWars.teamUnits[_team] < cvars.Number("mw_admin_max_units")
 	end
-	return res
+	return true
 end
 
-function ENT:BarrackSlowThink()
+function ENT:BarrackSlowThink() --TODO: Optimize / Refactor
 	local ent = self
+	local selfTbl = self:GetTable()
+	local selfTeam = self:GetNWInt("mw_melonTeam", -1)
 
-	if (not (IsValid(self.parent) or self.parent == nil or self.parent:IsWorld())) then
-		self.gotHit = true
-		self.HP = self.HP-50
-		self:SetNWFloat( "health", self.HP )
-		self.damage = 0
-		if (self.HP <= 0) then
-			MW_Die( self )
-		end
+	if selfTbl.parent and not(IsValid(selfTbl.parent) or selfTbl.parent:IsWorld()) then
+		selfTbl.gotHit = true
+		selfTbl.HP = 0
+		self:SetNWFloat( "healthFrac", 0 )
+		MelonWars.die( self )
 	end
 
-	if self.spawned == false then return end
-	if not cvars.Bool("mw_admin_playing") then return end
-	if not self.unitspawned then
-		if (self:GetNWFloat("nextSlowThink") < CurTime()+self:GetNWFloat("overdrive", 0)) then
-			if (EnoughPower(ent:GetNWInt("mw_melonTeam", 0))) then
-				self:SetNWFloat("overdrive", 0)
-				local newMarine = ents.Create( self.unit_class )
-				if not IsValid( newMarine ) then return end -- Check whether we successfully made an entity, if not - bail
-				local rotatedShotOffset = Vector(ent.shotOffset.x, ent.shotOffset.y, ent.shotOffset.z)
-				rotatedShotOffset:Rotate(self:GetAngles())
-				newMarine:SetPos( ent:GetPos() + Vector(0,0,20) + rotatedShotOffset)
+	if not selfTbl.spawned then return end
+	if not mw_admin_playing_cv:GetBool() then return end
 
-				sound.Play( "doors/door_latch1.wav", ent:GetPos(), 75, 150, 1 )
+	if not selfTbl.unitspawned and ( self.nextSlowThink < CurTime() + self:GetNWFloat("overdrive", 0) ) and EnoughPower(selfTeam) then
+		self:SetNWFloat("overdrive", 0)
 
-				mw_melonTeam = ent:GetNWInt("mw_melonTeam", 0)
+		local rotatedShotOffset = Vector(self.shotOffset)
+		rotatedShotOffset:Rotate(self:GetAngles())
+		local pos = ent:GetPos() + Vector(0,0,20) + rotatedShotOffset
 
-				newMarine:Spawn()
-				newMarine:SetNWInt("mw_melonTeam", ent:GetNWInt("mw_melonTeam", 0))
-				newMarine:Ini(ent:GetNWInt("mw_melonTeam", 0))
+		sound.Play( "doors/door_latch1.wav", ent:GetPos(), 75, 150, 1 )
+		local newMarine = MelonWars.spawnUnitAtPos( self.unit_class, pos, angle_zero, self.unit_cost, 0, selfTeam, false, nil, self:GetOwner(), 0 )
 
-				for i=1, 30 do
-					newMarine.rallyPoints[i] = self.rallyPoints[i]
-				end
-
-				if (cvars.Bool("mw_admin_credit_cost")) then
-					newMarine.value = self.unit_cost
-				else
-					newMarine.value = 0
-				end
-
-				if (ent.targetPos == ent:GetPos()) then
-					newMarine:SetVar('targetPos', ent:GetPos()+Vector(100,0,0))
-					newMarine:SetNWVector('targetPos', ent:GetPos()+Vector(100,0,0))
-				else
-					newMarine:SetVar('targetPos', ent.targetPos+Vector(0,0,1))
-					newMarine:SetNWVector('targetPos', ent.targetPos+Vector(0,0,1))
-				end
-				newMarine:SetVar('moving', true)
-
-				if (IsValid(self:GetOwner())) then
-					if (self:GetOwner():GetInfo( "mw_enable_skin" ) == "1") then
-						local _skin = mw_special_steam_skins[self:GetOwner():SteamID()]
-						if (_skin ~= nil) then
-							if (_skin.material ~= nil) then
-								newMarine:SkinMaterial(_skin.material)
-							end
-							--if (_skin.trail ~= nil) then
-							--	local color = Color(newMarine:GetColor().r*_skin.teamcolor+255*(1-_skin.teamcolor), newMarine:GetColor().g*_skin.teamcolor+255*(1-_skin.teamcolor), newMarine:GetColor().b*_skin.teamcolor+255*(1-_skin.teamcolor))
-							--	util.SpriteTrail( newMarine, 0, color, false, _skin.startSize, _skin.endSize, _skin.length, 1 / _skin.startSize * 0.5, _skin.trail )
-							--end
-						end
-					end
-				end
-
-				table.insert(ent.melons, newMarine)
-				undo.Create("Melon Marine")
-					undo.AddEntity( newMarine )
-					undo.SetPlayer( ent:GetOwner())
-				undo.Finish()
-
-				if (self:GetNWBool("active", false)) then
-					self.nextSlowThink = CurTime()+self.slowThinkTimer
-					self:SetNWFloat("nextSlowThink", self.nextSlowThink)
-				end
-				self.unitspawned = true
-				self:SetNWBool("spawned", self.unitspawned)
-			end
+		for i = 1, 30 do
+			newMarine.rallyPoints[i] = self.rallyPoints[i]
 		end
-	end
 
-	self:SetNWInt("count", 0)
-	for k, v in pairs( ent.melons ) do
-		if (IsValid(v)) then
-			self:SetNWInt("count", self:GetNWInt("count", 0)+1)
+		if ent.targetPos == ent:GetPos() then
+			newMarine.targetPos =  ent:GetPos() + Vector(100,0,0)
+			newMarine:SetNWVector("targetPos", ent:GetPos() + Vector(100,0,0))
 		else
-			table.remove(ent.melons, k)
+			newMarine.targetPos = ent.targetPos + vector_up
+			newMarine:SetNWVector("targetPos", ent.targetPos + vector_up)
 		end
-	end
+		newMarine.moving = true
 
-	if (self:GetNWBool("active", false)) then
-		if self.unitspawned == false then return end
-		if (self:GetNWInt("count", 0) < self:GetNWInt("maxunits", 0) and EnoughPower(self:GetNWInt("mw_melonTeam", -1))) then
-			if not (mw_teamCredits[ent:GetNWInt("mw_melonTeam", 0)] >= self.unit_cost or not cvars.Bool("mw_admin_credit_cost")) then return end
-			-- Start Production
-			--self:SetNWBool("spawned", false)
+		table.insert(ent.melons, newMarine)
+		undo.Create("Melon Marine")
+			undo.AddEntity( newMarine )
+			undo.SetPlayer( ent:GetOwner())
+		undo.Finish()
 
-			if (cvars.Bool("mw_admin_credit_cost")) then
-				mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] = mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)]-self.unit_cost
-				for k, v in pairs( player.GetAll() ) do
-					if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
-						net.Start("MW_TeamCredits")
-							net.WriteInt(mw_teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
-						net.Send(v)
-					end
-				end
-			end
-
-			self.nextSlowThink = CurTime()+self.slowThinkTimer
+		if self:GetNWBool("active", false) then
+			self.nextSlowThink = CurTime() + self.slowThinkTimer
 			self:SetNWFloat("nextSlowThink", self.nextSlowThink)
-			self.unitspawned = false
-			self:SetNWBool("spawned", self.unitspawned)
-		else
-			self.unitspawned = true
-			self:SetNWBool("spawned", self.unitspawned)
 		end
-	--else
-	--	self.nextSlowThink = CurTime()+1
-	--	self:SetNWFloat("nextSlowThink", self.nextSlowThink)
-	--	self.unitspawned = false
-	--	self:SetNWBool("spawned", self.unitspawned)
+		self.unitspawned = true
+		self:SetNWBool("spawned", self.unitspawned)
 	end
+
+	local count = 0
+	for i = #ent.melons, 1, -1 do
+		local v = ent.melons[i]
+		if IsValid(v) then
+			count = count + 1
+		else
+			table.remove(ent.melons, i)
+		end
+	end
+	self:SetNWInt("count", count)
+
+
+	--TODO: Below is generally pretty unreadable.
+
+	if not self.unitspawned or not self:GetNWBool("active", false) then return end
+
+	local creditCost = cvars.Bool("mw_admin_credit_cost")
+	if not(MelonWars.teamCredits[selfTeam] >= self.unit_cost or not creditCost) then return end
+
+	local shouldSpawnNewUnit = count < self:GetNWInt("maxunits", 0) and EnoughPower(selfTeam)
+
+	self.unitspawned = not shouldSpawnNewUnit
+	self:SetNWBool("spawned", self.unitspawned)
+
+	if not shouldSpawnNewUnit then return end
+
+
+	self.nextSlowThink = CurTime() + self.slowThinkTimer
+	self:SetNWFloat("nextSlowThink", self.nextSlowThink)
+
+	if not creditCost then return end
+
+	MelonWars.teamCredits[selfTeam] = MelonWars.teamCredits[selfTeam]-self.unit_cost
+	MelonWars.updateClientCredits(selfTeam)
 end
 
 function ENT:PlayHudSound(sndFile, volume, pitch, _team)

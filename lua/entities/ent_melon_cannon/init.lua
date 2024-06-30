@@ -4,7 +4,7 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include('shared.lua')
 
 function ENT:Initialize()
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_c17/oildrum001.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -34,7 +34,7 @@ function ENT:Initialize()
 
 	self.slowThinkTimer = 0.5
 
-	MW_Setup ( self )
+	self:Setup()
 
 	construct.SetPhysProp( self:GetOwner() , self, 0, nil,  { GravityToggle = true, Material = "ice" } )
 end
@@ -44,7 +44,7 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 end
 
 function ENT:PhysicsUpdate()
@@ -94,5 +94,5 @@ function ENT:Shoot ( ent, forceTargetPos )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

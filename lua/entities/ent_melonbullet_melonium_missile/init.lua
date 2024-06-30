@@ -1,29 +1,29 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-
 	self:SetModel("models/props_phx/ww2bomb.mdl")
 	self:SetSolid( SOLID_VPHYSICS )         -- Toolbox
 	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
 	self:SetMoveType(MOVETYPE_VPHYSICS)
-	
+
 	self.deathSound = "ambient/explosions/explode_9.wav"
-	
+
 	self.careForFriendlyFire = false
 
 	self.speed = 24
 	self.damageDeal = 3
 	self.maxHP = 20
 	self.random = Vector(0, 0,0.5)
-	
+
 	self.targetPos = Vector(0,0,0)
 	self.distance = 0
 	self.climb = 5
-	
+
 	self:SetColor(Color(150,255,100, 255))
+	self.mwBulletIndestructible = true
 end
 
 function ENT:PhysicsCollide( colData, collider )
@@ -46,7 +46,7 @@ function ENT:Think()
 	if (target ~= nil and IsValid(target)) then
 		self.targetPos = target:GetPos()
 	end
-	
+
 	self.distance = self:GetPos():Distance(self.targetPos)
 	if (self.targetPos == Vector(0,0,0)) then self:Remove() end
 	local targetVec = self.targetPos+self.random*self.distance*self.climb
@@ -61,7 +61,7 @@ function ENT:Think()
 			self:Explode()
 		end
 	end
-	
+
 	return true
 end
 

@@ -1,10 +1,10 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
+
 include('shared.lua')
 
 function ENT:Initialize()
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.unit = 16
 	self.modelString = "models/props_wasteland/kitchen_stove001a.mdl"
@@ -12,12 +12,12 @@ function ENT:Initialize()
 	--self.Angles = Angle(0,0,0)
 	--self:SetPos(self:GetPos()+Vector(0,0,-25))
 	self.shotOffset = Vector(0,0,30)
-	
+
 	self:BarrackInitialize()
 	self.population = 1
 	self:SetNWInt("maxunits", 5)
 
-	MW_Setup ( self )
+	self:Setup()
 end
 
 function ENT:Think(ent)
@@ -31,9 +31,9 @@ function ENT:Think(ent)
 end
 
 function ENT:Shoot ( ent )
-	--MW_DefaultShoot ( ent )
+	--MelonWars.defaultShoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

@@ -4,12 +4,12 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-	MW_Defaults( self )
+	MelonWars.defaults( self )
 
 	self.modelString = "models/props_junk/watermelon01.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
-	
+
 	self.maxHP = 10
 	self.speed = 90
 
@@ -19,19 +19,19 @@ function ENT:Initialize()
 
 	self.captureSpeed = 0.25
 
-	MW_Setup( self )
+	self:Setup()
 end
 
 function ENT:SlowThink( ent )
-	MW_UnitDefaultThink( ent )
+	MelonWars.unitDefaultThink( ent )
 end
 
 function ENT:Shoot( ent, forceTargetPos )
 	if not ( ent.ai or CurTime() > ent.nextControlShoot ) then return end
-	MW_DefaultShoot( ent, forceTargetPos )
+	MelonWars.defaultShoot( ent, forceTargetPos )
 	ent.nextControlShoot = CurTime() + ent.slowThinkTimer
 end
 
 function ENT:DeathEffect( ent )
-	MW_DefaultDeathEffect( ent )
+	MelonWars.defaultDeathEffect( ent )
 end

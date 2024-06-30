@@ -1,35 +1,30 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-
-	MW_Defaults ( self )
-
-	self.birth = CurTime()
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_c17/pulleywheels_small01.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
-	--self:SetAngles(self:GetAngles()+Angle(90,0,0))
-	
+
 	self.population = 0
 
-	--self.sphereRadius = 5
-	
 	self:SetNWBool("done",false)
-	
+
 	self.delayedForce = 0
 
 	self.captureSpeed = 0
-	
+
 	self.damping = 1
-	
 	self.maxHP = 45
 
-	MW_Setup ( self )
+	self.isContraptionPart = true
+	self.blockFriendlyTraces = true
 
+	self:Setup()
 end
 
 function ENT:ModifyColor()
@@ -37,100 +32,77 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-	
 end
 
 function ENT:Shoot ( ent )
-	--MW_DefaultShoot ( ent )
 end
 
 function ENT:Update (ent)
-
 end
 
 function ENT:Think ()
-	if (self.damage > 0) then
-		self.HP = self.HP-self.damage
-		self:SetNWFloat( "health", self.HP )
-		self.damage = 0
-		if (self.HP <= 0) then
-			MW_Die( self )
-		end
-	end
-		
 	local const = constraint.FindConstraints( self, "Weld" )
-	if (table.Count(const) == 0) then
-		self.damage = 5
+	if table.Count(const) == 0 then
+		self:TakeDamage(5)
 	end
 end
 
-function ENT:PropellerReady ()
-	self:SetNWBool("done",true)
-	local foundEnts = ents.FindInSphere(self:GetPos(), 600 )
-	for k, v in pairs( foundEnts ) do
-		if (v:GetClass() == "ent_melon_hover") then
-			v:SetNWBool("done",true)
+function ENT:Actuate()
+	for i, v in ipairs(ents.FindInSphere(self:GetPos(), 600 )) do
+		if v:GetClass() == "ent_melon_hover" then
+			v:SetNWBool("done", true)
 		end
 	end
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end
 
 function ENT:PhysicsUpdate()
-	
-	--if (self.moving == true) then
-	if (self:GetNWBool("done",false) == true) then
-		local hoverdistance = 40
-		local hoverforce = 200
-		local force = 0
-		local phys = self:GetPhysicsObject()
-		local tr = util.TraceLine( {
-		start = self:GetPos(),
-		endpos = self:GetPos()+Vector(0,0,-hoverdistance*2),
+	if not self:GetNWBool("done",false) then return end
+
+	local hoverdistance = 40
+	local hoverforce = 200
+	local force = 0
+
+	local selfTbl = self:GetTable()
+	local phys = self:GetPhysicsObject()
+	local selfPos = self:GetPos()
+	local tr = util.TraceLine( {
+		start = selfPos,
+		endpos = selfPos + Vector(0,0,-hoverdistance * 2),
 		filter = function( ent )
 			local ph = ent:GetPhysicsObject()
-			if (IsValid(ph)) then
-				if ( not ent:GetPhysicsObject() or not ent:GetPhysicsObject():IsMoveable() ) then 
-					return true
-				end
-			end
+			return IsValid(ph) and not ph:IsMoveable()
 		end,
-		mask = MASK_WATER+MASK_SOLID
-		} )
-		
-		local distance = self:GetPos():Distance(tr.HitPos)
-		
-		if (distance < hoverdistance) then
-			force = -(distance-hoverdistance)*hoverforce
-			phys:ApplyForceCenter(Vector(0,0,-phys:GetVelocity().z*8))
-		else
-			force = 0
-		end
-		
-		if (force > self.delayedForce) then
-			self.delayedForce = (self.delayedForce*2+force)/3
-		else
-			self.delayedForce = self.delayedForce*0.5
-		end
-		phys:ApplyForceCenter(Vector(0,0,self.delayedForce))
-		if (IsValid(tr.Entity)) then
-			local p = tr.Entity:GetPhysicsObject()
-			if (p ~= nil) then
-				p:ApplyForceOffset(Vector(0,0,-self.delayedForce), tr.HitPos)
-			end
-		end
-		--[[local mul = 10
-		local forcePoint = self:GetPos()+self:GetAngles():Up()*mul
-		local forceTarget = self:GetPos()+Vector(0,0,mul)
-		phys:ApplyForceOffset( (forceTarget-forcePoint)*mul, forcePoint )
-		forcePoint = self:GetPos()+self:GetAngles():Up()*-mul
-		forceTarget = self:GetPos()+Vector(0,0,-mul)
-		phys:ApplyForceOffset( (forceTarget-forcePoint)*mul, forcePoint )]]
-		--end
+		mask = MASK_WATER + MASK_SOLID --TODO: Maybe disable movement on water
+	} )
 
-		self:Align(self:GetAngles():Forward(), Vector(0,0,-1), 10000)
-		self:StopAngularVelocity(0.3)
+	local distance = (hoverdistance * 2) * tr.Fraction
+
+	if distance < hoverdistance then
+		force = -(distance-hoverdistance) * hoverforce
+		local vel = phys:GetVelocity()
+		vel.x, vel.y, vel.z = 0, 0, -vel.z * 8
+		phys:ApplyForceCenter(vel)
+	else
+		force = 0
 	end
+
+	if force > selfTbl.delayedForce then
+		selfTbl.delayedForce = (selfTbl.delayedForce * 2 + force) / 3
+	else
+		selfTbl.delayedForce = selfTbl.delayedForce * 0.5
+	end
+
+	local brakingForce = phys:GetVelocity() --Stop us from drifting forever
+	brakingForce.x = math.Clamp(brakingForce.x * -1, -2.5, 2.5)
+	brakingForce.y = math.Clamp(brakingForce.y * -1, -2.5, 2.5)
+	brakingForce.z = selfTbl.delayedForce
+
+	phys:ApplyForceCenter(brakingForce)
+
+	self:Align(self:GetAngles():Forward(), -vector_up, 10000)
+	self:StopAngularVelocity(0.3)
 end

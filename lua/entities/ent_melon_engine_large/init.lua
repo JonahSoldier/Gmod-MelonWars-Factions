@@ -5,7 +5,7 @@ include('shared.lua')
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_c17/trappropeller_engine.mdl"--"models/props_c17/TrapPropeller_Engine.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -13,12 +13,6 @@ function ENT:Initialize()
 	self.canShoot = true
 	self.speed = 60
 	self.thrustforce = 1
-
-	/*self:SetAngles(self:GetAngles()+Angle(90,180,0))
-
-	local offset = Vector(0,-0.8,0)
-	offset:Rotate(self:GetAngles())
-	self:SetPos(self:GetPos()+offset)*/
 
 	self.maxHP = 200
 
@@ -29,97 +23,64 @@ function ENT:Initialize()
 	self.damping = 1
 	self.angularDamping = 10000
 
-	MW_Setup ( self )
+	self:Setup()
 
 	self:GetPhysicsObject():SetMass(150)
 
-	self.moving = true;
+	self.moving = true
+	self.isContraptionPart = true
 end
 
 function ENT:SlowThink ( ent )
-	--MW_UnitDefaultThink ( ent )
 end
 
-function ENT:Welded( ent, parent )
-	local weld = constraint.Weld( ent, parent, 0, 0, 0, true , false )
-
-	--ent.canMove = false
+function ENT:Welded(ent, parent)
+	constraint.Weld(ent, parent, 0, 0, 0, true, false)
 	ent.materialString = "models/shiny"
-
 	ent.parent = parent
-
-	--Resta su poblacion para luego sumar la nueva
-	MW_UpdatePopulation(-ent.population, mw_melonTeam)
-	ent.population = math.ceil(ent.population/2)
-	MW_UpdatePopulation(ent.population, mw_melonTeam)
 end
 
-function ENT:Update( ent )
-	----[[
-	if (cvars.Bool("mw_admin_playing") ) then
+local mw_admin_playing_cv = GetConVar( "mw_admin_playing" )
+function ENT:Update()
+	if not mw_admin_playing_cv:GetBool() then return end
+	local selfTbl = self:GetTable()
 
-		--Aplicar daño
-		if (ent.damage > 0) then
-			ent.HP = ent.HP-ent.damage
-			ent:SetNWFloat( "health", ent.HP )
-			ent.damage = 0
-			if (ent.HP <= 0) then
-				MW_Die( ent )
-			end
-		end
+	local const = constraint.FindConstraints( self, "Weld" )
+	if table.Count(const) == 0 then
+		self:TakeDamage(5)
+	end
 
-		ent:SetNWVector( "targetPos", ent.targetPos )
+	self:SetNWVector("targetPos", selfTbl.targetPos)
+	self:SetNWEntity("followEntity", selfTbl.followEntity)
 
-		ent:SetNWEntity( "followEntity", ent.followEntity )
-
-		if (ent.canMove) then
-			local phys = self.phys
-
-			local const = constraint.FindConstraints( self, "Weld" )
-			if (table.Count(const) == 0) then
-				self.damage = 5
-			end
-
-			if (IsValid(phys)) then
-				---------------------------------------------------------------------------Movimiento
-				if (ent.moving) then
-					local moveVector = (ent.targetPos-ent:GetPos()):GetNormalized()*self.speed-self:GetVelocity()
-					local force = Vector(moveVector.x, moveVector.y, 0)
-					--Takes the average between the prev moveforce and the desired new moveforce, prevents it from shaking violently without any noticeable effect on its ability to move
-					ent.moveForce = (ent.moveForce + force*self.thrustforce)/2
-
-				else
-					local moveVector = -ent:GetVelocity()*0.2
-					local force = Vector(moveVector.x, moveVector.y, 0)
-					ent.moveForce = force
-				end
-			end
-
-			if (Vector(ent:GetPos().x, ent:GetPos().y, 0):Distance(Vector(ent.targetPos.x, ent.targetPos.y, 0)) < 100) then
-				ent:FinishMovement()
-				for k, v in pairs(constraint.GetAllConstrainedEntities( self )) do
-					if (v.Base == "ent_melon_base") then
-						if (v ~= ent) then
-							v:FinishMovement()
-						end
-					end
-				end
-			end
-
-			ent:SetNWBool("moving", ent.moving)
-			ent:NextThink(CurTime() + 0.01)
-			return true
+	local phys = selfTbl.phys
+	if IsValid(phys) then
+		if selfTbl.moving then
+			local moveVector = (selfTbl.targetPos - self:GetPos()):GetNormalized() * selfTbl.speed - self:GetVelocity()
+			moveVector.z = 0
+			selfTbl.moveForce = (selfTbl.moveForce + moveVector * selfTbl.thrustforce) / 2
+		else
+			local moveVector = -self:GetVelocity() * 0.2
+			moveVector.z = 0
+			selfTbl.moveForce = moveVector
 		end
 	end
-	--]]--
+
+	if selfTbl.moving and self:GetPos():Distance2DSqr(selfTbl.targetPos) < 100^2 then
+		for k, v in pairs(constraint.GetAllConstrainedEntities(self)) do
+			if v:GetTable().Base == "ent_melon_base" then
+				v:FinishMovement()
+			end
+		end
+	end
+
+	self:SetNWBool("moving", selfTbl.moving)
 end
 
 function ENT:PhysicsUpdate()
-	self:Align(self:GetAngles():Forward(), Vector(0,0,-1), 1000)
-
 	local moveVector = (self.targetPos-self:GetPos())
-	if (self.moving) then
-		self:Align(self:GetAngles():Up(), -moveVector:GetNormalized(), 100000)
+	if self.moving then
+		self:Align(self:GetAngles():Up(), -moveVector:GetNormalized(), 175000)
 	end
 
 	self:StopAngularVelocity(0.8)
@@ -128,9 +89,8 @@ function ENT:PhysicsUpdate()
 end
 
 function ENT:Shoot ( ent )
-	--MW_DefaultShoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

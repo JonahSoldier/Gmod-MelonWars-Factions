@@ -1,10 +1,10 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
+
 include('shared.lua')
 
 function ENT:Initialize()
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.unit = 5
 	self.modelString = "models/props_combine/combine_interface002.mdl"
@@ -20,7 +20,7 @@ function ENT:Initialize()
 	self.population = 1
 	self:SetNWInt("maxunits", 10)
 
-	MW_Setup ( self )
+	self:Setup()
 end
 
 function ENT:Think(ent)
@@ -34,9 +34,9 @@ function ENT:Think(ent)
 end
 
 function ENT:Shoot ( ent )
-	--MW_DefaultShoot ( ent )
+	--MelonWars.defaultShoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

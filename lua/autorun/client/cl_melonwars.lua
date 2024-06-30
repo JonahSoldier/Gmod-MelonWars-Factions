@@ -1,131 +1,110 @@
 if engine.ActiveGamemode() ~= "sandbox" then return end
 
-mw_team_colors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
-mw_team_colors[0] = Color(100,100,100,255)
+MelonWars = MelonWars or {}
 
-net.Receive( "MW_ReturnSelection", function( len, pl )
-	local returnedSelectionID = net.ReadInt(20)
+--TODO: Move these to tool
+CreateClientConVar( "mw_player_ready", "0", false, true, "Is the player ready or not", 0, 1 )
+CreateClientConVar( "mw_buildalpha_multiplier", "1", true, false, "Makes the sphere around outposts more/less transparent", 0, 10 )
+CreateClientConVar( "mw_oldbuildzones", "0", true, false, "Draw full spheres instead of just lines on the ground.", 0, 1 )
+
+include("melonwars/sh_unitlist.lua")
+include("melonwars/sh_functions.lua")
+
+include("melonwars/cl_worldrings.lua")
+
+MelonWars.teamColors = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
+MelonWars.teamColors[0] = Color(100,100,100,255)
+
+MelonWars.messageReceivingEntity = nil
+MelonWars.messageReceivingState = "idle"
+MelonWars.networkBuffer = ""
+
+cvars.AddChangeCallback("mw_player_ready", function()
+	net.Start("MWReadyUp")
+	net.SendToServer()
+end)
+
+function MelonWars.sendContraptionToServer(_file)
+	local text = file.Read(_file)
+	local compressed_text = util.Compress( text )
+	if not compressed_text then compressed_text = text end
+	local len = string.len( compressed_text )
+	local send_size = 60000
+	local parts = math.ceil( len / send_size )
+	local start = 0
+
+	net.Start( "BeginContraptionLoad" )
+	net.SendToServer()
+
+	for i = 1, parts do
+		local endbyte = math.min( start + send_size, len )
+		local size = endbyte - start
+		local data = compressed_text:sub( start + 1, endbyte + 1 )
+		net.Start( "ContraptionLoad" )
+			net.WriteBool( i == parts )
+			net.WriteUInt( size, 16 )
+			net.WriteData( data, size )
+		net.SendToServer()
+
+		start = endbyte
+	end
+end
+
+net.Receive( "MW_ReturnSelection", function()
+	local returnedSelectionID = net.ReadUInt(8)
 
 	if returnedSelectionID ~= LocalPlayer().mw_selectionID then return end
-	local count = net.ReadUInt(16)
-	-- local newTable = {}
+	local count = net.ReadUInt(10)
 
-	for i = 0, count do
+	for i = 1, count do
 		local foundEntity = net.ReadEntity()
-		if (not table.HasValue(LocalPlayer().foundMelons, foundEntity)) then
+		if not foundEntity:IsValid() then
+			print("== Melon Wars: Received a null entity from the server. If you see this in console please tell a dev, it means something's not working and you may fail to select units.")
+		end
+		if not table.HasValue(LocalPlayer().foundMelons, foundEntity) then
 			table.insert(LocalPlayer().foundMelons, foundEntity)
-			-- table.insert(newTable, foundEntity)
 		end
 	end
-	-- LocalPlayer().foundMelons = newTable
 end )
---[[
-function DrawBuildRanges(zoneEntity, zoneRadius)
-	if not (tostring(LocalPlayer().BuildZone) == "[NULL Entity]" or not IsValid(LocalPlayer().BuildZone)) then return end
-	LocalPlayer().BuildZone = ents.CreateClientProp( "models/hunter/tubes/circle2x2.mdl" )
-	LocalPlayer().BuildZone:SetMoveType( MOVETYPE_NONE )
-	LocalPlayer().BuildZone:SetNotSolid( true );
-	LocalPlayer().BuildZone:SetRenderMode( RENDERMODE_TRANSALPHA )
-	LocalPlayer().BuildZone:SetMaterial("models/debug/debugwhite")
-	LocalPlayer().BuildZone:SetColor( Color( 255, 255, 255, 255 ) )
-	LocalPlayer().BuildZone:SetModelScale(0.021*zoneRadius)
-	LocalPlayer().BuildZone:SetPos(zoneEntity:GetPos())
-	LocalPlayer().BuildZone:Spawn()
-	-- LocalPlayer().BuildZone:DeleteOnRemove( zoneEntity )
-end
-]]
-net.Receive( "MW_SelectContraption", function( len, pl )
+
+net.Receive( "MW_SelectContraption", function()
 	local count = net.ReadUInt( 16 )
+	local ply = LocalPlayer()
 	-- print("Receiving extra selections from the server ("..count..")")
 	local v, hasMelonBase, canMove, isFound
 	for i = 0, count do
 		v = net.ReadEntity()
 		hasMelonBase = v.Base == "ent_melon_base"
-		canMove = cvars.Bool( "mw_admin_move_any_team", false ) or ( pl == nil or v:GetNWInt( "mw_melonTeam", -1 ) == pl:GetInfoNum( "mw_team", -1 ) )
-		isFound = LocalPlayer().foundMelons[v]
+		canMove = cvars.Bool( "mw_admin_move_any_team", false ) or ( ply == nil or v:GetNWInt( "mw_melonTeam", -1 ) == ply:GetInfoNum( "mw_team", -1 ) )
+		isFound = ply.foundMelons[v]
 		if hasMelonBase and canMove and not isFound then
-			table.insert( LocalPlayer().foundMelons, v )
+			table.insert( ply.foundMelons, v )
 		end
 	end
 end )
---[[
-net.Receive( "Selection", function( len, pl ) -- Also tried function MW_DoSelection(foundMelons) without the net-related stuff too
-	if (LocalPlayer().foundMelons == nil) then
-		LocalPlayer().foundMelons = {}
-	end
-	if (LocalPlayer():KeyDown(IN_SPEED)) then
-		else table.Empty(foundMelons) end
-	local ammount = net.ReadInt(16)
-	for i = 1,ammount do
-        table.insert(foundMelons, net.ReadEntity())
-    end
-	LocalPlayer():SetNWVector("mw_selEnd", LocalPlayer():GetNWVector("mw_selStart", Vector(0,0,0)))
-	LocalPlayer().mw_selEnd = Vector(0,0,0)
-end )
-]]
-net.Receive( "RestartQueue", function( len, pl )
+
+net.Receive( "RestartQueue", function()
 	LocalPlayer().mw_spawntime = CurTime()
 end )
 
-mrtsMessageReceivingEntity = nil
-mrtsMessageReceivingState = "idle"
-mrtsNetworkBuffer = ""
-
 net.Receive( "BeginContraptionSaveClient", function()
-	mrtsMessageReceivingState = net.ReadString()
-	mrtsMessageReceivingEntity = net.ReadEntity()
-	mrtsNetworkBuffer = ""
+	MelonWars.messageReceivingState = net.ReadString()
+	MelonWars.messageReceivingEntity = net.ReadEntity()
+	MelonWars.networkBuffer = ""
 end )
 
 net.Receive( "ContraptionSaveClient", function()
 	local last = net.ReadBool()
 	local size = net.ReadUInt( 16 )
 	local data = net.ReadData( size )
-	mrtsNetworkBuffer = mrtsNetworkBuffer .. data
+	MelonWars.networkBuffer = MelonWars.networkBuffer .. data
 	if not last then return end
-	local text = util.Decompress( mrtsNetworkBuffer )
+	local text = util.Decompress( MelonWars.networkBuffer )
 	file.CreateDir( "melonwars/contraptions" )
-	file.Write( "melonwars/contraptions/" .. mrtsMessageReceivingState .. ".txt", text )
-	mrtsMessageReceivingEntity = nil
-	mrtsMessageReceivingState = "idle"
-	mrtsNetworkBuffer = ""
-end )
-
-net.Receive( "ContraptionValidateClient", function()
-	local contrapFiles = file.Find("melonwars/contraptions/*.txt", "DATA")
-
-	for i = 1, table.Count(contrapFiles) do
-		timer.Simple( i * 0.1, function()
-			local name = string.gsub(contrapFiles[i], ".txt", "") -- Removes .txt from the name, because other parts of the code add it back in later
-
-			local text =  file.Read( "melonwars/contraptions/" .. contrapFiles[i], "DATA" )
-			local compressed_text = util.Compress(text)
-			if not compressed_text then compressed_text = text end
-
-			local len = string.len( compressed_text )
-			local send_size = 60000
-			local parts = math.ceil( len / send_size )
-			local start = 0
-
-			-- 29 contrap files aren't reaching the serverside function properly (Out of 52, my contraptions are being used for testing.)
-			-- ^^ I had a corrupted contraption file. It was hitting that then failing to do anything after it
-
-			for ii = 1, parts do
-				local endbyte = math.min( start + send_size, len )
-				local size = endbyte - start
-				local data = compressed_text:sub( start + 1, endbyte + 1 )
-				net.Start( "ContraptionAutoValidate" )
-					net.WriteBool( ii == parts )
-					net.WriteUInt( size, 16 )
-					net.WriteData( data, size )
-					net.WriteString(name)
-				net.SendToServer()
-
-				start = endbyte
-			end
-			print("Validated " .. tostring(i) .. " contraption files")
-		end)
-	end
+	file.Write( "melonwars/contraptions/" .. MelonWars.messageReceivingState .. ".txt", text )
+	MelonWars.messageReceivingEntity = nil
+	MelonWars.messageReceivingState = "idle"
+	MelonWars.networkBuffer = ""
 end )
 
 local function ResourcesChanged( dif )
@@ -146,279 +125,36 @@ net.Receive( "MW_TeamCredits", function()
 end )
 
 net.Receive( "MW_TeamUnits", function()
+	--LocalPlayer().MelonWars.units = net.ReadInt(16)
 	LocalPlayer().mw_units = net.ReadInt(16)
 end )
---[[
-net.Receive( "ChatTimer", function( len, pl ) -- Nothing currently sends ChatTimer!
-	LocalPlayer().chatTimer = 1000
-end )
-]]
-net.Receive( "RequestContraptionLoadToClient", function()
-	local _file = net.ReadString()
-	local ent = net.ReadEntity()
 
-	local text = file.Read(_file)
-	local compressed_text = util.Compress( text )
-	if not compressed_text then compressed_text = text end
-	local len = string.len( compressed_text )
-	local send_size = 60000
-	local parts = math.ceil( len / send_size )
-	local start = 0
-	net.Start( "BeginContraptionLoad" )
-		net.WriteEntity(ent)
-	net.SendToServer()
-	for i = 1, parts do
-		local endbyte = math.min( start + send_size, len )
-		local size = endbyte - start
-		local data = compressed_text:sub( start + 1, endbyte + 1 )
-		net.Start( "ContraptionLoad" )
-			net.WriteBool( i == parts )
-			net.WriteUInt( size, 16 )
-			net.WriteData( data, size )
-		net.SendToServer()
-		start = endbyte
-	end
-	--[[net.Start("ContraptionLoad")
-		net.WriteString(file.Read( _file ))
-		net.WriteEntity(ent)
-	net.SendToServer()]]
-end )
-
-net.Receive( "EditorSetTeam", function( len, pl )
-	local ent = net.ReadEntity()
-	local frame = vgui.Create("DFrame")
-	local w = 250
-	local h = 160
-	frame:SetSize(w,h)
-	frame:SetPos( ScrW() / 2 - w / 2 + 150, ScrH() / 2 - h / 3 )
-	frame:SetTitle("Set team")
-	frame:MakePopup()
-	frame:ShowCloseButton()
-	local button = vgui.Create("DButton", frame)
-	button:SetSize(50,18)
-	button:SetPos(w-53,3)
-	button:SetText("x")
-	function button:DoClick()
-		frame:Remove()
-		frame = nil
-	end
-	for i = 1, 8 do
-		button = vgui.Create("DButton", frame)
-		button:SetSize(29,100)
-		button:SetPos( 5 + 30 * ( i - 1 ), 50 )
-		button:SetText("")
-		function button:DoClick()
-			net.Start("ServerSetTeam")
-				net.WriteEntity(ent)
-				net.WriteInt(i, 4)
-			net.SendToServer()
-			ent:SetColor(mw_team_colors[i])
-			ent.mw_melonTeam = i
-			frame:Remove()
-			frame = nil
-		end
-		button.Paint = function()
-			draw.RoundedBox( 6, 0, 0, w, h, Color(30,30,30,255) )
-			draw.RoundedBox( 4, 2, 2, w-4, h-4, mw_team_colors[i] )
-		end
-	end
-end )
---[[
-net.Receive( "EditorSetStage", function( len, pl ) -- Nothing currently sends EditorSetStage!
-	local ent = net.ReadEntity()
-	local frame = vgui.Create("DFrame")
-	local w = 250
-	local h = 100
-	frame:SetSize(w,h)
-	frame:SetPos( ScrW() / 2 - w / 2 + 150, ScrH() / 2 - h / 3 )
-	frame:SetTitle("Set Stage")
-	frame:MakePopup()
-	frame:ShowCloseButton()
-	local button = vgui.Create("DButton", frame)
-	button:SetSize(50,18)
-	button:SetPos(w-53,3)
-	button:SetText("x")
-	function button:DoClick()
-		frame:Remove()
-		frame = nil
-	end
-	local wang = vgui.Create("DNumberWang", frame)
-	wang:SetPos(20,50)
-	button = vgui.Create("DButton", frame)
-	button:SetSize(100,50)
-	button:SetPos(120,35)
-	button:SetText("Done")
-	function button:DoClick()
-		net.Start("ServerSetStage")
-			net.WriteEntity(ent)
-			net.WriteInt(wang:GetValue(), 8)
-		net.SendToServer()
-		ent.stage = wang:GetValue()
-		frame:Remove()
-		frame = nil
-	end
-end )
-
-net.Receive( "DrawWireframeBox", function( len, pl ) -- Nothing currently sends DrawWireframeBox!
-	local pos = net.ReadVector()
-	local min = net.ReadVector()
-	local max = net.ReadVector()
-	render.DrawWireframeBox( pos, Angle(0,0,0), min, max, Color(255,255,255,255), false )
-end )
-
-net.Receive( "EditorSetWaypoint", function( len, pl ) -- Nothing currently sends EditorSetWaypoint!
-	local ent = net.ReadEntity()
-	local waypoint = net.ReadInt(4)
-	local path = net.ReadInt(4)
-	local frame = vgui.Create("DFrame")
-	local w = 250
-	local h = 110
-	frame:SetSize(w,h)
-	frame:SetPos( ScrW() / 2 - w / 2 + 150, ScrH() / 2 - h / 3 )
-	frame:SetTitle("Set Waypoint")
-	frame:MakePopup()
-	frame:ShowCloseButton()
-	local button = vgui.Create("DButton", frame)
-	button:SetSize(50,18)
-	button:SetPos(w-53,3)
-	button:SetText("x")
-	function button:DoClick()
-		frame:Remove()
-		frame = nil
-	end
-	local label = vgui.Create("DLabel", frame)
-	label:SetPos(20,20)
-	label:SetText("Waypoint")
-	local waypointwang = vgui.Create("DNumberWang", frame)
-	waypointwang:SetPos(20,35)
-	if (ent.waypoint == nil) then ent.waypoint = 1 end
-	waypointwang:SetValue(ent.waypoint)
-	label = vgui.Create("DLabel", frame)
-	label:SetPos(20,55)
-	label:SetText("Path")
-	local pathwang = vgui.Create("DNumberWang", frame)
-	pathwang:SetPos(20,70)
-	if (ent.path == nil) then ent.path = 1 end
-	pathwang:SetValue(ent.path)
-	button = vgui.Create("DButton", frame)
-	button:SetSize(100,50)
-	button:SetPos(120,35)
-	button:SetText("Done")
-	function button:DoClick()
-		net.Start("ServerSetWaypoint")
-			net.WriteEntity(ent)
-			net.WriteInt(waypointwang:GetValue(), 8)
-			net.WriteInt(pathwang:GetValue(), 8)
-		net.SendToServer()
-		ent.waypoint = waypointwang:GetValue()
-		ent.path = pathwang:GetValue()
-		frame:Remove()
-		frame = nil
-	end
-end )
-]]
-function MW_SickEffect(ent, amount)
-	local emitter = ParticleEmitter( ent:GetPos() ) -- Particle emitter in this position
-	for i = 1, amount do -- SMOKE
-		local part = emitter:Add( "effects/yellowflare", ent:GetPos() ) -- Create a new particle at pos
-		if ( part ) then
-			part:SetDieTime( math.Rand(1.0, 2.0) ) -- How long the particle should "live"
-			part:SetColor(100, 255, 0)
-			part:SetStartAlpha( 255 )
-			part:SetEndAlpha( 255 ) -- Particle size at the end of its lifetime
-			part:SetStartSize( math.random(12, 18) )
-			part:SetEndSize( 0 ) -- Size when removed
-			part:SetAirResistance(50)
-			local vec = AngleRand():Forward() * math.random(10, 50)
-			part:SetGravity( Vector(0,0,50) ) -- Gravity of the particle
-			part:SetVelocity( vec * 0.8 ) -- Initial velocity of the particle
-		end
-	end
-	emitter:Finish()
-end
-
-function MW_SiloSmoke(ent, amount)
-	local emitter = ParticleEmitter( ent:GetPos() ) -- Particle emitter in this position
-	for i = 1, amount do -- SMOKE
-		local part = emitter:Add( "effects/yellowflare", ent:GetPos() + Vector(math.random(-30, 30), math.random(-30, 30), 0) ) -- Create a new particle at pos
-		if ( part ) then
-			part:SetDieTime( math.Rand(1.0, 2.0) ) -- How long the particle should "live"
-			part:SetColor(100, 255, 0)
-			part:SetStartAlpha( 255 )
-			part:SetEndAlpha( 255 ) -- Particle size at the end of its lifetime
-			part:SetStartSize( math.random(10, 20) )
-			part:SetEndSize( 0 ) -- Size when removed
-			part:SetAirResistance(50)
-			local vec = Vector(0,0,math.random(100, 500))
-			vec.z = math.abs(vec.z)
-			part:SetGravity( Vector(0,0,50) ) -- Gravity of the particle
-			part:SetVelocity( vec ) -- Initial velocity of the particle
-		end
-	end
-	emitter:Finish()
-end
---[[
--- New Year
-function MW_Firework(ent, amount, sizeMul)
-	if (CurTime()-ent:GetCreationTime() < 5) then return end
-
-	local grounded = false
-	local tr = util.QuickTrace( ent:GetPos(), Vector(0,0,-20), ent )
-	if (tr.Hit) then
-		grounded = true
-	end
-	local particleSize = math.random(12, 18)
-	local fireworkSize = math.random(300, 400)*sizeMul
-	local teamColor = ent:GetColor();
-	local emitter = ParticleEmitter( ent:GetPos() ) -- Particle emitter in this position
-	for i = 0, amount do -- SMOKE
-		local part = emitter:Add( "effects/yellowflare", ent:GetPos() ) -- Create a new particle at pos
-		if ( part ) then
-			part:SetDieTime( math.Rand(1.0, 4.0)*sizeMul ) -- How long the particle should "live"
-			local c = math.Rand(0.0, 1.0)
-			local _c = 1-c
-			part:SetColor(teamColor.r*c+255*_c,teamColor.g*c+255*_c,teamColor.b*c+255*_c)
-			part:SetStartAlpha( 255 ) -- Starting alpha of the particle
-			part:SetEndAlpha( 0 ) -- Particle size at the end if its lifetime
-			part:SetStartSize( particleSize ) -- Starting size
-			part:SetEndSize( 0 ) -- Size when removed
-			part:SetAirResistance(300)
-			part:SetGravity( Vector( 0, 0, -20 ) ) -- Gravity of the particle
-			local vec = AngleRand():Forward()*fireworkSize
-			if (grounded and vec.z < 0) then vec.z = -vec.z end
-			part:SetVelocity( vec ) -- Initial velocity of the particle
-		end
-	end
-	emitter:Finish()
-end
-]]
-net.Receive( "MWControlUnit" , function(len, pl)
+net.Receive( "MW_ClientControlUnit", function()
 	local u = net.ReadEntity()
 	LocalPlayer().controllingUnit = u
 end)
 
-net.Receive( "MW_UnitDecoration", function(len, pl)
+net.Receive( "MW_UnitDecoration", function()
 	local entity = net.ReadEntity()
 	local tbl = net.ReadTable()
 
 	local prop = ClientsideModel( tbl.prop )
 	prop:SetPos( entity:GetPos() + VectorRand( -3, 3 ) )
-	prop:SetAngles(AngleRand())
-	prop:SetModelScale(tbl.scale)
-	prop:SetMoveParent(entity)
+	prop:SetAngles( AngleRand() )
+	prop:SetModelScale( tbl.scale )
+	prop:SetMoveParent( entity )
 	local cdata = EffectData()
-	cdata:SetEntity(prop)
-	util.Effect("propspawn", cdata)
+	cdata:SetEntity( prop )
+	util.Effect( "propspawn", cdata )
 end)
 
-net.Receive( "MWColourMod", function(len, pl)
+net.Receive( "MWColourMod", function()
 	LocalPlayer().MWhasColourModifier = net.ReadBool()
 	LocalPlayer().MWColourModifierTable = net.ReadTable()
-	DrawColorModify(LocalPlayer().MWColourModifierTable)
+	DrawColorModify( LocalPlayer().MWColourModifierTable )
 end)
 
-net.Receive( "MelonWars_ClientModifySpawnTime", function( len, pl )
+net.Receive( "MW_ClientModifySpawnTime", function()
 	local spawnTimeChange = net.ReadFloat()
-	-- LocalPlayer().mw_spawntime = LocalPlayer().mw_spawntime + spawnTimeChange
-	LocalPlayer().spawnTimeMult = ( 1 + spawnTimeChange )
+	LocalPlayer().spawnTimeMult = spawnTimeChange
 end )

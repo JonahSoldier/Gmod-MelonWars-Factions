@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 	self:SetModel("models/props_c17/gravestone002a.mdl")
@@ -12,7 +12,7 @@ end
 
 function ENT:Think()
 	local vPoint = self:GetPos()+Vector(0,0,35)
-	SpawnUnitAtPos("ent_melon_doot", 0, vPoint, Angle(0,0,0), 0, 0, 0, false, nil, nil)
+	MelonWars.spawnUnitAtPos("ent_melon_doot", vPoint, Angle(0,0,0), 0, 0, 0, false, nil, nil)
 	local effectdata = EffectData()
 	effectdata:SetOrigin( vPoint )
 	util.Effect( "AntlionGib", effectdata )

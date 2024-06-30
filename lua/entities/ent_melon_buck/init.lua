@@ -1,11 +1,11 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_junk/plasticbucket001a.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -20,18 +20,17 @@ function ENT:Initialize()
 	self.shotSound = "weapons/shotgun/shotgun_fire6.wav"
 
 	self.buildingDamageMultiplier = 0.7
-	
+
 	self.shotOffset = Vector(0,0,5)
 
 	self.angularDamping = 10
 
-	--self:SetPos(self:GetPos()+Vector(0,0,12))
-	
 	self.nextShot = CurTime()+2
 
 	self.population = 3
-	
-	MW_Setup ( self )
+
+	self.useBBoxPhys = true
+	self:Setup()
 
 	construct.SetPhysProp( self:GetOwner() , self, 0, nil,  { GravityToggle = true, Material = "ice" } )
 end
@@ -41,17 +40,12 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-	--local vel = ent.phys:GetVelocity()
-	--ent.phys:SetAngles( ent.Angles )
-	--ent.phys:SetVelocity(vel)
-	MW_UnitDefaultThink ( ent )
-
+	MelonWars.unitDefaultThink ( ent )
 end
 
 function ENT:PhysicsUpdate()
-
-	local inclination = self:Align(self:GetAngles():Up(), Vector(0,0,1), 3000)
-	self.phys:ApplyForceCenter( Vector(0,0,inclination*100))
+	if not self:GetTable().canMove then return end
+	self:AlignUpright( 3000, 100 )
 
 	self:DefaultPhysicsUpdate()
 end
@@ -78,34 +72,16 @@ function ENT:Shoot ( ent, forceTargetPos )
 			local axis = right:Cross(baseDir):GetNormalized()
 			local bulletCount = 5
 			local baseAngle = baseDir:Angle()
-			for i=0, bulletCount do
+			for i = 1, bulletCount do
 				local rotatedDir = Angle(baseAngle.p, baseAngle.y, baseAngle.r)
 				rotatedDir:RotateAroundAxis(axis, (i-math.Round(bulletCount/2))*self.shotAngle/bulletCount)
 				local dir = rotatedDir:Forward()
-				/*local bullet = {}
-				bullet.Num=1
-				bullet.Src=pos
-				bullet.Dir=dir
-				bullet.Spread=Vector(0,0,0)
-				bullet.Tracer=1	
-				bullet.TracerName=ent.tracer
-				bullet.Force=2
 
-				bullet.Damage=ent.damageDeal
-				
-				bullet.Distance=ent.range*1.1
-
-				ent.fired = true
-
-				ent.nextShot = CurTime()+2
-
-				ent:FireBullets(bullet)*/
-				
-				MW_Bullet(ent, pos, dir, ent.range*1.1, ent, nil, 0)
+				MelonWars.bullet(ent, pos, dir, ent.range*1.1, ent, nil, 0)
 			end
 			local effectdata = EffectData()
 					effectdata:SetScale(1)
-					effectdata:SetAngles( (baseDir):Angle()) 
+					effectdata:SetAngles( (baseDir):Angle())
 					effectdata:SetOrigin( pos + (baseDir):GetNormalized()*10 )
 				util.Effect( "MuzzleEffect", effectdata )
 			sound.Play( ent.shotSound, pos )
@@ -114,5 +90,5 @@ function ENT:Shoot ( ent, forceTargetPos )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

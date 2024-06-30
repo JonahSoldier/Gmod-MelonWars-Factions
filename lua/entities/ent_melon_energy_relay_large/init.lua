@@ -1,11 +1,11 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Energy_Defaults ( self )
+	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_docks/dock01_pole01a_256.mdl"
 	self.maxHP = 50
@@ -21,7 +21,7 @@ function ENT:Initialize()
 
 	self:SetNWVector("energyPos", Vector(0,0,125))
 
-	MW_Energy_Setup ( self )
+	MelonWars.energySetup ( self )
 end
 
 function ENT:Think(ent)
@@ -39,5 +39,5 @@ function ENT:Shoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

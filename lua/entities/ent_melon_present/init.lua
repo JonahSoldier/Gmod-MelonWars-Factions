@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 local present_possibilities = {
 	"ent_melon_marine",
@@ -64,7 +64,7 @@ function ENT:Open(_team)
 
 	local randomclass = present_possibilities[ math.random( #present_possibilities ) ]
 
-	local unit = SpawnUnitAtPos (randomclass, 0, self:GetPos(), Angle(0,0,0), 0, 0, _team, false, nil, nil)
+	local unit = MelonWars.spawnUnitAtPos (randomclass, self:GetPos(), Angle(0,0,0), 0, 0, _team, false, nil, nil)
 
 	local time = 180
 

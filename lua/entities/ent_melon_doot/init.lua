@@ -1,11 +1,11 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/Gibs/HGIBS.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -31,11 +31,11 @@ function ENT:Initialize()
 
 	self.canBeSelected = false
 
-	MW_Setup ( self )
+	self:Setup()
 end
 
 function ENT:SlowThink ( ent )
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 	if (ent:GetNWInt("mw_melonTeam", 0) == 0 and ent.targetEntity == nil) then
 		local pos = ent:GetPos()+VectorRand(-100, 100)
 		ent:RemoveRallyPoints()
@@ -60,7 +60,7 @@ end
 
 function ENT:Shoot ( ent, forceTargetPos )
 	if (ent.ai or CurTime() > ent.nextControlShoot) then
-		MW_DefaultShoot ( ent, forceTargetPos )
+		MelonWars.defaultShoot ( ent, forceTargetPos )
 		ent.nextControlShoot = CurTime()+ent.slowThinkTimer
 	end
 end

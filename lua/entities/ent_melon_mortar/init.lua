@@ -5,7 +5,7 @@ include('shared.lua')
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_borealis/bluebarrel001.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
@@ -17,9 +17,6 @@ function ENT:Initialize()
 	self.minRange = 200
 
 	self.ai_chases = false
-	--self:SetPos(self:GetPos()+Vector(0,0,18))
-
-	--self.Angles = Angle(0,0,0)
 
 	self.careForFriendlyFire = false
 	self.careForWalls = false
@@ -31,14 +28,16 @@ function ENT:Initialize()
 
 	self.population = 3
 
-	self.nextShot = CurTime()+3
+	self.nextShot = CurTime() + 3
 
 	self.shotSound = "weapons/ar2/npc_ar2_altfire.wav"
 	self.tracer = "AR2Tracer"
 
 	self.slowThinkTimer = 0.5
 
-	MW_Setup ( self )
+	self.isAOE = true
+
+	self:Setup()
 	construct.SetPhysProp( self:GetOwner() , self, 0, nil,  { GravityToggle = true, Material = "ice" } )
 end
 
@@ -47,13 +46,12 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 end
 
 function ENT:PhysicsUpdate()
-
-	local inclination = self:Align(self:GetAngles():Up(), Vector(0,0,1), 10000)
-	self.phys:ApplyForceCenter( Vector(0,0,inclination*100))
+	if not self:GetTable().canMove then return end
+	self:AlignUpright( 10000, 100 )
 
 	self:DefaultPhysicsUpdate()
 end
@@ -94,5 +92,5 @@ function ENT:Shoot ( ent, forceTargetPos )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

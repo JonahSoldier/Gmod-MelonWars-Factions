@@ -1,23 +1,18 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
-	self.modelString = "models/props_phx/construct/metal_plate1x2.mdl"--"models/props_c17/TrapPropeller_Engine.mdl"
+	self.modelString = "models/props_phx/construct/metal_plate1x2.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
 	self.canShoot = true
 	self.speed = 200
 	self.force = 100
-
-	--self:SetAngles(self:GetAngles()+Angle(90,0,0))
-
-	--local offset = Vector(0,0,18.5)
-	--self:SetPos(self:GetPos()+offset)
 
 	self.closedpos = self:GetPos()
 	self.openedpos = self:GetPos()+Vector(0,0,80)
@@ -29,9 +24,9 @@ function ENT:Initialize()
 	self.process = CurTime()
 
 	self.damping = 4
-	
-	MW_Setup ( self )
-	
+
+	self:Setup()
+
 	self:GetPhysicsObject():EnableMotion(false)
 end
 
@@ -40,7 +35,6 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-	--MW_UnitDefaultThink ( ent )
 end
 
 function ENT:Actuate ()
@@ -63,9 +57,9 @@ function ENT:Update()
 end
 
 function ENT:Shoot ( ent )
-	--MW_DefaultShoot ( ent )
+	--MelonWars.defaultShoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

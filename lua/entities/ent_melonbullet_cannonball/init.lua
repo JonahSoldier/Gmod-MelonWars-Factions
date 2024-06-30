@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 	self:PhysicsInitSphere( 5, "default" )
@@ -22,7 +22,7 @@ function ENT:PhysicsCollide( colData, collider )
 	local vel = self:GetVelocity():Length()
 	if (self.exploded == false) then
 		local other = colData.HitEntity
-		local otherhealth = other:GetNWFloat("health", 0)
+		local otherhealth = v.HP --other:GetNWFloat("health", 0)
 		if (otherhealth ~= 0) then
 			self.exploded = true
 
@@ -32,9 +32,11 @@ function ENT:PhysicsCollide( colData, collider )
 			effectdata:SetOrigin( self:GetPos() )
 			util.Effect( "HelicopterMegaBomb", effectdata )
 			local newHealth = otherhealth-100
-			other:SetNWFloat("health", newHealth)
-			if (other:GetNWFloat("health", 1) <= 0) then
-				MW_Die(other)
+			--other:SetNWFloat("health", newHealth)
+			other.HP = newHealth
+			--if (other:GetNWFloat("health", 1) <= 0) then
+			if other.HP <= 0 then
+				MelonWars.die(other)
 			else
 				if (other:GetClass() == "ent_melon_wall") then
 					if (newHealth < 100) then

@@ -4,7 +4,6 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include('shared.lua')
 
 function ENT:Initialize()
-
 	self:SetModel("models/props_phx/rocket1.mdl")
 	self:SetSolid( SOLID_VPHYSICS )         -- Toolbox
 	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
@@ -24,13 +23,13 @@ function ENT:Initialize()
 
 	self.idsInside = {}
 
-
 	self.targetPos = Vector(0,0,0)
 	self.distance = 0
 
 	self:SetColor(Color(100,100,100, 255))
 	local trail = util.SpriteTrail(self, 0, Color(255,255,255), false, 10, 1, 2, 1/(15+1)*0.5, "effects/beam_generic01.vmt")
 
+	--[[
 	for i=0, 9 do
 		self:SetNWString("class"..i, "")
 		self:SetNWFloat("hp"..i, 0)
@@ -38,6 +37,7 @@ function ENT:Initialize()
 		self:SetNWInt("value"..i, 0)
 		self:SetNWInt("entindex"..i, 0)
 	end
+	--]]
 
 	self.launchTime = CurTime()
 	self.incomingSoundPlayed = true
@@ -46,11 +46,9 @@ function ENT:Initialize()
 	timer.Simple( 5, function()
 		self.incomingSoundPlayed = false
 	end)
-end
 
-/*function ENT:PhysicsCollide( colData, collider )
-	self:Explode()
-end*/
+	self.mwBulletIndestructible = true
+end
 
 function ENT:Think()
 
@@ -182,18 +180,18 @@ function ENT:Explode()
 				end
 			end
 
-			local count = table.Count(debri_props)
+			local count = table.Count(MelonWars.debrisProps)
 
 			for i = 1, count do --nicked the code from the HQ to make it spit out radioactive debris
 				local debris = ents.Create( "ent_melonium_plate" )
 				debris:Ignite( 500 )
 				debris:SetPos(self:GetPos() + Vector(math.random(-100,100), math.random(-100,100), math.random(0,200)))
 				debris:Spawn()
-				debris:SetModel(debri_props[i])
+				debris:SetModel(MelonWars.debrisProps[i])
 				debris:PhysicsInit(6)
 				local debrisPhys = debris:GetPhysicsObject()
 				debrisPhys:ApplyForceCenter(Vector(math.random(-5000,5000), math.random(-5000,5000), math.random(5000,35000)))
-				--MW_SickEffect(debris, 25)
+				--debris:DrawSickEffect( 25 )
 			end
 
 			local effectdata = EffectData()

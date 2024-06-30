@@ -1,51 +1,49 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_junk/MetalBucket01a.mdl"
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
-	
+
 	self.maxHP = 10
 	self.speed = 90
 	self.range = 150
-	
+
 	self.shotOffset = Vector(0,0,0)
 
 	self.ai_chases = false
 
 	self.angularDamping = 10
-	
-	--self:SetPos(self:GetPos()+Vector(0,0,12))
-	
+
 	self.nextShot = CurTime()+0.5
 
 	self.population = 2
 
-	MW_Setup ( self )
+	self.useBBoxPhys = true
+	self.isAOE = true
+
+	self:Setup()
 
 	construct.SetPhysProp( self:GetOwner() , self, 0, nil,  { GravityToggle = true, Material = "ice" } )
 
 	self.backpack = ents.Create( "prop_physics" )
-	if not IsValid( self.backpack ) then return end
 
 	self.backpack:SetModel("models/Items/car_battery01.mdl")
 	self.backpack:SetParent(self)
 
 	self.backpack:SetLocalAngles(Angle(0,180,90))
 	self.backpack:SetLocalPos(Vector(0,3.5,0))
-	self.backpack:SetColor( self.color ) 
-	
+	self.backpack:SetColor( self.color )
+
 	self.backpack:Spawn()
 
 	self.backpack:SetMaterial(self.materialString)
 	self.backpack:SetCollisionGroup( COLLISION_GROUP_IN_VEHICLE )
-
 end
 
 function ENT:ModifyColor()
@@ -55,16 +53,13 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-	--local vel = ent.phys:GetVelocity()
-	--ent.phys:SetAngles( ent.Angles )
-	--ent.phys:SetVelocity(vel)
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 
-	if(self.targetEntity ~= nil) then
-		if(self.targetEntity.moveType ~= MOVETYPE_NONE) then
+	if self.targetEntity ~= nil then
+		if self.targetEntity.moveType ~= MOVETYPE_NONE then
 			ent:LoseTarget()
 		else
-			if(self.targetEntity:GetClass() == "ent_melon_main_building" or self.targetEntity:GetClass() == "ent_melon_main_building_grand_war") then
+			if self.targetEntity:GetClass() == "ent_melon_main_building" or self.targetEntity:GetClass() == "ent_melon_main_building_grand_war" then
 				ent:LoseTarget()
 			end
 		end
@@ -73,39 +68,39 @@ function ENT:SlowThink ( ent )
 end
 
 function ENT:PhysicsUpdate()
-
-	local inclination = self:Align(self:GetAngles():Up()*-1, Vector(0,0,1), 1000)
-	self.phys:ApplyForceCenter( Vector(0,0,inclination*100))
+	if not self:GetTable().canMove then return end
+	local ang = self:GetAngles():Up()
+	ang:Negate()
+	local inclination = self:Align(ang, vector_up, 5000)
+	self.phys:ApplyForceCenter( Vector(0,0,inclination * 100))
 
 	self:DefaultPhysicsUpdate()
 end
 
 function ENT:Shoot ( ent, forceTargetPos )
-	if (ent.ai or CurTime() > ent.nextControlShoot) then
-		if(ent.targetEntity.moveType == MOVETYPE_NONE) then
-			if(self.targetEntity:GetClass() ~= "ent_melon_main_building" and self.targetEntity:GetClass() ~= "ent_melon_main_building_grand_war") then
+	local entTbl = ent:GetTable()
+	if not(entTbl.ai or CurTime() > entTbl.nextControlShoot) then return end
+	if self.targetEntity.moveType ~= MOVETYPE_NONE then return end --targetEntity.canMove would be a little less jank, but it lets you capture contraption components.
+	if self.targetEntity:GetClass() == "ent_melon_main_building" or self.targetEntity:GetClass() == "ent_melon_main_building_grand_war" then return end
 
-				MW_UpdatePopulation(ent.targetEntity.population*-1, ent.targetEntity:GetNWInt("mw_melonTeam",-1))
-				MW_UpdatePopulation(ent.targetEntity.population, self:GetNWInt("mw_melonTeam",-1))
+	MelonWars.updatePopulation(entTbl.targetEntity.population * - 1, entTbl.targetEntity:GetNWInt("mw_melonTeam",-1))
+	MelonWars.updatePopulation(entTbl.targetEntity.population, self:GetNWInt("mw_melonTeam",-1))
 
-				ent.targetEntity:SetNWInt("mw_melonTeam", self:GetNWInt("mw_melonTeam", 0))
-				ent.targetEntity:MelonSetColor( self:GetNWInt("mw_melonTeam", 0) )
+	entTbl.targetEntity:SetNWInt("mw_melonTeam", self:GetNWInt("mw_melonTeam", 0))
+	entTbl.targetEntity:MelonSetColor( self:GetNWInt("mw_melonTeam", 0) )
 
-				for k, v in pairs( player.GetAll() ) do
-					sound.Play("ItemBattery.Touch", v:GetPos(), 40, 90, 1)
-					sound.Play("AlyxEMP.Discharge", v:GetPos(), 40, 80, 1)
-				end
-			
-				sound.Play("ItemBattery.Touch", ent:GetPos(), 100, 90, 1)
-				sound.Play("AlyxEMP.Discharge", ent:GetPos(), 100, 80, 1)
-			
-				ent:Remove()	
-			end		
-		end
-
+	for i, v in ipairs( player.GetAll() ) do
+		local pos = v:GetPos()
+		sound.Play("ItemBattery.Touch", pos, 40, 90, 1)
+		sound.Play("AlyxEMP.Discharge", pos, 40, 80, 1)
 	end
+
+	sound.Play("ItemBattery.Touch", ent:GetPos(), 100, 90, 1)
+	sound.Play("AlyxEMP.Discharge", ent:GetPos(), 100, 80, 1)
+
+	ent:Remove()
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

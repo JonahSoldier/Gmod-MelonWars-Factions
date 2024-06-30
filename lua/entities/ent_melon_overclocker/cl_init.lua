@@ -1,32 +1,42 @@
-include('shared.lua')
+include("shared.lua")
 
---Laser = Material( "vgui/wave.png", "noclamp smooth" )
+local vOffset = Vector(0,0,16)
+local greenCol = Color( 0,255,0, 255 )
+local redCol = Color( 255,0,0, 255 )
+local angOffset = Angle(-90, 0, 0)
 function ENT:Draw()
-    -- self.BaseClass.Draw(self) -- Overrides Draw
-    self:DrawModel() -- Draws Model Client Side
+	self:DrawModel() -- Draws Model Client Side
 
-    --local state = self:GetNWFloat("energy", 0)/self:GetNWFloat("maxenergy", 1)
-    --local s = 10
-    --cam.Start3D2D( self:GetPos()+Vector(0,0,4), Angle(0,0,0), 1 )
-    --    surface.SetDrawColor( Color( 50, 50, 50, 255 ) )
-    --    surface.DrawRect( -s, -s, s*2, s*2 )
-    --    surface.SetDrawColor( Color( 0, state*255, state*255, 255 ) )
-    --    surface.DrawRect( -s+2, -s+2, s*2-4, s*2-4 )
-    --cam.End3D2D()
+	local angle = LocalPlayer():EyeAngles() + angOffset
+	local vpos = self:WorldSpaceCenter() + vOffset - angle:Forward() * 10 + angle:Right() * 10 + angle:Up() * 4
+	cam.Start3D2D(vpos, angle, 1)
+		if self:GetNWBool("active", false) then
+			surface.SetDrawColor(greenCol)
+		else
+			surface.SetDrawColor(redCol)
+		end
 
-    render.SetMaterial( Material( "color" ) )
-        --render.DrawBeam( self:WorldSpaceCenter(), self:GetNWVector("targetPos"), 1, 1, 1, Color( 0, 255, 0, 100 ) )
-    local angle = LocalPlayer():EyeAngles()+Angle(-90,0,0)
-    local vpos = self:WorldSpaceCenter()+Vector(0,0,16)-angle:Forward()*10+angle:Right()*10+angle:Up()*4
-    cam.Start3D2D( vpos, angle, 1 )
-        --Display de actividad
-        if (self:GetNWBool("active", false)) then
-            surface.SetDrawColor( Color( 0,255,0, 255 ) )
-        else
-            surface.SetDrawColor( Color( 255,0,0, 255 ) )
-        end
-        surface.DrawRect( -10, -15, 10, 10 )
-        surface.SetDrawColor( Color( 0,0,0, 255 ) )
-        surface.DrawOutlinedRect( -10, -15,10, 10 )
-    cam.End3D2D()
+		surface.DrawRect(-10, -15, 10, 10)
+		surface.SetDrawColor(color_black)
+		surface.DrawOutlinedRect(-10, -15, 10, 10)
+	cam.End3D2D()
+end
+
+function ENT:GetMessage()
+	local energyNetwork = MelonWars.electricNetwork[self:GetNWInt("network", nil)]
+	if not energyNetwork then return "" end
+	local addText = ""
+	local energy = energyNetwork.energy
+	local max = energyNetwork.capacity
+	if max == 0 then
+		addText = "No energy capacity.\nConnect batteries!"
+	else
+		addText = "Energy: " .. energy .. " / " .. max
+	end
+
+	if self:GetNWBool("active", true) then
+		return "Working\n" .. addText
+	else
+		return "Idle\n" .. addText
+	end
 end

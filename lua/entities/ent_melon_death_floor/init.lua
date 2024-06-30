@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 local melons = {}
 local melonsCount = 0
@@ -41,7 +41,7 @@ function ENT:Think()
 		if (IsValid(curMelon)) then
 			if (curMelon:OBBMins().z+curMelon:GetPos().z < self:GetPos().z) then
 				if (curMelon.Base == "ent_melon_prop_base") then
-					curMelon:MW_PropDefaultDeathEffect( curMelon )
+					curMelon:PropDefaultDeathEffect()
 				elseif (curMelon:GetNWInt("propHP", -1) ~= -1) then
 					local effectdata = EffectData()
 					effectdata:SetOrigin( curMelon:GetPos() )

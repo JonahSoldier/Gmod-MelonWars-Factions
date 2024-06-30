@@ -1,12 +1,12 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 	--self:SetPos(self:GetPos()+Vector(0,0,-5))
-	
-	MW_Defaults ( self )
+
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/props_rooftop/roof_vent004.mdl"
 	self.moveType = MOVETYPE_NONE
@@ -15,19 +15,19 @@ function ENT:Initialize()
 	self.canMove = false
 	self.canShoot = false
 	self.maxHP = 100
-	
+
 	self.active = true
-	
+
 	self.slowThinkTimer = 0.1
-	
+
 	self.population = 1
-	
+
 	self.deathSound = "ambient/explosions/explode_9.wav"
 	self.deathEffect = "Explosion"
 
-	MW_Setup ( self )
+	self:Setup()
 
-	
+
 	self.zone = ents.Create( "ent_melon_zone" )
 	self.zone:SetModel("models/hunter/tubes/tube4x4x025.mdl")
 	self.zone:SetCollisionGroup( COLLISION_GROUP_IN_VEHICLE )
@@ -42,8 +42,8 @@ function ENT:Initialize()
 
 	self:DeleteOnRemove( self.zone )
 
-	
-	timer.Simple(0.1, function () self:snapToGround() end) 
+
+	timer.Simple(0.1, function () self:snapToGround() end)
 	-- this doesn't seem like a super great way to do this but this seems to be what marum did so it's good enough for me
 end
 
@@ -55,12 +55,12 @@ function ENT:snapToGround()
 
 	local trace = util.TraceLine( {
 	start = pos+Vector(0,0,150),
-	endpos = pos-Vector(0,0,250), 
+	endpos = pos-Vector(0,0,250),
 	filter = function(foundEnt) if foundEnt.Base == "ent_melon_base" or foundEnt:GetClass() == "ent_melon_wall" then return false else return true end end
 	})
-	 
+
 	if(trace.Hit) then
-		self:SetPos(trace.HitPos)		
+		self:SetPos(trace.HitPos)
 	else
 		self:Remove()
 		for k, v in pairs(player.GetAll()) do
@@ -68,7 +68,7 @@ function ENT:snapToGround()
 				v:PrintMessage( HUD_PRINTTALK, "== Stations must be spawned on the ground! ==" )
 			end
 		end
-	end	
+	end
 end
 
 function ENT:SlowThink(ent)
@@ -76,9 +76,9 @@ function ENT:SlowThink(ent)
 end
 
 function ENT:Shoot ( ent )
-	--MW_DefaultShoot ( ent )
+	--MelonWars.defaultShoot ( ent )
 end
 
 function ENT:DeathEffect ( ent )
-	MW_DefaultDeathEffect ( ent )
+	MelonWars.defaultDeathEffect ( ent )
 end

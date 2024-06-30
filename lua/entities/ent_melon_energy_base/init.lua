@@ -10,34 +10,49 @@ Network.energy = 0
 Network.capacity = 0
 Network.elements = {}
 
-mw_electric_network = {}
+MelonWars.electricNetwork = MelonWars.electricNetwork or {}
+
+local lastThink = 0
+hook.Add("Think", "MW_UpdateNetWorks", function() --This is similar to using setNW on an entity, but will send less data than the old solution.
+	if CurTime() - lastThink < 1 then return end
+
+	for i, v in pairs(MelonWars.electricNetwork) do --TODO: idk if this table stays sequential or not.
+		if not(v.updated == false) then
+			net.Start("MW_UpdateNetwork")
+				net.WriteUInt(i, 10)
+				net.WriteUInt(v.energy, 20)
+				net.WriteUInt(v.capacity, 20)
+			net.Broadcast()
+			v.updated = false
+		end
+	end
+
+	lastThink = CurTime()
+end)
 
 local function MW_Network()
-	local newNetwork = table.Copy( Network )
-	return newNetwork
+	return table.Copy( Network )
 end
 
 local function MW_Energy_Network_New(ent)
 	local newNetwork = nil
 	local recycled = false
 	local index = 0
-	for k, v in pairs(mw_electric_network) do
-		if (recycled == false) then
-			if (v.active == false) then
-				v.active = true
-				index = k
-				newNetwork = v
-				recycled = true
-				break
-			end
+	for k, v in pairs(MelonWars.electricNetwork) do
+		if not(recycled or v.active) then
+			v.active = true
+			index = k
+			newNetwork = v
+			recycled = true
+			break
 		end
 	end
-	if (recycled == false) then
+	if not recycled then
 		newNetwork = MW_Network()
-		index = table.insert(mw_electric_network, newNetwork)
+		index = table.insert(MelonWars.electricNetwork, newNetwork)
 	end
 
-	newNetwork.name = "Network "..index
+	newNetwork.name = "Network " .. index
 	ent:SetNetwork(index)
 end
 
@@ -51,10 +66,11 @@ end
 
 local function MW_Energy_Network_Merge(ent, networkA, networkB)
 	--MW_Energy_Network_Insert_Element(ent, networkA)
-	local nwa = mw_electric_network[networkA]
-	local nwb = mw_electric_network[networkB]
+	local nwa = MelonWars.electricNetwork[networkA]
+	local nwb = MelonWars.electricNetwork[networkB]
 	--nwa.capacity = nwa.capacity + nwb.capacity
 	nwa.energy = nwa.energy + nwb.energy
+	nwa.updated = true
 	local count = table.Count(nwb.elements)
 	local safety = 0
 	for i=1, count do
@@ -67,28 +83,29 @@ end
 
 local function MW_CleanUp_Network(network)
 	local deleted = 0
-	for k, v in pairs(mw_electric_network[network].elements) do
-		if not IsValid(mw_electric_network[network].elements[k-deleted]) then
-			table.remove( mw_electric_network[network].elements, k-deleted )
+	for k, v in pairs(MelonWars.electricNetwork[network].elements) do
+		if not IsValid(MelonWars.electricNetwork[network].elements[k-deleted]) then
+			table.remove( MelonWars.electricNetwork[network].elements, k-deleted )
 			deleted = deleted + 1
 		end
 	end
-	if (table.Count(mw_electric_network[network].elements) == 0) then
-		MW_Energy_Deactivate_Network(mw_electric_network[network])
+	if (table.Count(MelonWars.electricNetwork[network].elements) == 0) then
+		MW_Energy_Deactivate_Network(MelonWars.electricNetwork[network])
 	end
 end
 
 local function MW_Energy_Network_Insert_Element(ent, network)
 	MW_CleanUp_Network(network)
-	local nw = mw_electric_network[network]
+	local nw = MelonWars.electricNetwork[network]
 	nw.active = true
 	nw.capacity = nw.capacity + ent.capacity
+	nw.updated = true
 	table.insert(nw.elements, ent)
 	ent.network = network
 	ent:SetNWInt("network", network)
 end
 
-function MW_CalculateConnections(ent, all)
+function MelonWars.calculateConnections(ent, all)
 	timer.Simple(0.05, function ()
 		constraint.RemoveConstraints( ent, "Rope" )
 		local foundEntities = table.Add(foundConnections, ents.FindInSphere(ent:GetPos(), ent.connectionRange))
@@ -97,7 +114,7 @@ function MW_CalculateConnections(ent, all)
 			--find every energy entity
 		local pos = ent:OBBCenter()
 		table.sort( foundEntities, function( a, b ) return ((a:GetPos()-pos):LengthSqr() < (b:GetPos()-pos):LengthSqr()) end )
-		for k, v in pairs(foundEntities) do
+		for i, v in ipairs(foundEntities) do
 			if (count >= 3) then break end
 			if (v ~= ent) then
 				if ((all == true and v.Base == "ent_melon_energy_base") or (all == false and v.connectToMachines) or (ent.connectToRelaysOnly == true and string.StartWith(v:GetClass(), "ent_melon_energy_relay"))) then
@@ -142,12 +159,14 @@ function MW_CalculateConnections(ent, all)
 end
 
 local function MW_Energy_Network_Search(ent, targetEnt)
+	if not IsValid(ent) then return end
+
 	local openList = {}
 	local closedList = {}
 	local foundEnt = nil
 	local safety = 0
 	table.insert(openList, ent)
-	while(table.Count(openList) > 0 and foundEnt == nil and safety < 10000) do
+	while table.Count(openList) > 0 and foundEnt == nil and safety < 10000 do
 		local current = openList[1]
 
 		current.alreadySearched = true
@@ -177,12 +196,13 @@ local function MW_Energy_Network_Search(ent, targetEnt)
 	return closedList, found
 end
 
-function MW_Energy_Network_Remove_Element(ent)
+function MelonWars.energyNetworkRemoveElement(ent)
 	local network = ent.network
-	local nw = mw_electric_network[network]
+	local nw = MelonWars.electricNetwork[network]
 	if (nw ~= nil) then
 		nw.energy = nw.energy-ent:GetEnergy()
 		nw.capacity = nw.capacity - ent.capacity
+		nw.updated = true
 		table.RemoveByValue( nw.elements, ent )
 		local touched = {}
 		local ambassador = nil
@@ -210,7 +230,8 @@ function MW_Energy_Network_Remove_Element(ent)
 								i.alreadySet = true
 								table.insert(touched, i)
 							end
-							mw_electric_network[newNetwork].energy = separatedEnergy
+							MelonWars.electricNetwork[newNetwork].energy = separatedEnergy
+							MelonWars.electricNetwork[newNetwork].updated = true
 							totalSeparatedEnergy = totalSeparatedEnergy + separatedEnergy
 						end
 						for j, i in pairs(searched) do
@@ -232,8 +253,8 @@ function MW_Energy_Network_Remove_Element(ent)
 	MW_CleanUp_Network(network)
 end
 
-function MW_Energy_Defaults( ent )
-	MW_Defaults(ent)
+function MelonWars.energyDefaults( ent )
+	MelonWars.defaults(ent)
 
 	ent.moveType = MOVETYPE_NONE
 	ent.connections = {}
@@ -252,52 +273,37 @@ function MW_Energy_Defaults( ent )
 	ent:SetNWFloat("percentage", 0)
 end
 
-function MW_Energy_Setup( ent )
-	MW_Setup(ent)
-	MW_CalculateConnections(ent, ent.connectToMachines)
+function MelonWars.energySetup( ent )
+	ent:Setup()
+	MelonWars.calculateConnections(ent, ent.connectToMachines)
 end
 
-function ENT:Energy_Set_State()
-	local energy = mw_electric_network[self.network].energy
+function ENT:Energy_Set_State() --TODO: This function might not be needed any more
+	local energy = MelonWars.electricNetwork[self.network].energy
 	if (tostring(energy) == "nan") then
-		mw_electric_network[self.network].energy = 0
-		energy = 0
+		MelonWars.electricNetwork[self.network].energy = 0
+		MelonWars.electricNetwork[self.network].updated = true
 	end
-	local max = mw_electric_network[self.network].capacity
-	local message = "Energy: "..energy.." / "..max
-	local state = math.Round(energy/max*1000)
-	if (max == 0) then
-		message = "No energy capacity.\nConnect batteries!"
-		state = 0
-	end
-	self:SetNWString("message", message)
-	self:SetNWInt("state", state)
 end
 
-function ENT:Energy_Add_State()
-	local energy = mw_electric_network[self.network].energy
+function ENT:Energy_Add_State() --TODO: This function might not be needed any more
+	local energy = MelonWars.electricNetwork[self.network].energy
 	if (tostring(energy) == "nan") then
-		mw_electric_network[self.network].energy = 0
-		energy = 0
+		MelonWars.electricNetwork[self.network].energy = 0
+		MelonWars.electricNetwork[self.network].updated = true
 	end
-	local max = mw_electric_network[self.network].capacity
-	local message = "Energy: "..energy.." / "..max
-	local state = math.Round(energy/max*1000)
-	if (max == 0) then
-		message = "No energy capacity.\nConnect batteries!"
-		state = 0
-	end
-	self:SetNWString("message", self:GetNWString("message","").."\n"..message)
-	self:SetNWInt("state", state)
 end
 
 function ENT:OnRemove()
-	if (istable(self.connections)) then
-		for k, v in pairs(self.connections) do
-			table.RemoveByValue(v.connections, self)
+	local selfTbl = self:GetTable()
+	if istable(selfTbl.connections) then
+		for k, v in pairs(selfTbl.connections) do
+			if istable(v.connections) then
+				table.RemoveByValue(v.connections, self)
+			end
 		end
 	end
-	MW_Energy_Network_Remove_Element(self)
+	MelonWars.energyNetworkRemoveElement(self)
 	self:DefaultOnRemove()
 end
 
@@ -306,9 +312,10 @@ function ENT:SetNetwork(network)
 
 	if (previousNetwork > 0) then
 		if (previousNetwork ~= nil) then
-			local prevnw = mw_electric_network[previousNetwork]
+			local prevnw = MelonWars.electricNetwork[previousNetwork]
 			prevnw.energy = prevnw.energy-self:GetEnergy()
 			prevnw.capacity = prevnw.capacity - self.capacity
+			prevnw.updated = true
 			table.RemoveByValue( prevnw.elements, self )
 			if (table.Count( prevnw.elements ) == 0) then
 				MW_Energy_Deactivate_Network(prevnw)
@@ -319,35 +326,38 @@ function ENT:SetNetwork(network)
 	MW_Energy_Network_Insert_Element(self, network, self:GetEnergy(previousNetwork))
 end
 
-function ENT:GetEnergy(network)
-	if (network == nil) then
-		network = self.network
-	end
-	if(self.network > 0) then
-		return math.floor(mw_electric_network[self.network].energy*(self.capacity/mw_electric_network[self.network].capacity))
+function ENT:GetEnergy(network) --TODO: Is there even a point of passing network here?
+	local selfTbl = self:GetTable()
+	network = network or selfTbl.network
+
+	if selfTbl.network > 0 then
+		local energyNetwork = MelonWars.electricNetwork[selfTbl.network]
+		return math.floor(energyNetwork.energy * (selfTbl.capacity / energyNetwork.capacity))
 	else
 		return 0
 	end
 end
 
-function ENT:DrainPower(power)
-	local enough = false
-	if (mw_electric_network[self.network].energy >= power) then
-		enough = true
-		mw_electric_network[self.network].energy = mw_electric_network[self.network].energy - power
+function ENT:DrainPower(power) --TODO: See if we can use this and GivePower to reliably detect updates. I'm not sure if any entities mess with energy directly.
+	local energyNetwork = MelonWars.electricNetwork[self:GetTable().network]
+	if (energyNetwork.energy >= power) then
+		energyNetwork.energy = energyNetwork.energy - power
+		energyNetwork.updated = true
+		return true
 	end
-	return enough
+	return false
 end
 
 function ENT:GivePower(power)
-	local can = true
-	if (self.network > 0) then
-		local nw = mw_electric_network[self.network]
-		if (nw.energy+power > nw.capacity) then
-			can = false
+	local netIndex = self:GetTable().network
+	if (netIndex > 0) then
+		local nw = MelonWars.electricNetwork[netIndex]
+		if (nw.energy + power > nw.capacity) then
+			return false
 		else
 			nw.energy = nw.energy + power
+			nw.updated = true
 		end
 	end
-	return can
+	return true
 end

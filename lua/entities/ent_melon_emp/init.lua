@@ -1,24 +1,24 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
-	MW_Defaults ( self )
+	MelonWars.defaults ( self )
 
 	self.modelString = "models/maxofs2d/hover_classic.mdl"
 	self.materialString = ""
-	
+
 	self.deathSound = "ambient/explosions/explode_9.wav"
-	
+
 	self.careForFriendlyFire = false
-	
+
 	self.slowThinkTimer = 1
-	
+
 	self.population = 2
 
 	self.sphereRadius = 9
-	
+
 	self.moveType = MOVETYPE_VPHYSICS
 	self.canMove = true
 	self.range = 80
@@ -30,7 +30,7 @@ function ENT:Initialize()
 
 	self.dootChance = 0
 
-	MW_Setup ( self )
+	self:Setup()
 
 	self:SetNWInt("mw_charge", 0)
 	self:SetNWInt("maxCharge", 50)
@@ -53,7 +53,7 @@ function ENT:DeathEffect( ent )
 			local foundEnts = ents.FindInSphere(pos, ent.range )
 			for k, v in RandomPairs( foundEnts ) do
 				if not (v:GetClass() == "ent_melon_emp") then
-					
+
 					if(v.nextSlowThink == nil or v.nextSlowThink < CurTime()) then
 						v.nextSlowThink = CurTime()
 					else
@@ -61,13 +61,13 @@ function ENT:DeathEffect( ent )
 					end
 					--v:NextThink( v.nextSlowThink+15 )
 					v.damage = 1
-					
+
 					if(v.speed ~= nil and not v.stunned) then
 						local originalSpeed = v.speed
 						v.speed = v.speed * 0.75
 
-						v.stunned = true 
-						
+						v.stunned = true
+
 						timer.Simple( 10, function()
 							v.speed = originalSpeed
 							v.stunned = false
@@ -75,15 +75,15 @@ function ENT:DeathEffect( ent )
 					end
 
 					if(v.Base == "ent_melon_energy_base") then
-						if (mw_electric_network[v.network].energy > 1000) then
-							mw_electric_network[v.network].energy = mw_electric_network[v.network].energy - 1000
+						if (MelonWars.electricNetwork[v.network].energy > 1000) then
+							MelonWars.electricNetwork[v.network].energy = MelonWars.electricNetwork[v.network].energy - 1000
 						else
-							mw_electric_network[v.network].energy = 0
+							MelonWars.electricNetwork[v.network].energy = 0
 						end
 
-						for k, v in pairs(mw_electric_network[v.network].elements) do
+						for k, v in pairs(MelonWars.electricNetwork[v.network].elements) do
 							v:Energy_Set_State()
-							if(v.nextSlowThink < CurTime()) then 
+							if(v.nextSlowThink < CurTime()) then
 								v.nextSlowThink = CurTime()
 							else
 								v.nextSlowThink = v.nextSlowThink+15
@@ -109,12 +109,12 @@ function ENT:DeathEffect( ent )
 			sound.Play("NPC_Vortigaunt.Explode", ent:GetPos(), 100, 80, 1)
 
 			--NPC_Vortigaunt.Explode
-			
+
 			local pos1 = ent:GetPos()-- Set worldpos 1. Add to the hitpos the world normal.
 			local pos2 = ent:GetPos()+Vector(0,0,-20) -- Set worldpos 2. Subtract from the hitpos the world normal.
 			ent.fired = true
 			ent:Remove()
-			
+
 			util.Decal("Scorch",pos1,pos2)
 		end
 	end)
@@ -127,7 +127,7 @@ function ENT:SlowThink ( ent )
 		self.canShoot = true
 	end
 
-	MW_UnitDefaultThink ( ent )
+	MelonWars.unitDefaultThink ( ent )
 end
 
 
@@ -138,7 +138,7 @@ function ENT:OnTakeDamage( damage )
 	util.Effect( "StunstickImpact", effectData )
 
 	if (self.canMove) then
-		if ((damage:GetAttacker():GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not damage:GetAttacker():GetVar('careForFriendlyFire')) and not damage:GetAttacker():IsPlayer()) then 
+		if ((damage:GetAttacker():GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not damage:GetAttacker():GetVar('careForFriendlyFire')) and not damage:GetAttacker():IsPlayer()) then
 			if (damage:GetAttacker():GetNWInt("mw_melonTeam", 0) == self:GetNWInt("mw_melonTeam", 0)) then
 				self.HP = self.HP - damage:GetDamage()/10
 			else
@@ -146,7 +146,7 @@ function ENT:OnTakeDamage( damage )
 			end
 			self:SetNWFloat( "health", self.HP )
 			if (self.HP <= 0) then
-				MW_Die (self)
+				MelonWars.die (self)
 			end
 		end
 	else
@@ -170,7 +170,7 @@ function ENT:Shoot ( ent, forcedTargetPos)
 			--util.Effect( "Explosion", effectdata )
 			--ent:Remove()
 				ent:SetPos(ent:GetPos()+Vector(0,0,3))
-				MW_Die ( ent )
+				MelonWars.die ( ent )
 			end
 		end
 	end )

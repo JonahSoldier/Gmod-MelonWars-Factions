@@ -1,16 +1,16 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
- 
-include('shared.lua')
+
+include( "shared.lua" )
 
 function ENT:Initialize()
 	self.slowThinkTimer = 20
 
 	self.nextSlowThink = CurTime()+10
 	self:SetModel( "models/maxofs2d/balloon_classic.mdl" )
-	
+
 	self:SetMaterial("models/shiny")
-	
+
 	self:PhysicsInit( SOLID_VPHYSICS )      -- Make us work with physics,
 	self:SetSolid( SOLID_VPHYSICS )         -- Toolbox
 	self:SetMoveType( MOVETYPE_NONE )
