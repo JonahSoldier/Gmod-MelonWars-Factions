@@ -18,7 +18,6 @@ function ENT:Initialize()
 	self:SetNWVector("energyPos", Vector(0,0,30))
 
 	self.maxWater = 4000
-	--self.waterGenerated = 0
 	self:SetNWInt("waterGenerated", 0)
 
 	MelonWars.energySetup ( self )
@@ -43,7 +42,6 @@ function ENT:Think(ent)
 				self:SetNWInt("waterGenerated", waterGenerated + waterGain)
 				MelonWars.updateClientCredits(selfTeam)
 			end
-			--self:Energy_Add_State()
 		else
 			self:SetColor(Color(150,150,150,255))
 

@@ -61,7 +61,7 @@ function ENT:DeathEffect( ent )
 	MelonWars.defaultDeathEffect( ent )
 end
 
-function ENT:PhysicsUpdate() --TODO: Jetpack-esque slowfall
+function ENT:PhysicsUpdate()
 	if not self:GetNWBool("done",false) then return end
 
 	local hoverdistance = 200
@@ -86,7 +86,7 @@ function ENT:PhysicsUpdate() --TODO: Jetpack-esque slowfall
 	if (distance < hoverdistance) then
 		force = -(distance-hoverdistance) * hoverforce
 		local vel = phys:GetVelocity()
-		vel.x, vel.y, vel.z = 0, 0, -vel.z * 8 --TODO: Make this relative to contraption mass(?)
+		vel.x, vel.y, vel.z = 0, 0, -vel.z * 8 --*TODO: Make this relative to contraption mass(?)
 		phys:ApplyForceCenter(vel)
 	else
 		force = 0

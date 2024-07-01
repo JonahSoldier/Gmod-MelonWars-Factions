@@ -45,7 +45,7 @@ function ENT:Think(ent)
 		local energyNetwork = MelonWars.electricNetwork[selfTbl.network]
 
 		powerAffected = math.min(energyNetwork.energy, energyCost)
-		--TODO: Approximate energy income?
+		--*TODO: Approximate energy income?
 
 		if self:DrainPower(powerAffected) then
 			if selfTbl.currentPowerEffect ~= powerAffected then

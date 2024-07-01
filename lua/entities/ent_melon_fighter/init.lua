@@ -1,4 +1,3 @@
---TODO: This file needs a lot of work
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 

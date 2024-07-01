@@ -154,7 +154,7 @@ local function MW_Spawn( ent )
 		local mins = ent.phys:GetAABB()
 		baseSize = (-mins.x-mins.y) * 0.6
 	end
-	ent:SetNWFloat( "baseSize", baseSize + 5 ) --TODO: See if this can be done without networking
+	ent:SetNWFloat( "baseSize", baseSize + 5 ) --*TODO: See if this can be done without networking
 
 	hook.Run("MelonWarsEntitySpawned", ent)
 end

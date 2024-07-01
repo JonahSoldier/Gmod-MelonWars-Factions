@@ -16,7 +16,6 @@ function ENT:Initialize()
 	self.shotOffset = Vector(0,0,65)
 
 	self.canMove = false
-	--self.canBeSelected = false --TODO: Does this do anything?
 	self.moveType = MOVETYPE_NONE
 
 	self.population = 0

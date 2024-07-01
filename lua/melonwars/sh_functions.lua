@@ -69,7 +69,7 @@ function MelonWars.canSpawn( unitIndex, attach, mwTeam, position, pl, attachEnt 
 		return false
 	end
 
-	if not(pl.canPlace or SERVER) then --TODO: Should be checked on server too, but I'll do that later.
+	if not(pl.canPlace or SERVER) then --*TODO: Should be checked on server too, but I'll do that later.
 		pl:PrintMessage( HUD_PRINTTALK, "== What you're trying to spawn overlaps with something else! ==" )
 		return false
 	end
@@ -149,9 +149,9 @@ function MelonWars.selectionCylinder(pos, radius, mwTeam, hitEnt, isTypeSelect)
 		depth = math.max(25, depth)
 		height = math.max(25, height)
 
-		if entClass == "ent_melon_jetpack" then --TODO: Replace with non-hardcoded version.
+		if hitEnt.height then --Flying units (jetpacks, fighters)
 			allFoundEntities = ents.FindInBox(pos - Vector(radius,radius,50), pos + Vector(radius,radius,50) )
-		else
+		else --Everything else
 			allFoundEntities = ents.FindInBox(pos - Vector(radius,radius,depth-1), pos + Vector(radius,radius,height-1) )
 		end
 
@@ -166,8 +166,7 @@ function MelonWars.selectionCylinder(pos, radius, mwTeam, hitEnt, isTypeSelect)
 			end
 		end
 	else
-		--We will figure this out later.
-		if hitEnt.Base == "ent_melon_base" then
+		if hitEnt.Base == "ent_melon_base" or hitEnt.Base == "ent_melon_energy_base" then
 			table.insert(foundEnts, hitEnt)
 		else
 			foundEnts = ents.FindInSphere( pos, 10 )
@@ -178,14 +177,14 @@ function MelonWars.selectionCylinder(pos, radius, mwTeam, hitEnt, isTypeSelect)
 
 	for i = #foundEnts, 1, -1 do
 		local v = foundEnts[i]
+		local vTbl = v:GetTable()
 		local vClass = v:GetClass()
 
-		classCheck = string.StartWith( vClass, "ent_melon_" ) --TODO: This seems like a bad solution.
-		canMove = moveAnyTeam or v:GetNWInt( "mw_melonTeam", -1 ) == mwTeam
-		notZone = vClass ~= "ent_melon_zone"
-		typeSelectCheck = not isTypeSelect or vClass == entClass
-		if not(classCheck and canMove and notZone and typeSelectCheck and v:IsValid()) then
-			table.remove( foundEnts, i )
+		local baseCheck = vTbl.Base == "ent_melon_base" or vTbl.Base == "ent_melon_energy_base"
+		local typeSelectCheck = not isTypeSelect or vClass == entClass
+
+		if not(v:IsValid() and baseCheck and typeSelectCheck and (moveAnyTeam or v:GetNWInt( "mw_melonTeam", -1 ) == mwTeam) ) then
+			table.remove(foundEnts, i)
 		end
 	end
 

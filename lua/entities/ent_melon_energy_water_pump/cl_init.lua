@@ -1,7 +1,6 @@
 include("shared.lua")
 
---TODO: Maybe make a proper on/off indicator
-
+--*TODO: Maybe make a proper on/off indicator
 function ENT:GetMessage()
 	local energyNetwork = MelonWars.electricNetwork[self:GetNWInt("network", nil)]
 	if not energyNetwork then return "" end

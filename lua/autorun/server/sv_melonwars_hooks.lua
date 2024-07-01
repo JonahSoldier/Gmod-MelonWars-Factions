@@ -62,7 +62,7 @@ timer.Simple(0, function()
 		if dmgInfo:GetAttacker() == target then return end
 
 		local targetTbl = target:GetTable()
-		if not(targetTbl.Base == "ent_melon_base" or targetTbl.Base == "ent_melon_energy_base") then return end
+		if not(targetTbl.Base == "ent_melon_base" or targetTbl.Base == "ent_melon_energy_base" or targetTbl.Base == "ent_melon_prop_base") then return end
 
 		target:OnTakeDamage(dmgInfo) --We need to do this here, because it'll be screwed up by changing the attacker.
 		target.mw_suppressOnTakeDamage = true --So that we don't run OnTakeDamage twice
