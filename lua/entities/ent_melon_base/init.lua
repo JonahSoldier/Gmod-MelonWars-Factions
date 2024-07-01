@@ -825,9 +825,14 @@ function ENT:DefaultPhysicsUpdate()
 end
 
 function ENT:OnTakeDamage( damage )
+	local selfTbl = self:GetTable()
+	if selfTbl.mw_suppressOnTakeDamage then --Related to bypassing damage-protection resulting from prop-protect addons. See sv_melonwars_hooks.lua
+		selfTbl.mw_suppressOnTakeDamage = nil
+		return
+	end
+
 	local attacker = damage:GetAttacker()
 	if (attacker:GetNWInt("mw_melonTeam", 0) ~= self:GetNWInt("mw_melonTeam", 0) or not attacker.careForFriendlyFire) and not attacker:IsPlayer() then
-		local selfTbl = self:GetTable()
 		local damageDone = damage:GetDamage()
 
 		if not selfTbl.canMove then
