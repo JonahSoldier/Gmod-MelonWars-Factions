@@ -6,7 +6,6 @@ if engine.ActiveGamemode() ~= "sandbox" then return end
 util.AddNetworkString( "MW_TeamCredits" )
 util.AddNetworkString( "MW_TeamUnits" )
 util.AddNetworkString( "MW_UpdateClientInfo" )
-util.AddNetworkString( "MW_UpdateServerInfo" )
 
 util.AddNetworkString( "MW_SelectContraption" )
 util.AddNetworkString( "MW_RequestSelection" )
@@ -265,11 +264,6 @@ net.Receive( "MW_UpdateClientInfo", function( _, pl )
 	end
 end )
 
-net.Receive( "MW_UpdateServerInfo", function() --TODO: This is bad. It shouldn't exist.
-	local a = net.ReadInt(8)
-	MelonWars.teamCredits[a] = net.ReadInt(32)
-end )
-
 net.Receive( "MW_UseWaterTank", function( _, pl )
 	local ent = net.ReadEntity()
 	local _team = ent.capTeam
@@ -433,6 +427,8 @@ net.Receive( "ContraptionSave", function( _, pl )
 	local name = net.ReadString()
 	local entity = net.ReadEntity()
 
+	if CPPI and not(entity:CPPIGetOwner() == pl) then return end
+
 	if entity:IsWorld() then return end
 	local entities = constraint.GetAllConstrainedEntities( entity )
 	for _, v in pairs(entities) do
@@ -510,7 +506,7 @@ function MelonWars.contraptionSpawn( spawnerEnt )
 		owner = spawnerEnt
 	else
 		pos = spawnerEnt:GetPos()
-		entTeam = spawnerEnt:GetNWInt("mw_melonTeam")
+		entTeam = spawnerEnt:GetNWInt("mw_melonTeam", -1)
 		owner = spawnerEnt.player
 	end
 
@@ -657,7 +653,7 @@ local function MW_SpawnProp( model, pos, ang, _team, parent, health, cost, pl, s
 	return newMarine
 end
 
-net.Receive( "MW_SpawnProp", function( _, pl )
+net.Receive( "MW_SpawnProp", function( _, pl ) --*TODO: Logic here should ideally be shared the same way it is for unit spawning
 	local index = net.ReadUInt(8)
 	local trace = net.ReadTable() --*TODO: just send the entity and pos over the network, not the entire traceResult table.
 	local _team = net.ReadInt(8)
@@ -666,7 +662,16 @@ net.Receive( "MW_SpawnProp", function( _, pl )
 	local baseProp = MelonWars.baseProps[index]
 
 	local cost = baseProp.cost
-	local spawntime = baseProp.spawn_time * cvars.Number("mw_admin_spawn_time")
+
+	pl.mw_spawntime = pl.mw_spawntime or 0
+	if cvars.Bool("mw_admin_spawn_time") then
+		pl.mw_spawntime = (pl.mw_spawntime > CurTime() and pl.mw_spawntime) or CurTime()
+		pl.mw_spawntime = pl.mw_spawntime + baseProp.spawn_time * (pl.spawnTimeMult or 1)
+	end
+
+	if cvars.Bool("mw_admin_credit_cost") then
+		MelonWars.teamCredits[_team] = MelonWars.teamCredits[_team] - cost
+	end
 	local offset
 	if cvars.Bool("mw_prop_offset") then
 		offset = baseProp.offset
@@ -678,7 +683,7 @@ net.Receive( "MW_SpawnProp", function( _, pl )
 	local yoffset = Vector( offset.y * ( -math.sin( propAngle.y / 180 * math.pi ) ), offset.y * ( math.cos( propAngle.y / 180 * math.pi ) ), 0 )
 	offset = xoffset + yoffset + Vector( 0, 0, offset.z )
 
-	MW_SpawnProp(baseProp.model, trace.HitPos + trace.HitNormal + offset, propAngle + baseProp.angle, _team, trace.Entity, baseProp.hp, cost, pl, spawntime, offset)
+	MW_SpawnProp(baseProp.model, trace.HitPos + trace.HitNormal + offset, propAngle + baseProp.angle, _team, trace.Entity, baseProp.hp, cost, pl, pl.mw_spawntime, offset)
 end )
 
 local function MW_SpawnBaseAtPos(_team, vector, pl, grandwar, unit)

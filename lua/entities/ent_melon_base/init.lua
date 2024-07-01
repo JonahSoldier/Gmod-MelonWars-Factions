@@ -472,13 +472,13 @@ function ENT:ApplyTorque( torque )
 	phys:ApplyForceOffset( forceDirection, pos )
 end
 
-function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
+function MelonWars.unitDefaultThink( ent ) --*TODO: Refactor
 	local pos = ent:GetPos()
-	if not util.IsInWorld( pos ) then ent:Remove() end
+	if not util.IsInWorld( pos ) then ent:Remove() return end
 	local entTbl = ent:GetTable()
 	if not ( entTbl.canShoot and entTbl.ai ) then return end
 
-	if ( not(IsValid(entTbl.targetEntity)) or entTbl.targetEntity.Base == "ent_melon_prop_base" or entTbl.targetEntity:GetNWInt("propHP",-1) ~= -1) then
+	if not(IsValid(entTbl.targetEntity)) or entTbl.targetEntity.Base == "ent_melon_prop_base" or entTbl.targetEntity:GetNWInt("propHP",-1) ~= -1 then
 		----------------------------------------------------------------------Buscar target
 		local foundEnts = ents.FindInSphere(pos, entTbl.range )
 
@@ -537,7 +537,7 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 		end
 	end
 
-	if (entTbl.targetEntity ~= nil) then
+	if entTbl.targetEntity then
 		----------------------------------------------------------------------Perder target
 		----------------------------------------porque no existe
 		if not IsValid(entTbl.targetEntity) then
@@ -560,26 +560,28 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 			return ent:LoseTarget()
 		end
 		----------------------------------------porque está lejos (o muy cerca)
-		local targetDist = entTbl.targetEntity:GetPos():Distance(pos)
-		if (IsValid(entTbl.targetEntity) and (targetDist > entTbl.range + entTbl.targetEntity:GetNWFloat( "baseSize", 0) or targetDist < entTbl.minRange)) then
-			if (entTbl.chaseStance and entTbl.ai_chases) then
-				if (not entTbl.chasing) then
-					entTbl.holdGroundPosition = pos
-					entTbl.chasing = true
-				end
-				local tepos = entTbl.targetEntity:GetPos()
-				entTbl.targetPos = tepos
-				ent:SetNWVector("targetPos", tepos)
-				entTbl.moving = true
-				entTbl.followEntity = ent
-				ent:SetNWEntity("followEntity", ent)
-				if ((tepos-entTbl.holdGroundPosition):LengthSqr() > entTbl.maxChaseDistance*entTbl.maxChaseDistance) then
+		if IsValid(entTbl.targetEntity) then
+			local targetDist = entTbl.targetEntity:GetPos():Distance(pos)
+			if targetDist > entTbl.range + entTbl.targetEntity:GetNWFloat( "baseSize", 0) or targetDist < entTbl.minRange then
+				if (entTbl.chaseStance and entTbl.ai_chases) then
+					if (not entTbl.chasing) then
+						entTbl.holdGroundPosition = pos
+						entTbl.chasing = true
+					end
+					local tepos = entTbl.targetEntity:GetPos()
+					entTbl.targetPos = tepos
+					ent:SetNWVector("targetPos", tepos)
+					entTbl.moving = true
+					entTbl.followEntity = ent
+					ent:SetNWEntity("followEntity", ent)
+					if ((tepos-entTbl.holdGroundPosition):LengthSqr() > entTbl.maxChaseDistance*entTbl.maxChaseDistance) then
+						ent:LoseTarget()
+					end
+				else
 					ent:LoseTarget()
 				end
-			else
-				ent:LoseTarget()
+				return false
 			end
-			return false
 		end
 		----------------------------------------------objetivo forzado
 		if (IsValid(entTbl.forcedTargetEntity)) then
@@ -600,21 +602,15 @@ function MelonWars.unitDefaultThink( ent ) --TODO: Optimize
 			})
 		----------------------------------------por que hay algo en el medio
 
-		if (entTbl.careForWalls) then
-			if (tostring(tr.Entity) ~= "[NULL Entity]") then
-				return ent:LoseTarget()
-			end
-
-			if (tostring(tr.Entity) == "Entity [0][worldspawn]") then
-				return ent:LoseTarget()
-			end
+		if entTbl.careForWalls and tr.Entity:IsValid() or tr.Entity:IsWorld() then
+			return ent:LoseTarget()
 		end
 	end
 
-	if (entTbl.targetEntity ~= nil) then
+	if entTbl.targetEntity then
 		local distSqr = entTbl.targetEntity:GetPos():DistToSqr(pos)
 		if distSqr < (entTbl.range + entTbl.targetEntity:GetNWFloat( "baseSize", 0)) ^ 2 and distSqr > entTbl.minRange ^ 2 then
-			if (entTbl.targetEntity:GetNWInt("mw_melonTeam", 0) ~= ent:GetNWInt("mw_melonTeam", 0)) then --TODO: maybe re-structure to get our team earlier and recycle it here too.
+			if entTbl.targetEntity:GetNWInt("mw_melonTeam", 0) ~= ent:GetNWInt("mw_melonTeam", 0) then
 				ent:Shoot( ent )
 			end
 		end

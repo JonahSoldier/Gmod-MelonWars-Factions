@@ -76,7 +76,7 @@ function ENT:PhysicsUpdate()
 			local ph = ent:GetPhysicsObject()
 			return IsValid(ph) and not ph:IsMoveable()
 		end,
-		mask = MASK_WATER + MASK_SOLID --TODO: Maybe disable movement on water
+		mask = MASK_WATER + MASK_SOLID --*TODO: Maybe disable movement on water
 	} )
 
 	local distance = (hoverdistance * 2) * tr.Fraction

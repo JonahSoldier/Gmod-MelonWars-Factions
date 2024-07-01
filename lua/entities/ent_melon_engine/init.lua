@@ -10,7 +10,7 @@ function ENT:Initialize()
 	self.canMove = true
 	self.canShoot = true
 	self.speed = 150
-	self.thrustforce = 0.3
+	self.thrustforce = 0.4
 	self.maxHP = 25
 	self.captureSpeed = 0
 	self.population = 0
@@ -51,7 +51,7 @@ function ENT:Update()
 		if selfTbl.moving then
 			local moveVector = (selfTbl.targetPos - self:GetPos()):GetNormalized() * selfTbl.speed - self:GetVelocity()
 			moveVector.z = 0
-			selfTbl.moveForce = (selfTbl.moveForce + moveVector * selfTbl.thrustforce) / 2
+			selfTbl.moveForce = moveVector * selfTbl.thrustforce
 		else
 			local moveVector = -self:GetVelocity() * 0.2
 			moveVector.z = 0
@@ -76,7 +76,7 @@ function ENT:PhysicsUpdate()
 
 	if selfTbl.moving then
 		local moveVector = (selfTbl.targetPos - self:GetPos()):GetNormalized()
-		self:Align(selfAng:Up(), -moveVector, 100000)
+		self:Align(selfAng:Up(), -moveVector, 75000)
 	end
 
 	local damp = 0.8

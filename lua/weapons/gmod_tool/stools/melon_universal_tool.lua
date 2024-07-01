@@ -1495,20 +1495,13 @@ function TOOL:LeftClick( tr )
 		net.Start("MW_SpawnProp")
 			net.WriteUInt(prop_index, 8)
 			net.WriteTable(trace)
-			--net.WriteInt(cost, 16)
 			net.WriteInt(mw_melonTeam, 8)
-			--net.WriteInt(pl.mw_spawntime * cvars.Number("mw_admin_spawn_time"), 16)
 			net.WriteAngle(pl.propAngle)
 		net.SendToServer()
 		if (cvars.Bool("mw_admin_credit_cost")) then
 			self:IndicateIncome(-cost)
 			pl.mw_credits = pl.mw_credits-cost
 		end
-
-		net.Start("MW_UpdateServerInfo")
-			net.WriteInt(mw_melonTeam ,8)
-			net.WriteInt(pl.mw_credits ,32)
-		net.SendToServer()
 	elseif action == 4 then  --Contraption Save
 		net.Start("ContraptionSave")
 			net.WriteString(pl.contraption_name)

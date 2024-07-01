@@ -96,7 +96,6 @@ function ENT:Shoot ( ent )
 	util.Effect( "inflator_magic", effectdata )
 	sound.Play( ent.shotSound, pos )
 
-	--TODO: Check if there's any reason this can't use normal TakeDamage functions
 	local heal = math.min(targetEnt.HP + ent.damageDeal, targetEnt.maxHP)
 	targetEnt.HP = heal
 	targetEnt:SetNWFloat("healthFrac", heal / targetEnt.maxHP)
