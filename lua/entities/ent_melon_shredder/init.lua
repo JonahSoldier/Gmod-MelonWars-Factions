@@ -8,7 +8,6 @@ function ENT:Initialize()
 
 	self.modelString = "models/props_c17/TrapPropeller_Blade.mdl"
 	self.canMove = false
-	self.canBeSelected = false
 	self.canShoot = false
 	self.maxHP = 20
 	self.moveType = MOVETYPE_VPHYSICS
@@ -37,7 +36,7 @@ function ENT:Initialize()
 	end)
 end
 
-function ENT:SlowThink(ent) --TODO: Refactor
+function ENT:SlowThink(ent)
 	local phys = ent:GetPhysicsObject()
 	phys:ApplyForceOffset(Vector(-5000,0,0), Vector(0, 100, 0))
 	phys:ApplyForceOffset(Vector(5000,0,0), Vector(0, -100, 0))
@@ -46,20 +45,21 @@ function ENT:SlowThink(ent) --TODO: Refactor
 	if #foundEnts == 0 then return end
 
 	local selfTeam = self:GetNWInt("mw_melonTeam", 0)
-	for k, v in pairs( foundEnts ) do
-		if (v.Base == "ent_melon_base" or v.Base == "ent_melon_energy_base") and v:GetClass() ~= "ent_melon_shredder" then
-			if v.isShredding ~= true and v.HP <= self.damageDeal then
-				local gain = v:GetVar("value")*0.75
-				if (v.spawned and v:GetClass() == "ent_melon_voidling") then
-					gain = v:GetVar("value")+1
+	for i, v in ipairs( foundEnts ) do
+		local vTbl = v:GetTable()
+		if vTbl.spawned and (vTbl.Base == "ent_melon_base" or vTbl.Base == "ent_melon_energy_base") and v:GetClass() ~= "ent_melon_shredder" then
+			if not vTbl.isShredding and vTbl.HP <= self.damageDeal then
+				local gain = vTbl.value * 0.75
+				if v:GetClass() == "ent_melon_voidling" then
+					gain = vTbl.value + 1
 				end
-				MelonWars.teamCredits[selfTeam] = MelonWars.teamCredits[selfTeam]+gain
+				MelonWars.teamCredits[selfTeam] = MelonWars.teamCredits[selfTeam] + gain
 				MelonWars.updateClientCredits(selfTeam)
-				v.isShredding = true
+				vTbl.isShredding = true
 			end
 
-			v.damage = v.damage + self.damageDeal
-			v.gotHit = true
+			vTbl.damage = vTbl.damage + self.damageDeal
+			vTbl.gotHit = true
 		end
 	end
 end

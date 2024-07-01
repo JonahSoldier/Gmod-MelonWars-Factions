@@ -44,16 +44,7 @@ function ENT:SlowThink ( ent )
 
 		for i = 1, maxtargets, 1 do
 			local v = foundEntities[i]
-			if v and self:DrainPower(energyCost) then --TODO: Refactor
-				local vTbl = v:GetTable()
-				if v:GetClass() == "prop_physics" then
-					local php = v:GetNWInt("propHP", -1)
-					if php ~= -1 then
-						v:SetNWInt("propHP", php-selfTbl.damageDeal)
-					end
-				else
-					vTbl.damage = vTbl.damage + selfTbl.damageDeal
-				end
+			if v and self:DrainPower(energyCost) then
 				local effectdata = EffectData()
 				effectdata:SetScale(3000)
 				effectdata:SetMagnitude(3000)

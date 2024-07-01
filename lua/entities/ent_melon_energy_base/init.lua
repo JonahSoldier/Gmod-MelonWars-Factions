@@ -16,7 +16,7 @@ local lastThink = 0
 hook.Add("Think", "MW_UpdateNetWorks", function() --This is similar to using setNW on an entity, but will send less data than the old solution.
 	if CurTime() - lastThink < 1 then return end
 
-	for i, v in pairs(MelonWars.electricNetwork) do --TODO: idk if this table stays sequential or not.
+	for i, v in pairs(MelonWars.electricNetwork) do
 		if not(v.updated == false) then
 			net.Start("MW_UpdateNetwork")
 				net.WriteUInt(i, 10)
@@ -278,7 +278,7 @@ function MelonWars.energySetup( ent )
 	MelonWars.calculateConnections(ent, ent.connectToMachines)
 end
 
-function ENT:Energy_Set_State() --TODO: This function might not be needed any more
+function ENT:Energy_Set_State() --*TODO: This function might not be needed any more
 	local energy = MelonWars.electricNetwork[self.network].energy
 	if (tostring(energy) == "nan") then
 		MelonWars.electricNetwork[self.network].energy = 0
@@ -286,7 +286,7 @@ function ENT:Energy_Set_State() --TODO: This function might not be needed any mo
 	end
 end
 
-function ENT:Energy_Add_State() --TODO: This function might not be needed any more
+function ENT:Energy_Add_State() --*TODO: This function might not be needed any more
 	local energy = MelonWars.electricNetwork[self.network].energy
 	if (tostring(energy) == "nan") then
 		MelonWars.electricNetwork[self.network].energy = 0

@@ -579,7 +579,7 @@ end)
 
 net.Receive( "ContraptionLoadToAssembler", function( _, pl )
 	local ent = net.ReadEntity()
-	if not( ent:GetNWInt("mw_melonTeam") == pl:GetInfoNum("mw_team", 0) ) then return end
+	if not( ent:GetNWInt("mw_melonTeam", -1) == pl:GetInfoNum("mw_team", 0) ) then return end
 
 	ent.loadedContraption = pl.loadedContraption
 	pl.loadedContraption = nil
@@ -588,18 +588,21 @@ net.Receive( "ContraptionLoadToAssembler", function( _, pl )
 
 	local cost, spawntime, power = MelonWars.calculateContraptionValues( ent.loadedContraption.Entities )
 
-	--TODO: Check that this player has the resources to do this.
+	local plTeam = pl:GetInfoNum("mw_team", 0)
+	if cvars.Bool("mw_admin_credit_cost") then
+		local newCredits = MelonWars.teamCredits[plTeam]-cost
+		if newCredits < 0 and not(mwTeam == 0) then
+			return --Stop if we can't afford to do this.
+		end
+
+		MW_Server_UpdateWater(plTeam, newCredits)
+	end
 
 	ent.powerCost = power
 
 	ent:SetNWBool( "active", true )
 	ent:SetNWFloat( "nextSlowThink", CurTime() + spawntime )
 	ent:SetNWFloat( "slowThinkTimer", time )
-
-	local plTeam = pl:GetInfoNum("mw_team", 0)
-	if cvars.Bool("mw_admin_credit_cost") then
-		MW_Server_UpdateWater(plTeam, MelonWars.teamCredits[plTeam]-cost)
-	end
 end )
 
 local function MW_SpawnProp( model, pos, ang, _team, parent, health, cost, pl, spawntime, offset )
