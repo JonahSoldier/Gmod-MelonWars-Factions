@@ -310,16 +310,14 @@ end
 function ENT:SetNetwork(network)
 	local previousNetwork = self.network
 
-	if (previousNetwork > 0) then
-		if (previousNetwork ~= nil) then
-			local prevnw = MelonWars.electricNetwork[previousNetwork]
-			prevnw.energy = prevnw.energy-self:GetEnergy()
-			prevnw.capacity = prevnw.capacity - self.capacity
-			prevnw.updated = true
-			table.RemoveByValue( prevnw.elements, self )
-			if (table.Count( prevnw.elements ) == 0) then
-				MW_Energy_Deactivate_Network(prevnw)
-			end
+	if previousNetwork and previousNetwork > 0 then
+		local prevnw = MelonWars.electricNetwork[previousNetwork]
+		prevnw.energy = prevnw.energy-self:GetEnergy()
+		prevnw.capacity = prevnw.capacity - self.capacity
+		prevnw.updated = true
+		table.RemoveByValue( prevnw.elements, self )
+		if (table.Count( prevnw.elements ) == 0) then
+			MW_Energy_Deactivate_Network(prevnw)
 		end
 	end
 

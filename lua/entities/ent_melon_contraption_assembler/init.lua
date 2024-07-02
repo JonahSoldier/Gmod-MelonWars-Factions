@@ -14,6 +14,8 @@ function ENT:SetStats()
 	self.population = 1
 
 	self.powerCost = 0
+
+	self.isBarracks = true
 end
 
 function ENT:Initialize()

@@ -720,6 +720,7 @@ u.indRingColour = indicator_utility_colour
 
 i = i + 1
 u = MelonWars.units[i]
+u.faction		= "full"
 u.name 			= "Forcefield generator"
 u.class 		= "ent_melon_forcefield_generator"
 u.cost 			= 750

@@ -691,16 +691,12 @@ local function _CreatePanel()
 		timer.Simple( 0.001, function() info:SetFontInternal( "Trebuchet24" ) end )
 		info:SetText( "Thanks for downloading and using the MelonWars:RTS addon. I hope you enjoy it.\n\nChoose a category on the left to see info about a certain topic!" )
 
-		--TODO: I really fucking suck at being concise.
 		_MakeHelpButton( "About", 0, info, "What is MelonWars:Factions?\n\n" ..
 			"This is a heavily modified version of MelonWars:RTS, which is itself a re-make of a Gmod 12 addon known as WarMelons:RTS.\n\n" ..
-			"MelonWars:Factions is my own expansion of/continuation of Melon Wars. It includes new units and buildings, as well as substantial improvements to performance, security, and a LOT of bug-fixes.\n\n" ..
-			"Every faction has been substantially reworked, with each one getting 2 new buildings, and almost every faction unit being rebalanced, reworked, or entirely replaced." ..
-			"The new versions are no-longer horrendously overpowered, and all of them are useful in some way, whilst still sticking to and reinforcing their factions' theme.\n\n" ..
-			"A few of the non-faction units/buildings have been tweaked a little, but none as substantially as the faction units. They're now a bit better-balanced for competititve play," ..
-			"but they should still be familiar to anyone who's played the original.\n\n" ,
-			"A few units have been removed that either overlapped too heavily in purpose with others, or whose concepts just didn't work well with the rest of the game." ..
-			"If you feel the addon's missing something without them, though, you can re-enable them through the admin menu (game-balance-be-damned)"
+			"MelonWars:Factions is my own expansion/continuation of Melon Wars. It includes a bunch of new content, and loads of bugfixes, polish, and security/performance improvements.\n\n" ..
+			"Every faction has been reworked, each getting 2 new buildings, and significant changes to their existing units. " ..
+			"A few of the default units have been tweaked a little as well, but they should be largely familiar to anyone who's played the original.\n\n" ..
+			"Certain units are no-longer spawnable by default. THESE HAVE NOT BEEN REMOVED. Any missing units can be added back via the bonus-units option in the admin menu."
 		)
 		info:SetFontInternal("Trebuchet24")
 
@@ -745,8 +741,20 @@ local function _CreatePanel()
 			"Remember, this is as much a gamemode as it is a toy, so there is no actual 'end' to the match other than whatever you make it. " ..
 			"You can play until the last base is destroyed, until only one player has units, or any other condition you can imagine. Just be sure to be clear about it with all players before starting." )
 
-		_MakeHelpButton("Factions", 7, info, "How do I set up a game?\n\n" ..
-			"If you're reading this, JonahSoldier forgot to write anything here!" )
+		_MakeHelpButton("Factions", 7, info, "Factions!\n\n" ..
+			"In the team menu you can choose between 1 of 3 factions (or no faction). Factions give you access to their own set of new unit/building-types.\n\n" ..
+			"Each faction is designed around a particular play-style. It's intended that you pick one at the start of a match, and stick to it. That said, if you and your friends decide you want to use all 3 at once: Go nuts. There's nothing stopping you from switching.\n\n" ..
+			"A general description of each faction is as follows:\n\n\n" ..
+			"V - Void (Aggressive)\n" ..
+			"Overwhelm your opponents with a strong offense, and ruthlessly punish their mistakes.\n\n" ..
+			"A measured approach is advised in dealing with them. Voidlings are devastating, but only if they out-maneuver you. Leave nothing important un-defended. Base-Props can soak-up damage from voidlings easily, and Raiders can be baited by using cheaper buildings (e.g. Relays) as fodder.\n\n\n",
+			"F - Full (Defensive)\n" ..
+			"The antithesis of the void. Sluggish and defensive, but brutally effective in the lategame.\n\n" ..
+			"Full units are very cost-effective, but take a long time to spawn. Fighters can safely take-out isolated units and high-value targets, but are vulnerable to snipers and base-defence buildings. Point-defence can resist attacks from artillery, but offers no protection from direct attacks, and can be overwhelmed with enough firepower. Particle towers? Don't let them build one. But also keep in-mind they take a lot of energy to fire.\n\n\n" ..
+			"P - Pyre (Guerilla)\n" ..
+			"A bit of a weird 3rd party. They focus on hit-and-run tactics, stalling, and otherwise undercutting their opponents.\n\n" ..
+			"Gatlings excel in short engagements; Molotovs can cheaply destroy defences, or temporarily block chokepoints; Electrified Debris is weak, but expensive and time-consuming to clear; And siphons can severely undermine enemy defences, economies, or siege weapons by draining their energy."
+		)
 
 		_MakeHelpButton("Credits", 8, info, "All the cool people who helped make this mod a reality:\n\n" ..
 			"Melon Wars:Factions\n" ..
@@ -756,7 +764,7 @@ local function _CreatePanel()
 			"	Playtesters:\n" ..
 			"		MerekiDor\n" ..
 			"		D-Boi-9341\n" ..
-			"		Andrew\n" .. --idk what to put here, his names aren't exactly recognisable. Maybe Commander Kettle?
+			"		Commander Kettle\n" ..
 			"		Kazzigum\n\n" .. --TODO: Ask everyone if they want to be included here.
 			"If You're from my private server and want to be added to this list, dm me!\n\n\n" ..
 			"The Original Melon Wars:\n" ..
@@ -1395,6 +1403,7 @@ end
 -- TOOL FUNCTIONS: ----------------------------------
 
 function TOOL:LeftClick( tr )
+	local trace = tr
 	if not CLIENT then return end
 	local pl = LocalPlayer()
 
@@ -1409,10 +1418,6 @@ function TOOL:LeftClick( tr )
 	end
 
 	if pl.mw_cooldown >= CurTime() - 0.1 then return end
-
-	local trace = self:GetOwner():GetEyeTrace( {
-		mask = MASK_SOLID + MASK_WATER
-	} ) --TODO: We can probably use the "tr" value passed in instead.
 
 	pl.mw_cooldown = CurTime()
 	mw_melonTeam = pl:GetInfoNum("mw_team", 0)
@@ -1449,14 +1454,11 @@ function TOOL:LeftClick( tr )
 			end
 		end
 
-		--local spawnPosition = trace.HitPos + Vector(0,0,1) + trace.HitNormal*5+MelonWars.units[unit_index].offset
-
 		net.Start("MW_SpawnUnit")
 			net.WriteInt(unit_index, 16)
 			net.WriteInt(mw_melonTeam, 4)
 			net.WriteBool(attach)
 			net.WriteAngle(spawnAngle)
-			--net.WriteVector(spawnPosition)
 		net.SendToServer()
 
 		local effectdata = EffectData()
@@ -1476,7 +1478,7 @@ function TOOL:LeftClick( tr )
 			net.WriteInt(mw_melonTeam, 8)
 		net.SendToServer()
 		self:GetOwner():ConCommand("mw_action 0")
-	elseif action == 3 then --TODO: Refactor
+	elseif action == 3 then --*TODO: Refactor
 		if pl.mw_spawnTimer >= CurTime() - 0.1 then return end
 		local prop_index = pl:GetInfoNum("mw_chosen_prop", 0)
 		local cost = MelonWars.baseProps[prop_index].cost
@@ -1485,7 +1487,7 @@ function TOOL:LeftClick( tr )
 		if not (cvars.Bool("mw_admin_allow_free_placing") or MelonWars.noEnemyNear(trace.HitPos, mw_melonTeam)) then return end
 		if not (pl.mw_credits >= cost or not cvars.Bool("mw_admin_credit_cost")) then return end
 
-		if (cvars.Number("mw_admin_spawn_time") == 1) then
+		if cvars.Bool("mw_admin_spawn_time") then
 			if (pl.mw_spawntime < CurTime()) then
 				pl.mw_spawntime = CurTime() + MelonWars.baseProps[prop_index].spawn_time
 			else
@@ -1775,25 +1777,24 @@ function TOOL:Think()
 		end
 
 		if plyTbl.mw_action == 0 then
-			if input.IsKeyDown( KEY_E ) then --TODO: Do we need ePressed? it might make more sense to just use locPly:KeyPressed
+			if input.IsKeyDown( KEY_E ) then
 				self.ePresed = self.ePressed or false
 				if not self.ePressed then
 					self.ePressed = true
-					local tr = ply:GetEyeTrace() --TODO: We already do a trace in this function.
-					local correctTeam = (tr.Entity:GetNWInt("mw_melonTeam", 0) == newTeam or tr.Entity:GetNWInt("capTeam", 0) == newTeam or cvars.Bool("mw_admin_move_any_team", false))
+					local correctTeam = (trace.Entity:GetNWInt("mw_melonTeam", 0) == newTeam or trace.Entity:GetNWInt("capTeam", 0) == newTeam or cvars.Bool("mw_admin_move_any_team", false))
 
-					local entClass = tr.Entity:GetClass()
+					local entClass = trace.Entity:GetClass()
 					if entClass == "ent_melon_contraption_assembler" and correctTeam then --*TODO: Team checks here unreliable.
-						plyTbl.selectedAssembler = tr.Entity
+						plyTbl.selectedAssembler = trace.Entity
 						self:MakeContraptionMenu()
 					elseif entClass == "ent_melon_water_tank" then
 						net.Start("MW_UseWaterTank") --*TODO: This could probably be rewritten to just use activate
-							net.WriteEntity(tr.Entity)
+							net.WriteEntity(trace.Entity)
 							net.WriteInt(newTeam,8)
 						net.SendToServer()
 					else
 						net.Start("MW_Activate")
-							net.WriteEntity(tr.Entity)
+							net.WriteEntity(trace.Entity)
 						net.SendToServer()
 					end
 
@@ -1934,7 +1935,7 @@ function TOOL:DrawToolScreen( width, height )
 	draw.SimpleText( txtStr, "DermaLarge", width / 2, height / 2, toolScreenTextCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 end
 
-function TOOL:DrawHUD() --TODO: Refactor. This needs to be split up/reorganized at least a little bit, since it's a giant 400 line function
+function TOOL:DrawHUD() --*TODO: Refactor. This needs to be split up/reorganized at least a little bit, since it's a giant 400 line function
 	if game.SinglePlayer() then
 		local w = 550
 		local h = 320

@@ -37,6 +37,8 @@ function ENT:Initialize()
 
 	self.slowThinkTimer = 0.05
 
+	self.moveForceMultiplier = 0.25
+
 	self:Setup()
 
 	self.phys:SetMass( 50 )

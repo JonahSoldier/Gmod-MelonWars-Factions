@@ -8,11 +8,7 @@ function ENT:Initialize()
 
 	self.modelString = "models/props_lab/teleportbulkeli.mdl"
 	self.maxHP = 1250
-	--self.Angles = Angle(0,0,0)
-	--local offset = Vector(0,0,20)
-	--offset:Rotate(self:GetAngles())
-	--self:SetPos(self:GetPos()+offset)
-	--self:SetPos(self:GetPos()+Vector(0,0,10))
+
 	self.moveType = MOVETYPE_NONE
 	self.canMove = false
 
@@ -24,93 +20,64 @@ function ENT:Initialize()
 	self.shotOffset = Vector(0,0,30)
 
 	MelonWars.energySetup ( self )
-
 end
 
-function ENT:Think(ent) --TODO: Rewrite. This was copied from other files initially and is really messy. A lot of its unnecessary.
-	if(self.spawned) then
-		local waterCost = 0
-		local energyGain = 250
-		if (self:GetNWBool("active", false)) then
-			if (MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] >= waterCost or not cvars.Bool("mw_admin_credit_cost")) then
-				if (self:GivePower(energyGain)) then
-					if (cvars.Bool("mw_admin_credit_cost")) then
-						MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] = MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)]-waterCost
-						for k, v in pairs( player.GetAll() ) do
-							if (v:GetInfo("mw_team") == tostring(self:GetNWInt("mw_melonTeam", 0))) then
-								net.Start("MW_TeamCredits")
-									net.WriteInt(MelonWars.teamCredits[self:GetNWInt("mw_melonTeam", 0)] ,32)
-								net.Send(v)
-							end
-						end
-					end
-					self:SetNWString("message", "Importing Energy")
-					local effectdata = EffectData()
-					effectdata:SetOrigin( self:GetPos() + Vector(0,0,55))
-					util.Effect( "ManhackSparks", effectdata )
-				else
-					self:SetNWString("message", "Energy full!")
-				end
-			end
-		else
-			self:SetNWString("message", "Generator Off")
-		end
+function ENT:Think(ent)
+	local selfTbl = self:GetTable()
+	if not(selfTbl.spawned and self:GetNWBool("active", false)) then
+		self:NextThink( CurTime() + 1 )
+		return
 	end
-	self:Energy_Add_State()
-	self:NextThink( CurTime()+1 )
+
+	if self:GivePower(250) then
+		local effectdata = EffectData()
+		effectdata:SetOrigin( self:GetPos() + Vector(0,0,55))
+		util.Effect( "ManhackSparks", effectdata )
+	end
+
+	self:NextThink( CurTime() + 1 )
 	return true
 end
 
 function ENT:SlowThink(ent)
-
 end
 
 function ENT:Shoot ( ent )
-
 end
 
 function ENT:DeathEffect ( ent )
 	timer.Simple( 0.02, function()
-		if (IsValid(ent)) then
-			util.BlastDamage( ent, ent, ent:GetPos(), 600, 800 )
-			local effectdata = EffectData()
-			effectdata:SetOrigin( ent:GetPos() )
-			util.Effect( "VortDispel", effectdata )
+		if not IsValid(ent) then return end
 
-			local effectdata = EffectData()
-				effectdata:SetOrigin( ent:GetPos() + Vector(0,0,300))
-				util.Effect( "Explosion", effectdata )
-				local effectdata = EffectData()
-				effectdata:SetOrigin( ent:GetPos() + Vector(0,300,0))
-				util.Effect( "Explosion", effectdata )
-				local effectdata = EffectData()
-				effectdata:SetOrigin( ent:GetPos() + Vector(300,0,0))
-				util.Effect( "Explosion", effectdata )
-				local effectdata = EffectData()
-				effectdata:SetOrigin( ent:GetPos() + Vector(0,-300,0))
-				util.Effect( "Explosion", effectdata )
-				local effectdata = EffectData()
-				effectdata:SetOrigin( ent:GetPos() + Vector(-300,0,0))
-				util.Effect( "Explosion", effectdata )
-				local effectdata = EffectData()
-				effectdata:SetOrigin( ent:GetPos() + Vector(150,150,0))
-				util.Effect( "Explosion", effectdata )
-				local effectdata = EffectData()
-				effectdata:SetOrigin( ent:GetPos() + Vector(-150,150,0))
-				util.Effect( "Explosion", effectdata )
-				local effectdata = EffectData()
-				effectdata:SetOrigin( ent:GetPos() + Vector(150,-150,0))
-				util.Effect( "Explosion", effectdata )
-				local effectdata = EffectData()
-				effectdata:SetOrigin( ent:GetPos() + Vector(-150,-150,0))
-				util.Effect( "Explosion", effectdata )
+		util.BlastDamage( ent, ent, ent:GetPos(), 600, 800 )
+		local effectdata = EffectData()
+		effectdata:SetOrigin( ent:GetPos() )
+		util.Effect( "VortDispel", effectdata )
 
-			local pos1 = ent:GetPos()-- Set worldpos 1. Add to the hitpos the world normal.
-			local pos2 = ent:GetPos()+Vector(0,0,-20) -- Set worldpos 2. Subtract from the hitpos the world normal.
-			ent.fired = true
-			ent:Remove()
+		effectdata:SetOrigin( ent:GetPos() + Vector(0,0,300))
+		util.Effect( "Explosion", effectdata )
+		effectdata:SetOrigin( ent:GetPos() + Vector(0,300,0))
+		util.Effect( "Explosion", effectdata )
+		effectdata:SetOrigin( ent:GetPos() + Vector(300,0,0))
+		util.Effect( "Explosion", effectdata )
+		effectdata:SetOrigin( ent:GetPos() + Vector(0,-300,0))
+		util.Effect( "Explosion", effectdata )
+		effectdata:SetOrigin( ent:GetPos() + Vector(-300,0,0))
+		util.Effect( "Explosion", effectdata )
+		effectdata:SetOrigin( ent:GetPos() + Vector(150,150,0))
+		util.Effect( "Explosion", effectdata )
+		effectdata:SetOrigin( ent:GetPos() + Vector(-150,150,0))
+		util.Effect( "Explosion", effectdata )
+		effectdata:SetOrigin( ent:GetPos() + Vector(150,-150,0))
+		util.Effect( "Explosion", effectdata )
+		effectdata:SetOrigin( ent:GetPos() + Vector(-150,-150,0))
+		util.Effect( "Explosion", effectdata )
 
-			util.Decal("Scorch",pos1,pos2)
-		end
+		local pos1 = ent:GetPos() -- Set worldpos 1. Add to the hitpos the world normal.
+		local pos2 = ent:GetPos() + Vector(0,0,-20) -- Set worldpos 2. Subtract from the hitpos the world normal.
+		ent.fired = true
+		ent:Remove()
+
+		util.Decal("Scorch",pos1,pos2)
 	end)
 end

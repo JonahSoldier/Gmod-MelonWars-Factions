@@ -42,7 +42,7 @@ function ENT:ConnectToBarrack()
 	local closestDistance = math.huge
 
 	for i, v in ipairs(ents.FindInSphere( selfPos, self.range )) do
-		if (string.StartWith(v:GetClass(), "ent_melon_barracks") or v:GetClass() == "ent_melon_contraption_assembler") and v:GetNWInt("mw_melonTeam", 0) == selfTeam then --TODO: Bad solution. Make an isBarracks boolean in ent_melon_base
+		if v.isBarracks and v:GetNWInt("mw_melonTeam", 0) == selfTeam then
 			local distSqr = selfPos:DistToSqr( v:GetPos() )
 			if distSqr < closestDistance then
 				closestEntity = v

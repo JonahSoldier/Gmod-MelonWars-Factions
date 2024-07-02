@@ -75,11 +75,7 @@ function ENT:DeathEffect( ent )
 					end
 
 					if(v.Base == "ent_melon_energy_base") then
-						if (MelonWars.electricNetwork[v.network].energy > 1000) then
-							MelonWars.electricNetwork[v.network].energy = MelonWars.electricNetwork[v.network].energy - 1000
-						else
-							MelonWars.electricNetwork[v.network].energy = 0
-						end
+						v:DrainPower(1000)
 
 						for k, v in pairs(MelonWars.electricNetwork[v.network].elements) do
 							v:Energy_Set_State()

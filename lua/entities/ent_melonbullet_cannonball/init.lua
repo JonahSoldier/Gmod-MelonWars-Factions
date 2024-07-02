@@ -22,7 +22,7 @@ function ENT:PhysicsCollide( colData, collider )
 	local vel = self:GetVelocity():Length()
 	if (self.exploded == false) then
 		local other = colData.HitEntity
-		local otherhealth = v.HP --other:GetNWFloat("health", 0)
+		local otherhealth = other.HP --other:GetNWFloat("health", 0)
 		if (otherhealth ~= 0) then
 			self.exploded = true
 

@@ -342,6 +342,10 @@ function MelonWars.spawnUnitAtPos( class, pos, ang, cost, spawntime, _team, atta
 	local newMarine = ents.Create( class )
 	if not IsValid( newMarine ) then return end
 
+	if CPPI then
+		newMarine:CPPISetOwner(pl)
+	end
+
 	newMarine:SetPos( pos )
 	newMarine:SetAngles( ang )
 
@@ -608,6 +612,10 @@ end )
 local function MW_SpawnProp( model, pos, ang, _team, parent, health, cost, pl, spawntime, offset )
 	local newMarine = ents.Create( "ent_melon_wall" )
 	if not IsValid( newMarine ) then return end
+
+	if CPPI then
+		newMarine:CPPISetOwner(pl)
+	end
 
 	newMarine:SetPos(pos)
 	newMarine:SetAngles(ang)
