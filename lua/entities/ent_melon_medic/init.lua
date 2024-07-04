@@ -46,7 +46,7 @@ function ENT:SlowThink ( ent ) --*TODO: This is moderately better than the vanil
 		local targEnt = selfTbl.targetEntity
 		local pos = self:GetPos()
 
-		if not IsValid(targEnt) or targEnt:GetPos():DistToSqr(pos) > selfTbl.range ^ 2 then
+		if not IsValid(targEnt) or targEnt.HP >= targEnt.maxHP or targEnt:GetPos():DistToSqr(pos) > selfTbl.range ^ 2 then
 			selfTbl.targetEntity = nil
 			selfTbl.nextSlowThink = CurTime() + 0.1
 			return false

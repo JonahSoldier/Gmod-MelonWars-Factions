@@ -46,7 +46,7 @@ function ENT:Think(ent)
 			self:SetColor(Color(150,150,150,255))
 
 			self.HP = self.HP-10
-			self:SetNWFloat( "health", self.HP )
+			self:SetNWFloat( "healthFrac", self.HP / self.maxHP)
 			if self.HP <= 0 then
 				MelonWars.die( self )
 			end

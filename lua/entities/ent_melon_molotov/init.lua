@@ -131,7 +131,7 @@ function ENT:OnTakeDamage( damage )
 			else
 				self.HP = self.HP - damage:GetDamage()
 			end
-			self:SetNWFloat( "health", self.HP )
+			self:SetNWFloat( "healthFrac", self.HP / self.maxHP )
 			if (self.HP <= 0) then
 				MelonWars.die (self)
 			end

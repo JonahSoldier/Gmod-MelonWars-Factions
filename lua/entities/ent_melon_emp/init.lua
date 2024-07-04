@@ -127,7 +127,7 @@ function ENT:SlowThink ( ent )
 end
 
 
-function ENT:OnTakeDamage( damage )
+function ENT:OnTakeDamage( damage ) --Can't remember what any of this was for.
 
 	local effectData = EffectData()
 	effectData:SetStart( self:GetPos())
@@ -140,7 +140,7 @@ function ENT:OnTakeDamage( damage )
 			else
 				self.HP = self.HP - damage:GetDamage()
 			end
-			self:SetNWFloat( "health", self.HP )
+			self:SetNWFloat( "healthFrac", self.HP / self.maxHP )
 			if (self.HP <= 0) then
 				MelonWars.die (self)
 			end

@@ -1,6 +1,6 @@
-if engine.ActiveGamemode() ~= "sandbox" then return end
 
 MelonWars = MelonWars or {}
+if engine.ActiveGamemode() ~= "sandbox" then return end
 
 CreateClientConVar( "mw_player_ready", "0", false, true, "Is the player ready or not", 0, 1 )
 CreateClientConVar( "mw_buildalpha_multiplier", "1", true, false, "Makes the sphere around outposts more/less transparent", 0, 10 )

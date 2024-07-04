@@ -1,3 +1,5 @@
+
+MelonWars = MelonWars or {}
 if engine.ActiveGamemode() ~= "sandbox" then return end
 
 -- Some lines from the cl_spawnmenu.lua in the sandbox GM
@@ -55,8 +57,6 @@ util.AddNetworkString( "MW_ClientModifySpawnTime" )
 -- Energy Networks
 util.AddNetworkString( "MW_UpdateNetwork" )
 
-
-MelonWars = MelonWars or {}
 
 include("melonwars/sh_unitlist.lua")
 include("melonwars/sh_functions.lua")
@@ -887,7 +887,7 @@ end )
 
 net.Receive( "SandboxMode", function(_, ply)
 	local openPerms = GetConVar( "mw_admin_open_permits" ):GetBool()
-	if not(openPerms or pl:IsAdmin()) then return end
+	if not(openPerms or ply:IsAdmin()) then return end
 
 	RunConsoleCommand("mw_admin_playing", "1")
 	RunConsoleCommand("mw_admin_locked_teams", "0")

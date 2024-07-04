@@ -1636,6 +1636,7 @@ function TOOL:Deploy()
 	owner.mw_spawntime = 0
 
 	owner:PrintMessage( HUD_PRINTCENTER, "Press R to open the menu" )
+	owner:CrosshairDisable()
 end
 
 function TOOL:Holster()
@@ -1645,6 +1646,8 @@ function TOOL:Holster()
 	if IsValid( self.GhostSphere ) then
 		self.GhostSphere:Remove()
 	end
+	if CLIENT then return end
+	self:GetOwner():CrosshairEnable()
 end
 
 local function MW_UpdateGhostEntity(model, pos, offset, angle, newColor, ghostSphereRange, ghostSpherePos)
@@ -2246,6 +2249,11 @@ function TOOL:DrawHUD() --*TODO: Refactor. This needs to be split up/reorganized
 		end
 	end
 end
+
+function TOOL:DoDrawCrosshair()
+	return true
+end
+
 
 if CLIENT then
 	--local mw_buildalpha_multiplier_cv = GetConVar("mw_buildalpha_multiplier")

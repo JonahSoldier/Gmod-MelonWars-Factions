@@ -1,3 +1,4 @@
+if engine.ActiveGamemode() ~= "sandbox" then return end
 hook.Add( "Initialize", "MelonWars_InitializeTeams", function()
 	MelonWars.teamColors[0] = Color( 100, 100, 100, 255 )
 end )
