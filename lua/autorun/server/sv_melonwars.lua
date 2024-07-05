@@ -298,7 +298,7 @@ end
 
 net.Receive( "MW_SpawnUnit", function( _, pl )
 	local unit_index = net.ReadInt(16)
-	local _team = net.ReadInt(4)
+	local _team = net.ReadUInt(5)
 	local attach = net.ReadBool()
 	local angle = net.ReadAngle()
 
@@ -333,7 +333,7 @@ net.Receive( "MW_SpawnUnit", function( _, pl )
 		undo.SetPlayer( pl)
 	undo.Finish()
 
-	if cvars.Bool("mw_admin_credit_cost") or _team == 0 then
+	if cvars.Bool("mw_admin_credit_cost") and not(_team == 0) then -- or _team == 0
 		MW_Server_UpdateWater(_team, MelonWars.teamCredits[_team]-cost)
 	end
 end )

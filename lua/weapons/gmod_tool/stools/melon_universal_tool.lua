@@ -1456,7 +1456,7 @@ function TOOL:LeftClick( tr )
 
 		net.Start("MW_SpawnUnit")
 			net.WriteInt(unit_index, 16)
-			net.WriteInt(mw_melonTeam, 4)
+			net.WriteUInt(mw_melonTeam, 5)
 			net.WriteBool(attach)
 			net.WriteAngle(spawnAngle)
 		net.SendToServer()
