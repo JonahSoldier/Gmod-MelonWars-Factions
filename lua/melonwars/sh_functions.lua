@@ -2,7 +2,7 @@ AddCSLuaFile()
 
 function MelonWars.isInRange( pos, teamIndex )
 	for i, v in ipairs(ents.FindByClass("ent_melon_zone")) do
-		if pos:DistToSqr( v:GetPos() ) < v:GetNWInt( "scale" , 0 ) ^ 2 and MelonWars.sameTeam(v:GetNWInt("zoneTeam", 0), teamIndex) then
+		if pos:DistToSqr( v:GetPos() ) < v:GetZoneRadius() ^ 2 and MelonWars.sameTeam(v:GetZoneTeam(), teamIndex) then
 			return true
 		end
 	end

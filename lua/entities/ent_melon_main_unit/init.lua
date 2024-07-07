@@ -38,9 +38,9 @@ function ENT:Initialize()
 		self.zone:SetPos(self:GetPos() + Vector(0,0,-50))
 		self.zone:Spawn()
 		self.zone:SetMoveType( MOVETYPE_NONE )
-	
-		self.zone:SetNWInt("zoneTeam", mw_melonTeam)
-		self.zone:SetNWInt("scale", 250)
+
+		self.zone:SetZoneTeam(mw_melonTeam)
+		self.zone:SetZoneRadius(250)
 
 		self.zone:SetNoDraw(true)
 		self:DeleteOnRemove( self.zone )

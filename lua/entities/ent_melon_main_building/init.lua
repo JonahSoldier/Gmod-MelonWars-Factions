@@ -13,7 +13,6 @@ function ENT:Initialize()
 	self.shotSound = "weapons/stunstick/stunstick_impact1.wav"
 
 	self.canMove = false
-	--self.canBeSelected = false
 
 	self.maxHP = 1000
 	self.dead = false
@@ -33,7 +32,8 @@ function ENT:Initialize()
 		self.zone:SetPos(self:GetPos() + Vector(0,0,-12))
 		self.zone:SetMoveType( MOVETYPE_NONE )
 
-		self.zone:SetNWInt("zoneTeam", mw_melonTeam)
+		self.zone:SetZoneTeam(mw_melonTeam)
+		self.zone:SetZoneRadius(800)
 		self.zone:SetNWInt("scale", 800)
 
 		self.zone:SetNoDraw(true)

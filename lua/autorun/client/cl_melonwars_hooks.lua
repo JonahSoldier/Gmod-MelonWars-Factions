@@ -29,9 +29,9 @@ hook.Add("PostDrawTranslucentRenderables", "MelonWars_DrawOutpostZones", functio
 		render.SetColorMaterial()
 		outpostRingCol.a = math.Clamp(10 * zoneAlpha, 0, 255)
 		for i, v in ipairs(ents.FindByClass("ent_melon_zone")) do
-			local zoneTeam = v:GetNWInt("zoneTeam", 0)
+			local zoneTeam = v:GetZoneTeam()
 			if MelonWars.sameTeam(pTeam, zoneTeam) then
-				local zoneRadius = v:GetNWInt( "scale" , 0 )
+				local zoneRadius = v:GetZoneRadius()
 				local vPos = v:GetPos()
 				render.DrawSphere(vPos, zoneRadius, 35, 12, outpostRingCol)
 				render.DrawSphere(vPos, -zoneRadius, 35, 12, outpostRingCol)
@@ -40,9 +40,9 @@ hook.Add("PostDrawTranslucentRenderables", "MelonWars_DrawOutpostZones", functio
 	else
 		render.StartWorldRings()
 		for i, v in ipairs(ents.FindByClass("ent_melon_zone")) do
-			local zoneTeam = v:GetNWInt("zoneTeam", 0)
+			local zoneTeam = v:GetZoneTeam()
 			if MelonWars.sameTeam(pTeam, zoneTeam) then
-				render.AddWorldRing(v:GetPos(), v:GetNWInt( "scale" , 0 ), 5, 20)
+				render.AddWorldRing(v:GetPos(), v:GetZoneRadius(), 5, 20)
 			end
 		end
 
@@ -242,9 +242,9 @@ hook.Add( "HUDPaint", "MelonWars_DrawHUD", function()
 			end
 		end
 	end
-
-	if not IsValid( ply.controllingUnit ) then return end
 	--[[
+	if not IsValid( ply.controllingUnit ) then return end
+
 	local pos = ply.controlTrace.HitPos
 	local spos = pos:ToScreen()
 	local hit = ply.controlTrace.Hit

@@ -37,8 +37,8 @@ function ENT:Initialize()
 	self.zone:SetMoveType( MOVETYPE_NONE )
 	self.zone:SetModelScale( 2.1, 0 ) --half size
 	self.zone:SetMaterial( "models/ihvtest/eyeball_l" )
-	self.zone:SetNWInt("zoneTeam", mw_melonTeam)
-	self.zone:SetNWInt("scale", 250)
+	self.zone:SetZoneTeam(mw_melonTeam)
+	self.zone:SetZoneRadius(250)
 
 	self:DeleteOnRemove( self.zone )
 

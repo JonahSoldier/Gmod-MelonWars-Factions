@@ -4,7 +4,5 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include( "shared.lua" )
 
 function ENT:Initialize()
-	self:SetRenderMode( RENDERMODE_TRANSALPHA )
-	self:SetColor(Color(255,0,0,100))
 	self:SetNoDraw( true )
 end

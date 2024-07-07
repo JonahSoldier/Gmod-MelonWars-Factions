@@ -30,8 +30,9 @@ function ENT:Initialize()
 		self.zone:SetPos(self:GetPos() + Vector(0,0,-100))
 		self.zone:SetMoveType( MOVETYPE_NONE )
 
-		self.zone:SetNWInt("zoneTeam", 0)
-		self.zone:SetNWInt("scale", 600)
+		self.zone:SetZoneTeam(0)
+
+		self.zone:SetZoneRadius(600)
 
 		self:DeleteOnRemove( self.zone )
 end
@@ -116,7 +117,7 @@ function ENT:GetCaptured(capturingTeam, ent)
 	local newColor = color_white
 	if capturingTeam > 0 then newColor = MelonWars.teamColors[capturingTeam] end
 
-	ent.zone:SetNWInt("zoneTeam", capturingTeam)
+	ent.zone:SetZoneTeam(capturingTeam)
 	ent:SetColor(newColor)
 end
 
