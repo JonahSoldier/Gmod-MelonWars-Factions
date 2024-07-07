@@ -85,7 +85,7 @@ function ENT:Shoot(ent)
 
 	local bullet = ents.Create( "ent_melonbullet_particlebeamtracer" )
 	bullet:SetPos( ent:GetPos() + Vector(0,0,200) )
-	bullet:SetNWInt("mw_melonTeam",self.mw_melonTeam)
+	bullet:SetNWInt("mw_melonTeam",self:GetNWInt("mw_melonTeam", -1))
 	bullet:Spawn()
 	bullet:SetNWEntity("target", ent.targetEntity)
 	bullet.owner = ent

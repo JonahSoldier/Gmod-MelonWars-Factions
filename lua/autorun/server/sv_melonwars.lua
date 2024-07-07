@@ -763,7 +763,7 @@ end )
 
 net.Receive( "SellEntity", function( _, pl )
 	local entity = net.ReadEntity()
-	local playerTeam = net.ReadInt(4)
+	local playerTeam = net.ReadUInt(5)
 
 	if not entity:IsValid() then
 		entity = pl:GetEyeTrace().Entity

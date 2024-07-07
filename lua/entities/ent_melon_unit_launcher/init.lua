@@ -141,7 +141,7 @@ function ENT:Shoot(ent, forcedTargetPos)
 	local bullet = ents.Create( "ent_melonbullet_unit_shell" )
 	if not IsValid( bullet ) then return end -- Check whether we successfully made an entity, if not - bail
 	bullet:SetPos( ent:GetPos() + Vector(0,0,200) )
-	bullet:SetNWInt("mw_melonTeam", self.mw_melonTeam)
+	bullet:SetNWInt("mw_melonTeam", self:GetNWInt("mw_melonTeam", -1))
 	bullet:Spawn()
 	bullet:SetNWVector("targetPos", forcedTargetPos)
 	bullet.owner = ent

@@ -13,7 +13,9 @@ function ENT:Initialize()
 	self.range = 80
 	self.sphereRadius = 0
 	self.shotSound = "weapons/stunstick/stunstick_impact1.wav"
-	self.shotOffset = Vector(0,0,65)
+	--self.shotOffset = Vector(0,0,65)
+	self.shotOffset = Vector(0,0,50)
+
 
 	self.canMove = false
 	self.moveType = MOVETYPE_NONE
@@ -51,6 +53,7 @@ function ENT:SlowThink ( ent )
 	for i = 1, math.min(count, 10), 1 do
 		selfTbl.DischargeEffect(self)
 	end
+	print(selfTbl.HP)
 end
 
 function ENT:DischargeEffect()

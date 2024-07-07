@@ -10,7 +10,6 @@ function ENT:Think()
 	local turnedOn = self:GetNWBool("active", false)
 
 	self:GetTable().onParticles:SetShouldDraw(turnedOn)
-	self:GetTable().onParticles2:SetShouldDraw(turnedOn)
 
 	self:SetNextClientThink(CurTime() + 2.5)
 	return true

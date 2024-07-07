@@ -45,13 +45,16 @@ function ENT:SlowThink ( ent ) --*TODO: This is moderately better than the vanil
 	else
 		local targEnt = selfTbl.targetEntity
 		local pos = self:GetPos()
-
-		if not IsValid(targEnt) or targEnt.HP >= targEnt.maxHP or targEnt:GetPos():DistToSqr(pos) > selfTbl.range ^ 2 then
+		if not IsValid(targEnt) or not targEnt.HP or not targEnt.maxHP then --Valid target
 			selfTbl.targetEntity = nil
 			selfTbl.nextSlowThink = CurTime() + 0.1
 			return false
 		end
-
+		if targEnt.HP >= targEnt.maxHP or targEnt:GetPos():DistToSqr(pos) > selfTbl.range ^ 2 then --healed or too far away.
+			selfTbl.targetEntity = nil
+			selfTbl.nextSlowThink = CurTime() + 0.1
+			return false
+		end
 		local tr = util.TraceLine( {
 			start = pos,
 			endpos = selfTbl.targetEntity:GetPos(),

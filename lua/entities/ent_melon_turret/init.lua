@@ -12,7 +12,7 @@ function ENT:Initialize()
 	self.damageDeal = 10
 	self.maxHP = 45
 	self.range = 500
-	self.population = 2
+	self.population = 1
 	self.shotSound = "weapons/ar1/ar1_dist2.wav"
 	self.tracer = "AR2Tracer"
 

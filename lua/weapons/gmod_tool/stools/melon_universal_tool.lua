@@ -1171,7 +1171,7 @@ local function MW_BeginSelection() -- Previously concommand.Add( "+mw_select", f
 		start = eyePos,
 		endpos = eyePos + ply:EyeAngles():Forward() * 10000,
 		filter = function( ent ) if ( ent:GetClass() ~= "player" ) then return true end end,
-		mask = MASK_SOLID + MASK_WATER
+		mask = MASK_SOLID + ((not ply:WaterLevel() == 3 and MASK_WATER) or 0)
 	} )
 
 	ply.mw_selectionStartingPoint = trace.HitPos
@@ -1199,7 +1199,7 @@ function TOOL:MW_SelectionThink() --This might be a little jank because I wrote 
 		start = eyePos,
 		endpos = eyePos + eyeForwards * 10000,
 		filter = function( ent ) if ( ent:GetClass() ~= "player" ) then return true end end,
-		mask = MASK_SOLID + MASK_WATER
+		mask = MASK_SOLID + ((not ply:WaterLevel() == 3 and MASK_WATER) or 0)
 	} )
 
 	local desiredZ = ply.mw_selectionStartingPoint[3]
@@ -1632,9 +1632,6 @@ function TOOL:Deploy()
 		net.Send( owner )
 	end
 
-	owner.mw_hudColor = MelonWars.teamColors[_team] or Color(100,100,100,255)
-	owner.mw_spawntime = 0
-
 	owner:PrintMessage( HUD_PRINTCENTER, "Press R to open the menu" )
 	owner:CrosshairDisable()
 end
@@ -1825,7 +1822,7 @@ function TOOL:Think()
 				if (trace.Entity:GetNWInt("mw_melonTeam") == newTeam) then
 					net.Start("SellEntity")
 						net.WriteEntity(trace.Entity)
-						net.WriteInt(mw_team_cv:GetInt(), 4)  --cvars.Number("mw_team"), 4)
+						net.WriteUInt(mw_team_cv:GetInt(), 5)  --cvars.Number("mw_team"), 4)
 					net.SendToServer()
 				end
 				plyTbl.mw_sell = 0
@@ -1992,6 +1989,7 @@ function TOOL:DrawHUD() --*TODO: Refactor. This needs to be split up/reorganized
 
 		local unit_id = cvars.Number("mw_chosen_unit")
 
+		pl.mw_spawntime = pl.mw_spawntime or CurTime()
 		if (math.floor(pl.mw_spawntime - CurTime()) > 0) then
 			draw.DrawText( "Spawning Queue: " .. math.floor(pl.mw_spawntime-CurTime()), "DermaLarge", ScrW() / 2, ScrH() - 80, color_white, TEXT_ALIGN_CENTER )
 		end
@@ -2256,6 +2254,9 @@ end
 
 
 if CLIENT then
+
+	LocalPlayer().mw_hudColor = MelonWars.teamColors[_team] or Color(100,100,100,255)
+
 	--local mw_buildalpha_multiplier_cv = GetConVar("mw_buildalpha_multiplier")
 	hook.Add("PostDrawTranslucentRenderables", "MelonWars_DrawToolIndicatorRanges", function(depth, skybox)
 		local locPly = LocalPlayer()

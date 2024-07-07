@@ -46,7 +46,7 @@ function ENT:Initialize()
 end
 
 function ENT:PhysicsCollide( colData, collider )
-	local _team = colData.HitEntity.mw_melonTeam
+	local _team = colData.HitEntity:GetNWInt("mw_melonTeam", -1)
 	if (colData.HitEntity.Base == "ent_melon_base") then
 		if (_team ~= nil) then
 			self:Open(_team)

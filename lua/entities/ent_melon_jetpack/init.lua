@@ -109,6 +109,7 @@ function ENT:PhysicsUpdate()
 	end
 
 	selfTbl.delayedForce = (selfTbl.delayedForce * 2 + force) / 3
+	selfTbl.delayedForce = math.Clamp(selfTbl.delayedForce, -35, 35) --Mitigate issues with rocketing into the sky
 
 	phys:ApplyForceCenter(Vector(0,0,selfTbl.delayedForce))
 end

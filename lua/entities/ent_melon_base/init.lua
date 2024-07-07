@@ -110,7 +110,7 @@ function ENT:Ini( teamnumber, affectPopulation )
 		self.chaseStance = true
 	end
 
-	--self.mw_melonTeam = teamnumber
+	self.mw_melonTeam = teamnumber
 
 	if teamnumber == -1 then
 		error( "Unit " .. tostring( self ) .. " spawned with team -1!" )
@@ -192,7 +192,7 @@ function ENT:Setup()
 	self.phys = self:GetPhysicsObject()
 
 	if self.moveType == 0 then
-		local weld = constraint.Weld( self, game.GetWorld(), 0, 0, 0, true , false )
+		constraint.Weld( self, game.GetWorld(), 0, 0, 0, true , false )
 		self.canMove = false
 		self.phys:EnableMotion( false )
 	end
@@ -574,7 +574,7 @@ function MelonWars.unitDefaultThink( ent ) --*TODO: Refactor
 					entTbl.moving = true
 					entTbl.followEntity = ent
 					ent:SetNWEntity("followEntity", ent)
-					if ((tepos-entTbl.holdGroundPosition):LengthSqr() > entTbl.maxChaseDistance*entTbl.maxChaseDistance) then
+					if ((tepos-entTbl.holdGroundPosition):LengthSqr() > entTbl.maxChaseDistance * entTbl.maxChaseDistance) then
 						ent:LoseTarget()
 					end
 				else
@@ -593,8 +593,8 @@ function MelonWars.unitDefaultThink( ent ) --*TODO: Refactor
 		local ourTeam = ent:GetNWInt("mw_melonTeam", 0)
 		local tr = util.TraceLine( {
 			start = pos,
-			endpos = entTbl.targetEntity:GetPos()+entTbl.targetEntity:GetVar("shotOffset", vector_origin),
-				filter = function( foundEntity ) 
+			endpos = entTbl.targetEntity:GetPos() + entTbl.targetEntity:GetVar("shotOffset", vector_origin),
+				filter = function( foundEntity )
 					if (foundEntity.Base ~= "ent_melon_base" and foundEntity.Base ~= "ent_melon_energy_base" and foundEntity:GetNWInt("mw_melonTeam", -1) == ourTeam or foundEntity:GetClass() == "prop_physics" and foundEntity ~= entTbl.targetEntity) then
 						 return true
 					end
@@ -653,7 +653,7 @@ function ENT:LoseTarget()
 	self.targetEntity = nil
 	self:SetNWEntity("targetEntity", nil)
 	self.forcedTargetEntity = nil
-	self.nextSlowThink = CurTime()+0.5
+	self.nextSlowThink = CurTime() + 0.5
 	if (self.chaseStance) then
 		self:SetVar("targetPos", self.holdGroundPosition)
 		self:SetNWVector("targetPos", self.holdGroundPosition)

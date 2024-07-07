@@ -133,14 +133,14 @@ function MelonWars.selectionCylinder(pos, radius, mwTeam, hitEnt, isTypeSelect)
 			start = pos,
 			endpos = pos + vec2000,
 			filter = function( ent ) if ( ent:GetClass() == "prop_physics" ) then return true end end,
-			mask = MASK_SOLID + MASK_WATER
+			mask = MASK_SOLID --+ MASK_WATER
 		} )
 
 		local depthTrace = util.TraceLine( {
 			start = pos,
 			endpos = pos - vec2000,
 			filter = function( ent ) if ( ent:GetClass() == "prop_physics" ) then return true end end,
-			mask = MASK_SOLID + MASK_WATER
+			mask = MASK_SOLID --+ MASK_WATER
 		} )
 
 		local depth = 2000 * depthTrace.Fraction

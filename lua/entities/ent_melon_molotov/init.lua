@@ -67,29 +67,13 @@ end
 
 function ENT:SlowThink ( ent )
 	MelonWars.unitDefaultThink ( ent )
-	--[[if (ent.canMove) then
-		MelonWars.unitDefaultThink ( ent )
-	else
-		local pos = ent:GetPos()
-		if (ent.targetEntity == nil) then
-			----------------------------------------------------------------------Buscar target
-			local foundEnts = ents.FindInSphere(pos, ent.range )
-			for k, v in RandomPairs( foundEnts ) do
-				if (v.Base == "ent_melon_base") then
-					if (v:GetNWInt("mw_melonTeam", -1) ~= ent:GetNWInt("mw_melonTeam", -1)) then
-						ent.targetEntity = v
-						ent:Shoot(ent)
-					end
-				end
-			end
-		end
-	end]]
 end
 
 function ENT:PostEntityPaste( ply, ent, createdEntities )
 	self:SetPos(self:GetPos()+Vector(0,0,1.2))
 end
 
+--[[
 function ENT:Welded (ent, trace)
 	ent:SetModel("models/props_c17/clock01.mdl")
 	ent:SetPos(ent:GetPos()+Vector(0,0,0))
@@ -99,18 +83,11 @@ function ENT:Welded (ent, trace)
 	ent.maxHP = 10
 	ent.HP = 10
 	ent.population = 1
-	--MelonWars.updatePopulation(-1, mw_melonTeam)
 	ent.range = 100
 	ent.materialString = "Models/effects/comball_sphere"
-	--[[for i = 1, 4 do
-		timer.Simple( 1+i*0.05, function()
-			if (IsValid(ent)) then
-				ent:SetPos(ent:GetPos()+Vector(0,0,-0.3))
-			end
-		end	)
-	end]]
+
 	timer.Simple( 1.3, function()
-		if (ent:IsValid()) then
+		if ent:IsValid() then
 			ent:SetMaterial(ent.materialString)
 			ent:SetColor(Color(255, 255, 255, 255))
 			ent:DrawShadow( false )
@@ -120,8 +97,9 @@ function ENT:Welded (ent, trace)
 			ent.targetable = false
 		end
 	end )
-	local weld = constraint.Weld( self, game.GetWorld(), 0, trace.PhysicsBone, 0, true , false )
+	constraint.Weld( self, game.GetWorld(), 0, trace.PhysicsBone, 0, true , false )
 end
+--]]
 
 function ENT:OnTakeDamage( damage )
 	if (self.canMove) then
@@ -145,21 +123,15 @@ function ENT:Shoot ( ent, forcedTargetPos)
 	sound.Play("buttons/button6.wav", ent:GetPos())
 	ent.forceExplode = (forcedTargetPos ~= nil)
 	timer.Simple( 0.3, function()
+		if not IsValid(self) then return end
 		sound.Play(self.deathSound, ent:GetPos())
-		if not ent.forceExplode and not IsValid(ent.targetEntity) then
-			ent.targetEntity = nil
-			ent.nextSlowThink = CurTime()+0.1
-			return false
+		if ent.forceExplode or IsValid(ent.targetEntity) then
+			ent:SetPos(ent:GetPos() + Vector(0,0,3))
+			MelonWars.die ( ent )
 		else
-			if (ent.forceExplode or tostring( ent.targetEntity ) ~= "[NULL Entity]") then
-			--util.BlastDamage( ent, ent, ent:GetPos(), 100, ent.damageDeal )
-			--local effectdata = EffectData()
-			--effectdata:SetOrigin( ent:GetPos() )
-			--util.Effect( "Explosion", effectdata )
-			--ent:Remove()
-				ent:SetPos(ent:GetPos()+Vector(0,0,3))
-				MelonWars.die ( ent )
-			end
+			ent.targetEntity = nil
+			ent.nextSlowThink = CurTime () + 0.1
+			return false
 		end
 	end )
 end

@@ -29,11 +29,6 @@ function ENT:Initialize()
 	self.capacity = 0
 	self:SetNWVector("energyPos", Vector(0,0,20))
 
-
-	self:SetNWInt("maxunits", 10)
-	self:SetNWInt("count", 0)
-	self.canEatUnits = true
-	self.idsInside = {}
 	self.firePrint = false
 	self.population = 0
 
@@ -42,14 +37,6 @@ function ENT:Initialize()
 
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 	self:GetPhysicsObject():EnableMotion(false)
-
-	for i=0, 9 do
-		self:SetNWString("class"..i, "")
-		self:SetNWFloat("hp"..i, 0)
-		self:SetNWInt("energy"..i, 0)
-		self:SetNWInt("value"..i, 0)
-		self:SetNWInt("entindex"..i, 0)
-	end
 end
 
 function ENT:SlowThink ( ent )
@@ -116,20 +103,14 @@ function ENT:Shoot(ent, forcedTargetPos)
 	local bullet = ents.Create( "ent_melonbullet_super_melonmissile" )
 	if not IsValid( bullet ) then return end -- Check whether we successfully made an entity, if not - bail
 	bullet:SetPos( ent:GetPos() + Vector(0,0,200) )
-	bullet:SetNWInt("mw_melonTeam",self.mw_melonTeam)
+	bullet:SetNWInt("mw_melonTeam",self:GetNWInt("mw_melonTeam", -1))
 	bullet:Spawn()
 	bullet:SetNWVector("targetPos", forcedTargetPos)
 	bullet.owner = ent
 	bullet:SetColor(self:GetColor())
 
-
-	bullet:SetNWInt("count", self:GetNWInt("count", 0))
-	bullet.idsInside = self.idsInside
-
-
 	ent.fired = true
 	ent.nextShot = CurTime()+ent.fireDelay
-
 end
 
 
@@ -138,23 +119,3 @@ end
 function ENT:DeathEffect ( ent )
 	MelonWars.defaultDeathEffect ( ent )
 end
-
-/*
-
-
-				if (IsValid(ent.targetEntity)and ent.targetEntity ~= ent) then
-					if ((ent.targetEntity:GetPos()-ent:GetPos()):LengthSqr() < ent.range*ent.range) then
-						local tr = util.TraceLine( {
-							start = pos,
-							endpos = ent.targetEntity:GetPos()+ent.targetEntity:GetVar("shotOffset", Vector(0,0,0)),
-							filter = function( foundEntity ) if (foundEntity.Base ~= "ent_melon_base" and foundEntity:GetNWInt("mw_melonTeam", 0) == ent:GetNWInt("mw_melonTeam", 1)or foundEntity:GetClass() == "prop_physics" and foundEntity ~= ent.targetEntity) then return true end end
-							})
-						if  (tr ~= nil and tostring(tr.Entity) == '[NULL Entity]') then
-							ent:Shoot( ent, ent.targetPos)
-							self:DrainPower(1000)
-						end
-					end
-				end
-
-
-*/
