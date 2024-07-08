@@ -21,6 +21,8 @@ TOOL.ClientConVar[ "mw_enable_skin" ] = "1"
 
 CreateConVar( "mw_admin_open_permits", "0", 8192 + 128, "Whether or not everyone is allowed to use the admin menu." )
 TOOL.ClientConVar[ "mw_admin_open_permits" ] = 0
+CreateConVar( "mw_admin_network_performance_mode", "0", 8192, "Only network entities within a 90* cone of players' view. Shifts some of the work from network to server." )
+TOOL.ClientConVar[ "mw_admin_network_performance_mode" ] = 0
 
 CreateConVar( "mw_admin_spawn_time", "0", 8192, "Whether or not units take time before spawning." )
 TOOL.ClientConVar[ "mw_admin_spawn_time" ] = 1

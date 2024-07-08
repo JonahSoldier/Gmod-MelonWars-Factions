@@ -10,7 +10,7 @@ function ENT:Initialize()
 	self.canMove = true
 	self.canShoot = true
 	self.speed = 150
-	self.thrustforce = 0.4
+	self.thrustforce = 1 --0.4
 	self.maxHP = 25
 	self.captureSpeed = 0
 	self.population = 0
