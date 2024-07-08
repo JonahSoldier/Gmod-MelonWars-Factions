@@ -71,8 +71,17 @@ function ENT:Think()
 		if (capturing[i] > 0) then
 			local othersHaveCapture = false
 			for ii = 1,8 do
-				if ii ~= i and selfTbl.captured[ii] > 0 then
-					selfTbl.captured[ii] = math.max(0,selfTbl.captured[ii]-capture)
+				local otherCapture = selfTbl.captured[ii]
+				if ii ~= i and otherCapture > 0 then
+					if MelonWars.sameTeam(i, ii) then --Assist our allies instead of obstructing them
+						if capture <= otherCapture then
+							selfTbl.captured[ii] = math.min(100, otherCapture + capture)
+							capture = 0
+							selfTbl.captured[i] = 0
+						end
+					else
+						selfTbl.captured[ii] = math.max(0,otherCapture-capture)
+					end
 					othersHaveCapture = true
 				end
 			end
@@ -98,6 +107,7 @@ function ENT:Think()
 				if totalCapture == 100 then
 					self:GetCaptured(i, self)
 				end
+				break
 			end
 		end
 	else

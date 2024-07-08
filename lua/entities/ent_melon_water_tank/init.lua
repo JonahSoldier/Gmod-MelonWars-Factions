@@ -46,22 +46,27 @@ function ENT:Think()
 
 	for i = 1, 8 do
 		local capture = math.Round(math.sqrt(capturing[i])) * 4
-		--Si hay gente capturando
 		if capturing[i] > 0 then
 			local othersHaveCapture = false
 			for ii = 1, 8 do
-				if ii ~= i and selfTbl.captured[ii] > 0 then --Si alguien más estaba capturando
-					--Bajar su captura
-					selfTbl.captured[ii] = selfTbl.captured[ii] - capture
+				local otherCapture = selfTbl.captured[ii]
+				if ii ~= i and otherCapture > 0 then
+					if MelonWars.sameTeam(i, ii) then --Assist our allies instead of obstructing them
+						if capture <= otherCapture then
+							selfTbl.captured[ii] = math.min(100, otherCapture + capture)
+							capture = 0
+							selfTbl.captured[i] = 0
+						end
+					else
+						selfTbl.captured[ii] = math.max(0,otherCapture-capture)
+					end
 					othersHaveCapture = true
 				end
 			end
-			--Si nadie estaba capturando, capturar
 			if not othersHaveCapture then
 				selfTbl.captured[i] = math.min(100, selfTbl.captured[i] + capture)
 			end
 		else
-		--Si no, bajarle
 			selfTbl.captured[i] = math.max(0, selfTbl.captured[i]-20)
 		end
 	end
