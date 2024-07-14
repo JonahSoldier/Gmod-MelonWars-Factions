@@ -1,7 +1,7 @@
 AddCSLuaFile( "cl_init.lua" ) -- Make sure clientside
 AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 
-include('shared.lua')
+include("shared.lua")
 
 function ENT:Initialize()
 	MelonWars.defaults ( self )
@@ -9,12 +9,12 @@ function ENT:Initialize()
 	self.unit = 14
 	self.modelString = "models/hunter/misc/roundthing2.mdl"
 	self.maxHP = 120
-	--self.Angles = Angle(0,0,0)
-	--self:SetPos(self:GetPos()+Vector(0,0,-25))
 
 	self:BarrackInitialize()
 	self.population = 1
 	self:SetNWInt("maxunits", 5)
+
+	self.shotOffset = Vector(0,0,35)
 
 	self:Setup()
 end

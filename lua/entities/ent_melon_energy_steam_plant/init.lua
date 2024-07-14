@@ -25,10 +25,9 @@ function ENT:Actuate()
 	self:SetNWBool("active", not on)
 end
 
-local mw_admin_playing_cv = GetConVar("mw_admin_playing")
 local mw_admin_credits_cv = GetConVar("mw_admin_credit_cost")
 function ENT:Think(ent)
-	if self.spawned and mw_admin_playing_cv:GetBool() and self:GetNWBool("active", false) then
+	if self.spawned and MelonWars.admin_playing and self:GetNWBool("active", false) then
 		local waterCost = 5
 		local energyGain = 20
 		local selfTeam = self:GetNWInt("mw_melonTeam", 0)

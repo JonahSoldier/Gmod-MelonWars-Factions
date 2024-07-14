@@ -3,8 +3,6 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 
 include("shared.lua")
 
-local mw_admin_playing_cv = GetConVar("mw_admin_playing")
-
 function ENT:Initialize()
 	MelonWars.defaults( self )
 
@@ -40,7 +38,7 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink( ent )
-	if not mw_admin_playing_cv:GetBool() then return end
+	if not MelonWars.admin_playing then return end
 	MelonWars.unitDefaultThink( ent )
 	self.dropdown = math.max(self.dropdown -1, 0)
 
@@ -65,7 +63,7 @@ function ENT:Unstuck()
 end
 
 function ENT:PhysicsUpdate()
-	if not mw_admin_playing_cv:GetBool() then
+	if not MelonWars.admin_playing then
 		self.phys:Sleep()
 		return
 	end

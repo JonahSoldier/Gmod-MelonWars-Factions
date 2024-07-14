@@ -33,9 +33,8 @@ function ENT:Welded(ent, parent)
 	ent.parent = parent
 end
 
-local mw_admin_playing_cv = GetConVar( "mw_admin_playing" )
 function ENT:Update()
-	if not mw_admin_playing_cv:GetBool() then return end
+	if not MelonWars.admin_playing then return end
 	local selfTbl = self:GetTable()
 
 	local const = constraint.FindConstraints( self, "Weld" )

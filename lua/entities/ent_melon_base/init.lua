@@ -4,7 +4,6 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include("shared.lua")
 
 local unit_colors  = {Color(255,50,50,255),Color(50,50,255,255),Color(255,200,50,255),Color(30,200,30,255),Color(100,0,80,255),Color(100,255,255,255),Color(255,120,0,255),Color(255,100,150,255)}
-local mw_admin_playing_cv = GetConVar( "mw_admin_playing" )
 
 function MelonWars.defaults( ent )
 	ent.maxHP = 20
@@ -186,9 +185,10 @@ function ENT:Setup()
 		self:PhysicsInit( SOLID_VPHYSICS )
 		local mins, maxs = self:GetPhysicsObject():GetAABB()
 		self:PhysicsInitBox( mins, maxs, "slime" )
+	elseif self.moveType == MOVETYPE_NONE then
+		self:PhysicsInitStatic( SOLID_VPHYSICS )
 	else
 		self:PhysicsInit( SOLID_VPHYSICS )
-		--self:SetSolid( SOLID_VPHYSICS )
 	end
 
 	self.phys = self:GetPhysicsObject()
@@ -227,6 +227,9 @@ end
 
 function ENT:Welded( ent, parent )
 	constraint.Weld( ent, parent, 0, 0, 0, true , false )
+	if not(self.moveType == MOVETYPE_NONE) then
+		ent.population = math.ceil(ent.population / 2)
+	end
 
 	ent.canMove = false
 	ent.materialString = "models/shiny"
@@ -234,11 +237,10 @@ function ENT:Welded( ent, parent )
 	ent.parent = parent
 
 	ent.phys:SetDamping(0,0)
+	ent.phys:Sleep()
 	ent:SetCollisionGroup( COLLISION_GROUP_DEBRIS_TRIGGER )
 
-	if not(self.moveType == MOVETYPE_NONE) then
-		ent.population = math.ceil(ent.population / 2)
-	end
+	ent.DefaultPhysicsUpdate = function() end
 end
 
 function ENT:Think()
@@ -277,6 +279,7 @@ function ENT:Think()
 		if table.Count( const ) == 0 then
 			selfTbl.damage = 5
 		end
+
 	end
 
 	if selfTbl.parent and not ( IsValid( selfTbl.parent ) or selfTbl.parent:IsWorld() ) then
@@ -285,7 +288,7 @@ function ENT:Think()
 end
 
 function ENT:Update()
-	if not mw_admin_playing_cv:GetBool() then return end
+	if not  MelonWars.admin_playing then return end
 	local selfTbl = self:GetTable()
 	if CurTime() > selfTbl.nextSlowThink then
 		selfTbl.nextSlowThink = CurTime() + selfTbl.slowThinkTimer
@@ -801,7 +804,7 @@ end
 local resistForce = Vector(0,0,0)
 function ENT:DefaultPhysicsUpdate()
 	local selfTbl = self:GetTable()
-	if selfTbl.canMove and mw_admin_playing_cv:GetBool()  then
+	if selfTbl.canMove and MelonWars.admin_playing then
 		if selfTbl.moving then
 			local phys = selfTbl.phys
 			local vel = phys:GetVelocity()
@@ -958,7 +961,7 @@ function ENT:BarrackSlowThink()
 		MelonWars.die( self )
 	end
 
-	if not selfTbl.spawned or not mw_admin_playing_cv:GetBool() then return end
+	if not selfTbl.spawned or not MelonWars.admin_playing then return end
 
 	if not selfTbl.unitspawned and ( selfTbl.nextSlowThink < CurTime() + self:GetNWFloat("overdrive", 0) ) and EnoughPower(selfTeam) then
 		self:SetNWFloat("overdrive", 0)

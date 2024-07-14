@@ -8,7 +8,7 @@ function ENT:Initialize()
 	MelonWars.energyDefaults ( self )
 
 	self.modelString = "models/props_combine/weaponstripper.mdl"
-	self.maxHP = 20
+	self.maxHP = 50
 	self.moveType = MOVETYPE_NONE
 
 	self.canMove = false
@@ -17,7 +17,7 @@ function ENT:Initialize()
 	self.capacity = 0
 	self:SetNWVector("energyPos", Vector(0,0,62.5))
 
-	self.shotOffset = Vector(0,0,1)
+	self.shotOffset = Vector(0,0,65)
 
 	self.history = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
 	self.historyTotal = 25
@@ -54,9 +54,8 @@ function ENT:EstimateEfficiency()
 	end
 end
 
-local mw_admin_playing_cv = GetConVar("mw_admin_playing")
 function ENT:Think(ent)
-	if mw_admin_playing_cv:GetBool() and self.spawned then
+	if MelonWars.admin_playing and self.spawned then
 		local angles = self:GetAngles()
 		local selfPos = self:GetPos()
 		local offset = angles:Right() * math.random(-60,60) --+ angles:Up() * math.random(0,120)

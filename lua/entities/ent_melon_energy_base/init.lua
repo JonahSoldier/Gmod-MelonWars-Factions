@@ -324,7 +324,7 @@ function ENT:SetNetwork(network)
 	MW_Energy_Network_Insert_Element(self, network, self:GetEnergy(previousNetwork))
 end
 
-function ENT:GetEnergy(network) --TODO: Is there even a point of passing network here?
+function ENT:GetEnergy(network)
 	local selfTbl = self:GetTable()
 	network = network or selfTbl.network
 
@@ -336,7 +336,7 @@ function ENT:GetEnergy(network) --TODO: Is there even a point of passing network
 	end
 end
 
-function ENT:DrainPower(power) --TODO: See if we can use this and GivePower to reliably detect updates. I'm not sure if any entities mess with energy directly.
+function ENT:DrainPower(power)
 	local energyNetwork = MelonWars.electricNetwork[self:GetTable().network]
 	if (energyNetwork.energy >= power) then
 		energyNetwork.energy = energyNetwork.energy - power
