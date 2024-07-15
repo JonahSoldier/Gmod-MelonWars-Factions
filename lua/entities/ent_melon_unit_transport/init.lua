@@ -45,7 +45,7 @@ end
 
 function ENT:PhysicsCollide( data, physobj )
 	local hitEntity = data.HitEntity
-	if hitEntity:IsValid() then
+	if hitEntity:IsValid() and hitEntity.spawned then
 		self:AbsorbUnit(hitEntity)
 	end
 end
@@ -54,7 +54,7 @@ function ENT:AbsorbUnit(unit)
 	if self.canEatUnits and unit.Base == "ent_melon_base" then
 		local uClass = unit:GetClass()
 		local selfTeam = self:GetNWInt("mw_melonTeam", -1)
-		if unit:GetNWInt("mw_melonTeam", 0) == selfTeam and unit.canMove and not unit.isContraptionPart and unit:GetClass() ~= "ent_melon_main_unit" then
+		if unit:GetNWInt("mw_melonTeam", 0) == selfTeam and unit.canMove and not unit.isContraptionPart and uClass ~= "ent_melon_main_unit" then
 			if unit.population <= self:GetNWInt("maxunits", 0) - self:GetNWInt("count", 0) then
 				local index = self:GetNWInt("count", 0)
 				self.containedEnts[index+1] = {
@@ -69,12 +69,14 @@ function ENT:AbsorbUnit(unit)
 				unit.fired = true
 
 				unit:Remove()
+				unit.spawned = false
 
 				sound.Play("items/ammocrate_close.wav", self:GetPos())
 			end
 		end
 	end
 end
+
 
 function ENT:Actuate()
 	self:FreeUnits()

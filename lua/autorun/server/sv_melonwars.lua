@@ -238,7 +238,7 @@ end )
 
 net.Receive( "MW_Activate", function(_, pl)
 	local ent = net.ReadEntity()
-	if not IsValid(ent) then return end
+	if not IsValid(ent) or not IsValid(pl) then return end
 
 	local plTeam = pl:GetInfoNum("mw_team", -1)
 	if not plTeam == ent:GetNWInt( "mw_melonTeam", 0 ) then return end
@@ -966,7 +966,7 @@ net.Receive( "MW_Order", function( _, ply )
 		for _, v in ipairs( foundMelons ) do
 			local vTbl = v:GetTable()
 
-			local sameTeam = v:SameTeam(hitEnt)
+			sameTeam = hitValid and v:SameTeam(hitEnt)
 			local forceTargetEnt = ( (not sameTeam and hitValid ) and hitEnt) or v
 			local followEnt = ( sameTeam and hitEnt ) or v
 

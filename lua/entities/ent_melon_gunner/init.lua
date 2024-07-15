@@ -36,35 +36,28 @@ function ENT:ModifyColor()
 end
 
 function ENT:SlowThink ( ent )
-	self.slowThinkTimer = self.spinup
-	if (self.spinup < self.maxspinup) then
-		self.spinup = self.spinup + 0.2
-		if (self.spinup > self.maxspinup) then
-			self.spinup = self.maxspinup
-		end
-	end
+	local selfTbl = self:GetTable()
+	selfTbl.slowThinkTimer = selfTbl.spinup
+	selfTbl.spinup = math.min(selfTbl.spinup + 0.2, selfTbl.maxspinup)
+
 	MelonWars.unitDefaultThink ( ent )
 end
 
 function ENT:Shoot ( ent, forcedTargetPos )
-	if (ent.ai or CurTime() > ent.nextControlShoot) then
+	local selfTbl = self:GetTable()
+	if selfTbl.ai or CurTime() > selfTbl.nextControlShoot then
 		MelonWars.defaultShoot ( ent, forcedTargetPos )
-		ent.nextControlShoot = CurTime()+ent.slowThinkTimer
+		selfTbl.nextControlShoot = CurTime() + selfTbl.slowThinkTimer
 		for i = 1, 2 do
-			timer.Simple( i*self.spinup/3, function()
+			timer.Simple( i * selfTbl.spinup / 3, function()
 				if (IsValid(ent)) then
 					MelonWars.defaultShoot ( ent, forcedTargetPos )
 				end
 			end)
 		end
-		local target = ent.targetEntity
-		if (target.Base == "ent_melon_base" or target.Base == "ent_melon_energy_base" or target.Base == "ent_melon_prop_base") then
-			if self.spinup > self.minspinup then
-				self.spinup = self.spinup - 0.6
-				if self.spinup < self.minspinup then
-					self.spinup = self.minspinup
-				end
-			end
+		local target = selfTbl.targetEntity
+		if target.Base == "ent_melon_base" or target.Base == "ent_melon_energy_base" or target.Base == "ent_melon_prop_base" then
+			selfTbl.spinup = math.max(selfTbl.spinup - 0.6, selfTbl.minspinup)
 		end
 	end
 end

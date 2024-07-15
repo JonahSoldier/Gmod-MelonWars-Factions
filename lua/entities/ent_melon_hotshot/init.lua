@@ -21,13 +21,8 @@ function ENT:Initialize()
 
 	self.buildingDamageMultiplier = 0.7
 
-	self.shotOffset = Vector(0,0,5)
-
 	self.angularDamping = 10
-
-	--self:SetPos(self:GetPos()+Vector(0,0,12))
-
-	self.nextShot = CurTime()+3
+	self.nextShot = CurTime() + 3
 
 	self.population = 3
 	self.useBBoxPhys = true

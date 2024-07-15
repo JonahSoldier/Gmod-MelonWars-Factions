@@ -41,7 +41,7 @@ end
 
 function ENT:PhysicsCollide( data, physobj )
 	local hitEntity = data.HitEntity
-	if hitEntity:IsValid() then
+	if hitEntity:IsValid() and hitEntity.spawned then
 		self:AbsorbUnit(hitEntity)
 	end
 end
@@ -65,6 +65,7 @@ function ENT:AbsorbUnit(unit)
 				unit.fired = true
 
 				unit:Remove()
+				unit.spawned = false
 
 				sound.Play("items/ammocrate_close.wav", self:GetPos())
 			end
@@ -82,7 +83,7 @@ function ENT:FreeUnits()
 
 	local exitPos = self:GetPos() + (self:GetRight() * -98.1) - Vector(0,0,110)
 	local selfTeam = self:GetNWInt("mw_melonTeam", -1)
-	for i = 1, totalCount do
+	for i = 1, totalCount + 1 do
 		local cEnt = self.containedEnts[i]
 		if cEnt then
 			local pos = exitPos + Vector(math.random(-10,10),math.random(-10,10), i * 10)
@@ -99,6 +100,7 @@ function ENT:FreeUnits()
 
 			MelonWars.updatePopulation(-newUnit.population, selfTeam)
 		end
+		self.containedEnts[i] = nil
 	end
 	self:SetNWInt("count", 0)
 	sound.Play( "doors/door_metal_medium_open1.wav", self:GetPos() )
