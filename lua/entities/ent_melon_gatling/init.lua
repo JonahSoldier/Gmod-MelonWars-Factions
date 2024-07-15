@@ -16,7 +16,7 @@ function ENT:Initialize()
 	self.range = 250
 
 	self.weight = 25
-	self.shotOffset = Vector(0,0,5)
+	self.shotOffset = Vector(0,0,25)
 
 	self.population = 2
 	self.buildingDamageMultiplier = 0.8

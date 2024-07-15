@@ -518,23 +518,32 @@ function MelonWars.unitDefaultThink( ent ) --*TODO: Refactor
 				if vTbl.Base == "ent_melon_prop_base" or v:GetNWInt("propHP",-1) ~= -1 then
 					local vTeam = v:GetNWInt("mw_melonTeam", ourTeam)
 					if not( ourTeam == vTeam or MelonWars.sameTeam(ourTeam, vTeam) or string.StartWith( vClass, "ent_melonbullet_" )) and (not v.AOETargetableOnly or entTbl.isAOE) then
-						if entTbl.chaseStance then
-							if vClass == "ent_melon_wall" then
-								if (entTbl.stuck > 15) then
-									if (IsValid(entTbl.barrier)) then
-										entTbl.targetEntity = entTbl.barrier
-									else
-										entTbl.targetEntity = v
-										break
+						local tr = util.TraceLine( {
+							start = pos,
+							endpos = v:GetPos() + (vTbl.shotOffset or vector_origin),
+							filter = function( foundEnt )
+								return foundEnt:GetClass() == "prop_physics" or foundEnt:GetTable().blockFriendlyTraces
+							end
+						})
+						if not tr.Entity:IsValid() then
+							if entTbl.chaseStance then
+								if vClass == "ent_melon_wall" then
+									if (entTbl.stuck > 15) then
+										if (IsValid(entTbl.barrier)) then
+											entTbl.targetEntity = entTbl.barrier
+										else
+											entTbl.targetEntity = v
+											break
+										end
 									end
+								else
+									entTbl.targetEntity = v
+									break
 								end
 							else
 								entTbl.targetEntity = v
 								break
 							end
-						else
-							entTbl.targetEntity = v
-							break
 						end
 					end
 				end

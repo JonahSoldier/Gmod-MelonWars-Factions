@@ -68,6 +68,7 @@ local function MW_Energy_Network_Merge(ent, networkA, networkB)
 	--MW_Energy_Network_Insert_Element(ent, networkA)
 	local nwa = MelonWars.electricNetwork[networkA]
 	local nwb = MelonWars.electricNetwork[networkB]
+	if not nwa or not nwb then return end
 	--nwa.capacity = nwa.capacity + nwb.capacity
 	nwa.energy = nwa.energy + nwb.energy
 	nwa.updated = true
