@@ -2,6 +2,9 @@ TOOL.Category = "MelonWars: RTS"
 TOOL.Name = "Player Tool"
 TOOL.Command = nil
 TOOL.ConfigName = "" -- Setting this means that you do not have to create external configuration files to define the layout of the tool config-hud
+TOOL.Information = {
+	{ name = "reload" }
+}
 
 -- Convars (Start)
 
