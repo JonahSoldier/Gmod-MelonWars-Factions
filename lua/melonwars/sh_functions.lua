@@ -125,7 +125,7 @@ local vec2000 = Vector(0,0,2000)
 function MelonWars.selectionCylinder(pos, radius, mwTeam, hitEnt, isTypeSelect)
 	local foundEnts = {}
 
-	local entClass = hitEnt:GetClass()
+	local entClass = hitEnt:IsValid() and hitEnt:GetClass()
 
 	if radius > 15 then
 		local allFoundEntities = {}

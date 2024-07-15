@@ -70,6 +70,9 @@ TOOL.ClientConVar[ "mw_faction" ] = ""
 CreateClientConVar( "mw_income_indicator", "1", 1, false )
 TOOL.ClientConVar[ "mw_income_indicator" ] = 1
 
+local mw_showtutorial_cv = CreateClientConVar( "mw_show_tutorial", "1", true )
+TOOL.ClientConVar[ "mw_show_tutorial" ] = 1
+
 local mw_action_cv = CreateClientConVar( "mw_action", "0", 0, true )
 TOOL.ClientConVar[ "mw_action" ] = 0
 
@@ -1153,6 +1156,10 @@ local function _CreatePanel()
 		-- Player readyup
 		y = y + 40
 		_MakeCheckbox(20, y, scroll, "[Ready Up]", "mw_player_ready")
+
+		y = y + 40
+		_MakeCheckbox(20, y, scroll, "Hide Tutorial", "mw_show_tutorial", "", true)
+
 	end
 end
 
@@ -2036,7 +2043,7 @@ function TOOL:DrawHUD() --*TODO: Refactor. This needs to be split up/reorganized
 			draw.DrawText( "Current Cheats:", "DermaLarge", 10, ScrH() - cheatsOffset, Color(255,255,255,100), TEXT_ALIGN_LEFT)
 		end
 
-		if (pl.mw_action == 2) then --spawning main building
+		if pl.mw_action == 2 then --spawning main building
 			local w = 300
 			-- local h = 280
 			local x = ScrW() - w
@@ -2045,7 +2052,7 @@ function TOOL:DrawHUD() --*TODO: Refactor. This needs to be split up/reorganized
 			draw.DrawText( "R: Open menu", "DermaLarge", x + w-10, y-140, color_white, TEXT_ALIGN_RIGHT )
 			draw.DrawText( "LMB: Spawn Main Building", "DermaLarge", x + w-10, y-100, color_white, TEXT_ALIGN_RIGHT )
 			draw.DrawText( "RMB: Cancel", "DermaLarge", x + w-10, y-60, color_white, TEXT_ALIGN_RIGHT )
-		elseif (pl.mw_action == 1) then --spawning
+		elseif pl.mw_action == 1 then --spawning
 			local teamColor = Color(100,100,100,255)
 			local mwTeam = mw_team_cv:GetInt()
 			if mwTeam ~= 0 then
@@ -2078,10 +2085,6 @@ function TOOL:DrawHUD() --*TODO: Refactor. This needs to be split up/reorganized
 				draw.DrawText( "R: Open menu", "DermaLarge", x + w-10, y-120, color_white, TEXT_ALIGN_RIGHT )
 				draw.DrawText( "LMB: Spawn", "DermaLarge", x + w-10, y-80, color_white, TEXT_ALIGN_RIGHT )
 				draw.DrawText( "RMB: Cancel", "DermaLarge", x + w-10, y-40, color_white, TEXT_ALIGN_RIGHT )
-
-				--if (math.floor(pl.mw_spawntime-CurTime()) > 0) then
-				--	draw.DrawText( "Spawning Queue: " .. math.floor(pl.mw_spawntime-CurTime()), "DermaLarge", ScrW() / 2, ScrH() - 80, color_white, TEXT_ALIGN_CENTER )
-				--end
 
 				if (cvars.Bool("mw_unit_option_welded") and MelonWars.units[unit_id].welded_cost ~= -1) then
 					draw.RoundedBox( 10, mx-100, my + 40, 200, 45, Color(0,0,0,100) )
@@ -2129,15 +2132,17 @@ function TOOL:DrawHUD() --*TODO: Refactor. This needs to be split up/reorganized
 			local x = ScrW() - w
 			local y = ScrH() - h
 
-			draw.DrawText( "R: Open menu", "DermaLarge", x + w-10, y-235, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "LMB (Hold and drag): Select", "DermaLarge", x + w-10, y-195, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "LMB double click: Select unit type", "CloseCaption_Normal", x + w-10, y-165, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "Hold Shift to add to selection", "CloseCaption_Normal", x + w-10, y-145, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "RMB: Move selected", "DermaLarge", x + w-10, y-115, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "Alt + RMB: force target or follow ally", "CloseCaption_Normal", x + w-10, y-85, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "Shift + RMB: Add waypoint", "CloseCaption_Normal", x + w-10, y-65, color_white, TEXT_ALIGN_RIGHT )
-			draw.DrawText( "Left Ctrl: Stop selected units", "CloseCaption_Normal", x + w-10, y-45, color_white, TEXT_ALIGN_RIGHT )
-			-- draw.DrawText( "Left Ctrl + RMB: Disperse", "CloseCaption_Normal", x + w-10, y-25, color_white, TEXT_ALIGN_RIGHT )
+			if mw_showtutorial_cv:GetBool() then
+				draw.DrawText( "LMB (Hold and drag): Select", "DermaLarge", x + w-10, y-195, color_white, TEXT_ALIGN_RIGHT )
+				draw.DrawText( "LMB double click: Select unit type", "CloseCaption_Normal", x + w-10, y-165, color_white, TEXT_ALIGN_RIGHT )
+				draw.DrawText( "Hold Shift to add to selection", "CloseCaption_Normal", x + w-10, y-145, color_white, TEXT_ALIGN_RIGHT )
+				draw.DrawText( "RMB: Move selected", "DermaLarge", x + w-10, y-115, color_white, TEXT_ALIGN_RIGHT )
+				draw.DrawText( "Alt + RMB: force target or follow ally", "CloseCaption_Normal", x + w-10, y-85, color_white, TEXT_ALIGN_RIGHT )
+				draw.DrawText( "Shift + RMB: Add waypoint", "CloseCaption_Normal", x + w-10, y-65, color_white, TEXT_ALIGN_RIGHT )
+				draw.DrawText( "Left Ctrl: Stop selected units", "CloseCaption_Normal", x + w-10, y-45, color_white, TEXT_ALIGN_RIGHT )
+			end
+			local openMenuY = (mw_showtutorial_cv:GetBool() and y-235) or y - 50
+			draw.DrawText( "R: Open menu", "DermaLarge", x + w-10, openMenuY, color_white, TEXT_ALIGN_RIGHT )
 
 			draw.RoundedBox( 15, x, y, w, h, teamColor )
 			draw.RoundedBox( 10, x + 10, y + 10, w-20, h-20, Color(0,0,0,230) )
