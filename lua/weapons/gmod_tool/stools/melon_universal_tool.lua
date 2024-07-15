@@ -1637,6 +1637,7 @@ function TOOL:Deploy()
 		net.Send( owner )
 	end
 
+	owner:PrintMessage( HUD_PRINTCENTER, "Press R to open the menu" )
 	owner:CrosshairDisable()
 end
 
