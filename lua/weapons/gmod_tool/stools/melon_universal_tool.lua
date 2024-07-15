@@ -793,33 +793,36 @@ local function _CreatePanel()
 		scroll:SetPos(0,0)
 		scroll:SetSize(px, py)
 
-		local button = vgui.Create("DButton", scroll)
-		button:SetSize(200,40)
-		button:SetPos(20,y)
-		button:SetFont("CloseCaption_Normal")
-		button:SetText("Start Match")
-		function button:DoClick()
+		local function signalButton(buttonText, buttonLabel)
+			local button = vgui.Create("DButton", scroll)
+			button:SetSize(200,40)
+			button:SetPos(20,y)
+			button:SetFont("CloseCaption_Normal")
+			button:SetText(buttonText)
+			button.Paint = function(s, w, h)
+				draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
+				draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
+			end
+			local label = vgui.Create("DLabel", scroll)
+			label:SetPos(270, y)
+			label:SetSize(370,40)
+			label:SetFontInternal( "Trebuchet18" )
+			label:SetText(buttonLabel)
+
+			return button
+		end
+
+		local startButton = signalButton("Start Match", "[Set preferences for a match of MelonWars]")
+		function startButton:DoClick()
 			net.Start("StartGame")
 			net.SendToServer()
 			pl.mw_frame:Remove()
 			pl.mw_frame = nil
 		end
-		button.Paint = function(s, w, h)
-			draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
-			draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
-		end
-		local label = vgui.Create("DLabel", scroll)
-		label:SetPos(270, y)
-		label:SetSize(370,40)
-		label:SetFontInternal( "Trebuchet18" )
-		label:SetText("[Set preferences for a match of MelonWars]")
 		y = y + 50
-		local button = vgui.Create("DButton", scroll)
-		button:SetSize(200,40)
-		button:SetPos(20,y)
-		button:SetFont("CloseCaption_Normal")
-		button:SetText("Sandbox Mode")
-		function button:DoClick()
+
+		local sandboxButton = signalButton("Sandbox Mode", "[Set preferences for messing around]")
+		function sandboxButton:DoClick()
 			pl:ConCommand("mw_admin_playing 1")
 			pl:ConCommand("mw_admin_locked_teams 0")
 			pl:ConCommand("mw_admin_move_any_team 1")
@@ -832,15 +835,7 @@ local function _CreatePanel()
 			pl.mw_frame:Remove()
 			pl.mw_frame = nil
 		end
-		button.Paint = function(s, w, h)
-			draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
-			draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
-		end
-		local label = vgui.Create("DLabel", scroll)
-		label:SetPos(270, y)
-		label:SetSize(370,40)
-		label:SetFontInternal( "Trebuchet18" )
-		label:SetText("[Set preferences for messing around]")
+
 		y = y + 80
 
 		local label = vgui.Create("DLabel", scroll)
@@ -901,7 +896,7 @@ local function _CreatePanel()
 		label:SetText("Alternative Gameplay Options")
 
 		y = y + 40
-		_MakeCheckbox( 20, y, scroll, "Extra Unit Options", "mw_admin_bonusunits", "[Balance not guaranteed]", false )
+		_MakeCheckbox( 20, y, scroll, "Bonus Units", "mw_admin_bonusunits", "[Balance not guaranteed]", false )
 
 		y = y + 40
 		_MakeCheckbox( 20, y, scroll, "No Manual Placing", "mw_admin_allow_manual_placing", "[Prevents spawning of mobile units]", true)
@@ -929,41 +924,16 @@ local function _CreatePanel()
 		_MakeCheckbox( 20, y, scroll, "Immortal Units", "mw_admin_immortality", "[Units can't die. Useful for photography]" )
 
 		y = y + 60
-		local button = vgui.Create("DButton", scroll)
-		button:SetSize(200,40)
-		button:SetPos(20,y)
-		button:SetFont("CloseCaption_Normal")
-		button:SetText("Reset Credits")
-		function button:DoClick()
+		local resetCredits = signalButton("Reset Credits", "[Set all credits back to the default]")
+		function resetCredits:DoClick()
 			pl:ConCommand("mw_reset_credits")
 		end
-		button.Paint = function(s, w, h)
-			draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
-			draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
-		end
-		local label = vgui.Create("DLabel", scroll)
-		label:SetPos(270, y)
-		label:SetSize(370,40)
-		label:SetFontInternal( "Trebuchet18" )
-		label:SetText("[Set all credits back to the default]")
 		y = y + 45
-		local button = vgui.Create("DButton", scroll)
-		button:SetSize(200,40)
-		button:SetPos(20,y)
-		button:SetFont("CloseCaption_Normal")
-		button:SetText("Reset Power")
-		function button:DoClick()
+		local resetPower = signalButton("Reset Power", "[Set all Power back to the default]")
+		function resetPower:DoClick()
 			pl:ConCommand("mw_reset_power")
 		end
-		button.Paint = function(s, w, h)
-			draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
-			draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
-		end
-		local label = vgui.Create("DLabel", scroll)
-		label:SetPos(270, y)
-		label:SetSize(370,40)
-		label:SetFontInternal( "Trebuchet18" )
-		label:SetText("[Set all Power back to the default]")
+
 		y = y + 70
 		-----------------------------------------------------------  Resource Sliders
 		local function resourceSlider(text, convar, lenMul, valMul)
@@ -1111,6 +1081,29 @@ local function _CreatePanel()
 			grid:AddItem(DPanel)
 		end
 		-- }
+
+		-------------------------------------------------------- Super-Admin Options
+		if not pl:IsSuperAdmin() then return end --These options could mess up people's builds or cause un-necessary lag on dedicated servers, so they aren't available even with openPermits
+
+		y = y + 280
+		local label = vgui.Create("DLabel", scroll)
+		label:SetPos(20, y)
+		label:SetSize(300,40)
+		label:SetFontInternal( "DermaLarge" )
+		label:SetText("Performance Options")
+
+		y = y + 45
+
+		local staticPhysProps = signalButton("Set Props Static", "[Make all frozen props static (For prop-maps)]")
+		function staticPhysProps:DoClick()
+			net.Start("MW_SetPropsStatic")
+			net.SendToServer()
+		end
+
+		y = y + 50
+		_MakeCheckbox( 20, y, scroll, "Net Performance", "mw_admin_network_performance_mode", "[Helps players with high ping.]", false )
+
+
 	elseif (pl.mw_menu == 8) then -- Player menu
 		--*TODO: See if I can re-use the slider function
 		local y = 20

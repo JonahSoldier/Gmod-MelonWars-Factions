@@ -31,7 +31,7 @@ function ENT:SlowThink(ent)
 	local closestDist = math.huge
 
 	for i, v in ipairs(ents.FindByClass( "ent_melon_teleporter_receiver" )) do
-		if selfTeam == v:GetNWInt("mw_melonTeam", -1) then
+		if v.spawned and selfTeam == v:GetNWInt("mw_melonTeam", -1) then
 			local dist = selfPos:DistToSqr(v:GetPos())
 			if dist < closestDist then
 				closestDist = dist

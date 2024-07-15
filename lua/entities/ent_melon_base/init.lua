@@ -426,6 +426,7 @@ function ENT:OnFinishMovement()
 end
 
 function ENT:RemoveRallyPoints()
+	if not self.rallyPoints then return end --Why is it not set sometimes?
 	local rallyPoints = self.rallyPoints
 	for i = 1, 30 do
 		rallyPoints[i] = vector_origin
@@ -1070,7 +1071,7 @@ cvars.AddChangeCallback( "mw_admin_network_performance_mode", function(convName,
 
 		for i, v in ipairs(ents.GetAll()) do
 			local vTbl = v:GetTable()
-			if vTbl.Base == "ent_melon_base" then
+			if IsValid(v) and vTbl.Base == "ent_melon_base" and vTbl.mw_networkFilter then
 				vTbl.mw_networkFilter:AddAllPlayers()
 				v:SetPreventTransmit( vTbl.mw_networkFilter, false )
 
@@ -1085,7 +1086,7 @@ cvars.AddChangeCallback( "mw_admin_network_performance_mode", function(convName,
 
 			for i, v in ipairs(ents.FindInPVS(ply)) do
 				local vTbl = v:GetTable()
-				if vTbl.Base == "ent_melon_base" and dir:Dot((v:GetPos() - pos):GetNormalized()) > 1 / 2 then --if we're in a players' pvs and a within a 90* cone of their viewangle network the entity to them.
+				if vTbl.Base == "ent_melon_base" and vTbl.mw_networkFilter and dir:Dot((v:GetPos() - pos):GetNormalized()) > 1 / 2 then --if we're in a players' pvs and a within a 90* cone of their viewangle network the entity to them.
 					vTbl.mw_networkFilter:RemovePlayer( ply )
 				end
 			end
@@ -1093,7 +1094,7 @@ cvars.AddChangeCallback( "mw_admin_network_performance_mode", function(convName,
 
 		for i, v in ipairs(ents.GetAll()) do
 			local vTbl = v:GetTable()
-			if vTbl.Base == "ent_melon_base" then
+			if IsValid(v) and vTbl.Base == "ent_melon_base" and vTbl.mw_networkFilter then
 				v:SetPreventTransmit( vTbl.mw_networkFilter, true )
 			end
 		end

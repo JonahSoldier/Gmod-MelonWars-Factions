@@ -111,7 +111,7 @@ function ENT:FreeUnits(i)
 			local pos = self:GetPos() + Vector(0,0,50) + self:GetForward() * (count % 3 - 1) * 15 + self:GetRight() * ( 40 + count * 5)
 
 			local selfTeam = self:GetNWInt("mw_melonTeam", -1)
-			local newUnit = MelonWars.spawnUnitAtPos( cEnt.class, nil, pos, angle_zero, cEnt.value, 0, selfTeam, false, nil, cEnt.owner, 0 )
+			local newUnit = MelonWars.spawnUnitAtPos( cEnt.class, pos, angle_zero, cEnt.value, 0, selfTeam, false, nil, cEnt.owner, 0 )
 
 			if cEnt.energy > 0 then
 				newUnit:SetNWInt("mw_charge", cEnt.Energy)

@@ -53,6 +53,7 @@ util.AddNetworkString( "SetMWConvar" )
 util.AddNetworkString( "SetMWConvarInt" )
 util.AddNetworkString( "MWReadyUp" )
 util.AddNetworkString( "MW_ClientModifySpawnTime" )
+util.AddNetworkString( "MW_SetPropsStatic" )
 
 -- Energy Networks
 util.AddNetworkString( "MW_UpdateNetwork" )
@@ -237,6 +238,8 @@ end )
 
 net.Receive( "MW_Activate", function(_, pl)
 	local ent = net.ReadEntity()
+	if not IsValid(ent) then return end
+
 	local plTeam = pl:GetInfoNum("mw_team", -1)
 	if not plTeam == ent:GetNWInt( "mw_melonTeam", 0 ) then return end
 	if ent.Actuate then
@@ -1055,3 +1058,16 @@ function MelonWars.updateClientCredits(_team)
 		end
 	end
 end
+
+net.Receive( "MW_SetPropsStatic", function(_, pl)
+	if not pl:IsSuperAdmin() then return end
+
+	for i, v in ipairs(ents.FindByClass("prop_physics")) do
+		if IsValid(v) then
+			local physObj = v:GetPhysicsObject()
+			if IsValid(physObj) and not physObj:IsMoveable() then
+				v:PhysicsInitStatic( SOLID_VPHYSICS )
+			end
+		end
+	end
+end )
