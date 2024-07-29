@@ -19,7 +19,6 @@ function ENT:Initialize()
 	self.careForWalls = true
 	self.fireDelay = 30
 	self.canMove = false
-	self.canBeSelected = true
 	self.moveType = MOVETYPE_NONE
 
 	self.slowThinkTimer = 1
@@ -30,7 +29,6 @@ function ENT:Initialize()
 	self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 	self:GetPhysicsObject():EnableMotion(false)
 
-	self:SetNWBool("Fired", false)
 	self:SetNWBool("active", false)
 end
 
@@ -94,8 +92,8 @@ function ENT:Shoot(ent)
 	ent.nextControlShoot = CurTime() + ent.fireDelay
 	ent:LoseTarget()
 
-	self:SetNWBool("Fired", true)
-	timer.Simple(13, function() self:SetNWBool("Fired", false) end)
+	self:SetFired(true)
+	timer.Simple(13, function() self.SetFired(false) end)
 
 	local beamSound = CreateSound( self, "d3_citadel.weapon_zapper_beam_loop1" )
 	beamSound:Play()

@@ -34,7 +34,7 @@ function ENT:PhysicsCollide( colData, collider )
 	local other = colData.HitEntity
 	if not self:IsValid() or not other:IsValid() then return end
 
-	if (other.Base == "ent_melon_base" and not other.canMove) or other.Base == "ent_melon_prop_base" then
+	if ((other.Base == "ent_melon_base" or other.Base == "ent_melon_energy_base") and not other.canMove) or other.Base == "ent_melon_prop_base" then
 		other:TakeDamage(30, self, self)
 
 		local effectdata = EffectData()

@@ -54,6 +54,7 @@ util.AddNetworkString( "SetMWConvarInt" )
 util.AddNetworkString( "MWReadyUp" )
 util.AddNetworkString( "MW_ClientModifySpawnTime" )
 util.AddNetworkString( "MW_SetPropsStatic" )
+util.AddNetworkString( "MW_PlayGlobalSound" )
 
 -- Energy Networks
 util.AddNetworkString( "MW_UpdateNetwork" )
@@ -1040,6 +1041,19 @@ net.Receive( "MWControlShoot", function()
 	u:Shoot( u, pos )
 end )
 
+net.Receive( "MW_SetPropsStatic", function(_, pl)
+	if not pl:IsSuperAdmin() then return end
+
+	for i, v in ipairs(ents.FindByClass("prop_physics")) do
+		if IsValid(v) then
+			local physObj = v:GetPhysicsObject()
+			if IsValid(physObj) and not physObj:IsMoveable() then
+				v:PhysicsInitStatic( SOLID_VPHYSICS )
+			end
+		end
+	end
+end )
+
 function MelonWars.broadcastTeamMessage(_team, message, mode)
 	mode = mode or HUD_PRINTTALK
 	for i, v in ipairs(player.GetAll()) do
@@ -1059,15 +1073,15 @@ function MelonWars.updateClientCredits(_team)
 	end
 end
 
-net.Receive( "MW_SetPropsStatic", function(_, pl)
-	if not pl:IsSuperAdmin() then return end
+function MelonWars.playGlobalSound(name, pos, soundLevel, pitch, volume, override)
+	if not isstring(name) then return end
 
-	for i, v in ipairs(ents.FindByClass("prop_physics")) do
-		if IsValid(v) then
-			local physObj = v:GetPhysicsObject()
-			if IsValid(physObj) and not physObj:IsMoveable() then
-				v:PhysicsInitStatic( SOLID_VPHYSICS )
-			end
-		end
-	end
-end )
+	net.Start("MW_PlayGlobalSound")
+		net.WriteString(name)
+		net.WriteVector(pos or vector_origin)
+		net.WriteFloat(soundLevel or 75)
+		net.WriteFloat(pitch or 100)
+		net.WriteFloat(volume or 1)
+		net.WriteBool(override or false) --handle sound attenuation manually, because some sounds override it for some reason.
+	net.Broadcast()
+end

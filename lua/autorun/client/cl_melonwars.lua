@@ -157,3 +157,20 @@ net.Receive( "MW_ClientModifySpawnTime", function()
 	local spawnTimeChange = net.ReadFloat()
 	LocalPlayer().spawnTimeMult = spawnTimeChange
 end )
+
+net.Receive("MW_PlayGlobalSound", function()
+	local soundName = net.ReadString()
+	if not soundName then return end
+	local pos = net.ReadVector() or vector_origin
+	local soundLevel = net.ReadFloat() or 75
+	local pitch = net.ReadFloat() or 100
+	local volume = net.ReadFloat() or 1
+	local override = net.ReadBool() or false
+
+	if override then --Some sounds don't allow you to change their soundLevel for some reason, so this is a work-around for that.
+		local dist = pos:Distance(LocalPlayer():GetPos())
+		volume = math.Clamp(volume * (soundLevel / 5) ^ 2 / dist, 0, 1) --not based on anything in particular.
+	end
+
+	EmitSound(soundName, pos, (override and -1) or 0, CHAN_AUTO, volume, soundLevel, 0, pitch)
+end )

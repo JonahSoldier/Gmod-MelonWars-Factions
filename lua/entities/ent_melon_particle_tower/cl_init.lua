@@ -2,6 +2,7 @@ include("shared.lua")
 
 function ENT:Initialize()
 	self.lastAttack = 0
+	self.circleSize = 50
 end
 
 function ENT:AttackParticle()
@@ -15,14 +16,6 @@ function ENT:AttackParticle()
 	part:SetEndSize( 20 )
 
 	emitter:Finish()
-end
-
-function ENT:Think()
-	if self:GetNWBool("Fired", false) then
-		self.lastAttack = CurTime()
-		self:SetNWBool("Fired", false)
-		self:AttackParticle()
-	end
 end
 
 function ENT:GetMessage()

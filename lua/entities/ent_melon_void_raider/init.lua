@@ -14,13 +14,13 @@ function ENT:Initialize()
 	self.speed = 90
 	self.range = 150
 
-	self.shotOffset = Vector(0,0,0)
-
+	--self.shotOffset = Vector(0,0,0)
 	self.ai_chases = false
 
 	self.angularDamping = 10
 
-	self.nextShot = CurTime()+0.5
+	self.slowThinkTimer = 0.5
+	self.nextShot = CurTime() + 0.5
 
 	self.population = 2
 
@@ -58,13 +58,10 @@ function ENT:SlowThink ( ent )
 	if self.targetEntity ~= nil then
 		if self.targetEntity.moveType ~= MOVETYPE_NONE then
 			ent:LoseTarget()
-		else
-			if self.targetEntity:GetClass() == "ent_melon_main_building" or self.targetEntity:GetClass() == "ent_melon_main_building_grand_war" then
-				ent:LoseTarget()
-			end
+		elseif self.targetEntity:GetClass() == "ent_melon_main_building" or self.targetEntity:GetClass() == "ent_melon_main_building_grand_war" then
+			ent:LoseTarget()
 		end
 	end
-
 end
 
 function ENT:PhysicsUpdate()
@@ -89,14 +86,9 @@ function ENT:Shoot ( ent, forceTargetPos )
 	entTbl.targetEntity:SetNWInt("mw_melonTeam", self:GetNWInt("mw_melonTeam", 0))
 	entTbl.targetEntity:MelonSetColor( self:GetNWInt("mw_melonTeam", 0) )
 
-	for i, v in ipairs( player.GetAll() ) do
-		local pos = v:GetPos()
-		sound.Play("ItemBattery.Touch", pos, 40, 90, 1)
-		sound.Play("AlyxEMP.Discharge", pos, 40, 80, 1)
-	end
-
-	sound.Play("ItemBattery.Touch", ent:GetPos(), 100, 90, 1)
-	sound.Play("AlyxEMP.Discharge", ent:GetPos(), 100, 80, 1)
+	local pos = self:GetPos()
+	MelonWars.playGlobalSound("AlyxEMP.Discharge", pos, 100, 80)
+	MelonWars.playGlobalSound("ItemBattery.Touch", pos, 100, 90, 1, true)
 
 	ent:Remove()
 end

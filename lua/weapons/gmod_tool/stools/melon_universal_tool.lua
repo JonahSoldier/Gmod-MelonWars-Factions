@@ -438,8 +438,14 @@ local function _CreatePanel()
 			draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
 			draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
 		end
-	elseif (pl.mw_menu == 3) then																--Energy menu
-		unitScroller(firstEnergy, firstContraption, function() return true end)
+	elseif (pl.mw_menu == 3) then	
+		local bonusUnits = GetConVar( "mw_admin_bonusunits" ):GetBool()
+		local plCode = pl:GetInfo("mw_code")
+		local plFaction = pl:GetInfo("mw_faction")
+		local function check(unit)
+			return (not unit.code or plCode == unit.code) and (not unit.isBonusUnit or bonusUnits) and (not unit.faction or unit.faction == plFaction) and not (unit.code == "admin" and not pl:IsAdmin())
+		end															--Energy menu
+		unitScroller(firstEnergy, firstContraption, check)
 
 		DefaultInfo()
 	elseif (pl.mw_menu == 4) then																--Contraption menu
@@ -1950,8 +1956,8 @@ function TOOL:DrawHUD() --*TODO: Refactor. This needs to be split up/reorganized
 		draw.RoundedBox( 15, x, y, w, h, Color(255, 80 + 80 * math.sin( CurTime() * 3 ), 0, 255) )
 		draw.RoundedBox( 10, x + 10, y + 10, w - 20, h - 20, Color( 0, 0, 0, 150 ) )
 		draw.DrawText( "I'm sorry, but this tool does not work in\nsingleplayer. Please start a 2 player game\nif you want to use this addon on your own.\n\n" ..
-			"You'll have more fun if you play with\nsomeone. Join the MelonWars:RTS Steam\ngroup to find MelonWars players!", "DermaLarge", x + w / 2, y + 30, color_white, TEXT_ALIGN_CENTER )
-		draw.DrawText( "https:--steamcommunity.com/groups/melonwarsrts", "Trebuchet24", x + w / 2, y + 270, color_white, TEXT_ALIGN_CENTER )
+			"You'll have more fun if you play with\nsomeone. Join the MelonWars:RTS Discord\n to find MelonWars players!", "DermaLarge", x + w / 2, y + 30, color_white, TEXT_ALIGN_CENTER )
+		draw.DrawText( "https://discord.gg/r5a78g3", "Trebuchet24", x + w / 2, y + 270, color_white, TEXT_ALIGN_CENTER )
 		return
 	end
 

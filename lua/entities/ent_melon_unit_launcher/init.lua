@@ -136,9 +136,7 @@ end
 function ENT:Shoot(ent, forcedTargetPos)
 	self:SetNWFloat("lastAttack", CurTime())
 
-	for i, v in ipairs( player.GetAll() ) do
-		sound.Play( ent.shotSound, v:GetPos() )
-	end
+	MelonWars.playGlobalSound(ent.shotSound, self:GetPos(), 140)
 
 	local bullet = ents.Create( "ent_melonbullet_unit_shell" )
 	if not IsValid( bullet ) then return end -- Check whether we successfully made an entity, if not - bail

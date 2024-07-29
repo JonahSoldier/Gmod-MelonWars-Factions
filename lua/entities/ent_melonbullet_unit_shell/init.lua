@@ -73,9 +73,7 @@ function ENT:Think()
 		self:NextThink(CurTime()+0.05)
 
 		if(self.distance < self.speed*35 and not self.incomingSoundPlayed) then
-			for k, v in pairs( player.GetAll() ) do
-				sound.Play( "HeadcrabCanister.IncomingSound", v:GetPos() )
-			end
+			MelonWars.playGlobalSound("HeadcrabCanister.IncomingSound", self:GetPos(), 140)
 
 			self.incomingSoundPlayed = true
 		end
@@ -93,8 +91,8 @@ function ENT:Think()
 	else
 		if (self:GetNWInt("count", 0) > 0) then
 
-			self.counter = self.counter-1
-			self:FreeUnits(self.counter)
+			--self.counter = self.counter-1
+			self:FreeUnits()
 			sound.Play( "doors/door_metal_medium_open1.wav", self:GetPos() )
 			self:NextThink(CurTime() + 0.5)
 			return true
@@ -103,10 +101,10 @@ function ENT:Think()
 end
 
 
-function ENT:FreeUnits(i)
+function ENT:FreeUnits()
 	if self:GetNWInt("count", 0) > 0 then
-		local count = i
-		local cEnt = self.containedEnts[i]
+		local count = self:GetNWInt("count", 0)
+		local cEnt = self.containedEnts[count]
 		if cEnt then
 			local pos = self:GetPos() + Vector(0,0,50) + self:GetForward() * (count % 3 - 1) * 15 + self:GetRight() * ( 40 + count * 5)
 
@@ -134,9 +132,7 @@ end
 function ENT:Explode()
 	self.crashed = true
 
-	for i, v in ipairs( player.GetAll() ) do
-		sound.Play( "HeadcrabCanister.Explosion", v:GetPos(), 75, 100, 1 )
-	end
+	MelonWars.playGlobalSound("HeadcrabCanister.Explosion", self:GetPos(), 140)
 
 	timer.Simple( 25, function()
 		local effectdata = EffectData()

@@ -68,9 +68,9 @@ function ENT:Explode()
 			util.Effect("AR2Explosion", effectdata) 
 			ParticleEffect( "explosion_huge_c", self:GetPos(), angle_zero )
 
-			for i, v in ipairs( player.GetAll() ) do
-				sound.Play( "k_lab2.Barney_Explosion", v:GetPos(), 75, 100, 1 )
-			end
+			MelonWars.playGlobalSound("k_lab2.Barney_Explosion", self:GetPos(), 140, 100, 1, true)
+			MelonWars.playGlobalSound("NPC_CombineBall.Explosion", self:GetPos(), 140, 90, 0.5)
+
 			self:Remove()
 		end	)
 end
