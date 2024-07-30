@@ -83,6 +83,7 @@ function ENT:TransportDraw(self, offset)
 
 	local s = 17
 	cam.Start3D2D(self:GetPos() + self:GetRight() * -68.5 - Vector(0, 0, 65), self:GetAngles() + Angle(0, 0, -90), 1)
+		render.SetColorMaterial()
 		surface.SetDrawColor(Color(100, 100, 100, 255))
 		drawSolidCircle(-3.1, 2.65, s, s)
 	cam.End3D2D()

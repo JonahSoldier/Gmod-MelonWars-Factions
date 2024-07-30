@@ -25,7 +25,7 @@ function ENT:Initialize()
 	self.nextShot = CurTime()+2
 	self.fireDelay = 15
 
-	self.shotOffset = Vector(0,0,10)
+	self.shotOffset = Vector(0,0,75)
 
 	self.population = 5
 

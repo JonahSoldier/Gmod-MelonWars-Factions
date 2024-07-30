@@ -360,9 +360,9 @@ function MelonWars.spawnUnitAtPos( class, pos, ang, cost, spawntime, _team, atta
 	newMarine:SetNWFloat("spawnTime", spawntime)
 	newMarine:SetNWInt("mw_melonTeam", _team)
 
-	if (attach) then
+	if attach then
 		newMarine:SetCollisionGroup( COLLISION_GROUP_DEBRIS_TRIGGER )
-		if IsValid(parent) then
+		if IsValid(parent) or parent:IsWorld() then
 			newMarine:Welded(newMarine, parent)
 		else
 			newMarine:SetMoveType(MOVETYPE_NONE)
