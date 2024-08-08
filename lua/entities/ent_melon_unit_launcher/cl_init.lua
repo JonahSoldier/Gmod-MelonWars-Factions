@@ -10,14 +10,7 @@ function ENT:Draw()
 	self:TransportDraw(self, 190)
 end
 
---[[ NOTE: 
-	I'm not sure where this function comes from, but I'm pretty confident I didn't write it, and it isn't in vanilla MW
-	or (easily findable) on the wiki. So I might've just lifted it from some other addon.
-
-	If that's the case I probably want to write my own version to replace it. This wasn't an issue when it was just a small
-	unlisted addon for my community, but I don't want to put it on the workshop with code I didn't ask permission to use.
---]]
-local function drawSolidCircle(x, y, radius, seg)
+local function drawSolidCircle(x, y, radius, seg) --Taken from the wiki
 	local cir = {}
 	table.insert(cir, {
 		x = x,

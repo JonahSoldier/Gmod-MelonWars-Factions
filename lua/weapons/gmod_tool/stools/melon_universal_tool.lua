@@ -779,7 +779,7 @@ local function _CreatePanel()
 			"		MerekiDor\n" ..
 			"		D-Boi-9341\n" ..
 			"		Commander Kettle\n" ..
-			"		Kazzigum\n\n" .. --TODO: Ask everyone if they want to be included here.
+			"		Kazzigum\n\n" ..
 			"If You're from my private server and want to be added to this list, dm me!\n\n\n" ..
 			"The Original Melon Wars:\n" ..
 			"	Creator: Marum\n" ..
@@ -2261,9 +2261,7 @@ function TOOL:DoDrawCrosshair()
 	return true
 end
 
-
 if CLIENT then
-
 	LocalPlayer().mw_hudColor = MelonWars.teamColors[_team] or Color(100,100,100,255)
 
 	--local mw_buildalpha_multiplier_cv = GetConVar("mw_buildalpha_multiplier")
@@ -2284,7 +2282,6 @@ if CLIENT then
 		render.AddWorldRing(tr.HitPos, unit.indRingRadius, 5, 20)
 
 		unit.indRingColour.a = math.Clamp(unit.indRingRadius / 8, 100, 255) --It's really hard to see the ring for things like particle towers and launchers
-		--unit.indRingColour.a = math.Clamp(50 * mw_buildalpha_multiplier_cv:GetFloat(), 0, 255) --not sure if this is worth it
 		render.FinishWorldRings( unit.indRingColour ) --outpostRingCol)
 	end)
 
