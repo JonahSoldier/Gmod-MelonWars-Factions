@@ -116,21 +116,28 @@ function ENT:SlowThink ( ent )
 	local energyCost = 500
 	if  MelonWars.electricNetwork[self.network].energy < energyCost then return end
 
-	local dist = ent.targetPos:DistToSqr(ent:GetPos())
-	if not(ent.nextShot < CurTime() and ent.targetPos ~= vector_origin and dist < ent.range^2 and dist > ent.minRange^2 ) then return end
+	--Don't clear our orders if we're just on cooldown
+	if not(ent.nextShot < CurTime() and ent.targetPos ~= vector_origin) then return end
 
+	--Do clear our orders if it's another valid reason (too far, too close, enemy buildings in range)
 	local selfTeam = self:GetNWInt("mw_melonTeam", -1)
+	local dist = ent.targetPos:DistToSqr(ent:GetPos())
+	if not(dist < ent.range^2 and dist > ent.minRange^2) then
+		self:ClearOrders()
+		return
+	end
+
 	for i, v in ipairs(ents.FindInSphere( ent.targetPos, 400 )) do
 		if v.moveType == MOVETYPE_NONE and not MelonWars.sameTeam(selfTeam, v:GetNWInt("mw_melonTeam", -1)) then
 			MelonWars.broadcastTeamMessage(selfTeam, "== Unit launcher target position too close to an enemy building! ==")
-			ent.targetPos = vector_origin
+			self:ClearOrders()
 			return
 		end
 	end
 
 	ent:Shoot( ent, ent.targetPos)
 	self:DrainPower(energyCost)
-	ent.targetPos = vector_origin
+	self:ClearOrders()
 end
 
 function ENT:Shoot(ent, forcedTargetPos)

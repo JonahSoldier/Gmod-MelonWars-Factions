@@ -2,6 +2,7 @@ include("shared.lua")
 
 function ENT:Initialize()
 	self.lastAttack = 0
+	self.circleSize = 65
 end
 
 function ENT:Draw()
