@@ -19,41 +19,42 @@ function ENT:PhysicsUpdate()
 end
 
 function ENT:PhysicsCollide( colData, collider )
-	local vel = self:GetVelocity():Length()
-	if (self.exploded == false) then
-		local other = colData.HitEntity
-		local otherhealth = other.HP --other:GetNWFloat("health", 0)
-		if (otherhealth ~= 0) then
-			self.exploded = true
+	--local vel = self:GetVelocity():Length()
+	if self.exploded then return end
 
-			util.BlastDamage( self, self, self:GetPos(), 50, 50 )
+	local other = colData.HitEntity
 
-			local effectdata = EffectData()
-			effectdata:SetOrigin( self:GetPos() )
-			util.Effect( "HelicopterMegaBomb", effectdata )
-			local newHealth = otherhealth-100
-			--other:SetNWFloat("health", newHealth)
-			other.HP = newHealth
-			--if (other:GetNWFloat("health", 1) <= 0) then
-			if other.HP <= 0 then
-				MelonWars.die(other)
-			else
-				if (other:GetClass() == "ent_melon_wall") then
-					if (newHealth < 100) then
-						constraint.RemoveConstraints( other, "Weld" )
-					end
+	local otherhealth = other.HP --other:GetNWFloat("health", 0)
+	if otherhealth and otherhealth ~= 0 then
+		self.exploded = true
+
+		util.BlastDamage( self, self, self:GetPos(), 50, 50 )
+
+		local effectdata = EffectData()
+		effectdata:SetOrigin( self:GetPos() )
+		util.Effect( "HelicopterMegaBomb", effectdata )
+		local newHealth = otherhealth-100
+		--other:SetNWFloat("health", newHealth)
+		other.HP = newHealth
+		--if (other:GetNWFloat("health", 1) <= 0) then
+		if other.HP <= 0 then
+			MelonWars.die(other)
+		else
+			if (other:GetClass() == "ent_melon_wall") then
+				if (newHealth < 100) then
+					constraint.RemoveConstraints( other, "Weld" )
 				end
 			end
 		end
-		self:GetPhysicsObject():SetVelocity(Vector(0,0,-1000))
-		timer.Simple( 1, function()
-			if (self:IsValid()) then
-				util.BlastDamage( self, self, self:GetPos(), 70, 50 )
-				local effectdata = EffectData()
-				effectdata:SetOrigin( self:GetPos() )
-				util.Effect( "Explosion", effectdata )
-				self:Remove()
-			end
-		end	)
 	end
+	self:GetPhysicsObject():SetVelocity(Vector(0,0,-10))
+	timer.Simple( 1, function()
+		if (self:IsValid()) then
+			util.BlastDamage( self, self, self:GetPos(), 70, 50 )
+			local effectdata = EffectData()
+			effectdata:SetOrigin( self:GetPos() )
+			util.Effect( "Explosion", effectdata )
+			self:Remove()
+		end
+	end	)
 end
