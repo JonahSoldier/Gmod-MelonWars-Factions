@@ -12,6 +12,7 @@ include("shared.lua")
 
 function ENT:PropDefaults( ent )
 
+	ent.maxHP = 1
 	ent.HP = 1
 
 	ent.shotOffset = Vector(0,0,0)
@@ -77,7 +78,7 @@ function ENT:OnRemove()
 	if selfTeam == -1 then return end
 
 	if MelonWars.teamCredits[selfTeam] ~= nil then
-		MelonWars.teamCredits[selfTeam] = MelonWars.teamCredits[selfTeam] + self.value
+		MelonWars.teamCredits[selfTeam] = MelonWars.teamCredits[selfTeam] + (self.value or 0)
 	end
 
 	for i, v in ipairs( player.GetAll() ) do
@@ -85,7 +86,7 @@ function ENT:OnRemove()
 			net.Start("MW_TeamCredits")
 				net.WriteInt(MelonWars.teamCredits[selfTeam] ,32)
 			net.Send(v)
-			v:PrintMessage( HUD_PRINTTALK, "== " .. self.value .. " Water Refunded ==" )
+			v:PrintMessage( HUD_PRINTTALK, "== " .. tostring(self.value or 0) .. " Water Refunded ==" )
 		end
 	end
 end
