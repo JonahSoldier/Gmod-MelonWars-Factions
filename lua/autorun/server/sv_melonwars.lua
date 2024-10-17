@@ -523,7 +523,7 @@ function MelonWars.contraptionSpawn( spawnerEnt )
 	local localpos = pos - Vector( ( dupeTable.Maxs.x + dupeTable.Mins.x ) / 2, ( dupeTable.Maxs.y + dupeTable.Mins.y ) / 2, dupeTable.Mins.z - 10 )
 
 	duplicator.SetLocalPos( localpos )
-	local paste = duplicator.Paste( player.GetByID( 0 ), dupeTable.Entities, dupeTable.Constraints )
+	local paste = duplicator.Paste( owner, dupeTable.Entities, dupeTable.Constraints )
 	duplicator.SetLocalPos( vector_origin )
 
 	local enableSkin = tobool(owner:GetInfo( "mw_enable_skin" ))
