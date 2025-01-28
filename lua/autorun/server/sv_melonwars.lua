@@ -1139,3 +1139,37 @@ cvars.AddChangeCallback( "mw_admin_network_performance_mode", function(convName,
 		end
 	end)
 end)
+
+
+
+--Fix the fucking duplicator. This is a hacky workaround because they fucked up the behaviour of it at some point.
+local function modifiedDuplicatorFunction(ply, data) --This is a copy-paste of the generic duplicator, function, but with the fucking admin checks removed, because they fuck us up.
+	local Entity = ents.Create( data.Class )
+	if ( !IsValid( Entity ) ) then return end
+
+	if ( data.Angle ) then Entity:SetAngles( data.Angle ) end
+	if ( data.Pos ) then Entity:SetPos( data.Pos ) end
+
+	Entity:Spawn()
+	Entity:Activate()
+
+	table.Merge( Entity:GetTable(), data )
+
+	return Entity
+end
+
+--Register all melon wars entities
+local entFiles, entDirectories = file.Find( "entities/*", "LUA")
+for i, name in ipairs(entFiles) do 
+	if string.StartsWith(name, "ent_melon_") then
+		duplicator.RegisterEntityClass( name, function(ply, data) return modifiedDuplicatorFunction(ply, data) end, "Data" )
+	end
+end
+for i, name in ipairs(entDirectories) do 
+	if string.StartsWith(name, "ent_melon_") then
+		duplicator.RegisterEntityClass( name, function(ply, data) 
+			local ent = modifiedDuplicatorFunction(ply, data) 
+			return ent
+		end, "Data" )
+	end
+end
