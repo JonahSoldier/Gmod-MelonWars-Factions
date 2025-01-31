@@ -11,23 +11,23 @@ AddCSLuaFile( "shared.lua" )  -- and shared scripts are sent.
 include("shared.lua")
 
 function ENT:PropDefaults( ent )
+	--we set this stuff in the tool so we can't overwrite values
+	ent.maxHP = ent.maxHP or 1
+	ent.HP = ent.HP or 1
 
-	ent.maxHP = 1
-	ent.HP = 1
-
-	ent.shotOffset = Vector(0,0,0)
-	ent.modelString = "models/props_junk/watermelon01.mdl"
-	ent.materialString = "models/debug/debugwhite"
+	ent.shotOffset = ent.shotOffset or Vector(0,0,0)
+	ent.modelString = ent.modelString or "models/props_junk/watermelon01.mdl"
+	ent.materialString = ent.materialString or "models/debug/debugwhite"
 
 	ent:SetMaterial( "Models/effects/comball_sphere" )
 
-	ent.onFire = false
+	ent.onFire = ent.onFire or false
 
-	ent.deathEffect = "cball_explode"
+	ent.deathEffect = ent.deathEffect or "cball_explode"
 
-	ent.damage = 0
+	ent.damage = ent.damage or 0
 
-	ent.Angles = Angle(0,0,0)
+	ent.Angles = ent.Angles or Angle(0,0,0)
 end
 
 function ENT:PropDefaultDeathEffect()
