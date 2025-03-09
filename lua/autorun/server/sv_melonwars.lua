@@ -423,6 +423,8 @@ function MelonWars.sanitizeContraptionEntities( dupeEntities )
 	}
 
 	for _, entity in pairs(dupeEntities) do
+		if not(string.StartsWith(entity.Class, "ent_melon_")) then 	continue end
+
 		for k, v in pairs(entity) do
 			if not legalDataValues[k] then
 				entity[k] = nil

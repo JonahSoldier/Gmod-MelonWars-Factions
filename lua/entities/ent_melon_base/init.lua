@@ -725,11 +725,13 @@ function MelonWars.defaultShoot( ent, forceTargetPos )
 
 		MelonWars.bullet(ent, pos, dir, entTbl.range, ent, nil, 0)
 
-		local effectdata = EffectData()
-		effectdata:SetScale(1)
-		effectdata:SetAngles( dir:Angle())
-		effectdata:SetOrigin( pos + dir:GetNormalized() * 10 )
-		util.Effect( "MuzzleEffect", effectdata )
+		if not MelonWars.net_perf_mode then 
+			local effectdata = EffectData()
+			effectdata:SetScale(1)
+			effectdata:SetAngles( dir:Angle())
+			effectdata:SetOrigin( pos + dir:GetNormalized() * 10 )
+			util.Effect( "MuzzleEffect", effectdata )
+		end
 		sound.Play( entTbl.shotSound, pos )
 	end
 end
@@ -777,20 +779,25 @@ function MelonWars.bullet(ent, startingPos, direction, distance, ignore, callbac
 			end
 		end
 	end
+
 	effectdata:SetStart(startingPos)
 	effectdata:SetScale(2000)
 	effectdata:SetAngles(angle)
 	util.Effect( "AR2Tracer", effectdata )
-	effectdata:SetOrigin(hitpos)
-	effectdata:SetScale(3)
-	effectdata:SetNormal(direction)
-	util.Effect( "AR2Impact", effectdata )
+	if not MelonWars.net_perf_mode then 
+		effectdata:SetOrigin(hitpos)
+		effectdata:SetScale(3)
+		effectdata:SetNormal(direction)
+		util.Effect( "AR2Impact", effectdata )
+	end
 end
 
 function MelonWars.defaultDeathEffect( ent )
-	local effectdata = EffectData()
-	effectdata:SetOrigin( ent:GetPos() )
-	util.Effect( ent.deathEffect, effectdata )
+	if not MelonWars.net_perf_mode then 
+		local effectdata = EffectData()
+		effectdata:SetOrigin( ent:GetPos() )
+		util.Effect( ent.deathEffect, effectdata )
+	end
 	sound.Play( ent.deathSound, ent:GetPos() )
 	ent:Remove()
 end

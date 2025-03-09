@@ -80,8 +80,10 @@ end)
 
 timer.Simple(0, function() --Delaying it like this isn't ideal but I can't be bothered to re-organize at the moment. This is so that it runs after the tool actually sets up the convars.
 	local mw_admin_playing_cv = GetConVar("mw_admin_playing")
-	hook.Add("Think", "MelonWars_cacheCvars", function()
-		MelonWars.admin_playing =  mw_admin_playing_cv:GetBool() --
+	local mw_net_perf_cv = GetConVar("mw_admin_network_performance_mode")
+	hook.Add("Think", "MelonWars_cacheCvars", function() --TODO: We could probably just set these values when the convars change. Don't know why I thought this needed to be in a think hook.
+		MelonWars.admin_playing = mw_admin_playing_cv:GetBool()
+		MelonWars.net_perf_mode = mw_net_perf_cv:GetBool()
 	end)
 end)
 
