@@ -1,15 +1,21 @@
 include("shared.lua")
+
+local upAngle = Angle(0, 0, 90)
+
 function ENT:Draw()
 	-- self.BaseClass.Draw(self) -- Overrides Draw
 	self:DrawModel() -- Draws Model Client Side
+
 	local time = self:GetNWFloat("spawnTime", 0)
-	if CurTime() < time then
+	local curTime = CurTime()
+
+	if curTime < time then
 		local eyeAngs = LocalPlayer():EyeAngles()
-		local angle = eyeAngs + Angle(0, 0, 90)
+		local angle = eyeAngs + upAngle
 		angle:RotateAroundAxis(eyeAngs:Up(), -90)
 		local vpos = self:WorldSpaceCenter() --+angle:Forward()*10-angle:Right()*10/2
 		cam.Start3D2D(vpos, angle, 0.5)
-		draw.SimpleText(tostring(math.ceil(time - CurTime())), "Trebuchet24", 0, 0, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(tostring(math.ceil(time - curTime)), "Trebuchet24", 0, 0, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		cam.End3D2D()
 	end
 
@@ -22,9 +28,11 @@ function ENT:Initialize()
 end
 
 function MelonWars.drawSickEffect(ent, amount)
-	local emitter = ParticleEmitter(ent:GetPos()) -- Particle emitter in this position
-	for i = 1, amount do -- SMOKE
-		local part = emitter:Add("effects/yellowflare", ent:GetPos()) -- Create a new particle at pos
+	local entPos = ent:GetPos()
+	local emitter = ParticleEmitter(entPos) -- Particle emitter in this position
+
+	for _ = 1, amount do -- SMOKE
+		local part = emitter:Add("effects/yellowflare", entPos) -- Create a new particle at pos
 		if part then
 			part:SetDieTime(math.Rand(1.0, 2.0)) -- How long the particle should "live"
 			part:SetColor(100, 255, 0)
@@ -43,9 +51,11 @@ function MelonWars.drawSickEffect(ent, amount)
 end
 
 function MelonWars.drawSiloSmoke(ent, amount)
-	local emitter = ParticleEmitter(ent:GetPos()) -- Particle emitter in this position
-	for i = 1, amount do -- SMOKE
-		local part = emitter:Add("effects/yellowflare", ent:GetPos() + Vector(math.random(-30, 30), math.random(-30, 30), 0)) -- Create a new particle at pos
+	local entPos = ent:GetPos()
+	local emitter = ParticleEmitter(entPos) -- Particle emitter in this position
+
+	for _ = 1, amount do -- SMOKE
+		local part = emitter:Add("effects/yellowflare", entPos + Vector(math.random(-30, 30), math.random(-30, 30), 0)) -- Create a new particle at pos
 		if part then
 			part:SetDieTime(math.Rand(1.0, 2.0)) -- How long the particle should "live"
 			part:SetColor(100, 255, 0)
@@ -66,18 +76,22 @@ end
 
 local traceStartOff = Vector(0, 0, 20)
 local traceEndOff = Vector(0, 0, -280)
+local floorTrace = {
+	filter = { "prop_physics" },
+	whitelist = true,
+	mask = bit.bor(MASK_SOLID, MASK_WATER)
+}
+
 function ENT:Think()
 	local selfTbl = self:GetTable()
 	local pos = self:GetPos()
 
-	local tr = util.TraceLine({
-		start = pos + traceStartOff,
-		endpos = pos + traceEndOff,
-		filter = function(ent) if ent:GetClass() == "prop_physics" then return true end end,
-		mask = bit.bor(MASK_SOLID, MASK_WATER)
-	})
+	floorTrace.start = pos + traceStartOff
+	floorTrace.endpos = pos + traceEndOff
 
+	local tr = util.TraceLine(floorTrace)
 	selfTbl.floorTrace = tr
+
 	if selfTbl.circleSize == 0 then
 		local baseSize = self:GetNWFloat("baseSize", -1)
 		if baseSize > -1 then selfTbl.circleSize = baseSize end
@@ -90,22 +104,18 @@ function ENT:Think()
 			selfTbl.nextParticle = CurTime() + math.min(1 / sick, 1)
 		end
 	end
-
-	self:ClientThink()
 end
 
 function ENT:DrawExpirationDate()
 	if self:GetNWFloat("expiration", -1) == -1 then return end
 	local vpos = self:GetPos() + Vector(0, 0, 30)
-	local angle = LocalPlayer():EyeAngles() + Angle(0, 0, 90)
-	angle:RotateAroundAxis(LocalPlayer():EyeAngles():Up(), -90)
+	local eyeAngle = LocalPlayer():EyeAngles()
+	local angle = eyeAngle + upAngle
+	angle:RotateAroundAxis(eyeAngle:Up(), -90)
 	local timeLeft = self:GetNWFloat("expiration") - CurTime()
 	cam.Start3D2D(vpos, angle, 0.5)
-	draw.SimpleText(tostring(math.ceil(timeLeft)), "Trebuchet18", 0, 0, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	draw.SimpleText(tostring(math.ceil(timeLeft)), "Trebuchet18", 0, 0, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	cam.End3D2D()
-end
-
-function ENT:ClientThink()
 end
 
 function ENT:BarrackDraw(self, offset)
@@ -118,15 +128,13 @@ function ENT:BarrackDraw(self, offset)
 		local STT = self:GetNWFloat("slowThinkTimer", 0)
 		local OD = self:GetNWFloat("overdrive", 0)
 		cam.Start3D2D(vpos, angle, 1)
-		if not self:GetNWBool("spawned", false) then
-			if NST > CurTime() then
-				surface.SetDrawColor(Color(0, 255, 255))
-				surface.DrawRect(0, -15, 5, math.min(35, 35 + (CurTime() + OD - NST) * 35 / STT))
-				surface.SetDrawColor(Color(255, 240, 0))
-				surface.DrawRect(0, -15, 5, 35 + (CurTime() - NST) * 35 / STT)
-				surface.SetDrawColor(Color(0, 0, 0, 255))
-				surface.DrawOutlinedRect(0, -15, 5, 35)
-			end
+		if not self:GetNWBool("spawned", false) and NST > CurTime() then
+			surface.SetDrawColor(Color(0, 255, 255))
+			surface.DrawRect(0, -15, 5, math.min(35, 35 + (CurTime() + OD - NST) * 35 / STT))
+			surface.SetDrawColor(Color(255, 240, 0))
+			surface.DrawRect(0, -15, 5, 35 + (CurTime() - NST) * 35 / STT)
+			surface.SetDrawColor(color_black)
+			surface.DrawOutlinedRect(0, -15, 5, 35)
 		end
 
 		--Display de actividad
@@ -137,7 +145,7 @@ function ENT:BarrackDraw(self, offset)
 		end
 
 		surface.DrawRect(-10, -15, 10, 10)
-		surface.SetDrawColor(Color(0, 0, 0, 255))
+		surface.SetDrawColor(color_black)
 		surface.DrawOutlinedRect(-10, -15, 10, 10)
 		--Display de unidades
 		surface.SetDrawColor(Color(50, 50, 50, 255))
@@ -150,11 +158,11 @@ function ENT:BarrackDraw(self, offset)
 			if i <= m then surface.DrawRect(-10, -10 + (i - 5) * 5, 5, 5) end
 		end
 
-		surface.SetDrawColor(Color(255, 255, 255, 255))
+		surface.SetDrawColor(color_white)
 		local c = self:GetNWInt("count", 0)
 		surface.DrawRect(-5, -5, 5, math.min(c, 5) * 5)
 		if c > 5 then surface.DrawRect(-10, -5, 5, (c - 5) * 5) end
-		surface.SetDrawColor(Color(0, 0, 0, 255))
+		surface.SetDrawColor(color_black)
 		for i = 1, 5 do
 			if i <= m then surface.DrawOutlinedRect(-5, -10 + i * 5, 5, 5) end
 		end
@@ -168,11 +176,12 @@ function ENT:BarrackDraw(self, offset)
 
 	local time = self:GetNWFloat("spawnTime", 0)
 	if CurTime() >= time then return end
-	local angle = LocalPlayer():EyeAngles() + Angle(0, 0, 90)
-	angle:RotateAroundAxis(LocalPlayer():EyeAngles():Up(), -90)
+	local eyeAngle = LocalPlayer():EyeAngles()
+	local angle = eyeAngle + upAngle
+	angle:RotateAroundAxis(eyeAngle:Up(), -90)
 	local vpos = self:WorldSpaceCenter() --+angle:Forward()*10-angle:Right()*10/2
 	cam.Start3D2D(vpos, angle, 0.5)
-	draw.SimpleText(tostring(math.ceil(time - CurTime())) .. "s", "Trebuchet24", 0, 0, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	draw.SimpleText(tostring(math.ceil(time - CurTime())) .. "s", "Trebuchet24", 0, 0, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	cam.End3D2D()
 end
 

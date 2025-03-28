@@ -44,6 +44,4 @@ function ENT:Think()
 			self.circleSize = baseSize
 		end
 	end
-
-	self:ClientThink()
 end
