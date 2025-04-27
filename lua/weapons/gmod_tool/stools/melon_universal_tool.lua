@@ -6,6 +6,8 @@ TOOL.Information = {
 	{ name = "reload" }
 }
 
+MelonWars.toolFileLoaded = true
+
 -- Convars (Start)
 
 CreateClientConVar( "mw_chosen_unit", "1", 0, false )
@@ -745,8 +747,8 @@ local function _CreatePanel()
 		_MakeHelpButton( "Contrap.", 5, info, "What is a contraption?\n\nA contraption is a machine built by the player that can be used in melon combat as a vehicle. It can be used for ramming, as a tank, as transport, or anything you can imagine.\n\n" ..
 			"How do I build them?\n\nBuild a contraption just like you would in Sandbox. Beware that parts like thrusters, hoverballs, and wheels will get removed when you 'legalize' the contraption.\n\n" ..
 			"What is legalizing?\n\nIn order to make your contraption legal inside the MelonWars battle, you have to save it using the Contraption Manager, located under the Contrap. menu, and spawn it using a Contraption Assembler.\n\n" ..
-			"How do I make my contraption move?\n\nUnder the Contrap. submenu, you have Thrusters, Wheels, Propellers and Hover Pads. " ..
-			"The Thruster is a powerful melon that cannot shoot, but it is very strong and can move even if attached to a contraption. The Wheel can be used to help your contraption roll across the ground. The Propeller and Hover Pad can be used to make your contraption hover above ground." )
+			"How do I make my contraption move?\n\nUnder the Contrap. submenu, you have Engines, Wheels, Propellers and Hover Pads. " ..
+			"The Engine is a powerful melon that cannot shoot, but it is very strong and can move even if attached to a contraption. The Wheel can be used to help your contraption roll across the ground. The Propeller and Hover Pad can be used to make your contraption hover above ground." )
 
 		_MakeHelpButton("Setup", 6, info, "How do I set up a game?\n\n" ..
 			"In order to set up a game, you should build an arena out of props or go to a MelonWars map. The admin should ask the players what colors they want to be, then spawn a Base (or Grand War Base) from the Admin menu for each player at different locations.\n\n" ..
