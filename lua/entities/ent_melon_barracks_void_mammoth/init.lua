@@ -7,7 +7,7 @@ function ENT:Initialize()
 
 	MelonWars.defaults ( self )
 
-	self.unit = 25
+	self.unit = 23
 	self.modelString = "models/props_combine/masterinterface.mdl"
 	--self.Angles = Angle(0,0,180)
 	self.maxHP = 200
