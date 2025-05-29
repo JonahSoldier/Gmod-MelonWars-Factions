@@ -23,7 +23,6 @@ function ENT:Initialize()
 end
 
 function ENT:Think(ent)
-
 	self:SetNWInt("count", 0)
 
 	self:BarrackSlowThink()
