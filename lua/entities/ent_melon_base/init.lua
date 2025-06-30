@@ -725,7 +725,7 @@ function MelonWars.defaultShoot( ent, forceTargetPos )
 
 		MelonWars.bullet(ent, pos, dir, entTbl.range, ent, nil, 0)
 
-		if not MelonWars.net_perf_mode then 
+		if not MelonWars.net_perf_mode then
 			local effectdata = EffectData()
 			effectdata:SetScale(1)
 			effectdata:SetAngles( dir:Angle())
@@ -784,7 +784,7 @@ function MelonWars.bullet(ent, startingPos, direction, distance, ignore, callbac
 	effectdata:SetScale(2000)
 	effectdata:SetAngles(angle)
 	util.Effect( "AR2Tracer", effectdata )
-	if not MelonWars.net_perf_mode then 
+	if not MelonWars.net_perf_mode then
 		effectdata:SetOrigin(hitpos)
 		effectdata:SetScale(3)
 		effectdata:SetNormal(direction)
@@ -793,7 +793,7 @@ function MelonWars.bullet(ent, startingPos, direction, distance, ignore, callbac
 end
 
 function MelonWars.defaultDeathEffect( ent )
-	if not MelonWars.net_perf_mode then 
+	if not MelonWars.net_perf_mode then
 		local effectdata = EffectData()
 		effectdata:SetOrigin( ent:GetPos() )
 		util.Effect( ent.deathEffect, effectdata )

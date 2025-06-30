@@ -440,7 +440,7 @@ local function _CreatePanel()
 			draw.RoundedBox( 6, 0, 0, w, h, Color(210,210,210) )
 			draw.RoundedBox( 3, 5, 5, w-10, h-10, Color(250,250,250) )
 		end
-	elseif (pl.mw_menu == 3) then	
+	elseif (pl.mw_menu == 3) then
 		local bonusUnits = GetConVar( "mw_admin_bonusunits" ):GetBool()
 		local plCode = pl:GetInfo("mw_code")
 		local plFaction = pl:GetInfo("mw_faction")
@@ -1174,6 +1174,8 @@ end
 
 -- SELECTION CODE: ----------------------------------
 
+local ignoreClasses = {"player"}
+
 local function MW_BeginSelection() -- Previously concommand.Add( "+mw_select", function( ply )
 	if not CLIENT then return end
 
@@ -1183,7 +1185,7 @@ local function MW_BeginSelection() -- Previously concommand.Add( "+mw_select", f
 	local trace = util.TraceLine( {
 		start = eyePos,
 		endpos = eyePos + ply:EyeAngles():Forward() * 10000,
-		filter = function( ent ) if ( ent:GetClass() ~= "player" ) then return true end end,
+		filter = ignoreClasses,
 		mask = MASK_SOLID + ((not ply:WaterLevel() == 3 and MASK_WATER) or 0)
 	} )
 
@@ -1211,7 +1213,7 @@ function TOOL:MW_SelectionThink() --This might be a little jank because I wrote 
 	local specialTrace = util.TraceLine( {
 		start = eyePos,
 		endpos = eyePos + eyeForwards * 10000,
-		filter = function( ent ) if ( ent:GetClass() ~= "player" ) then return true end end,
+		filter = ignoreClasses,
 		mask = MASK_SOLID + ((not ply:WaterLevel() == 3 and MASK_WATER) or 0)
 	} )
 
@@ -1242,11 +1244,11 @@ function TOOL:DoSelection(startingPos, endingPos)
 	local center = (startingPos + endingPos) / 2
 	local radius = (startingPos - endingPos):Length() / 2
 
-	--local foundEntities = {}
 	local locPly = LocalPlayer()
+	local foundMelons = locPly.foundMelons
 
-	if locPly.foundMelons and not locPly:KeyDown(IN_SPEED) then
-		table.Empty(locPly.foundMelons)
+	if foundMelons and not locPly:KeyDown(IN_SPEED) then
+		table.Empty(foundMelons)
 	end
 
 	locPly.lastSelectionTime = locPly.lastSelectionTime or CurTime()
@@ -1261,7 +1263,7 @@ function TOOL:DoSelection(startingPos, endingPos)
 	local doubleClick = locPly.lastSelectionTime + 0.3 > CurTime() and IsValid( clickedUnit )
 
 	radius = (doubleClick and 300) or radius
-	foundEntities = MelonWars.selectionCylinder(center, radius, _team, clickedUnit, doubleClick)
+	local foundEntities = MelonWars.selectionCylinder(center, radius, _team, clickedUnit, doubleClick)
 
 	net.Start("MW_RequestSelection")
 		net.WriteUInt(locPly.mw_selectionID, 8)
@@ -1273,7 +1275,21 @@ function TOOL:DoSelection(startingPos, endingPos)
 
 	locPly.lastSelectionTime = CurTime()
 
-	locPly.foundMelons = table.Copy(foundEntities)
+	-- Add all entities that aren't already selected to the list
+	for _, ent in ipairs(foundEntities) do
+		local entAlreadySelected = false
+
+		for _, oldEnt in ipairs(foundMelons) do
+			if oldEnt == ent then
+				entAlreadySelected = true
+				break
+			end
+		end
+
+		if not entAlreadySelected then
+			table.insert(foundMelons, ent)
+		end
+	end
 end
 
 -- CONTRAPTION CODE: ----------------------------------
