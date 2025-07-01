@@ -10,3 +10,4 @@ ENT.Purpose = "Annoy"
 ENT.Instructions = "Produces one melonium pack every minute"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
+ENT.IconOverride = "spawnicons/models/props_vehicles/generatortrailer01.png"

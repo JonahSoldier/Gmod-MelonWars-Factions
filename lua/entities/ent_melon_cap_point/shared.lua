@@ -10,3 +10,4 @@ ENT.Purpose = "Annoy"
 ENT.Instructions = "Spawn a whole bunch"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
+ENT.IconOverride = "spawnicons/models/props_wasteland/buoy01.png"

@@ -7,3 +7,4 @@ ENT.Author = "JonahSoldier"
 
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
+ENT.IconOverride = "spawnicons/models/hunter/tubes/circle2x2.png"

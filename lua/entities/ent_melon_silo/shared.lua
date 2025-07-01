@@ -10,3 +10,4 @@ ENT.Purpose = "Annoy"
 ENT.Instructions = "Bring it melonium and it will fire at enemy bases"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
+ENT.IconOverride = "spawnicons/models/hunter/triangles/trapezium3x3x1.png"

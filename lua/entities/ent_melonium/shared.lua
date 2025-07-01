@@ -10,3 +10,4 @@ ENT.Purpose = "Annoy"
 ENT.Instructions = "You shouldnt be able to spawn this"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
+ENT.IconOverride = "spawnicons/models/maxofs2d/hover_rings.png"

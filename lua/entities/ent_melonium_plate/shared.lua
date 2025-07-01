@@ -10,6 +10,7 @@ ENT.Author = "JonahSoldier"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ENT.Editable = true
+ENT.IconOverride = "spawnicons/models/hunter/plates/plate32x32.png"
 
 ENT.AdminOnly = true --Can be set to an error model, which makes it hard to get rid of. Probably not something you want random players doing.
 
@@ -24,7 +25,7 @@ function ENT:SetupDataTables()
 	} )
 
 	if SERVER then
-		self:NetworkVarNotify( "MWModel", function(name, old, new)
+		self:NetworkVarNotify( "MWModel", function(_, _, new)
 			self:SetModel(new)
 			self:PhysicsInit( SOLID_VPHYSICS )
 			self:GetPhysicsObject():EnableMotion(false)

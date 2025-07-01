@@ -9,6 +9,7 @@ ENT.PrintName = "Buildspeed Multiplier"
 ENT.Author = "JonahSoldier"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
+ENT.IconOverride = "spawnicons/models/hunter/blocks/cube025x025x025.png"
 
 ENT.AdminOnly = true
 ENT.Editable = true
