@@ -52,7 +52,8 @@ end
 net.Receive( "MW_ReturnSelection", function()
 	local returnedSelectionID = net.ReadUInt(8)
 
-	if returnedSelectionID ~= LocalPlayer().mw_selectionID then return end
+	local locPly = LocalPlayer()
+	if returnedSelectionID ~= locPly.mw_selectionID then return end
 	local count = net.ReadUInt(10)
 
 	for i = 1, count do
@@ -60,8 +61,8 @@ net.Receive( "MW_ReturnSelection", function()
 		if not foundEntity:IsValid() then
 			print("== Melon Wars: Received a null entity from the server. If you see this in console please tell a dev, it means something's not working and you may fail to select units.")
 		end
-		if not table.HasValue(LocalPlayer().foundMelons, foundEntity) then
-			table.insert(LocalPlayer().foundMelons, foundEntity)
+		if not table.HasValue(locPly.foundMelons, foundEntity) then
+			table.insert(locPly.foundMelons, foundEntity)
 		end
 	end
 end )

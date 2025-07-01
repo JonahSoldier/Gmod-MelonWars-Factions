@@ -1245,6 +1245,7 @@ function TOOL:DoSelection(startingPos, endingPos)
 	local radius = (startingPos - endingPos):Length() / 2
 
 	local locPly = LocalPlayer()
+	locPly.foundMelons = locPly.foundMelons or {}
 	local foundMelons = locPly.foundMelons
 
 	if foundMelons and not locPly:KeyDown(IN_SPEED) then
